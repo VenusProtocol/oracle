@@ -13,15 +13,96 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
-      name: "Greeter",
+      name: "ERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Greeter__factory>;
+    ): Promise<Contracts.ERC20__factory>;
+    getContractFactory(
+      name: "IERC20Metadata",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC20Metadata__factory>;
+    getContractFactory(
+      name: "IERC20",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC20__factory>;
+    getContractFactory(
+      name: "AggregatorV2V3Interface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AggregatorV2V3Interface__factory>;
+    getContractFactory(
+      name: "BEP20Interface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BEP20Interface__factory>;
+    getContractFactory(
+      name: "VBep20Interface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.VBep20Interface__factory>;
+    getContractFactory(
+      name: "BEP20Harness",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BEP20Harness__factory>;
+    getContractFactory(
+      name: "MockV3Aggregator",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockV3Aggregator__factory>;
+    getContractFactory(
+      name: "VBEP20Harness",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.VBEP20Harness__factory>;
+    getContractFactory(
+      name: "VenusChainlinkOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.VenusChainlinkOracle__factory>;
 
     getContractAt(
-      name: "Greeter",
+      name: "ERC20",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.Greeter>;
+    ): Promise<Contracts.ERC20>;
+    getContractAt(
+      name: "IERC20Metadata",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC20Metadata>;
+    getContractAt(
+      name: "IERC20",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC20>;
+    getContractAt(
+      name: "AggregatorV2V3Interface",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AggregatorV2V3Interface>;
+    getContractAt(
+      name: "BEP20Interface",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.BEP20Interface>;
+    getContractAt(
+      name: "VBep20Interface",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.VBep20Interface>;
+    getContractAt(
+      name: "BEP20Harness",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.BEP20Harness>;
+    getContractAt(
+      name: "MockV3Aggregator",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockV3Aggregator>;
+    getContractAt(
+      name: "VBEP20Harness",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.VBEP20Harness>;
+    getContractAt(
+      name: "VenusChainlinkOracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.VenusChainlinkOracle>;
 
     // default types
     getContractFactory(
