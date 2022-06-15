@@ -72,7 +72,7 @@ contract VenusChainlinkOracle {
         }
 
         // Ensure that we don't multiply the result by 0
-        if (block.timestamp.sub(updatedAt) > maxStalePeriod) {
+        if (block.timestamp.sub(updatedAt, "updatedAt exceeds block time") > maxStalePeriod) {
             return 0;
         }
 

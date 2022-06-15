@@ -7,10 +7,7 @@ declare module "mocha" {
   export interface Context {
     oracle: VenusChainlinkOracle;
     loadFixture: <T>(fixture: Fixture<T>) => Promise<T>;
-    signers: Signers;
+    signers: SignerWithAddress[];
+    admin: SignerWithAddress;
   }
-}
-
-export interface Signers {
-  admin: SignerWithAddress;
 }
