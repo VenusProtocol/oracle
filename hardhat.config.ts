@@ -1,6 +1,7 @@
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
+import "hardhat-deploy";
 import { config as dotenvConfig } from "dotenv";
 import "hardhat-gas-reporter";
 import { HardhatUserConfig } from "hardhat/config";
@@ -8,14 +9,13 @@ import { NetworkUserConfig } from "hardhat/types";
 import { resolve } from "path";
 import "solidity-coverage";
 
-import "./tasks/accounts";
-import "./tasks/deploy";
+import "./tasks";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
 // Ensure that we have all the environment variables we need.
-const mnemonic: string | undefined = process.env.MNEMONIC;
-if (!mnemonic) {
+const privateKey: string | undefined = process.env.PRIVATE_KEY;
+if (!privateKey) {
   throw new Error("Please set your MNEMONIC in a .env file");
 }
 
@@ -35,20 +35,16 @@ function getChainConfig(chain: keyof typeof chainIds): NetworkUserConfig {
   let jsonRpcUrl: string;
   switch (chain) {
     case "bsc":
-      jsonRpcUrl = "https://bsc-dataseed1.binance.org";
+      jsonRpcUrl = process.env.BSC_RPC || "https://bsc-dataseed1.binance.org";
       break;
     case "bsctestnet":
-      jsonRpcUrl = "https://data-seed-prebsc-1-s1.binance.org:8545";
+      jsonRpcUrl = process.env.BSC_TESTNET_NODE || "https://data-seed-prebsc-2-s1.binance.org:8545";
       break;
     default:
       jsonRpcUrl = "https://" + chain + ".infura.io/v3/" + infuraApiKey;
   }
   return {
-    accounts: {
-      count: 10,
-      mnemonic,
-      path: "m/44'/60'/0'/0",
-    },
+    accounts: [`0x${privateKey}`],
     chainId: chainIds[chain],
     url: jsonRpcUrl,
   };
@@ -56,10 +52,15 @@ function getChainConfig(chain: keyof typeof chainIds): NetworkUserConfig {
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
+  namedAccounts: {
+    deployer: {
+      default: 0, // here this will by default take the first account as deployer
+    }
+  },
   etherscan: {
     apiKey: {
-      bsc: process.env.BSCSCAN_API_KEY || "BSCSCAN_API_KEY",
-      bsctestnet: process.env.BSCSCAN_API_KEY || "BSCSCAN_API_KEY",
+      bsc: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
+      bsctestnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       rinkeby: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
     },
   },
@@ -71,9 +72,6 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      accounts: {
-        mnemonic,
-      },
       chainId: chainIds.hardhat,
     },
     rinkeby: getChainConfig("rinkeby"),

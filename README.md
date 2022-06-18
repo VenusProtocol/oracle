@@ -82,7 +82,15 @@ $ yarn clean
 Deploy the contracts to Hardhat Network:
 
 ```sh
-$ yarn deploy --greeting "Bonjour, le monde!"
+$ yarn deploy --greeting "Bonjour, le monde!" --network bsctestnet
+```
+
+### Verify
+
+Verify the contracts through `hardhat-deploy`
+
+```sh
+$ yarn etherscan-verify --network bsctestnet
 ```
 
 ## Syntax Highlighting
