@@ -37,11 +37,11 @@ contract VenusChainlinkOracle {
         } else if (compareStrings(symbol, "XVS")) {
             return prices[address(vToken)];
         } else {
-            return getPrice(vToken);
+            return getUnderlyingPriceInternal(vToken);
         }
     }
 
-    function getPrice(VBep20Interface vToken) internal view returns (uint256 price) {
+    function getUnderlyingPriceInternal(VBep20Interface vToken) internal view returns (uint256 price) {
         VBep20Interface token = VBep20Interface(vToken.underlying());
 
         if (prices[address(token)] != 0) {
@@ -124,8 +124,8 @@ contract VenusChainlinkOracle {
         return feeds[keccak256(abi.encodePacked(symbol))];
     }
 
-    function getMaxStalePeriod(address asset) external view returns (uint256) {
-        return maxStalePeriods[asset];
+    function getMaxStalePeriod(address feed) external view returns (uint256) {
+        return maxStalePeriods[feed];
     }
 
     function assetPrices(address asset) external view returns (uint256) {

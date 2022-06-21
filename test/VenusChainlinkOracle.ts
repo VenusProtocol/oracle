@@ -18,23 +18,23 @@ describe("Oracle unit tests", function () {
     this.signers = signers;
     this.admin = admin;
 
-    this.vToken = await makeVToken(admin, { name: "vToken", symbol: "vToken" });
-    this.vBnb = await makeVToken(admin, { name: "vBNB", symbol: "vBNB" });
+    this.vToken = await makeVToken(admin, { name: "vToken", symbol: "vToken" }, { name: "Token", symbol: "Token" });
+    this.vBnb = await makeVToken(admin, { name: "vBNB", symbol: "vBNB" }, { name: "BNB", symbol: "BNB" });
     this.vai = await makeVToken(admin, { name: "VAI", symbol: "VAI" });
     this.xvs = await makeVToken(admin, { name: "XVS", symbol: "XVS" });
     this.vExampleSet = await makeVToken(admin, { name: "vExampleSet", symbol: "vExampleSet" });
     this.vExampleUnset = await makeVToken(admin, { name: "vExampleUnset", symbol: "vExampleUnset" });
     this.vUsdc = await makeVToken(
       admin,
-      { name: "vUsdc", symbol: "vUsdc" },
+      { name: "vUSDC", symbol: "vUSDC" },
       { name: "USDC", symbol: "USDC", decimals: 6 },
     );
     this.vUsdt = await makeVToken(
       admin,
-      { name: "vUsdt", symbol: "vUsdt" },
+      { name: "vUSDT", symbol: "vUSDT" },
       { name: "USDT", symbol: "USDT", decimals: 6 },
     );
-    this.vDai = await makeVToken(admin, { name: "vDai", symbol: "vDai" }, { name: "DAI", symbol: "DAI", decimals: 18 });
+    this.vDai = await makeVToken(admin, { name: "vDAI", symbol: "vDAI" }, { name: "DAI", symbol: "DAI", decimals: 18 });
 
     this.bnbFeed = await makeChainlinkOracle(admin, 8, 30000000000);
     this.usdcFeed = await makeChainlinkOracle(admin, 8, 100000000);
@@ -114,7 +114,7 @@ describe("Oracle unit tests", function () {
     it('parameter length check', async function () {
       await expect(
         this.oracle.batchSetFeeds(
-          ["vBNB", "vUSDT"],
+          ["vBNB", "USDT"],
           ["0x0000000000000000000000000000000000000000"],
           [BigNumber.from(MAX_STALE_PERIOD)]
         )
@@ -122,7 +122,7 @@ describe("Oracle unit tests", function () {
 
       await expect(
         this.oracle.batchSetFeeds(
-          ["vBNB", "vUSDT"],
+          ["vBNB", "USDT"],
           ["0x0000000000000000000000000000000000000000"],
           [BigNumber.from(MAX_STALE_PERIOD), BigNumber.from(MAX_STALE_PERIOD)]
         )
@@ -137,13 +137,13 @@ describe("Oracle unit tests", function () {
 
     it("set multiple feeds", async function () {
       await this.oracle.batchSetFeeds(
-        ["vBNB", "vUSDT"],
+        ["vBNB", "USDT"],
         [this.bnbFeed.address, this.usdtFeed.address],
         [2 * MAX_STALE_PERIOD, 3 * MAX_STALE_PERIOD]
       );
 
       const newBnbFeed = await this.oracle.getFeed("vBNB");
-      const newUsdtFeed = await this.oracle.getFeed("vUSDT");
+      const newUsdtFeed = await this.oracle.getFeed("USDT");
       const newBnbStalePeriod = await this.oracle.getMaxStalePeriod(this.bnbFeed.address);
       const newUsdtStalePeriod = await this.oracle.getMaxStalePeriod(this.usdtFeed.address);
 

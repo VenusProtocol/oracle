@@ -8,7 +8,7 @@ export const makeVToken = async (
   opts: { name: string; symbol: string; decimals?: number },
   underlyingOpts?: {
     symbol: string;
-    decimals: number;
+    decimals?: number;
     name: string;
   },
 ) => {
@@ -22,7 +22,7 @@ export const makeVToken = async (
   const underlyingToken = await waffle.deployContract(admin, tokenArtifact, [
     underlyingOpts2.name,
     underlyingOpts2.symbol,
-    underlyingOpts2.decimals,
+    underlyingOpts2.decimals || 18,
   ]);
   await underlyingToken.deployed();
   const vTokenArtifact = await artifacts.readArtifact("VBEP20Harness");

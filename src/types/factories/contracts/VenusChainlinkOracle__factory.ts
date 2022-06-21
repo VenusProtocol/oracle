@@ -181,7 +181,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "asset",
+        name: "feed",
         type: "address",
       },
     ],

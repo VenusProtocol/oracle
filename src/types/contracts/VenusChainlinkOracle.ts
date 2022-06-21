@@ -227,7 +227,7 @@ export interface VenusChainlinkOracle extends BaseContract {
     ): Promise<[string]>;
 
     getMaxStalePeriod(
-      asset: PromiseOrValue<string>,
+      feed: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -283,7 +283,7 @@ export interface VenusChainlinkOracle extends BaseContract {
   ): Promise<string>;
 
   getMaxStalePeriod(
-    asset: PromiseOrValue<string>,
+    feed: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -339,7 +339,7 @@ export interface VenusChainlinkOracle extends BaseContract {
     ): Promise<string>;
 
     getMaxStalePeriod(
-      asset: PromiseOrValue<string>,
+      feed: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -428,7 +428,7 @@ export interface VenusChainlinkOracle extends BaseContract {
     ): Promise<BigNumber>;
 
     getMaxStalePeriod(
-      asset: PromiseOrValue<string>,
+      feed: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -485,7 +485,7 @@ export interface VenusChainlinkOracle extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getMaxStalePeriod(
-      asset: PromiseOrValue<string>,
+      feed: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
