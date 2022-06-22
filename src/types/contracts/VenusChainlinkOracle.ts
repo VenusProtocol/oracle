@@ -32,13 +32,13 @@ export interface VenusChainlinkOracleInterface extends utils.Interface {
     "VAI_VALUE()": FunctionFragment;
     "admin()": FunctionFragment;
     "assetPrices(address)": FunctionFragment;
-    "batchSetFeeds(string[],address[],uint256[])": FunctionFragment;
-    "getFeed(string)": FunctionFragment;
+    "batchSetFeeds(address[],address[],uint256[])": FunctionFragment;
+    "getFeed(address)": FunctionFragment;
     "getMaxStalePeriod(address)": FunctionFragment;
     "getUnderlyingPrice(address)": FunctionFragment;
     "setAdmin(address)": FunctionFragment;
     "setDirectPrice(address,uint256)": FunctionFragment;
-    "setFeed(string,address,uint256)": FunctionFragment;
+    "setFeed(address,address,uint256)": FunctionFragment;
     "setUnderlyingPrice(address,uint256)": FunctionFragment;
   };
 
@@ -135,7 +135,7 @@ export interface VenusChainlinkOracleInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "FeedSet(address,string,uint256)": EventFragment;
+    "FeedSet(address,address,uint256)": EventFragment;
     "NewAdmin(address,address)": EventFragment;
     "PricePosted(address,uint256,uint256,uint256)": EventFragment;
   };
@@ -147,7 +147,7 @@ export interface VenusChainlinkOracleInterface extends utils.Interface {
 
 export interface FeedSetEventObject {
   feed: string;
-  symbol: string;
+  asset: string;
   maxStalePeriod: BigNumber;
 }
 export type FeedSetEvent = TypedEvent<
@@ -215,14 +215,14 @@ export interface VenusChainlinkOracle extends BaseContract {
     ): Promise<[BigNumber]>;
 
     batchSetFeeds(
-      symbols_: PromiseOrValue<string>[],
+      assets_: PromiseOrValue<string>[],
       feeds_: PromiseOrValue<string>[],
       maxStalePeriods_: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getFeed(
-      symbol: PromiseOrValue<string>,
+      vToken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -248,7 +248,7 @@ export interface VenusChainlinkOracle extends BaseContract {
     ): Promise<ContractTransaction>;
 
     setFeed(
-      symbol: PromiseOrValue<string>,
+      asset: PromiseOrValue<string>,
       feed: PromiseOrValue<string>,
       maxStalePeriod: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -271,14 +271,14 @@ export interface VenusChainlinkOracle extends BaseContract {
   ): Promise<BigNumber>;
 
   batchSetFeeds(
-    symbols_: PromiseOrValue<string>[],
+    assets_: PromiseOrValue<string>[],
     feeds_: PromiseOrValue<string>[],
     maxStalePeriods_: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getFeed(
-    symbol: PromiseOrValue<string>,
+    vToken: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -304,7 +304,7 @@ export interface VenusChainlinkOracle extends BaseContract {
   ): Promise<ContractTransaction>;
 
   setFeed(
-    symbol: PromiseOrValue<string>,
+    asset: PromiseOrValue<string>,
     feed: PromiseOrValue<string>,
     maxStalePeriod: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -327,14 +327,14 @@ export interface VenusChainlinkOracle extends BaseContract {
     ): Promise<BigNumber>;
 
     batchSetFeeds(
-      symbols_: PromiseOrValue<string>[],
+      assets_: PromiseOrValue<string>[],
       feeds_: PromiseOrValue<string>[],
       maxStalePeriods_: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     getFeed(
-      symbol: PromiseOrValue<string>,
+      vToken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -360,7 +360,7 @@ export interface VenusChainlinkOracle extends BaseContract {
     ): Promise<void>;
 
     setFeed(
-      symbol: PromiseOrValue<string>,
+      asset: PromiseOrValue<string>,
       feed: PromiseOrValue<string>,
       maxStalePeriod: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -374,14 +374,14 @@ export interface VenusChainlinkOracle extends BaseContract {
   };
 
   filters: {
-    "FeedSet(address,string,uint256)"(
+    "FeedSet(address,address,uint256)"(
       feed?: null,
-      symbol?: null,
+      asset?: null,
       maxStalePeriod?: null
     ): FeedSetEventFilter;
     FeedSet(
       feed?: null,
-      symbol?: null,
+      asset?: null,
       maxStalePeriod?: null
     ): FeedSetEventFilter;
 
@@ -416,14 +416,14 @@ export interface VenusChainlinkOracle extends BaseContract {
     ): Promise<BigNumber>;
 
     batchSetFeeds(
-      symbols_: PromiseOrValue<string>[],
+      assets_: PromiseOrValue<string>[],
       feeds_: PromiseOrValue<string>[],
       maxStalePeriods_: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getFeed(
-      symbol: PromiseOrValue<string>,
+      vToken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -449,7 +449,7 @@ export interface VenusChainlinkOracle extends BaseContract {
     ): Promise<BigNumber>;
 
     setFeed(
-      symbol: PromiseOrValue<string>,
+      asset: PromiseOrValue<string>,
       feed: PromiseOrValue<string>,
       maxStalePeriod: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -473,14 +473,14 @@ export interface VenusChainlinkOracle extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     batchSetFeeds(
-      symbols_: PromiseOrValue<string>[],
+      assets_: PromiseOrValue<string>[],
       feeds_: PromiseOrValue<string>[],
       maxStalePeriods_: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getFeed(
-      symbol: PromiseOrValue<string>,
+      vToken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -506,7 +506,7 @@ export interface VenusChainlinkOracle extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setFeed(
-      symbol: PromiseOrValue<string>,
+      asset: PromiseOrValue<string>,
       feed: PromiseOrValue<string>,
       maxStalePeriod: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

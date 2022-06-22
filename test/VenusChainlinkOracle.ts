@@ -57,25 +57,25 @@ describe("Oracle unit tests", function () {
   describe("setFeed", () => {
     it("only admin may set a feed", async function () {
       await expect(
-        this.oracle.connect(this.signers[2]).setFeed("vBNB", this.bnbFeed.address, BigNumber.from(MAX_STALE_PERIOD))
+        this.oracle.connect(this.signers[2]).setFeed(this.vBnb.address, this.bnbFeed.address, BigNumber.from(MAX_STALE_PERIOD))
       ).to.be.revertedWith("only admin may call");
     });
 
     it("cannot set feed to self address", async function () {
       await expect(
-        this.oracle.setFeed("vBNB", this.oracle.address, BigNumber.from(MAX_STALE_PERIOD))
+        this.oracle.setFeed(this.vBnb.address, this.oracle.address, BigNumber.from(MAX_STALE_PERIOD))
       ).to.be.revertedWith("invalid feed address");
     });
 
     it("cannot set feed to zero address", async function () {
       await expect(
-        this.oracle.setFeed("vBNB", "0x0000000000000000000000000000000000000000", BigNumber.from(MAX_STALE_PERIOD))
+        this.oracle.setFeed(this.vBnb.address, "0x0000000000000000000000000000000000000000", BigNumber.from(MAX_STALE_PERIOD))
       ).to.be.revertedWith("invalid feed address");
     });
 
     it("sets a feed", async function () {
-      await this.oracle.setFeed("vBNB", this.bnbFeed.address, BigNumber.from(MAX_STALE_PERIOD))
-      const feed = await this.oracle.getFeed("vBNB");
+      await this.oracle.setFeed(this.vBnb.address, this.bnbFeed.address, BigNumber.from(MAX_STALE_PERIOD))
+      const feed = await this.oracle.getFeed(this.vBnb.address);
       expect(feed).to.be.equal(this.bnbFeed.address);
     });
   });
@@ -84,7 +84,7 @@ describe("Oracle unit tests", function () {
     it("only admin may set a feed", async function () {
       await expect(
         this.oracle.connect(this.signers[2]).batchSetFeeds(
-          ["vBNB"],
+          [this.vBnb.address],
           [this.bnbFeed.address],
           [BigNumber.from(MAX_STALE_PERIOD)]
         )
@@ -94,7 +94,7 @@ describe("Oracle unit tests", function () {
     it("cannot set feed to self address", async function () {
       await expect(
         this.oracle.batchSetFeeds(
-          ["vBNB"],
+          [this.vBnb.address],
           [this.oracle.address],
           [BigNumber.from(MAX_STALE_PERIOD)]
         )
@@ -104,7 +104,7 @@ describe("Oracle unit tests", function () {
     it('cannot set feed to zero address', async function () {
       await expect(
         this.oracle.batchSetFeeds(
-          ["vBNB"],
+          [this.vBnb.address],
           ["0x0000000000000000000000000000000000000000"],
           [BigNumber.from(MAX_STALE_PERIOD)]
         )
@@ -114,7 +114,7 @@ describe("Oracle unit tests", function () {
     it('parameter length check', async function () {
       await expect(
         this.oracle.batchSetFeeds(
-          ["vBNB", "USDT"],
+          [this.vBnb.address, this.vUsdt.address],
           ["0x0000000000000000000000000000000000000000"],
           [BigNumber.from(MAX_STALE_PERIOD)]
         )
@@ -122,7 +122,7 @@ describe("Oracle unit tests", function () {
 
       await expect(
         this.oracle.batchSetFeeds(
-          ["vBNB", "USDT"],
+          [this.vBnb.address, this.vUsdt.address],
           ["0x0000000000000000000000000000000000000000"],
           [BigNumber.from(MAX_STALE_PERIOD), BigNumber.from(MAX_STALE_PERIOD)]
         )
@@ -137,13 +137,13 @@ describe("Oracle unit tests", function () {
 
     it("set multiple feeds", async function () {
       await this.oracle.batchSetFeeds(
-        ["vBNB", "USDT"],
+        [this.vBnb.address, this.vUsdt.address],
         [this.bnbFeed.address, this.usdtFeed.address],
         [2 * MAX_STALE_PERIOD, 3 * MAX_STALE_PERIOD]
       );
 
-      const newBnbFeed = await this.oracle.getFeed("vBNB");
-      const newUsdtFeed = await this.oracle.getFeed("USDT");
+      const newBnbFeed = await this.oracle.getFeed(this.vBnb.address);
+      const newUsdtFeed = await this.oracle.getFeed(this.vUsdt.address);
       const newBnbStalePeriod = await this.oracle.getMaxStalePeriod(this.bnbFeed.address);
       const newUsdtStalePeriod = await this.oracle.getMaxStalePeriod(this.usdtFeed.address);
 
@@ -156,10 +156,10 @@ describe("Oracle unit tests", function () {
 
   describe("getUnderlyingPrice", () => {
     beforeEach(async function () {
-      await this.oracle.setFeed("vBNB", this.bnbFeed.address, BigNumber.from(MAX_STALE_PERIOD));
-      await this.oracle.setFeed("USDC", this.usdcFeed.address, BigNumber.from(MAX_STALE_PERIOD));
-      await this.oracle.setFeed("USDT", this.usdtFeed.address, BigNumber.from(MAX_STALE_PERIOD));
-      await this.oracle.setFeed("DAI", this.daiFeed.address, BigNumber.from(MAX_STALE_PERIOD));
+      await this.oracle.setFeed(this.vBnb.address, this.bnbFeed.address, BigNumber.from(MAX_STALE_PERIOD));
+      await this.oracle.setFeed(this.vUsdc.address, this.usdcFeed.address, BigNumber.from(MAX_STALE_PERIOD));
+      await this.oracle.setFeed(this.vUsdt.address, this.usdtFeed.address, BigNumber.from(MAX_STALE_PERIOD));
+      await this.oracle.setFeed(this.vDai.address, this.daiFeed.address, BigNumber.from(MAX_STALE_PERIOD));
       await this.oracle.setDirectPrice(this.xvs.address, 7);
       await this.oracle.setUnderlyingPrice(this.vExampleSet.address, 1);
     });
@@ -237,19 +237,19 @@ describe("Oracle unit tests", function () {
 
   describe('stale price validation', () => {
     beforeEach(async function () {
-      await this.oracle.setFeed("vBNB", this.bnbFeed.address, BigNumber.from(MAX_STALE_PERIOD));
+      await this.oracle.setFeed(this.vBnb.address, this.bnbFeed.address, BigNumber.from(MAX_STALE_PERIOD));
     });
 
     it('stale price period cannot be 0', async function () {
       await expect(
-        this.oracle.setFeed("vBNB", this.bnbFeed.address, 0)
+        this.oracle.setFeed(this.vBnb.address, this.bnbFeed.address, 0)
       ).to.revertedWith('stale period can\'t be zero');
     });
 
     it('modify stale price period will emit an event', async function () {
-      const result = await this.oracle.setFeed("vBNB", this.bnbFeed.address, BigNumber.from(MAX_STALE_PERIOD));
+      const result = await this.oracle.setFeed(this.vBnb.address, this.bnbFeed.address, BigNumber.from(MAX_STALE_PERIOD));
       await expect(result).to.emit(this.oracle, 'FeedSet').withArgs(
-        this.bnbFeed.address, "vBNB", MAX_STALE_PERIOD
+        this.bnbFeed.address, this.vBnb.address, MAX_STALE_PERIOD
       )
     });
 

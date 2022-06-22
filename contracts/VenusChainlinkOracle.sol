@@ -13,7 +13,7 @@ contract VenusChainlinkOracle {
 
     mapping(address => uint256) internal prices;
     mapping(address => uint256) internal maxStalePeriods;
-    mapping(bytes32 => AggregatorV2V3Interface) internal feeds;
+    mapping(address => AggregatorV2V3Interface) internal feeds;
 
     event PricePosted(
         address asset,
@@ -22,7 +22,7 @@ contract VenusChainlinkOracle {
         uint256 newPriceMantissa
     );
     event NewAdmin(address oldAdmin, address newAdmin);
-    event FeedSet(address feed, string symbol, uint256 maxStalePeriod);
+    event FeedSet(address feed, address asset, uint256 maxStalePeriod);
 
     constructor() {
         admin = msg.sender;
@@ -31,7 +31,7 @@ contract VenusChainlinkOracle {
     function getUnderlyingPrice(VBep20Interface vToken) public view returns (uint256) {
         string memory symbol = vToken.symbol();
         if (compareStrings(symbol, "vBNB")) {
-            return getChainlinkPrice(getFeed(symbol));
+            return getChainlinkPrice(getFeed(address(vToken)));
         } else if (compareStrings(symbol, "VAI")) {
             return VAI_VALUE;
         } else if (compareStrings(symbol, "XVS")) {
@@ -47,7 +47,7 @@ contract VenusChainlinkOracle {
         if (prices[address(token)] != 0) {
             price = prices[address(token)];
         } else {
-            price = getChainlinkPrice(getFeed(token.symbol()));
+            price = getChainlinkPrice(getFeed(address(vToken)));
         }
 
         uint256 decimalDelta = uint256(18).sub(uint256(token.decimals()));
@@ -95,33 +95,28 @@ contract VenusChainlinkOracle {
     }
 
     function batchSetFeeds(
-        string[] calldata symbols_,
+        address[] calldata assets_,
         address[] calldata feeds_,
         uint256[] calldata maxStalePeriods_
     ) external onlyAdmin {
-        require(symbols_.length == feeds_.length, "invalid length");
-        require(symbols_.length == maxStalePeriods_.length, "invalid length");
-        require(symbols_.length > 0, "empty feeds");
-        for (uint256 i = 0; i < symbols_.length; i++) {
-            setFeed(symbols_[i], feeds_[i], maxStalePeriods_[i]);
+        require(assets_.length == feeds_.length, "invalid length");
+        require(assets_.length == maxStalePeriods_.length, "invalid length");
+        require(assets_.length > 0, "empty feeds");
+        for (uint256 i = 0; i < assets_.length; i++) {
+            setFeed(assets_[i], feeds_[i], maxStalePeriods_[i]);
         }
     }
 
-    function setFeed(
-        string memory symbol,
-        address feed,
-        uint256 maxStalePeriod
-    ) public onlyAdmin {
+    function setFeed(address asset, address feed, uint256 maxStalePeriod) public onlyAdmin {
         require(feed != address(0) && feed != address(this), "invalid feed address");
         require(maxStalePeriod > 0, "stale period can't be zero");
-        bytes32 symbolHash = keccak256(abi.encodePacked(symbol));
-        feeds[symbolHash] = AggregatorV2V3Interface(feed);
+        feeds[asset] = AggregatorV2V3Interface(feed);
         maxStalePeriods[feed] = maxStalePeriod;
-        emit FeedSet(feed, symbol, maxStalePeriod);
+        emit FeedSet(feed, asset, maxStalePeriod);
     }
 
-    function getFeed(string memory symbol) public view returns (AggregatorV2V3Interface) {
-        return feeds[keccak256(abi.encodePacked(symbol))];
+    function getFeed(address vToken) public view returns (AggregatorV2V3Interface) {
+        return feeds[vToken];
     }
 
     function getMaxStalePeriod(address feed) external view returns (uint256) {
