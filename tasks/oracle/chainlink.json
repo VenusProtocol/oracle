@@ -1609,5 +1609,13 @@
     "proxy": "0xCfA786C17d6739CBC702693F23cA4417B5945491",
     "feedCategory": "",
     "feedType": "-"
+  }, {
+    "pair": "TUSD / USD",
+    "proxy": "0xC6222C9fA907B9Ed797d6feA08139cDABd14bcB9",
+    "assetName": "",
+    "deviationThreshold": 0.3,
+    "heartbeat": "24h",
+    "decimals": 8,
+    "feedCategory": ""
   }]
 }]

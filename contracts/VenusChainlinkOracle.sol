@@ -30,10 +30,13 @@ contract VenusChainlinkOracle {
 
     function getUnderlyingPrice(VBep20Interface vToken) public view returns (uint256) {
         string memory symbol = vToken.symbol();
+        // VBNB token doesn't have `underlying` method 
         if (compareStrings(symbol, "vBNB")) {
             return getChainlinkPrice(getFeed(address(vToken)));
+        // VAI price is constantly 1
         } else if (compareStrings(symbol, "VAI")) {
             return VAI_VALUE;
+        // @todo: This is some history code, keep it here in case of messing up 
         } else if (compareStrings(symbol, "XVS")) {
             return prices[address(vToken)];
         } else {
