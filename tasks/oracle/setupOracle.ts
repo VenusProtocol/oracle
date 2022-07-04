@@ -136,6 +136,13 @@ task("setup_oracle", "Set all price feeds and prices from the old oracle to the 
         heartbeat: 0, stalePeriod: 120
       };
     }
+    if (!proxyMap[feed]) {
+      console.log(`${symbol} is deprecated from Chainlink`);
+      return {
+        feed: '', symbol, market, directPrice,
+        heartbeat: 0, stalePeriod: 120
+      }
+    }
     return {
       feed, symbol, market, 
       directPrice,
