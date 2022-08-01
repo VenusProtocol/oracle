@@ -18,18 +18,15 @@ jobs:
         - name: Check out code
           uses: actions/checkout@v2
 
-        - uses: pnpm/action-setup@v2.0.1
-          with:
-            version: 6.32.2
-
         - name: Setup Node.js environment
           uses: actions/setup-node@v2
           with:
             node-version: 16
-            cache: 'pnpm'
 
+        - run: npm install -g yarn
+        
         - name: Install dependencies
-          run: pnpm install
+          run: yarn
 
         - name: Test
-          run: pnpm test
+          run: PRIVATE_KEY=1111111111111111111111111111111111111111111111111111111111111111 INFURA_API_KEY=INFURA_API_KEY yarn test
