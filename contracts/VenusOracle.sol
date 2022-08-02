@@ -26,8 +26,12 @@ contract VenusOracle is Ownable, Pausable {
     }
 
     struct TokenConfig {
+        /// @notice `oracles` stores the oracles in the order of: [main, pivot, fallback], 
+        /// it can be indexed with enum OracleRole value
         address[3] oracles;
-        bool[3] enables;
+        /// @notice `enableFlagsForOracles` stores the oracle enable statuses
+        /// for each oracle in the same order as `oracles`
+        bool[3] enableFlagsForOracles;
     }
 
     mapping(address => TokenConfig) private tokenConfigs;
@@ -78,7 +82,7 @@ contract VenusOracle is Ownable, Pausable {
      */
     function getOracle(address vToken, OracleRole role) public view returns (address oracle, bool enabled) {
         oracle = tokenConfigs[vToken].oracles[uint(role)];
-        enabled = tokenConfigs[vToken].enables[uint(role)];
+        enabled = tokenConfigs[vToken].enableFlagsForOracles[uint(role)];
     }
 
     /**
@@ -141,7 +145,7 @@ contract VenusOracle is Ownable, Pausable {
         notNullAddress(vToken)
         checkTokenConfigExistance(vToken, true)
     {
-        tokenConfigs[vToken].enables[uint(role)] = enable;
+        tokenConfigs[vToken].enableFlagsForOracles[uint(role)] = enable;
         emit OracleEnabled(vToken, uint(role), enable);
     }
 
