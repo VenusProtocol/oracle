@@ -66,12 +66,26 @@ contract VenusOracle is Ownable, Pausable {
         }
         _;
     }
+    
+    /**
+     * @notice Pause protocol
+     */
+    function pause() external onlyOwner() {
+        _pause();
+    }
+
+    /**
+     * @notice Unpause protocol
+     */
+    function unpause() external onlyOwner() {
+        _unpause();
+    }
 
     /**
      * @dev Get token config by vToken address 
      * @param vToken vtoken address
      */
-    function getTokenConfig(address vToken) public view returns (TokenConfig memory) {
+    function getTokenConfig(address vToken) external view returns (TokenConfig memory) {
         return tokenConfigs[vToken];
     }
 
@@ -90,7 +104,7 @@ contract VenusOracle is Ownable, Pausable {
      * @param vTokens vToken array
      * @param tokenConfigs_ token config array
      */
-    function addTokenConfigs(address[] memory vTokens, TokenConfig[] memory tokenConfigs_) public onlyOwner() {
+    function addTokenConfigs(address[] memory vTokens, TokenConfig[] memory tokenConfigs_) external onlyOwner() {
         require(vTokens.length == tokenConfigs_.length, "length doesn't match");
         require(vTokens.length != 0, "length can't be 0");
         for (uint256 i = 0; i < vTokens.length; i++) {
@@ -124,7 +138,7 @@ contract VenusOracle is Ownable, Pausable {
      * @param oracle oracle address
      * @param role oracle role
      */
-    function setOracle(address vToken, address oracle, OracleRole role) public
+    function setOracle(address vToken, address oracle, OracleRole role) external
         onlyOwner()
         notNullAddress(vToken)
         notNullAddress(oracle)
@@ -140,7 +154,7 @@ contract VenusOracle is Ownable, Pausable {
      * @param role oracle role
      * @param enable expected status
      */
-    function enableOracle(address vToken, OracleRole role, bool enable) public
+    function enableOracle(address vToken, OracleRole role, bool enable) external
         onlyOwner()
         notNullAddress(vToken)
         checkTokenConfigExistance(vToken, true)
