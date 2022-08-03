@@ -141,9 +141,9 @@ contract VenusOracle is Ownable, Pausable {
     function setOracle(address vToken, address oracle, OracleRole role) external
         onlyOwner()
         notNullAddress(vToken)
-        notNullAddress(oracle)
         checkTokenConfigExistance(vToken, true)
     {
+        require(!(oracle == address(0) && role == OracleRole.MAIN), "can't set zero address to main oracle");
         tokenConfigs[vToken].oracles[uint(role)] = oracle;
         emit OracleSet(vToken, oracle, uint(role));
     }
@@ -172,6 +172,15 @@ contract VenusOracle is Ownable, Pausable {
      * @param vToken vToken address
      */
     function getUnderlyingPrice(address vToken) external view returns (uint256) {
+        uint256 price = getUnderlyingPriceInternal(vToken);
+        (address fallbackOracle, bool fallbackEnabled) = getOracle(vToken, OracleRole.FALLBACK);
+        if (price == INVALID_PRICE && fallbackEnabled && fallbackOracle != address(0)) {
+            return OracleInterface(fallbackOracle).getUnderlyingPrice(vToken);
+        }
+        return price;
+    }
+
+    function getUnderlyingPriceInternal(address vToken) internal view returns (uint256) {
         // Global emergency switch
         if (paused()) {
             return INVALID_PRICE;
@@ -199,11 +208,6 @@ contract VenusOracle is Ownable, Pausable {
         bool pass = PivotOracleInterface(pivotOracle).validatePrice(vToken, price);
         if (!pass) {
             return INVALID_PRICE;
-        }
-
-        (address fallbackOracle, bool fallbackEnabled) = getOracle(vToken, OracleRole.FALLBACK);
-        if (price == INVALID_PRICE && fallbackEnabled && fallbackOracle != address(0)) {
-            return OracleInterface(fallbackOracle).getUnderlyingPrice(vToken);
         }
 
         return price;
