@@ -6,3 +6,4 @@ export type { interfaces };
 import type * as test from "./test";
 export type { test };
 export type { VenusChainlinkOracle } from "./VenusChainlinkOracle";
+export type { VenusOracle } from "./VenusOracle";

@@ -13,6 +13,14 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
+      name: "Ownable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Ownable__factory>;
+    getContractFactory(
+      name: "Pausable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Pausable__factory>;
+    getContractFactory(
       name: "ERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20__factory>;
@@ -33,6 +41,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.BEP20Interface__factory>;
     getContractFactory(
+      name: "OracleInterface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.OracleInterface__factory>;
+    getContractFactory(
+      name: "PivotOracleInterface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PivotOracleInterface__factory>;
+    getContractFactory(
       name: "VBep20Interface",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.VBep20Interface__factory>;
@@ -40,6 +56,14 @@ declare module "hardhat/types/runtime" {
       name: "BEP20Harness",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.BEP20Harness__factory>;
+    getContractFactory(
+      name: "MockPivotOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockPivotOracle__factory>;
+    getContractFactory(
+      name: "MockSimpleOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockSimpleOracle__factory>;
     getContractFactory(
       name: "MockV3Aggregator",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -52,7 +76,21 @@ declare module "hardhat/types/runtime" {
       name: "VenusChainlinkOracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.VenusChainlinkOracle__factory>;
+    getContractFactory(
+      name: "VenusOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.VenusOracle__factory>;
 
+    getContractAt(
+      name: "Ownable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Ownable>;
+    getContractAt(
+      name: "Pausable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Pausable>;
     getContractAt(
       name: "ERC20",
       address: string,
@@ -79,6 +117,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.BEP20Interface>;
     getContractAt(
+      name: "OracleInterface",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.OracleInterface>;
+    getContractAt(
+      name: "PivotOracleInterface",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PivotOracleInterface>;
+    getContractAt(
       name: "VBep20Interface",
       address: string,
       signer?: ethers.Signer
@@ -88,6 +136,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.BEP20Harness>;
+    getContractAt(
+      name: "MockPivotOracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockPivotOracle>;
+    getContractAt(
+      name: "MockSimpleOracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockSimpleOracle>;
     getContractAt(
       name: "MockV3Aggregator",
       address: string,
@@ -103,6 +161,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.VenusChainlinkOracle>;
+    getContractAt(
+      name: "VenusOracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.VenusOracle>;
 
     // default types
     getContractFactory(
