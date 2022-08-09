@@ -4,3 +4,4 @@
 export * as interfaces from "./interfaces";
 export * as test from "./test";
 export { VenusChainlinkOracle__factory } from "./VenusChainlinkOracle__factory";
+export { VenusOracle__factory } from "./VenusOracle__factory";
