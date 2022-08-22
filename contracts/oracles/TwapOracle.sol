@@ -33,7 +33,8 @@ contract TwapOracle is Ownable, OracleInterface {
     using SafeMath for uint256;
     using FixedPoint for *;
 
-    address public constant VBNB = address(0);
+    /// @notice vBNB address
+    address public constant VBNB = address(0xA07c5b74C9B40447a954e1466938b865b6BBea36);
 
     /// @notice the base unit of WBNB and BUSD, which are the paired tokens for all assets
     uint256 public constant bnbBaseUnit = 1e18;
@@ -87,7 +88,7 @@ contract TwapOracle is Ownable, OracleInterface {
      * @param configs config array
      */
     function addTokenConfigs(TokenConfig[] memory configs) external onlyOwner() {
-        require(configs.length > 0, "invalid token config length");
+        require(configs.length > 0, "length can't be 0");
         for (uint8 i = 0; i < configs.length; i++) {
             addTokenConfig(configs[i]);
         }
@@ -102,7 +103,9 @@ contract TwapOracle is Ownable, OracleInterface {
         notNullAddress(config.vToken)
         notNullAddress(config.pancakePool)
     {
+        require(tokenConfigs[config.vToken].vToken == address(0), "token config must not exist");
         require(config.anchorPeriod > 0, "anchor period must be positive");
+        require(config.baseUnit > 0, "base unit must be positive");
         uint256 cumulativePrice = currentCumulativePrice(config);
 
         // Initialize observation data
@@ -132,7 +135,7 @@ contract TwapOracle is Ownable, OracleInterface {
      * @notice Fetches the current token/WBNB and token/BUSD price accumulator from pancakeswap.
      * @return cumulative price of target token regardless of pair order 
      */
-    function currentCumulativePrice(TokenConfig memory config) internal view returns (uint256) {
+    function currentCumulativePrice(TokenConfig memory config) public view returns (uint256) {
         (uint256 price0, uint256 price1,) = PancakeOracleLibrary.currentCumulativePrices(config.pancakePool);
         if (config.isReversedPool) {
             return price1;
@@ -144,18 +147,10 @@ contract TwapOracle is Ownable, OracleInterface {
     function updateTwap(address vToken) public returns (uint256) {
         require(tokenConfigs[vToken].vToken != address(0), "vTokne not exist");
         // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
-        if (vToken != VBNB) {
-            updateBnbTwap();
+        if (vToken != VBNB && tokenConfigs[vToken].isBnbBased) {
+            updateTwap(VBNB);
         }
         return updateTwapInternal(tokenConfigs[vToken]);
-    }
-
-    /**
-     * @notice Update the current WBNB/BUSD price from Pancakeswap
-     * @return price in USD, with 18 decimals
-     */
-    function updateBnbTwap() internal returns (uint256) {
-        return updateTwapInternal(tokenConfigs[VBNB]);
     }
 
     /**

@@ -57,6 +57,9 @@ contract PancakePairHarness {
     uint256 public price1CumulativeLast;
     uint256 public kLast; // reserve0 * reserve1, as of immediately after the most recent liquidity event
 
+    function currentBlockTimestamp() external view returns (uint32) {
+        return uint32(block.timestamp % 2 ** 32);
+    }
 
     function getReserves()
         public

@@ -2,6 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as interfaces from "./interfaces";
+export * as libraries from "./libraries";
+export * as oracles from "./oracles";
 export * as test from "./test";
 export { VenusChainlinkOracle__factory } from "./VenusChainlinkOracle__factory";
 export { VenusOracle__factory } from "./VenusOracle__factory";
