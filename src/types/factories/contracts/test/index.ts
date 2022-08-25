@@ -3,6 +3,7 @@
 /* eslint-disable */
 export * as mockSimpleOracleSol from "./MockSimpleOracle.sol";
 export { BEP20Harness__factory } from "./BEP20Harness__factory";
+export { MockPyth__factory } from "./MockPyth__factory";
 export { MockV3Aggregator__factory } from "./MockV3Aggregator__factory";
 export { PancakePairHarness__factory } from "./PancakePairHarness__factory";
 export { VBEP20Harness__factory } from "./VBEP20Harness__factory";

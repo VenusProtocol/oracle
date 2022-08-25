@@ -2,8 +2,8 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { artifacts, ethers, waffle } from "hardhat";
+import { VenusChainlinkOracle } from "../src/types";
 
-import type { VenusChainlinkOracle } from "../src/types/VenusChainlinkOracle";
 import { makeChainlinkOracle } from "./utils/makeChainlinkOracle";
 import { makeVToken } from "./utils/makeVToken";
 import { increaseTime } from "./utils/time";

@@ -2,4 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { PivotTwapOracle } from "./PivotTwapOracle";
+export type { PythOracle } from "./PythOracle";
 export type { TwapOracle } from "./TwapOracle";

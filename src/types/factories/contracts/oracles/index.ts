@@ -2,4 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export { PivotTwapOracle__factory } from "./PivotTwapOracle__factory";
+export { PythOracle__factory } from "./PythOracle__factory";
 export { TwapOracle__factory } from "./TwapOracle__factory";
