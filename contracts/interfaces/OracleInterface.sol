@@ -7,6 +7,9 @@ interface OracleInterface {
     function getUnderlyingPrice(address vToken) external view returns (uint256);
 }
 
-interface PivotOracleInterface is OracleInterface {
+interface PivotValidator {
     function validatePrice(address vToken, uint256 price) external view returns (bool);
+}
+
+interface PivotOracleInterface is OracleInterface, PivotValidator {
 }

@@ -3,6 +3,10 @@
 /* eslint-disable */
 import type * as interfaces from "./interfaces";
 export type { interfaces };
+import type * as libraries from "./libraries";
+export type { libraries };
+import type * as oracles from "./oracles";
+export type { oracles };
 import type * as test from "./test";
 export type { test };
 export type { VenusChainlinkOracle } from "./VenusChainlinkOracle";

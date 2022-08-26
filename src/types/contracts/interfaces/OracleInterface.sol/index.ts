@@ -3,3 +3,4 @@
 /* eslint-disable */
 export type { OracleInterface } from "./OracleInterface";
 export type { PivotOracleInterface } from "./PivotOracleInterface";
+export type { PivotValidator } from "./PivotValidator";

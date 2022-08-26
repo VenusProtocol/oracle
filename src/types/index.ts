@@ -24,8 +24,16 @@ export type { OracleInterface } from "./contracts/interfaces/OracleInterface.sol
 export { OracleInterface__factory } from "./factories/contracts/interfaces/OracleInterface.sol/OracleInterface__factory";
 export type { PivotOracleInterface } from "./contracts/interfaces/OracleInterface.sol/PivotOracleInterface";
 export { PivotOracleInterface__factory } from "./factories/contracts/interfaces/OracleInterface.sol/PivotOracleInterface__factory";
+export type { PivotValidator } from "./contracts/interfaces/OracleInterface.sol/PivotValidator";
+export { PivotValidator__factory } from "./factories/contracts/interfaces/OracleInterface.sol/PivotValidator__factory";
 export type { VBep20Interface } from "./contracts/interfaces/VBep20Interface";
 export { VBep20Interface__factory } from "./factories/contracts/interfaces/VBep20Interface__factory";
+export type { IPancakePair } from "./contracts/libraries/PancakeLibrary.sol/IPancakePair";
+export { IPancakePair__factory } from "./factories/contracts/libraries/PancakeLibrary.sol/IPancakePair__factory";
+export type { PivotTwapOracle } from "./contracts/oracles/PivotTwapOracle";
+export { PivotTwapOracle__factory } from "./factories/contracts/oracles/PivotTwapOracle__factory";
+export type { TwapOracle } from "./contracts/oracles/TwapOracle";
+export { TwapOracle__factory } from "./factories/contracts/oracles/TwapOracle__factory";
 export type { BEP20Harness } from "./contracts/test/BEP20Harness";
 export { BEP20Harness__factory } from "./factories/contracts/test/BEP20Harness__factory";
 export type { MockPivotOracle } from "./contracts/test/MockSimpleOracle.sol/MockPivotOracle";
@@ -34,6 +42,8 @@ export type { MockSimpleOracle } from "./contracts/test/MockSimpleOracle.sol/Moc
 export { MockSimpleOracle__factory } from "./factories/contracts/test/MockSimpleOracle.sol/MockSimpleOracle__factory";
 export type { MockV3Aggregator } from "./contracts/test/MockV3Aggregator";
 export { MockV3Aggregator__factory } from "./factories/contracts/test/MockV3Aggregator__factory";
+export type { PancakePairHarness } from "./contracts/test/PancakePairHarness";
+export { PancakePairHarness__factory } from "./factories/contracts/test/PancakePairHarness__factory";
 export type { VBEP20Harness } from "./contracts/test/VBEP20Harness";
 export { VBEP20Harness__factory } from "./factories/contracts/test/VBEP20Harness__factory";
 export type { VenusChainlinkOracle } from "./contracts/VenusChainlinkOracle";

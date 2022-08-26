@@ -49,9 +49,25 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PivotOracleInterface__factory>;
     getContractFactory(
+      name: "PivotValidator",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PivotValidator__factory>;
+    getContractFactory(
       name: "VBep20Interface",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.VBep20Interface__factory>;
+    getContractFactory(
+      name: "IPancakePair",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPancakePair__factory>;
+    getContractFactory(
+      name: "PivotTwapOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PivotTwapOracle__factory>;
+    getContractFactory(
+      name: "TwapOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TwapOracle__factory>;
     getContractFactory(
       name: "BEP20Harness",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -68,6 +84,10 @@ declare module "hardhat/types/runtime" {
       name: "MockV3Aggregator",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockV3Aggregator__factory>;
+    getContractFactory(
+      name: "PancakePairHarness",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PancakePairHarness__factory>;
     getContractFactory(
       name: "VBEP20Harness",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -127,10 +147,30 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.PivotOracleInterface>;
     getContractAt(
+      name: "PivotValidator",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PivotValidator>;
+    getContractAt(
       name: "VBep20Interface",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.VBep20Interface>;
+    getContractAt(
+      name: "IPancakePair",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPancakePair>;
+    getContractAt(
+      name: "PivotTwapOracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PivotTwapOracle>;
+    getContractAt(
+      name: "TwapOracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TwapOracle>;
     getContractAt(
       name: "BEP20Harness",
       address: string,
@@ -151,6 +191,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.MockV3Aggregator>;
+    getContractAt(
+      name: "PancakePairHarness",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PancakePairHarness>;
     getContractAt(
       name: "VBEP20Harness",
       address: string,
