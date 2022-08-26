@@ -6,7 +6,7 @@ import { VenusChainlinkOracle } from "../src/types";
 
 import { makeChainlinkOracle } from "./utils/makeChainlinkOracle";
 import { makeVToken } from "./utils/makeVToken";
-import { increaseTime } from "./utils/time";
+import { getTime, increaseTime } from "./utils/time";
 
 const MAX_STALE_PERIOD = 60 * 15; // 15min
 
@@ -257,6 +257,8 @@ describe("Oracle unit tests", function () {
       const ADVANCE_SECONDS = 90000;
       let price = await this.oracle.getUnderlyingPrice(this.vBnb.address);
       expect(price).to.equal('300000000000000000000');
+      
+      const nowSeconds = await getTime();
 
       await increaseTime(ADVANCE_SECONDS);
 
@@ -264,14 +266,13 @@ describe("Oracle unit tests", function () {
       expect(price).to.equal('0');
 
       // update round data
-      const nowSeconds = Math.floor(Date.now() / 1000);
       await this.bnbFeed.updateRoundData(1111, 12345, nowSeconds + ADVANCE_SECONDS, nowSeconds);
       price = await this.oracle.getUnderlyingPrice(this.vBnb.address);
       expect(price).to.equal(BigNumber.from(12345).mul(1e10));
     });
 
     it('if updatedAt is some time in the future, revert it', async function () {
-      const nowSeconds = Math.floor(Date.now() / 1000);
+      const nowSeconds = await getTime();
       await this.bnbFeed.updateRoundData(1111, 12345, nowSeconds + 900000, nowSeconds);
 
       await expect(
