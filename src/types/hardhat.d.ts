@@ -53,6 +53,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PivotValidator__factory>;
     getContractFactory(
+      name: "IPyth",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPyth__factory>;
+    getContractFactory(
       name: "VBep20Interface",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.VBep20Interface__factory>;
@@ -65,6 +69,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PivotTwapOracle__factory>;
     getContractFactory(
+      name: "PythOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PythOracle__factory>;
+    getContractFactory(
       name: "TwapOracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TwapOracle__factory>;
@@ -72,6 +80,10 @@ declare module "hardhat/types/runtime" {
       name: "BEP20Harness",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.BEP20Harness__factory>;
+    getContractFactory(
+      name: "MockPyth",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockPyth__factory>;
     getContractFactory(
       name: "MockPivotOracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -152,6 +164,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.PivotValidator>;
     getContractAt(
+      name: "IPyth",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPyth>;
+    getContractAt(
       name: "VBep20Interface",
       address: string,
       signer?: ethers.Signer
@@ -167,6 +184,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.PivotTwapOracle>;
     getContractAt(
+      name: "PythOracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PythOracle>;
+    getContractAt(
       name: "TwapOracle",
       address: string,
       signer?: ethers.Signer
@@ -176,6 +198,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.BEP20Harness>;
+    getContractAt(
+      name: "MockPyth",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockPyth>;
     getContractAt(
       name: "MockPivotOracle",
       address: string,

@@ -3,6 +3,8 @@
 /* eslint-disable */
 import type * as oracleInterfaceSol from "./OracleInterface.sol";
 export type { oracleInterfaceSol };
+import type * as pythInterfaceSol from "./PythInterface.sol";
+export type { pythInterfaceSol };
 export type { AggregatorV2V3Interface } from "./AggregatorV2V3Interface";
 export type { BEP20Interface } from "./BEP20Interface";
 export type { VBep20Interface } from "./VBep20Interface";

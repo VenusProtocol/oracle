@@ -373,85 +373,85 @@ describe("Twap Oracle unit tests", function () {
       // @todo: maybe one more test - increase time no greater than anchorPeriod, nothing happen
     });
 
-    // describe('twap calculation for BNB based token', function () {
-    //   beforeEach(async function () {
-    //     // add bnb pair config
-    //     const token0 = await this.bnbBasedPair.token0();
-    //     const token1 = await this.bnbBasedPair.token1();
-    //     this.tokenConfig = {
-    //       vToken: token0,
-    //       baseUnit: EXP_SCALE,
-    //       pancakePool: this.bnbBasedPair.address,
-    //       isBnbBased: true,
-    //       isReversedPool: false,
-    //       anchorPeriod: 900, // 15min
-    //     };
-    //     // prepare busd-bnb config
-    //     this.bnbConfig = {
-    //       vToken: await this.twapOracle.VBNB(),
-    //       baseUnit: EXP_SCALE,
-    //       pancakePool: this.bnbPair.address,
-    //       isBnbBased: false,
-    //       isReversedPool: true,
-    //       anchorPeriod: 600, // 10min
-    //     }
-    //     this.token0 = token0;
-    //     this.token1 = token1;
-    //     await this.twapOracle.addTokenConfig(this.tokenConfig);
-    //   });
-    //   it('if no BNB config is added, revert', async function () {
-    //     await expect(
-    //       this.twapOracle.updateTwap(this.token0)
-    //     ).to.be.revertedWith("vTokne not exist");
-    //   });
+    describe('twap calculation for BNB based token', function () {
+      beforeEach(async function () {
+        // add bnb pair config
+        const token0 = await this.bnbBasedPair.token0();
+        const token1 = await this.bnbBasedPair.token1();
+        this.tokenConfig = {
+          vToken: token0,
+          baseUnit: EXP_SCALE,
+          pancakePool: this.bnbBasedPair.address,
+          isBnbBased: true,
+          isReversedPool: false,
+          anchorPeriod: 900, // 15min
+        };
+        // prepare busd-bnb config
+        this.bnbConfig = {
+          vToken: await this.twapOracle.VBNB(),
+          baseUnit: EXP_SCALE,
+          pancakePool: this.bnbPair.address,
+          isBnbBased: false,
+          isReversedPool: true,
+          anchorPeriod: 600, // 10min
+        }
+        this.token0 = token0;
+        this.token1 = token1;
+        await this.twapOracle.addTokenConfig(this.tokenConfig);
+      });
+      it('if no BNB config is added, revert', async function () {
+        await expect(
+          this.twapOracle.updateTwap(this.token0)
+        ).to.be.revertedWith("vTokne not exist");
+      });
 
-    //   it('twap calculation', async function () {
-    //     await this.twapOracle.addTokenConfig(this.bnbConfig);
-    //     await this.bnbPair.update(1000, 100, 100, 100); // bnb: $10
-    //     await this.bnbBasedPair.update(200, 100, 100, 100); // token: 0.5bnb
+      it('twap calculation', async function () {
+        await this.twapOracle.addTokenConfig(this.bnbConfig);
+        await this.bnbPair.update(1000, 100, 100, 100); // bnb: $10
+        await this.bnbBasedPair.update(200, 100, 100, 100); // token: 0.5bnb
 
-    //     // this only trigger bnb price update
-    //     await increaseTime(666);
+        // this only trigger bnb price update
+        await increaseTime(666);
 
-    //     // update bnb based pair
-    //     let [cp0, pairLastTime] = [
-    //       await this.bnbBasedPair.price0CumulativeLast(),
-    //       (await this.bnbBasedPair.getReserves())[2]
-    //     ];
+        // update bnb based pair
+        let [cp0, pairLastTime] = [
+          await this.bnbBasedPair.price0CumulativeLast(),
+          (await this.bnbBasedPair.getReserves())[2]
+        ];
 
-    //     await this.twapOracle.updateTwap(this.token0);
-    //     let oldObservation = await this.twapOracle.oldObservations(this.token0);
+        await this.twapOracle.updateTwap(this.token0);
+        let oldObservation = await this.twapOracle.oldObservations(this.token0);
 
-    //     // get bnb price here, after token0 twap updated, during which bnb price got updated again
-    //     const vbnb = await this.twapOracle.VBNB();
-    //     let bnbPrice = await this.twapOracle.getUnderlyingPrice(vbnb);
+        // get bnb price here, after token0 twap updated, during which bnb price got updated again
+        const vbnb = await this.twapOracle.VBNB();
+        let bnbPrice = await this.twapOracle.getUnderlyingPrice(vbnb);
 
-    //     let ts2 = await getTime();
-    //     let newAcc = Q112.mul(100).div(200).mul(ts2 - pairLastTime).add(cp0);
-    //     let oldAcc = oldObservation.acc;
-    //     let avgPrice0InBnb = newAcc.sub(oldAcc).div(RATIO).div(ts2 - oldObservation.timestamp.toNumber());
-    //     let expectedPrice = avgPrice0InBnb.mul(bnbPrice).div(EXP_SCALE);
-    //     expect(expectedPrice).to.equal(await this.twapOracle.getUnderlyingPrice(this.token0));
+        let ts2 = await getTime();
+        let newAcc = Q112.mul(100).div(200).mul(ts2 - pairLastTime).add(cp0);
+        let oldAcc = oldObservation.acc;
+        let avgPrice0InBnb = newAcc.sub(oldAcc).div(RATIO).div(ts2 - oldObservation.timestamp.toNumber());
+        let expectedPrice = avgPrice0InBnb.mul(bnbPrice).div(EXP_SCALE);
+        expect(expectedPrice).to.equal(await this.twapOracle.getUnderlyingPrice(this.token0));
 
-    //     // increase time and test again
-    //     await increaseTime(800);
-    //     [cp0, pairLastTime] = [
-    //       await this.bnbBasedPair.price0CumulativeLast(),
-    //       (await this.bnbBasedPair.getReserves())[2]
-    //     ];
+        // increase time and test again
+        await increaseTime(800);
+        [cp0, pairLastTime] = [
+          await this.bnbBasedPair.price0CumulativeLast(),
+          (await this.bnbBasedPair.getReserves())[2]
+        ];
 
-    //     await this.twapOracle.updateTwap(this.token0);
+        await this.twapOracle.updateTwap(this.token0);
 
-    //     oldObservation = await this.twapOracle.oldObservations(this.token0);
-    //     bnbPrice = await this.twapOracle.getUnderlyingPrice(vbnb);
-    //     ts2 = await getTime();
-    //     newAcc = Q112.mul(100).div(200).mul(ts2 - pairLastTime).add(cp0);
-    //     oldAcc = oldObservation.acc;
-    //     avgPrice0InBnb = newAcc.sub(oldAcc).div(RATIO).div(ts2 - oldObservation.timestamp.toNumber());
-    //     expectedPrice = avgPrice0InBnb.mul(bnbPrice).div(EXP_SCALE);
-    //     expect(expectedPrice).to.equal(await this.twapOracle.getUnderlyingPrice(this.token0));
-    //   });
-    // });
+        oldObservation = await this.twapOracle.oldObservations(this.token0);
+        bnbPrice = await this.twapOracle.getUnderlyingPrice(vbnb);
+        ts2 = await getTime();
+        newAcc = Q112.mul(100).div(200).mul(ts2 - pairLastTime).add(cp0);
+        oldAcc = oldObservation.acc;
+        avgPrice0InBnb = newAcc.sub(oldAcc).div(RATIO).div(ts2 - oldObservation.timestamp.toNumber());
+        expectedPrice = avgPrice0InBnb.mul(bnbPrice).div(EXP_SCALE);
+        expect(expectedPrice).to.equal(await this.twapOracle.getUnderlyingPrice(this.token0));
+      });
+    });
   })
 
   describe('validation', function () {

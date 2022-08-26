@@ -4,6 +4,7 @@
 import type * as mockSimpleOracleSol from "./MockSimpleOracle.sol";
 export type { mockSimpleOracleSol };
 export type { BEP20Harness } from "./BEP20Harness";
+export type { MockPyth } from "./MockPyth";
 export type { MockV3Aggregator } from "./MockV3Aggregator";
 export type { PancakePairHarness } from "./PancakePairHarness";
 export type { VBEP20Harness } from "./VBEP20Harness";
