@@ -2,9 +2,11 @@
 pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/AggregatorV2V3Interface.sol";
+import "../interfaces/OracleInterface.sol";
 
 struct TokenConfig {
     /// @notice vToken address, which can't be zero address and can be used for existance check
@@ -15,12 +17,11 @@ struct TokenConfig {
     uint256 maxStalePeriod;
 }
 
-contract ChainlinkOracle {
+contract ChainlinkOracle is Ownable, OracleInterface {
     using SafeMath for uint256;
 
     /// @notice VAI token is considered $1 constantly in oracle for now
     uint256 public constant VAI_VALUE = 1e18;
-    address public admin;
 
     /// @notice TODO: might be removed some day, it's for enabling us to force set the prices to
     /// certain values in some urgent conditions
@@ -36,7 +37,6 @@ contract ChainlinkOracle {
         uint256 requestedPriceMantissa,
         uint256 newPriceMantissa
     );
-    event NewAdmin(address oldAdmin, address newAdmin);
 
     /// @notice emit when token config is added
     event TokenConfigAdded(address vToken, address feed, uint256 maxStalePeriod);
@@ -46,24 +46,19 @@ contract ChainlinkOracle {
         _;
     }
 
-    constructor() {
-        admin = msg.sender;
-    }
-
     /**
      * @notice Get the Chainlink price of underlying asset of input vToken, revert when vToken is zero address
      * @param vToken vToken address
      * @return price in USD, with 18 decimals
      */
-    function getUnderlyingPrice(VBep20Interface vToken) public view 
-        notNullAddress(address(vToken))
+    function getUnderlyingPrice(address vToken) public view override
         returns (uint256)
     {
-        string memory symbol = vToken.symbol();
+        string memory symbol = VBep20Interface(vToken).symbol();
         // VBNB token doesn't have `underlying` method, so it has to skip `getUnderlyingPriceInternal
         // method and directly goes into `getChainlinkPrice`
         if (compareStrings(symbol, "vBNB")) {
-            return getChainlinkPrice(address(vToken));
+            return getChainlinkPrice(vToken);
         // VAI price is constantly 1 at the moment, but not guarantee in the future
         } else if (compareStrings(symbol, "VAI")) {
             return VAI_VALUE;
@@ -71,7 +66,7 @@ contract ChainlinkOracle {
         } else if (compareStrings(symbol, "XVS")) {
             return prices[address(vToken)];
         } else {
-            return getUnderlyingPriceInternal(vToken);
+            return getUnderlyingPriceInternal(VBep20Interface(vToken));
         }
     }
 
@@ -131,7 +126,7 @@ contract ChainlinkOracle {
      * @param vToken vToken address
      * @param underlyingPriceMantissa price in 18 decimals
      */
-    function setUnderlyingPrice(VBep20Interface vToken, uint256 underlyingPriceMantissa) external onlyAdmin {
+    function setUnderlyingPrice(VBep20Interface vToken, uint256 underlyingPriceMantissa) external onlyOwner() {
         address asset = address(vToken.underlying());
         emit PricePosted(asset, prices[asset], underlyingPriceMantissa, underlyingPriceMantissa);
         prices[asset] = underlyingPriceMantissa;
@@ -142,7 +137,7 @@ contract ChainlinkOracle {
      * @param asset asset address
      * @param price price in 18 decimals
      */
-    function setDirectPrice(address asset, uint256 price) external onlyAdmin {
+    function setDirectPrice(address asset, uint256 price) external onlyOwner() {
         emit PricePosted(asset, prices[asset], price, price);
         prices[asset] = price;
     }
@@ -151,7 +146,7 @@ contract ChainlinkOracle {
      * @notice Add multiple token configs at the same time
      * @param tokenConfigs_ config array
      */
-    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyAdmin {
+    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner() {
         require(tokenConfigs_.length > 0, "length can't be 0");
         for (uint256 i = 0; i < tokenConfigs_.length; i++) {
             setTokenConfig(tokenConfigs_[i]);
@@ -163,7 +158,7 @@ contract ChainlinkOracle {
      * @param tokenConfig token config struct
      */
     function setTokenConfig(TokenConfig memory tokenConfig) public
-        onlyAdmin
+        onlyOwner()
         notNullAddress(tokenConfig.vToken)
         notNullAddress(tokenConfig.feed)
     {
@@ -178,17 +173,5 @@ contract ChainlinkOracle {
 
     function compareStrings(string memory a, string memory b) internal pure returns (bool) {
         return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
-    }
-
-    function setAdmin(address newAdmin) external onlyAdmin {
-        address oldAdmin = admin;
-        admin = newAdmin;
-
-        emit NewAdmin(oldAdmin, newAdmin);
-    }
-
-    modifier onlyAdmin() {
-        require(msg.sender == admin, "only admin may call");
-        _;
     }
 }

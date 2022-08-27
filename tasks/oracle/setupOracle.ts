@@ -100,7 +100,7 @@ task("setup_oracle", "Set all price feeds and prices from the old oracle to the 
   const oldAdmin = await oldOracleContract.functions.admin();
   console.log(`old admin: ${oldAdmin}`);
 
-  const ourAdmin = await ourOracleContract.functions.admin();
+  const ourAdmin = await ourOracleContract.functions.owner();
   console.log(`our admin: ${ourAdmin}`);
 
   // set stale period a little longer than heartbeat

@@ -50,7 +50,7 @@ describe("Oracle unit tests", function () {
 
   describe("constructor", () => {
     it("sets address of admin", async function () {
-      const admin = await this.oracle.admin();
+      const admin = await this.oracle.owner();
       expect(admin).to.equal(this.admin.address);
     });    
   });
@@ -63,7 +63,7 @@ describe("Oracle unit tests", function () {
           feed: this.bnbFeed.address,
           maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
         })
-      ).to.be.revertedWith("only admin may call");
+      ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 
     it("cannot set feed to zero address", async function () {
@@ -94,7 +94,7 @@ describe("Oracle unit tests", function () {
           feed: this.bnbFeed.address,
           maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
         }])
-      ).to.be.revertedWith("only admin may call");
+      ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 
     it('cannot set feed or vtoken to zero address', async function () {
@@ -213,7 +213,7 @@ describe("Oracle unit tests", function () {
     it("only admin may set an underlying price", async function () {
       await expect(
         this.oracle.connect(this.signers[2]).setUnderlyingPrice(this.vExampleSet.address, 1)
-      ).to.be.revertedWith("only admin may call");
+      ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 
     it("sets the underlying price", async function () {
@@ -228,7 +228,7 @@ describe("Oracle unit tests", function () {
     it("only admin may set an underlying price", async function () {
       await expect(
         this.oracle.connect(this.signers[2]).setUnderlyingPrice(this.xvs.address, 7)
-      ).to.be.revertedWith("only admin may call");
+      ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 
     it("sets the direct price", async function () {
