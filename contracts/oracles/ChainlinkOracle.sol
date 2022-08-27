@@ -6,15 +6,30 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/AggregatorV2V3Interface.sol";
 
-contract VenusChainlinkOracle {
+struct TokenConfig {
+    /// @notice vToken address, which can't be zero address and can be used for existance check
+    address vToken;
+    /// @notice chainlink feed address
+    address feed;
+    /// @notice expiration period of this asset
+    uint256 maxStalePeriod;
+}
+
+contract ChainlinkOracle {
     using SafeMath for uint256;
+
+    /// @notice VAI token is considered $1 constantly in oracle for now
     uint256 public constant VAI_VALUE = 1e18;
     address public admin;
 
-    mapping(address => uint256) internal prices;
-    mapping(address => uint256) internal maxStalePeriods;
-    mapping(address => AggregatorV2V3Interface) internal feeds;
+    /// @notice TODO: might be removed some day, it's for enabling us to force set the prices to
+    /// certain values in some urgent conditions
+    mapping(address => uint256) public prices;
 
+    /// @notice token config by assets
+    mapping(address => TokenConfig) public tokenConfigs;
+
+    /// @notice emit when forced price is set 
     event PricePosted(
         address asset,
         uint256 previousPriceMantissa,
@@ -22,21 +37,37 @@ contract VenusChainlinkOracle {
         uint256 newPriceMantissa
     );
     event NewAdmin(address oldAdmin, address newAdmin);
-    event FeedSet(address feed, address asset, uint256 maxStalePeriod);
+
+    /// @notice emit when token config is added
+    event TokenConfigAdded(address vToken, address feed, uint256 maxStalePeriod);
+
+    modifier notNullAddress(address someone) {
+        require(someone != address(0), "can't be zero address");
+        _;
+    }
 
     constructor() {
         admin = msg.sender;
     }
 
-    function getUnderlyingPrice(VBep20Interface vToken) public view returns (uint256) {
+    /**
+     * @notice Get the Chainlink price of underlying asset of input vToken, revert when vToken is zero address
+     * @param vToken vToken address
+     * @return price in USD, with 18 decimals
+     */
+    function getUnderlyingPrice(VBep20Interface vToken) public view 
+        notNullAddress(address(vToken))
+        returns (uint256)
+    {
         string memory symbol = vToken.symbol();
-        // VBNB token doesn't have `underlying` method 
+        // VBNB token doesn't have `underlying` method, so it has to skip `getUnderlyingPriceInternal
+        // method and directly goes into `getChainlinkPrice`
         if (compareStrings(symbol, "vBNB")) {
-            return getChainlinkPrice(getFeed(address(vToken)));
-        // VAI price is constantly 1
+            return getChainlinkPrice(address(vToken));
+        // VAI price is constantly 1 at the moment, but not guarantee in the future
         } else if (compareStrings(symbol, "VAI")) {
             return VAI_VALUE;
-        // @todo: This is some history code, keep it here in case of messing up 
+        // @TODO: This is some history code, keep it here in case of messing up 
         } else if (compareStrings(symbol, "XVS")) {
             return prices[address(vToken)];
         } else {
@@ -44,90 +75,105 @@ contract VenusChainlinkOracle {
         }
     }
 
+    /**
+     * @notice Get the Chainlink price of underlying asset of input vToken or cached price when it's been set
+     * @dev The decimals of underlying tokens is considered to ensure the returned prices are in 18 decimals
+     * @param vToken vToken address
+     * @return price in USD, with 18 decimals
+     */
     function getUnderlyingPriceInternal(VBep20Interface vToken) internal view returns (uint256 price) {
         VBep20Interface token = VBep20Interface(vToken.underlying());
 
         if (prices[address(token)] != 0) {
             price = prices[address(token)];
         } else {
-            price = getChainlinkPrice(getFeed(address(vToken)));
+            price = getChainlinkPrice(address(vToken));
         }
 
         uint256 decimalDelta = uint256(18).sub(uint256(token.decimals()));
-        // Ensure that we don't multiply the result by 0
-        if (decimalDelta > 0) {
-            return price.mul(10**decimalDelta);
-        } else {
-            return price;
-        }
+        return price.mul(10**decimalDelta);
     }
 
-    function getChainlinkPrice(AggregatorV2V3Interface feed) internal view returns (uint256) {
-        // Chainlink USD-denominated feeds store answers at 8 decimals
+    /**
+     * @notice Get the Chainlink price of underlying asset of input vToken, revert if token config doesn't exit
+     * @dev The decimals of feeds are considered
+     * @param vToken vToken address
+     * @return price in USD, with 18 decimals
+     */
+    function getChainlinkPrice(address vToken)
+        internal view
+        notNullAddress(tokenConfigs[address(vToken)].vToken)
+        returns (uint256)
+    {
+        TokenConfig storage tokenConfig = tokenConfigs[vToken];
+        AggregatorV2V3Interface feed = AggregatorV2V3Interface(tokenConfig.feed);
+        uint256 maxStalePeriod = tokenConfig.maxStalePeriod;
+
+        // Chainlink USD-denominated feeds store answers at 8 decimals, mostly
         uint256 decimalDelta = uint256(18).sub(feed.decimals());
 
         (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
 
         // a feed with 0 max stale period or doesn't exist, return 0
-        uint256 maxStalePeriod = maxStalePeriods[address(feed)];
         if (maxStalePeriod == 0) {
             return 0;
         }
 
-        // Ensure that we don't multiply the result by 0
         if (block.timestamp.sub(updatedAt, "updatedAt exceeds block time") > maxStalePeriod) {
             return 0;
         }
 
-        if (decimalDelta > 0) {
-            return uint256(answer).mul(10**decimalDelta);
-        } else {
-            return uint256(answer);
-        }
+        return uint256(answer).mul(10**decimalDelta);
     }
 
+    /**
+     * @notice Set the forced prices of the underlying token of input vToken
+     * @param vToken vToken address
+     * @param underlyingPriceMantissa price in 18 decimals
+     */
     function setUnderlyingPrice(VBep20Interface vToken, uint256 underlyingPriceMantissa) external onlyAdmin {
         address asset = address(vToken.underlying());
         emit PricePosted(asset, prices[asset], underlyingPriceMantissa, underlyingPriceMantissa);
         prices[asset] = underlyingPriceMantissa;
     }
 
+    /**
+     * @notice Set the forced prices of the input token
+     * @param asset asset address
+     * @param price price in 18 decimals
+     */
     function setDirectPrice(address asset, uint256 price) external onlyAdmin {
         emit PricePosted(asset, prices[asset], price, price);
         prices[asset] = price;
     }
 
-    function batchSetFeeds(
-        address[] calldata assets_,
-        address[] calldata feeds_,
-        uint256[] calldata maxStalePeriods_
-    ) external onlyAdmin {
-        require(assets_.length == feeds_.length, "invalid length");
-        require(assets_.length == maxStalePeriods_.length, "invalid length");
-        require(assets_.length > 0, "empty feeds");
-        for (uint256 i = 0; i < assets_.length; i++) {
-            setFeed(assets_[i], feeds_[i], maxStalePeriods_[i]);
+    /**
+     * @notice Add multiple token configs at the same time
+     * @param tokenConfigs_ config array
+     */
+    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyAdmin {
+        require(tokenConfigs_.length > 0, "length can't be 0");
+        for (uint256 i = 0; i < tokenConfigs_.length; i++) {
+            setTokenConfig(tokenConfigs_[i]);
         }
     }
 
-    function setFeed(address asset, address feed, uint256 maxStalePeriod) public onlyAdmin {
-        require(feed != address(0) && feed != address(this), "invalid feed address");
-        require(maxStalePeriod > 0, "stale period can't be zero");
-        feeds[asset] = AggregatorV2V3Interface(feed);
-        maxStalePeriods[feed] = maxStalePeriod;
-        emit FeedSet(feed, asset, maxStalePeriod);
-    }
-
-    function getFeed(address vToken) public view returns (AggregatorV2V3Interface) {
-        return feeds[vToken];
-    }
-
-    function getMaxStalePeriod(address feed) external view returns (uint256) {
-        return maxStalePeriods[feed];
-    }
-
-    function assetPrices(address asset) external view returns (uint256) {
-        return prices[asset];
+    /**
+     * @notice Add single token config, vToken & feed cannot be zero address, and maxStalePeriod must be positive
+     * @param tokenConfig token config struct
+     */
+    function setTokenConfig(TokenConfig memory tokenConfig) public
+        onlyAdmin
+        notNullAddress(tokenConfig.vToken)
+        notNullAddress(tokenConfig.feed)
+    {
+        require(tokenConfig.maxStalePeriod > 0, "stale period can't be zero");
+        tokenConfigs[tokenConfig.vToken] = tokenConfig;
+        emit TokenConfigAdded(
+            tokenConfig.vToken, 
+            tokenConfig.feed,
+            tokenConfig.maxStalePeriod
+        );
     }
 
     function compareStrings(string memory a, string memory b) internal pure returns (bool) {

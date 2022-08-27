@@ -3,6 +3,7 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { artifacts, ethers, waffle } from "hardhat";
 import { ChainlinkOracle } from "../src/types/contracts/oracles/ChainlinkOracle";
+import { addr0000 } from "./utils/data";
 
 import { makeChainlinkOracle } from "./utils/makeChainlinkOracle";
 import { makeVToken } from "./utils/makeVToken";
@@ -54,98 +55,84 @@ describe("Oracle unit tests", function () {
     });    
   });
 
-  describe("setFeed", () => {
-    it("only admin may set a feed", async function () {
+  describe("set token config", () => {
+    it("only admin may set token config", async function () {
       await expect(
-        this.oracle.connect(this.signers[2]).setFeed(this.vBnb.address, this.bnbFeed.address, BigNumber.from(MAX_STALE_PERIOD))
+        this.oracle.connect(this.signers[2]).setTokenConfig({
+          vToken: this.vBnb.address,
+          feed: this.bnbFeed.address,
+          maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
+        })
       ).to.be.revertedWith("only admin may call");
-    });
-
-    it("cannot set feed to self address", async function () {
-      await expect(
-        this.oracle.setFeed(this.vBnb.address, this.oracle.address, BigNumber.from(MAX_STALE_PERIOD))
-      ).to.be.revertedWith("invalid feed address");
     });
 
     it("cannot set feed to zero address", async function () {
       await expect(
-        this.oracle.setFeed(this.vBnb.address, "0x0000000000000000000000000000000000000000", BigNumber.from(MAX_STALE_PERIOD))
-      ).to.be.revertedWith("invalid feed address");
+        this.oracle.setTokenConfig({
+          vToken: this.vBnb.address,
+          feed: addr0000,
+          maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
+      })).to.be.revertedWith("can't be zero address")
     });
 
-    it("sets a feed", async function () {
-      await this.oracle.setFeed(this.vBnb.address, this.bnbFeed.address, BigNumber.from(MAX_STALE_PERIOD))
-      const feed = await this.oracle.getFeed(this.vBnb.address);
-      expect(feed).to.be.equal(this.bnbFeed.address);
+    it("sets a token config", async function () {
+      await this.oracle.setTokenConfig({
+        vToken: this.vBnb.address,
+        feed: this.bnbFeed.address,
+        maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
+      });
+      const tokenConfig = await this.oracle.tokenConfigs(this.vBnb.address);
+      expect(tokenConfig.feed).to.be.equal(this.bnbFeed.address);
     });
   });
 
-  describe('batch set feeds', () => {
-    it("only admin may set a feed", async function () {
+  describe('batch set token configs', () => {
+    it("only admin may set token configs", async function () {
       await expect(
-        this.oracle.connect(this.signers[2]).batchSetFeeds(
-          [this.vBnb.address],
-          [this.bnbFeed.address],
-          [BigNumber.from(MAX_STALE_PERIOD)]
-        )
+        this.oracle.connect(this.signers[2]).setTokenConfigs([{
+          vToken: this.vBnb.address,
+          feed: this.bnbFeed.address,
+          maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
+        }])
       ).to.be.revertedWith("only admin may call");
     });
 
-    it("cannot set feed to self address", async function () {
+    it('cannot set feed or vtoken to zero address', async function () {
       await expect(
-        this.oracle.batchSetFeeds(
-          [this.vBnb.address],
-          [this.oracle.address],
-          [BigNumber.from(MAX_STALE_PERIOD)]
-        )
-      ).to.be.revertedWith("invalid feed address");
-    });
-
-    it('cannot set feed to zero address', async function () {
+        this.oracle.setTokenConfigs([{
+          vToken: this.vBnb.address,
+          feed: addr0000,
+          maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
+        }])
+      ).to.be.revertedWith("can't be zero address");
       await expect(
-        this.oracle.batchSetFeeds(
-          [this.vBnb.address],
-          ["0x0000000000000000000000000000000000000000"],
-          [BigNumber.from(MAX_STALE_PERIOD)]
-        )
-      ).to.be.revertedWith("invalid feed address");
+        this.oracle.setTokenConfigs([{
+          vToken: addr0000,
+          feed: this.bnbFeed.address,
+          maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
+        }])
+      ).to.be.revertedWith("can't be zero address");
     });
 
     it('parameter length check', async function () {
       await expect(
-        this.oracle.batchSetFeeds(
-          [this.vBnb.address, this.vUsdt.address],
-          ["0x0000000000000000000000000000000000000000"],
-          [BigNumber.from(MAX_STALE_PERIOD)]
-        )
-      ).to.be.revertedWith("invalid length");
-
-      await expect(
-        this.oracle.batchSetFeeds(
-          [this.vBnb.address, this.vUsdt.address],
-          ["0x0000000000000000000000000000000000000000"],
-          [BigNumber.from(MAX_STALE_PERIOD), BigNumber.from(MAX_STALE_PERIOD)]
-        )
-      ).to.be.revertedWith("invalid length");
-
-      await expect(
-        this.oracle.batchSetFeeds(
-          [], [], [],
-        )
-      ).to.be.revertedWith("empty feeds");
+        this.oracle.setTokenConfigs([])
+      ).to.be.revertedWith("length can't be 0");
     });
 
     it("set multiple feeds", async function () {
-      await this.oracle.batchSetFeeds(
-        [this.vBnb.address, this.vUsdt.address],
-        [this.bnbFeed.address, this.usdtFeed.address],
-        [2 * MAX_STALE_PERIOD, 3 * MAX_STALE_PERIOD]
-      );
+      await this.oracle.setTokenConfigs([{
+        vToken: this.vBnb.address,
+        feed: this.bnbFeed.address,
+        maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD).mul(2),
+      }, {
+        vToken: this.vUsdt.address,
+        feed: this.usdtFeed.address,
+        maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD).mul(3),
+      }]);
 
-      const newBnbFeed = await this.oracle.getFeed(this.vBnb.address);
-      const newUsdtFeed = await this.oracle.getFeed(this.vUsdt.address);
-      const newBnbStalePeriod = await this.oracle.getMaxStalePeriod(this.bnbFeed.address);
-      const newUsdtStalePeriod = await this.oracle.getMaxStalePeriod(this.usdtFeed.address);
+      const [,newBnbFeed, newBnbStalePeriod] = await this.oracle.tokenConfigs(this.vBnb.address);
+      const [,newUsdtFeed, newUsdtStalePeriod] = await this.oracle.tokenConfigs(this.vUsdt.address);
 
       expect(newBnbFeed).to.equal(this.bnbFeed.address);
       expect(newUsdtFeed).to.equal(this.usdtFeed.address);
@@ -156,10 +143,26 @@ describe("Oracle unit tests", function () {
 
   describe("getUnderlyingPrice", () => {
     beforeEach(async function () {
-      await this.oracle.setFeed(this.vBnb.address, this.bnbFeed.address, BigNumber.from(MAX_STALE_PERIOD));
-      await this.oracle.setFeed(this.vUsdc.address, this.usdcFeed.address, BigNumber.from(MAX_STALE_PERIOD));
-      await this.oracle.setFeed(this.vUsdt.address, this.usdtFeed.address, BigNumber.from(MAX_STALE_PERIOD));
-      await this.oracle.setFeed(this.vDai.address, this.daiFeed.address, BigNumber.from(MAX_STALE_PERIOD));
+      await this.oracle.setTokenConfig({
+        vToken: this.vBnb.address,
+        feed: this.bnbFeed.address,
+        maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
+      });
+      await this.oracle.setTokenConfig({
+        vToken: this.vUsdc.address,
+        feed: this.usdcFeed.address,
+        maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
+      });
+      await this.oracle.setTokenConfig({
+        vToken: this.vUsdt.address,
+        feed: this.usdtFeed.address,
+        maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
+      });
+      await this.oracle.setTokenConfig({
+        vToken: this.vDai.address,
+        feed: this.daiFeed.address,
+        maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
+      });
       await this.oracle.setDirectPrice(this.xvs.address, 7);
       await this.oracle.setUnderlyingPrice(this.vExampleSet.address, 1);
     });
@@ -202,7 +205,7 @@ describe("Oracle unit tests", function () {
     it("reverts if no price or feed has been set", async function () {
       await expect(
         this.oracle.getUnderlyingPrice(this.vExampleUnset.address)
-      ).to.revertedWith('');
+      ).to.revertedWith('can\'t be zero address');
     });
   });
 
@@ -216,7 +219,7 @@ describe("Oracle unit tests", function () {
     it("sets the underlying price", async function () {
       await this.oracle.setUnderlyingPrice(this.vExampleSet.address, 1);
       const underlying = await this.vExampleSet.underlying();
-      const price = await this.oracle.assetPrices(underlying);
+      const price = await this.oracle.prices(underlying);
       expect(price).to.be.equal("1");
     });
   });
@@ -230,26 +233,38 @@ describe("Oracle unit tests", function () {
 
     it("sets the direct price", async function () {
       await this.oracle.setDirectPrice(this.xvs.address, 7);
-      const price = await this.oracle.assetPrices(this.xvs.address);
+      const price = await this.oracle.prices(this.xvs.address);
       expect(price).to.be.equal(7);
     });
   });
 
   describe('stale price validation', () => {
     beforeEach(async function () {
-      await this.oracle.setFeed(this.vBnb.address, this.bnbFeed.address, BigNumber.from(MAX_STALE_PERIOD));
+      await this.oracle.setTokenConfig({
+        vToken: this.vBnb.address,
+        feed: this.bnbFeed.address,
+        maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
+      });
     });
 
     it('stale price period cannot be 0', async function () {
       await expect(
-        this.oracle.setFeed(this.vBnb.address, this.bnbFeed.address, 0)
+        this.oracle.setTokenConfig({
+          vToken: this.vBnb.address,
+          feed: this.bnbFeed.address,
+          maxStalePeriod: 0,
+        })
       ).to.revertedWith('stale period can\'t be zero');
     });
 
     it('modify stale price period will emit an event', async function () {
-      const result = await this.oracle.setFeed(this.vBnb.address, this.bnbFeed.address, BigNumber.from(MAX_STALE_PERIOD));
-      await expect(result).to.emit(this.oracle, 'FeedSet').withArgs(
-        this.bnbFeed.address, this.vBnb.address, MAX_STALE_PERIOD
+      const result = await this.oracle.setTokenConfig({
+        vToken: this.vBnb.address,
+        feed: this.bnbFeed.address,
+        maxStalePeriod: MAX_STALE_PERIOD,
+      })
+      await expect(result).to.emit(this.oracle, 'TokenConfigAdded').withArgs(
+        this.vBnb.address, this.bnbFeed.address, MAX_STALE_PERIOD
       )
     });
 

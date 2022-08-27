@@ -159,11 +159,11 @@ task("setup_oracle", "Set all price feeds and prices from the old oracle to the 
   await waterfall([
     // function batchSetFeed(string[] assets, address[] feeds, uint[] stalePeriods)
     () => {
-      return ourOracleContract.batchSetFeeds(
-        validFeedData.map(e => e.market),
-        validFeedData.map(e => e.feed),
-        validFeedData.map(e => e.stalePeriod),
-      )
+      return ourOracleContract.setTokenConfigs(validFeedData.map(e => ({
+        vToken: e.market,
+        feed: e.feed,
+        maxStalePeriod: e.stalePeriod
+      })));
     },
     // function setDirectPrice(address asset, uint price)
     ...(metadata.filter(i => i.directPrice.gt(0)).map(data => {
