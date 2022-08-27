@@ -25,9 +25,9 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../common";
+} from "../../common";
 
-export interface VenusChainlinkOracleInterface extends utils.Interface {
+export interface ChainlinkOracleInterface extends utils.Interface {
   functions: {
     "VAI_VALUE()": FunctionFragment;
     "admin()": FunctionFragment;
@@ -178,12 +178,12 @@ export type PricePostedEvent = TypedEvent<
 
 export type PricePostedEventFilter = TypedEventFilter<PricePostedEvent>;
 
-export interface VenusChainlinkOracle extends BaseContract {
+export interface ChainlinkOracle extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: VenusChainlinkOracleInterface;
+  interface: ChainlinkOracleInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

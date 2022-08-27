@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "../common";
 
-export declare namespace VenusOracle {
+export declare namespace ResilientOracle {
   export type TokenConfigStruct = {
     oracles: [
       PromiseOrValue<string>,
@@ -50,11 +50,9 @@ export declare namespace VenusOracle {
   };
 }
 
-export interface VenusOracleInterface extends utils.Interface {
+export interface ResilientOracleInterface extends utils.Interface {
   functions: {
     "INVALID_PRICE()": FunctionFragment;
-    "addTokenConfig(address,(address[3],bool[3]))": FunctionFragment;
-    "addTokenConfigs(address[],(address[3],bool[3])[])": FunctionFragment;
     "enableOracle(address,uint8,bool)": FunctionFragment;
     "getOracle(address,uint8)": FunctionFragment;
     "getTokenConfig(address)": FunctionFragment;
@@ -64,6 +62,8 @@ export interface VenusOracleInterface extends utils.Interface {
     "paused()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setOracle(address,address,uint8)": FunctionFragment;
+    "setTokenConfig(address,(address[3],bool[3]))": FunctionFragment;
+    "setTokenConfigs(address[],(address[3],bool[3])[])": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unpause()": FunctionFragment;
   };
@@ -71,8 +71,6 @@ export interface VenusOracleInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "INVALID_PRICE"
-      | "addTokenConfig"
-      | "addTokenConfigs"
       | "enableOracle"
       | "getOracle"
       | "getTokenConfig"
@@ -82,6 +80,8 @@ export interface VenusOracleInterface extends utils.Interface {
       | "paused"
       | "renounceOwnership"
       | "setOracle"
+      | "setTokenConfig"
+      | "setTokenConfigs"
       | "transferOwnership"
       | "unpause"
   ): FunctionFragment;
@@ -89,14 +89,6 @@ export interface VenusOracleInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "INVALID_PRICE",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addTokenConfig",
-    values: [PromiseOrValue<string>, VenusOracle.TokenConfigStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addTokenConfigs",
-    values: [PromiseOrValue<string>[], VenusOracle.TokenConfigStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "enableOracle",
@@ -134,6 +126,14 @@ export interface VenusOracleInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "setTokenConfig",
+    values: [PromiseOrValue<string>, ResilientOracle.TokenConfigStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setTokenConfigs",
+    values: [PromiseOrValue<string>[], ResilientOracle.TokenConfigStruct[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
@@ -141,14 +141,6 @@ export interface VenusOracleInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "INVALID_PRICE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "addTokenConfig",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "addTokenConfigs",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -172,6 +164,14 @@ export interface VenusOracleInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setOracle", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setTokenConfig",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setTokenConfigs",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -268,12 +268,12 @@ export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
 
 export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
-export interface VenusOracle extends BaseContract {
+export interface ResilientOracle extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: VenusOracleInterface;
+  interface: ResilientOracleInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -297,18 +297,6 @@ export interface VenusOracle extends BaseContract {
   functions: {
     INVALID_PRICE(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    addTokenConfig(
-      vToken: PromiseOrValue<string>,
-      tokenConfig: VenusOracle.TokenConfigStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    addTokenConfigs(
-      vTokens: PromiseOrValue<string>[],
-      tokenConfigs_: VenusOracle.TokenConfigStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     enableOracle(
       vToken: PromiseOrValue<string>,
       role: PromiseOrValue<BigNumberish>,
@@ -325,7 +313,7 @@ export interface VenusOracle extends BaseContract {
     getTokenConfig(
       vToken: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[VenusOracle.TokenConfigStructOutput]>;
+    ): Promise<[ResilientOracle.TokenConfigStructOutput]>;
 
     getUnderlyingPrice(
       vToken: PromiseOrValue<string>,
@@ -351,6 +339,18 @@ export interface VenusOracle extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setTokenConfig(
+      vToken: PromiseOrValue<string>,
+      tokenConfig: ResilientOracle.TokenConfigStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setTokenConfigs(
+      vTokens: PromiseOrValue<string>[],
+      tokenConfigs_: ResilientOracle.TokenConfigStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -362,18 +362,6 @@ export interface VenusOracle extends BaseContract {
   };
 
   INVALID_PRICE(overrides?: CallOverrides): Promise<BigNumber>;
-
-  addTokenConfig(
-    vToken: PromiseOrValue<string>,
-    tokenConfig: VenusOracle.TokenConfigStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  addTokenConfigs(
-    vTokens: PromiseOrValue<string>[],
-    tokenConfigs_: VenusOracle.TokenConfigStruct[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   enableOracle(
     vToken: PromiseOrValue<string>,
@@ -391,7 +379,7 @@ export interface VenusOracle extends BaseContract {
   getTokenConfig(
     vToken: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<VenusOracle.TokenConfigStructOutput>;
+  ): Promise<ResilientOracle.TokenConfigStructOutput>;
 
   getUnderlyingPrice(
     vToken: PromiseOrValue<string>,
@@ -417,6 +405,18 @@ export interface VenusOracle extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setTokenConfig(
+    vToken: PromiseOrValue<string>,
+    tokenConfig: ResilientOracle.TokenConfigStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setTokenConfigs(
+    vTokens: PromiseOrValue<string>[],
+    tokenConfigs_: ResilientOracle.TokenConfigStruct[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   transferOwnership(
     newOwner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -428,18 +428,6 @@ export interface VenusOracle extends BaseContract {
 
   callStatic: {
     INVALID_PRICE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    addTokenConfig(
-      vToken: PromiseOrValue<string>,
-      tokenConfig: VenusOracle.TokenConfigStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    addTokenConfigs(
-      vTokens: PromiseOrValue<string>[],
-      tokenConfigs_: VenusOracle.TokenConfigStruct[],
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     enableOracle(
       vToken: PromiseOrValue<string>,
@@ -457,7 +445,7 @@ export interface VenusOracle extends BaseContract {
     getTokenConfig(
       vToken: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<VenusOracle.TokenConfigStructOutput>;
+    ): Promise<ResilientOracle.TokenConfigStructOutput>;
 
     getUnderlyingPrice(
       vToken: PromiseOrValue<string>,
@@ -476,6 +464,18 @@ export interface VenusOracle extends BaseContract {
       vToken: PromiseOrValue<string>,
       oracle: PromiseOrValue<string>,
       role: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setTokenConfig(
+      vToken: PromiseOrValue<string>,
+      tokenConfig: ResilientOracle.TokenConfigStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setTokenConfigs(
+      vTokens: PromiseOrValue<string>[],
+      tokenConfigs_: ResilientOracle.TokenConfigStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -549,18 +549,6 @@ export interface VenusOracle extends BaseContract {
   estimateGas: {
     INVALID_PRICE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    addTokenConfig(
-      vToken: PromiseOrValue<string>,
-      tokenConfig: VenusOracle.TokenConfigStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    addTokenConfigs(
-      vTokens: PromiseOrValue<string>[],
-      tokenConfigs_: VenusOracle.TokenConfigStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     enableOracle(
       vToken: PromiseOrValue<string>,
       role: PromiseOrValue<BigNumberish>,
@@ -603,6 +591,18 @@ export interface VenusOracle extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setTokenConfig(
+      vToken: PromiseOrValue<string>,
+      tokenConfig: ResilientOracle.TokenConfigStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setTokenConfigs(
+      vTokens: PromiseOrValue<string>[],
+      tokenConfigs_: ResilientOracle.TokenConfigStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -615,18 +615,6 @@ export interface VenusOracle extends BaseContract {
 
   populateTransaction: {
     INVALID_PRICE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    addTokenConfig(
-      vToken: PromiseOrValue<string>,
-      tokenConfig: VenusOracle.TokenConfigStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    addTokenConfigs(
-      vTokens: PromiseOrValue<string>[],
-      tokenConfigs_: VenusOracle.TokenConfigStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
 
     enableOracle(
       vToken: PromiseOrValue<string>,
@@ -667,6 +655,18 @@ export interface VenusOracle extends BaseContract {
       vToken: PromiseOrValue<string>,
       oracle: PromiseOrValue<string>,
       role: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setTokenConfig(
+      vToken: PromiseOrValue<string>,
+      tokenConfig: ResilientOracle.TokenConfigStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setTokenConfigs(
+      vTokens: PromiseOrValue<string>[],
+      tokenConfigs_: ResilientOracle.TokenConfigStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

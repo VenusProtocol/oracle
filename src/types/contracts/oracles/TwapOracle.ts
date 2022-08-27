@@ -55,8 +55,6 @@ export type TokenConfigStructOutput = [
 export interface TwapOracleInterface extends utils.Interface {
   functions: {
     "VBNB()": FunctionFragment;
-    "addTokenConfig((address,uint256,address,bool,bool,uint256))": FunctionFragment;
-    "addTokenConfigs((address,uint256,address,bool,bool,uint256)[])": FunctionFragment;
     "bnbBaseUnit()": FunctionFragment;
     "busdBaseUnit()": FunctionFragment;
     "currentCumulativePrice((address,uint256,address,bool,bool,uint256))": FunctionFragment;
@@ -67,6 +65,8 @@ export interface TwapOracleInterface extends utils.Interface {
     "owner()": FunctionFragment;
     "prices(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "setTokenConfig((address,uint256,address,bool,bool,uint256))": FunctionFragment;
+    "setTokenConfigs((address,uint256,address,bool,bool,uint256)[])": FunctionFragment;
     "tokenConfigs(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "updateTwap(address)": FunctionFragment;
@@ -75,8 +75,6 @@ export interface TwapOracleInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "VBNB"
-      | "addTokenConfig"
-      | "addTokenConfigs"
       | "bnbBaseUnit"
       | "busdBaseUnit"
       | "currentCumulativePrice"
@@ -87,20 +85,14 @@ export interface TwapOracleInterface extends utils.Interface {
       | "owner"
       | "prices"
       | "renounceOwnership"
+      | "setTokenConfig"
+      | "setTokenConfigs"
       | "tokenConfigs"
       | "transferOwnership"
       | "updateTwap"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "VBNB", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "addTokenConfig",
-    values: [TokenConfigStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addTokenConfigs",
-    values: [TokenConfigStruct[]]
-  ): string;
   encodeFunctionData(
     functionFragment: "bnbBaseUnit",
     values?: undefined
@@ -136,6 +128,14 @@ export interface TwapOracleInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "setTokenConfig",
+    values: [TokenConfigStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setTokenConfigs",
+    values: [TokenConfigStruct[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "tokenConfigs",
     values: [PromiseOrValue<string>]
   ): string;
@@ -149,14 +149,6 @@ export interface TwapOracleInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "VBNB", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "addTokenConfig",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "addTokenConfigs",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "bnbBaseUnit",
     data: BytesLike
@@ -186,6 +178,14 @@ export interface TwapOracleInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "prices", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setTokenConfig",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setTokenConfigs",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -294,16 +294,6 @@ export interface TwapOracle extends BaseContract {
   functions: {
     VBNB(overrides?: CallOverrides): Promise<[string]>;
 
-    addTokenConfig(
-      config: TokenConfigStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    addTokenConfigs(
-      configs: TokenConfigStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     bnbBaseUnit(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     busdBaseUnit(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -345,6 +335,16 @@ export interface TwapOracle extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setTokenConfig(
+      config: TokenConfigStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setTokenConfigs(
+      configs: TokenConfigStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     tokenConfigs(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -371,16 +371,6 @@ export interface TwapOracle extends BaseContract {
   };
 
   VBNB(overrides?: CallOverrides): Promise<string>;
-
-  addTokenConfig(
-    config: TokenConfigStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  addTokenConfigs(
-    configs: TokenConfigStruct[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   bnbBaseUnit(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -419,6 +409,16 @@ export interface TwapOracle extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setTokenConfig(
+    config: TokenConfigStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setTokenConfigs(
+    configs: TokenConfigStruct[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   tokenConfigs(
     arg0: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -445,16 +445,6 @@ export interface TwapOracle extends BaseContract {
 
   callStatic: {
     VBNB(overrides?: CallOverrides): Promise<string>;
-
-    addTokenConfig(
-      config: TokenConfigStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    addTokenConfigs(
-      configs: TokenConfigStruct[],
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     bnbBaseUnit(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -494,6 +484,16 @@ export interface TwapOracle extends BaseContract {
     ): Promise<BigNumber>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    setTokenConfig(
+      config: TokenConfigStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setTokenConfigs(
+      configs: TokenConfigStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     tokenConfigs(
       arg0: PromiseOrValue<string>,
@@ -573,16 +573,6 @@ export interface TwapOracle extends BaseContract {
   estimateGas: {
     VBNB(overrides?: CallOverrides): Promise<BigNumber>;
 
-    addTokenConfig(
-      config: TokenConfigStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    addTokenConfigs(
-      configs: TokenConfigStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     bnbBaseUnit(overrides?: CallOverrides): Promise<BigNumber>;
 
     busdBaseUnit(overrides?: CallOverrides): Promise<BigNumber>;
@@ -620,6 +610,16 @@ export interface TwapOracle extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setTokenConfig(
+      config: TokenConfigStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setTokenConfigs(
+      configs: TokenConfigStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     tokenConfigs(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -638,16 +638,6 @@ export interface TwapOracle extends BaseContract {
 
   populateTransaction: {
     VBNB(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    addTokenConfig(
-      config: TokenConfigStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    addTokenConfigs(
-      configs: TokenConfigStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
 
     bnbBaseUnit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -683,6 +673,16 @@ export interface TwapOracle extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setTokenConfig(
+      config: TokenConfigStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setTokenConfigs(
+      configs: TokenConfigStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -42,11 +42,11 @@ export type TokenConfigStructOutput = [string, string, BigNumber] & {
 export interface PythOracleInterface extends utils.Interface {
   functions: {
     "EXP_SCALE()": FunctionFragment;
-    "addTokenConfig((bytes32,address,uint64))": FunctionFragment;
-    "addTokenConfigs((bytes32,address,uint64)[])": FunctionFragment;
     "getUnderlyingPrice(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "setTokenConfig((bytes32,address,uint64))": FunctionFragment;
+    "setTokenConfigs((bytes32,address,uint64)[])": FunctionFragment;
     "setUnderlyingPythOracle(address)": FunctionFragment;
     "tokenConfigs(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -56,11 +56,11 @@ export interface PythOracleInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "EXP_SCALE"
-      | "addTokenConfig"
-      | "addTokenConfigs"
       | "getUnderlyingPrice"
       | "owner"
       | "renounceOwnership"
+      | "setTokenConfig"
+      | "setTokenConfigs"
       | "setUnderlyingPythOracle"
       | "tokenConfigs"
       | "transferOwnership"
@@ -69,14 +69,6 @@ export interface PythOracleInterface extends utils.Interface {
 
   encodeFunctionData(functionFragment: "EXP_SCALE", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "addTokenConfig",
-    values: [TokenConfigStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addTokenConfigs",
-    values: [TokenConfigStruct[]]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getUnderlyingPrice",
     values: [PromiseOrValue<string>]
   ): string;
@@ -84,6 +76,14 @@ export interface PythOracleInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setTokenConfig",
+    values: [TokenConfigStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setTokenConfigs",
+    values: [TokenConfigStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "setUnderlyingPythOracle",
@@ -104,20 +104,20 @@ export interface PythOracleInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "EXP_SCALE", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "addTokenConfig",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "addTokenConfigs",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getUnderlyingPrice",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setTokenConfig",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setTokenConfigs",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -209,16 +209,6 @@ export interface PythOracle extends BaseContract {
   functions: {
     EXP_SCALE(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    addTokenConfig(
-      tokenConfig: TokenConfigStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    addTokenConfigs(
-      tokenConfigs_: TokenConfigStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     getUnderlyingPrice(
       vToken: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -227,6 +217,16 @@ export interface PythOracle extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setTokenConfig(
+      tokenConfig: TokenConfigStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setTokenConfigs(
+      tokenConfigs_: TokenConfigStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -256,16 +256,6 @@ export interface PythOracle extends BaseContract {
 
   EXP_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
 
-  addTokenConfig(
-    tokenConfig: TokenConfigStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  addTokenConfigs(
-    tokenConfigs_: TokenConfigStruct[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   getUnderlyingPrice(
     vToken: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -274,6 +264,16 @@ export interface PythOracle extends BaseContract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setTokenConfig(
+    tokenConfig: TokenConfigStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setTokenConfigs(
+    tokenConfigs_: TokenConfigStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -303,16 +303,6 @@ export interface PythOracle extends BaseContract {
   callStatic: {
     EXP_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    addTokenConfig(
-      tokenConfig: TokenConfigStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    addTokenConfigs(
-      tokenConfigs_: TokenConfigStruct[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     getUnderlyingPrice(
       vToken: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -321,6 +311,16 @@ export interface PythOracle extends BaseContract {
     owner(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    setTokenConfig(
+      tokenConfig: TokenConfigStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setTokenConfigs(
+      tokenConfigs_: TokenConfigStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setUnderlyingPythOracle(
       underlyingPythOracle_: PromiseOrValue<string>,
@@ -378,16 +378,6 @@ export interface PythOracle extends BaseContract {
   estimateGas: {
     EXP_SCALE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    addTokenConfig(
-      tokenConfig: TokenConfigStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    addTokenConfigs(
-      tokenConfigs_: TokenConfigStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     getUnderlyingPrice(
       vToken: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -396,6 +386,16 @@ export interface PythOracle extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setTokenConfig(
+      tokenConfig: TokenConfigStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setTokenConfigs(
+      tokenConfigs_: TokenConfigStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -420,16 +420,6 @@ export interface PythOracle extends BaseContract {
   populateTransaction: {
     EXP_SCALE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    addTokenConfig(
-      tokenConfig: TokenConfigStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    addTokenConfigs(
-      tokenConfigs_: TokenConfigStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     getUnderlyingPrice(
       vToken: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -438,6 +428,16 @@ export interface PythOracle extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setTokenConfig(
+      tokenConfig: TokenConfigStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setTokenConfigs(
+      tokenConfigs_: TokenConfigStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

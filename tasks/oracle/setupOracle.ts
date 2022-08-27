@@ -1,6 +1,5 @@
 // npx hardhat setup_oracle --network bsctestnet
 import { task } from "hardhat/config";
-import { VenusChainlinkOracle } from "../../src/types";
 // The ABI of the old oracle has changed
 import OldOracleAbi from './oldOracleAbi.json';
 import ComptrollerAbi from './comptroller.json';
@@ -9,6 +8,7 @@ import ComptrollerAbi from './comptroller.json';
 // fetched from https://docs.chain.link/docs/bnb-chain-addresses/
 import chainlinkFeedData from './chainlink.json';
 import { waterfall } from "../utils/waterfall";
+import { ChainlinkOracle } from "../../src/types/contracts/oracles/ChainlinkOracle";
 
 type ChainlinkFeedProxyItem = {
   pair: string,
@@ -70,7 +70,7 @@ task("setup_oracle", "Set all price feeds and prices from the old oracle to the 
 
   const { deployments, network } = hre;
 
-  const oracleDeployment = await deployments.get('VenusChainlinkOracle');
+  const oracleDeployment = await deployments.get('ChainlinkOracle');
   const ourOracleContractAddress = oracleDeployment.address;
 
   console.log(`network name: ${network.name}`);
@@ -95,7 +95,7 @@ task("setup_oracle", "Set all price feeds and prices from the old oracle to the 
   const oldOracleContract = await ethers.getContractAt(OldOracleAbi, oldOracleContractAddress);
 
   console.log(`our venus chainlink oracle contract: ${ourOracleContractAddress}`);
-  const ourOracleContract = <VenusChainlinkOracle>await ethers.getContractAt('VenusChainlinkOracle', ourOracleContractAddress);
+  const ourOracleContract = <ChainlinkOracle>await ethers.getContractAt('ChainlinkOracle', ourOracleContractAddress);
 
   const oldAdmin = await oldOracleContract.functions.admin();
   console.log(`old admin: ${oldAdmin}`);

@@ -67,7 +67,7 @@ describe("Twap Oracle unit tests", function () {
 
   describe('admin check', function () {
     it('only admin can call add token configs', async function () {
-      // addTokenConfigs
+      // setTokenConfigs
       const config = {
         vToken: addr1111,
         baseUnit: 100,
@@ -77,12 +77,12 @@ describe("Twap Oracle unit tests", function () {
         anchorPeriod: 30,
       }
       await expect(
-        this.twapOracle.connect(this.signers[2]).addTokenConfigs([config])
+        this.twapOracle.connect(this.signers[2]).setTokenConfigs([config])
       ).to.be.revertedWith("Ownable: caller is not the owner");
 
-      // addTokenConfig
+      // setTokenConfig
       await expect(
-        this.twapOracle.connect(this.signers[1]).addTokenConfig(config)
+        this.twapOracle.connect(this.signers[1]).setTokenConfig(config)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     })
     it('only admin can call add validation configs', async function () {
@@ -92,11 +92,11 @@ describe("Twap Oracle unit tests", function () {
         lowerBoundRatio: EXP_SCALE.mul(8).div(10),
       }
       await expect(
-        this.twapOracle.connect(this.signers[2]).addValidateConfigs([config])
+        this.twapOracle.connect(this.signers[2]).setValidateConfigs([config])
       ).to.be.revertedWith("Ownable: caller is not the owner");
 
       await expect(
-        this.twapOracle.connect(this.signers[1]).addValidateConfig(config)
+        this.twapOracle.connect(this.signers[1]).setValidateConfig(config)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     })
   });
@@ -113,30 +113,30 @@ describe("Twap Oracle unit tests", function () {
           anchorPeriod: 0,
         }
         await expect(
-          this.twapOracle.addTokenConfig(config)
+          this.twapOracle.setTokenConfig(config)
         ).to.be.revertedWith("can't be zero address");
 
         config.vToken = addr1111;
         await expect(
-          this.twapOracle.addTokenConfig(config)
+          this.twapOracle.setTokenConfig(config)
         ).to.be.revertedWith("can't be zero address");
 
         config.pancakePool = this.simplePair.address;
         await expect(
-          this.twapOracle.addTokenConfig(config)
+          this.twapOracle.setTokenConfig(config)
         ).to.be.revertedWith("anchor period must be positive");
 
         config.anchorPeriod = 100;
         await expect(
-          this.twapOracle.addTokenConfig(config)
+          this.twapOracle.setTokenConfig(config)
         ).to.be.revertedWith("base unit must be positive");
         config.baseUnit = 100;
 
         // nothing happen
-        await this.twapOracle.addTokenConfig(config);
+        await this.twapOracle.setTokenConfig(config);
       });
 
-      it('config must not exist', async function () {
+      it('reset token config', async function () {
         const config1 = {
           vToken: addr1111,
           baseUnit: 100,
@@ -153,10 +153,10 @@ describe("Twap Oracle unit tests", function () {
           isReversedPool: true,
           anchorPeriod: 100,
         };
-        await this.twapOracle.addTokenConfig(config1);
-        await expect(
-          this.twapOracle.addTokenConfig(config2)
-        ).to.be.revertedWith("token config must not exist");
+        await this.twapOracle.setTokenConfig(config1);
+        expect((await this.twapOracle.tokenConfigs(addr1111)).anchorPeriod).to.equal(10);
+        await this.twapOracle.setTokenConfig(config2);
+        expect((await this.twapOracle.tokenConfigs(addr1111)).anchorPeriod).to.equal(100);
       });
 
       it('token config added successfully & events check', async function () {
@@ -168,7 +168,7 @@ describe("Twap Oracle unit tests", function () {
           isReversedPool: false,
           anchorPeriod: 888,
         };
-        const result = await this.twapOracle.addTokenConfig(config);
+        const result = await this.twapOracle.setTokenConfig(config);
         await expect(result).to.emit(this.twapOracle, 'TokenConfigAdded').withArgs(
           addr1111, this.simplePair.address, 888 
         );
@@ -183,7 +183,7 @@ describe("Twap Oracle unit tests", function () {
     describe('batch add token configs', function () {
       it('length check', async function () {
         await expect(
-          this.twapOracle.addTokenConfigs([])
+          this.twapOracle.setTokenConfigs([])
         ).to.be.revertedWith("length can't be 0");
       })
 
@@ -196,7 +196,7 @@ describe("Twap Oracle unit tests", function () {
           isReversedPool: false,
           anchorPeriod: 888,
         };
-        await this.twapOracle.addTokenConfigs([config]);
+        await this.twapOracle.setTokenConfigs([config]);
         const savedConfig = await this.twapOracle.tokenConfigs(addr1111);
         expect(savedConfig.anchorPeriod).to.equal(888);
         expect(savedConfig.vToken).to.equal(addr1111);
@@ -221,7 +221,7 @@ describe("Twap Oracle unit tests", function () {
       };
       this.token0 = token0;
       this.token1 = token1;
-      await this.twapOracle.addTokenConfig(this.tokenConfig);
+      await this.twapOracle.setTokenConfig(this.tokenConfig);
     })
     it('revert if get underlying price of not existing token', async function () {
       await expect(
@@ -397,7 +397,7 @@ describe("Twap Oracle unit tests", function () {
         }
         this.token0 = token0;
         this.token1 = token1;
-        await this.twapOracle.addTokenConfig(this.tokenConfig);
+        await this.twapOracle.setTokenConfig(this.tokenConfig);
       });
       it('if no BNB config is added, revert', async function () {
         await expect(
@@ -406,7 +406,7 @@ describe("Twap Oracle unit tests", function () {
       });
 
       it('twap calculation', async function () {
-        await this.twapOracle.addTokenConfig(this.bnbConfig);
+        await this.twapOracle.setTokenConfig(this.bnbConfig);
         await this.bnbPair.update(1000, 100, 100, 100); // bnb: $10
         await this.bnbBasedPair.update(200, 100, 100, 100); // token: 0.5bnb
 
@@ -458,7 +458,7 @@ describe("Twap Oracle unit tests", function () {
     describe('add validation config', function () {
       it('length check', async function () {
         await expect(
-          this.twapOracle.addValidateConfigs([])
+          this.twapOracle.setValidateConfigs([])
         ).to.be.revertedWith("invalid validate config length");
       })
       it('validation config check', async function () {
@@ -468,18 +468,18 @@ describe("Twap Oracle unit tests", function () {
           lowerBoundRatio: 0,
         }
         await expect(
-          this.twapOracle.addValidateConfigs([config])
+          this.twapOracle.setValidateConfigs([config])
         ).to.be.revertedWith("can't be zero address");
 
         config.vToken = addr1111;
         await expect(
-          this.twapOracle.addValidateConfigs([config])
+          this.twapOracle.setValidateConfigs([config])
         ).to.be.revertedWith("bound must be positive");
 
         config.lowerBoundRatio = 100;
         config.upperBoundRatio = 80;
         await expect(
-          this.twapOracle.addValidateConfigs([config])
+          this.twapOracle.setValidateConfigs([config])
         ).to.be.revertedWith("upper bound must be higher than lowner bound");
       });
       it('config added successfully & event check', async function () {
@@ -488,7 +488,7 @@ describe("Twap Oracle unit tests", function () {
           upperBoundRatio: 100,
           lowerBoundRatio: 80,
         }
-        const result = await this.twapOracle.addValidateConfigs([config])
+        const result = await this.twapOracle.setValidateConfigs([config])
         await expect(result).to.emit(this.twapOracle, 'ValidateConfigAdded').withArgs(
           addr1111, 100, 80,
         );
@@ -506,7 +506,7 @@ describe("Twap Oracle unit tests", function () {
         upperBoundRatio: EXP_SCALE.mul(12).div(10),
         lowerBoundRatio: EXP_SCALE.mul(8).div(10),
       }
-      await this.twapOracle.addValidateConfigs([validationConfig]);
+      await this.twapOracle.setValidateConfigs([validationConfig]);
 
       // sanity check
       await expect(
@@ -521,7 +521,7 @@ describe("Twap Oracle unit tests", function () {
         isReversedPool: true,
         anchorPeriod: 900, // 15min
       };
-      await this.twapOracle.addTokenConfig(tokenConfig);
+      await this.twapOracle.setTokenConfig(tokenConfig);
 
       // without updateTwap the price is not written and should revert
       await expect(

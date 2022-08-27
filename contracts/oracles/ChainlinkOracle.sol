@@ -3,10 +3,10 @@ pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "./interfaces/VBep20Interface.sol";
-import "./interfaces/AggregatorV2V3Interface.sol";
+import "../interfaces/VBep20Interface.sol";
+import "../interfaces/AggregatorV2V3Interface.sol";
 
-contract VenusChainlinkOracle {
+contract ChainlinkOracle {
     using SafeMath for uint256;
     uint256 public constant VAI_VALUE = 1e18;
     address public admin;

@@ -87,10 +87,10 @@ contract TwapOracle is Ownable, OracleInterface {
      * @notice Add multiple token configs at the same time
      * @param configs config array
      */
-    function addTokenConfigs(TokenConfig[] memory configs) external onlyOwner() {
+    function setTokenConfigs(TokenConfig[] memory configs) external onlyOwner() {
         require(configs.length > 0, "length can't be 0");
         for (uint8 i = 0; i < configs.length; i++) {
-            addTokenConfig(configs[i]);
+            setTokenConfig(configs[i]);
         }
     }
 
@@ -98,12 +98,11 @@ contract TwapOracle is Ownable, OracleInterface {
      * @notice Add single token configs
      * @param config token config struct
      */
-    function addTokenConfig(TokenConfig memory config) public 
+    function setTokenConfig(TokenConfig memory config) public 
         onlyOwner()
         notNullAddress(config.vToken)
         notNullAddress(config.pancakePool)
     {
-        require(tokenConfigs[config.vToken].vToken == address(0), "token config must not exist");
         require(config.anchorPeriod > 0, "anchor period must be positive");
         require(config.baseUnit > 0, "base unit must be positive");
         uint256 cumulativePrice = currentCumulativePrice(config);

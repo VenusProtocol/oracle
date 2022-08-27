@@ -36,10 +36,10 @@ contract PivotTwapOracle is TwapOracle, PivotValidator {
      * @notice Add multiple validation configs at the same time
      * @param configs config array 
      */
-    function addValidateConfigs(ValidateConfig[] memory configs) external onlyOwner() {
+    function setValidateConfigs(ValidateConfig[] memory configs) external onlyOwner() {
         require(configs.length > 0, "invalid validate config length");
         for (uint8 i = 0; i < configs.length; i++) {
-            addValidateConfig(configs[i]);
+            setValidateConfig(configs[i]);
         }
     }
 
@@ -47,7 +47,7 @@ contract PivotTwapOracle is TwapOracle, PivotValidator {
      * @notice Add single validation config
      * @param config config struct
      */
-    function addValidateConfig(ValidateConfig memory config) public 
+    function setValidateConfig(ValidateConfig memory config) public 
         onlyOwner()
         notNullAddress(config.vToken)
     {

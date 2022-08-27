@@ -9,5 +9,4 @@ import type * as oracles from "./oracles";
 export type { oracles };
 import type * as test from "./test";
 export type { test };
-export type { VenusChainlinkOracle } from "./VenusChainlinkOracle";
-export type { VenusOracle } from "./VenusOracle";
+export type { ResilientOracle } from "./ResilientOracle";

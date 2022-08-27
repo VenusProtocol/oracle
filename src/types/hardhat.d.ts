@@ -65,6 +65,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IPancakePair__factory>;
     getContractFactory(
+      name: "ChainlinkOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ChainlinkOracle__factory>;
+    getContractFactory(
       name: "PivotTwapOracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PivotTwapOracle__factory>;
@@ -76,6 +80,10 @@ declare module "hardhat/types/runtime" {
       name: "TwapOracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TwapOracle__factory>;
+    getContractFactory(
+      name: "ResilientOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ResilientOracle__factory>;
     getContractFactory(
       name: "BEP20Harness",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -104,14 +112,6 @@ declare module "hardhat/types/runtime" {
       name: "VBEP20Harness",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.VBEP20Harness__factory>;
-    getContractFactory(
-      name: "VenusChainlinkOracle",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.VenusChainlinkOracle__factory>;
-    getContractFactory(
-      name: "VenusOracle",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.VenusOracle__factory>;
 
     getContractAt(
       name: "Ownable",
@@ -179,6 +179,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IPancakePair>;
     getContractAt(
+      name: "ChainlinkOracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ChainlinkOracle>;
+    getContractAt(
       name: "PivotTwapOracle",
       address: string,
       signer?: ethers.Signer
@@ -193,6 +198,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.TwapOracle>;
+    getContractAt(
+      name: "ResilientOracle",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ResilientOracle>;
     getContractAt(
       name: "BEP20Harness",
       address: string,
@@ -228,16 +238,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.VBEP20Harness>;
-    getContractAt(
-      name: "VenusChainlinkOracle",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.VenusChainlinkOracle>;
-    getContractAt(
-      name: "VenusOracle",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.VenusOracle>;
 
     // default types
     getContractFactory(

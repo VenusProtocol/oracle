@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "./interfaces/OracleInterface.sol";
 
 
-contract VenusOracle is Ownable, Pausable {
+contract ResilientOracle is Ownable, Pausable {
     using SafeMath for uint256;
 
     uint256 public constant INVALID_PRICE = 0;
@@ -104,11 +104,11 @@ contract VenusOracle is Ownable, Pausable {
      * @param vTokens vToken array
      * @param tokenConfigs_ token config array
      */
-    function addTokenConfigs(address[] memory vTokens, TokenConfig[] memory tokenConfigs_) external onlyOwner() {
+    function setTokenConfigs(address[] memory vTokens, TokenConfig[] memory tokenConfigs_) external onlyOwner() {
         require(vTokens.length == tokenConfigs_.length, "length doesn't match");
         require(vTokens.length != 0, "length can't be 0");
         for (uint256 i = 0; i < vTokens.length; i++) {
-            addTokenConfig(vTokens[i], tokenConfigs_[i]);
+            setTokenConfig(vTokens[i], tokenConfigs_[i]);
         }
     }
 
@@ -117,11 +117,10 @@ contract VenusOracle is Ownable, Pausable {
      * @param vToken vToken address
      * @param tokenConfig token config struct
      */
-    function addTokenConfig(address vToken, TokenConfig memory tokenConfig) public 
+    function setTokenConfig(address vToken, TokenConfig memory tokenConfig) public 
         onlyOwner()
         notNullAddress(vToken)
         notNullAddress(tokenConfig.oracles[uint(OracleRole.MAIN)])
-        checkTokenConfigExistance(vToken, false)
     {
         tokenConfigs[vToken] = tokenConfig;
         emit TokenConfigAdded(

@@ -2,7 +2,7 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { artifacts, ethers, waffle } from "hardhat";
-import { VenusChainlinkOracle } from "../src/types";
+import { ChainlinkOracle } from "../src/types/contracts/oracles/ChainlinkOracle";
 
 import { makeChainlinkOracle } from "./utils/makeChainlinkOracle";
 import { makeVToken } from "./utils/makeVToken";
@@ -41,10 +41,10 @@ describe("Oracle unit tests", function () {
     this.usdtFeed = await makeChainlinkOracle(admin, 8, 100000000);
     this.daiFeed = await makeChainlinkOracle(admin, 8, 100000000);
 
-    const oracleArtifact = await artifacts.readArtifact("VenusChainlinkOracle");
+    const oracleArtifact = await artifacts.readArtifact("ChainlinkOracle");
     const oracle = await waffle.deployContract(admin, oracleArtifact, []);
     await oracle.deployed();
-    this.oracle = <VenusChainlinkOracle>oracle;
+    this.oracle = <ChainlinkOracle>oracle;
   });
 
   describe("constructor", () => {
