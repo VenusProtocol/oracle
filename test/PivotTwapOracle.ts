@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { artifacts, ethers, waffle } from "hardhat";
 import { PivotTwapOracle } from "../src/types/contracts/oracles/PivotTwapOracle";
-import { addr0000, addr1111 } from "./utils/data";
+import { addr0000, addr1111, getSimpleAddress } from "./utils/data";
 import { makePairWithTokens } from "./utils/makePair";
 import { makeToken } from "./utils/makeToken";
 import { getTime, increaseTime } from "./utils/time";
@@ -37,8 +37,9 @@ describe("Twap Oracle unit tests", function () {
     const admin = signers[0];
     this.signers = signers;
     this.admin = admin;
+    const vBnb = getSimpleAddress(8);
     const twapOracleArtifact = await artifacts.readArtifact("PivotTwapOracle");
-    const twapOracle = <PivotTwapOracle>await waffle.deployContract(admin, twapOracleArtifact, []);
+    const twapOracle = <PivotTwapOracle>await waffle.deployContract(admin, twapOracleArtifact, [vBnb]);
     await twapOracle.deployed();
     this.twapOracle = twapOracle;
 
@@ -50,7 +51,7 @@ describe("Twap Oracle unit tests", function () {
     // set up bnb based pair for later test
     const token3 = await makeToken(this.admin, 'TOKEN3', 'TOKEN3', 18);
     const BEP20HarnessFactory = await ethers.getContractFactory('BEP20Harness');
-    const tokenWbnb = BEP20HarnessFactory.attach(await this.twapOracle.VBNB());
+    const tokenWbnb = BEP20HarnessFactory.attach(await this.twapOracle.vBNB());
     const bnbBasedPair = await makePairWithTokens(this.admin, token3, tokenWbnb);
     this.bnbBasedPair = bnbBasedPair;
 
@@ -388,7 +389,7 @@ describe("Twap Oracle unit tests", function () {
         };
         // prepare busd-bnb config
         this.bnbConfig = {
-          vToken: await this.twapOracle.VBNB(),
+          vToken: await this.twapOracle.vBNB(),
           baseUnit: EXP_SCALE,
           pancakePool: this.bnbPair.address,
           isBnbBased: false,
@@ -423,7 +424,7 @@ describe("Twap Oracle unit tests", function () {
         let oldObservation = await this.twapOracle.oldObservations(this.token0);
 
         // get bnb price here, after token0 twap updated, during which bnb price got updated again
-        const vbnb = await this.twapOracle.VBNB();
+        const vbnb = await this.twapOracle.vBNB();
         let bnbPrice = await this.twapOracle.getUnderlyingPrice(vbnb);
 
         let ts2 = await getTime();

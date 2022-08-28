@@ -34,7 +34,7 @@ contract TwapOracle is Ownable, OracleInterface {
     using FixedPoint for *;
 
     /// @notice vBNB address
-    address public constant VBNB = address(0xA07c5b74C9B40447a954e1466938b865b6BBea36);
+    address public vBNB;
 
     /// @notice the base unit of WBNB and BUSD, which are the paired tokens for all assets
     uint256 public constant bnbBaseUnit = 1e18;
@@ -81,6 +81,11 @@ contract TwapOracle is Ownable, OracleInterface {
     modifier notNullAddress(address someone) {
         require(someone != address(0), "can't be zero address");
         _;
+    }
+
+    constructor(address vBNB_) {
+        require(vBNB_ != address(0), "vBNB can't be zero address");
+        vBNB = vBNB_;
     }
 
     /**
@@ -146,8 +151,8 @@ contract TwapOracle is Ownable, OracleInterface {
     function updateTwap(address vToken) public returns (uint256) {
         require(tokenConfigs[vToken].vToken != address(0), "vTokne not exist");
         // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
-        if (vToken != VBNB && tokenConfigs[vToken].isBnbBased) {
-            updateTwap(VBNB);
+        if (vToken != vBNB && tokenConfigs[vToken].isBnbBased) {
+            updateTwap(vBNB);
         }
         return updateTwapInternal(tokenConfigs[vToken]);
     }
@@ -179,7 +184,7 @@ contract TwapOracle is Ownable, OracleInterface {
 
         // if this token is paired with BNB, convert its price to USD
         if (config.isBnbBased) {
-            uint256 bnbPrice = prices[VBNB];
+            uint256 bnbPrice = prices[vBNB];
             require(bnbPrice != 0, "bnb price is invalid");
             anchorPriceMantissa = anchorPriceMantissa.mul(bnbPrice).div(bnbBaseUnit);
         }
