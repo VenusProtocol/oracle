@@ -102,21 +102,18 @@ contract ChainlinkOracle is Ownable, OracleInterface {
     {
         TokenConfig storage tokenConfig = tokenConfigs[vToken];
         AggregatorV2V3Interface feed = AggregatorV2V3Interface(tokenConfig.feed);
+
+        // note: maxStalePeriod cannot be 0
         uint256 maxStalePeriod = tokenConfig.maxStalePeriod;
 
         // Chainlink USD-denominated feeds store answers at 8 decimals, mostly
         uint256 decimalDelta = uint256(18).sub(feed.decimals());
 
         (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
+        require(answer > 0, "chainlink price must be positive");
 
-        // a feed with 0 max stale period or doesn't exist, return 0
-        if (maxStalePeriod == 0) {
-            return 0;
-        }
-
-        if (block.timestamp.sub(updatedAt, "updatedAt exceeds block time") > maxStalePeriod) {
-            return 0;
-        }
+        uint256 deltaTime = block.timestamp.sub(updatedAt, "updatedAt exceeds block time");
+        require(deltaTime <= maxStalePeriod, "chainlink price expired");
 
         return uint256(answer).mul(10**decimalDelta);
     }

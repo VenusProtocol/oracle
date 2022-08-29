@@ -101,7 +101,7 @@ contract PythOracle is OracleInterface, Ownable {
      * @return price in 10 decimals
      */
     function getUnderlyingPrice(address vToken) external view override returns (uint256) {
-        require(address(underlyingPythOracle) != address(0), "pyth oracle is zero address");
+        require(address(underlyingPythOracle) != address(0), "Pyth oracle is zero address");
         TokenConfig storage tokenConfig = tokenConfigs[vToken];
         require(tokenConfig.vToken != address(0), "vToken doesn't exist");
 
@@ -112,6 +112,8 @@ contract PythOracle is OracleInterface, Ownable {
         );
         
         uint256 price = int256(priceInfo.price).toUint256();
+
+        require(price > 0, "Pyth oracle price must be positive");
         
         // the price returned from Pyth is price ** 10^expo, which is the real dollar price of the assets
         // we need to multiply it by 1e18 to make the price 18 decimals

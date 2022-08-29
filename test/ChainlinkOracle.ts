@@ -268,7 +268,7 @@ describe("Oracle unit tests", function () {
       )
     });
 
-    it('get underlying will return 0 if price stale', async function () {
+    it('revert when price stale', async function () {
       const ADVANCE_SECONDS = 90000;
       let price = await this.oracle.getUnderlyingPrice(this.vBnb.address);
       expect(price).to.equal('300000000000000000000');
@@ -277,8 +277,9 @@ describe("Oracle unit tests", function () {
 
       await increaseTime(ADVANCE_SECONDS);
 
-      price = await this.oracle.getUnderlyingPrice(this.vBnb.address);
-      expect(price).to.equal('0');
+      await expect(
+        this.oracle.getUnderlyingPrice(this.vBnb.address),
+      ).to.revertedWith('chainlink price expired');
 
       // update round data
       await this.bnbFeed.updateRoundData(1111, 12345, nowSeconds + ADVANCE_SECONDS, nowSeconds);
@@ -293,6 +294,15 @@ describe("Oracle unit tests", function () {
       await expect(
         this.oracle.getUnderlyingPrice(this.vBnb.address),
       ).to.revertedWith('updatedAt exceeds block time');
+    });
+
+    it('the chainlink anwser is 0, revert it', async function () {
+      const nowSeconds = await getTime();
+      await this.bnbFeed.updateRoundData(1111, 0, nowSeconds + 1000, nowSeconds);
+
+      await expect(
+        this.oracle.getUnderlyingPrice(this.vBnb.address),
+      ).to.revertedWith('chainlink price must be positive');
     });
   })
 });

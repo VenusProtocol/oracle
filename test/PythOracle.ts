@@ -186,7 +186,7 @@ describe("Oracle plugin frame unit tests", function () {
       ).to.be.revertedWith("No available price within given duration");
     })
 
-    it('revert when price is negative (just in case Pyth return insane data)', async function () {
+    it('revert when price is not positive (just in case Pyth return insane data)', async function () {
       const ts = await getTime();
       const feed = {
         id: getBytes32String(3),
@@ -216,6 +216,12 @@ describe("Oracle plugin frame unit tests", function () {
       await expect(
         this.pythOracle.getUnderlyingPrice(addr1111)
       ).to.be.revertedWith("SafeCast: value must be positive");
+
+      feed.price = BigNumber.from(0);
+      await this.underlyingPythOracle.updatePriceFeedsHarness([feed]);
+      await expect(
+        this.pythOracle.getUnderlyingPrice(addr1111)
+      ).to.be.revertedWith("Pyth oracle price must be positive");
     })
 
     it('price should be 18 decimals', async function () {
