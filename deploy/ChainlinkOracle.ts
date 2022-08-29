@@ -12,7 +12,7 @@ const func: DeployFunction = async function ({
     const { deployer, dev } = await getNamedAccounts()
     console.log(deployer, dev, await getChainId());
     
-    const res = await deploy('VenusChainlinkOracle', {
+    const res = await deploy('ChainlinkOracle', {
         from: deployer,
         log: true,
         deterministicDeployment: false,

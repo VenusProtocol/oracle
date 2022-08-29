@@ -61,10 +61,10 @@ contract PythOracle is OracleInterface, Ownable {
      * @notice Batch set token configs
      * @param tokenConfigs_ token config array
      */
-    function addTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner() {
+    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner() {
         require(tokenConfigs_.length != 0, "length can't be 0");
         for (uint256 i = 0; i < tokenConfigs_.length; i++) {
-            addTokenConfig(tokenConfigs_[i]);
+            setTokenConfig(tokenConfigs_[i]);
         }
     }
 
@@ -72,7 +72,7 @@ contract PythOracle is OracleInterface, Ownable {
      * @notice Set single token config, `maxStalePeriod` cannot be 0 and `vToken` can be zero address
      * @param tokenConfig token config struct
      */
-    function addTokenConfig(TokenConfig memory tokenConfig) public 
+    function setTokenConfig(TokenConfig memory tokenConfig) public 
         onlyOwner()
         notNullAddress(tokenConfig.vToken)
     {

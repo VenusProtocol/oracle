@@ -1,7 +1,7 @@
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { expect } from "chai";
 import { artifacts, ethers, waffle } from "hardhat";
-import { MockPivotOracle, MockSimpleOracle, VenusOracle } from "../src/types";
+import { MockPivotOracle, MockSimpleOracle, ResilientOracle } from "../src/types";
 import { addr0000, addr1111, getSimpleAddress } from "./utils/data";
 
 const getSimpleOracle = async (account: SignerWithAddress) => {
@@ -30,10 +30,10 @@ describe("Oracle plugin frame unit tests", function () {
   });
 
   beforeEach(async function () {
-    const oracleBasementArtifact = await artifacts.readArtifact("VenusOracle");
+    const oracleBasementArtifact = await artifacts.readArtifact("ResilientOracle");
     const oracleBasement = await waffle.deployContract(this.admin, oracleBasementArtifact, []);
     await oracleBasement.deployed();
-    this.oracleBasement = <VenusOracle>oracleBasement;
+    this.oracleBasement = <ResilientOracle>oracleBasement;
   });
 
   describe('constructor', function () {
@@ -45,17 +45,19 @@ describe("Oracle plugin frame unit tests", function () {
 
   describe('admin check', function () {
     it('only admin can call the setters', async function () {
-      // addTokenConfigs
+      // setTokenConfigs
       await expect(
-        this.oracleBasement.connect(this.signers[2]).addTokenConfigs([addr0000], [{
+        this.oracleBasement.connect(this.signers[2]).setTokenConfigs([{
+          vToken: addr0000,
           oracles: [addr0000, addr0000, addr0000],
           enableFlagsForOracles: [false, false, false],
         }])
       ).to.be.revertedWith("Ownable: caller is not the owner");
 
-      // addTokenConfig
+      // setTokenConfig
       await expect(
-        this.oracleBasement.connect(this.signers[1]).addTokenConfig(addr0000, {
+        this.oracleBasement.connect(this.signers[1]).setTokenConfig({
+          vToken: addr0000,
           oracles: [addr0000, addr0000, addr0000],
           enableFlagsForOracles: [false, false, false],
         })
@@ -84,8 +86,9 @@ describe("Oracle plugin frame unit tests", function () {
       await this.oracleBasement.transferOwnership(this.signers[2].address);
       const newOwner = await this.oracleBasement.owner();
       expect(newOwner).to.equal(this.signers[2].address);
-      await this.oracleBasement.connect(this.signers[2]).addTokenConfig(addr1111,
+      await this.oracleBasement.connect(this.signers[2]).setTokenConfig(
         {
+          vToken: addr1111,
           oracles: [addr1111, addr1111, addr1111],
           enableFlagsForOracles: [false, false, false]
         }
@@ -98,35 +101,40 @@ describe("Oracle plugin frame unit tests", function () {
     describe('add single token config', function () {
       it('vToken can"t be zero & main oracle can\'t be zero', async function () {
         await expect(
-          this.oracleBasement.addTokenConfig(addr0000, {
+          this.oracleBasement.setTokenConfig({
+            vToken: addr0000,
             oracles: [addr1111, addr1111, addr1111],
             enableFlagsForOracles: [true, false, true],
           })
         ).to.be.revertedWith("can't be zero address");
 
         await expect(
-          this.oracleBasement.addTokenConfig(addr1111, {
+          this.oracleBasement.setTokenConfig({
+            vToken: addr1111,
             oracles: [addr0000, addr1111, addr0000],
             enableFlagsForOracles: [true, false, true],
           })
         ).to.be.revertedWith("can't be zero address");
       });
 
-      it('token must not exist', async function () {
-        await this.oracleBasement.addTokenConfig(addr1111, {
+      it('reset token config', async function () {
+        await this.oracleBasement.setTokenConfig({
+          vToken: addr1111,
           oracles: [addr1111, addr1111, addr1111],
           enableFlagsForOracles: [true, false, true],
         })
-        await expect(
-          this.oracleBasement.addTokenConfig(addr1111, {
+        expect((await this.oracleBasement.getTokenConfig(addr1111)).enableFlagsForOracles[0]).to.equal(true);
+        await this.oracleBasement.setTokenConfig({
+            vToken: addr1111,
             oracles: [addr1111, addr0000, addr0000],
             enableFlagsForOracles: [false, false, true],
           })
-        ).to.be.revertedWith("token config must not exist");
+        expect((await this.oracleBasement.getTokenConfig(addr1111)).enableFlagsForOracles[0]).to.equal(false);
       });
 
       it('token config added successfully & events check', async function () {
-        const result = await this.oracleBasement.addTokenConfig(addr1111, {
+        const result = await this.oracleBasement.setTokenConfig({
+          vToken: addr1111,
           oracles: [addr1111, addr1111, addr1111],
           enableFlagsForOracles: [true, false, true],
         });
@@ -139,19 +147,18 @@ describe("Oracle plugin frame unit tests", function () {
     describe('batch add token configs', function () {
       it('length check', async function () {
         await expect(
-          this.oracleBasement.addTokenConfigs([], [])
+          this.oracleBasement.setTokenConfigs([])
         ).to.be.revertedWith("length can't be 0");
-        await expect(
-          this.oracleBasement.addTokenConfigs([addr1111], [])
-        ).to.be.revertedWith("length doesn't match");
       })
 
       it('token config added successfully & data check', async function () {
-        await this.oracleBasement.addTokenConfigs([addr1111, getSimpleAddress(3)], [{
+        await this.oracleBasement.setTokenConfigs([{
+          vToken: addr1111,
           oracles: [addr1111, addr1111, addr0000],
           enableFlagsForOracles: [true, false, true],
         },
         {
+          vToken: getSimpleAddress(3),
           oracles: [addr1111, getSimpleAddress(2), getSimpleAddress(3)],
           enableFlagsForOracles: [true, false, true],
         },
@@ -168,7 +175,8 @@ describe("Oracle plugin frame unit tests", function () {
 
   describe('change oracle', function () {
     beforeEach(async function () {
-      await this.oracleBasement.addTokenConfig(addr1111, {
+      await this.oracleBasement.setTokenConfig({
+        vToken: addr1111,
         oracles: [addr1111, addr1111, addr0000],
         enableFlagsForOracles: [true, false, true],
       });
@@ -211,11 +219,13 @@ describe("Oracle plugin frame unit tests", function () {
 
 
     beforeEach(async function () {
-      await this.oracleBasement.addTokenConfigs([token1, token2], [{
+      await this.oracleBasement.setTokenConfigs([{
+          vToken: token1,
           oracles: [this.mainOracle.address, this.pivotOracle.address, this.fallbackOracle.address],
           enableFlagsForOracles: [true, true, false],
         },
         {
+          vToken: token2,
           oracles: [this.mainOracle.address, this.pivotOracle.address, this.fallbackOracle.address],
           enableFlagsForOracles: [true, true, false],
         },

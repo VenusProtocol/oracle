@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "./interfaces/OracleInterface.sol";
 
 
-contract VenusOracle is Ownable, Pausable {
+contract ResilientOracle is Ownable, Pausable {
     using SafeMath for uint256;
 
     uint256 public constant INVALID_PRICE = 0;
@@ -26,6 +26,8 @@ contract VenusOracle is Ownable, Pausable {
     }
 
     struct TokenConfig {
+        /// @notice vToken address
+        address vToken;
         /// @notice `oracles` stores the oracles in the order of: [main, pivot, fallback], 
         /// it can be indexed with enum OracleRole value
         address[3] oracles;
@@ -52,18 +54,12 @@ contract VenusOracle is Ownable, Pausable {
     }
 
     /**
-     * @notice Check whether token config exist by checking whether main oracle is zero address
-     * @dev main oracle can't be set to zero, so it's suitable to be used to check
+     * @notice Check whether token config exist by checking whether vToken is zero address
+     * @dev vToken can't be set to zero, so it's suitable to be used to check
      * @param vToken vtoken address
-     * @param exist check existance or not 
      */
-    modifier checkTokenConfigExistance(address vToken, bool exist) {
-        address mainOracle = tokenConfigs[vToken].oracles[uint(OracleRole.MAIN)];
-        if (exist) {
-            require(mainOracle != address(0), "token config must exist");
-        } else {
-            require(mainOracle == address(0), "token config must not exist");
-        }
+    modifier checkTokenConfigExistance(address vToken) {
+        require(tokenConfigs[vToken].vToken != address(0), "token config must exist");
         _;
     }
     
@@ -101,31 +97,27 @@ contract VenusOracle is Ownable, Pausable {
 
     /**
      * @notice Batch set token configs
-     * @param vTokens vToken array
      * @param tokenConfigs_ token config array
      */
-    function addTokenConfigs(address[] memory vTokens, TokenConfig[] memory tokenConfigs_) external onlyOwner() {
-        require(vTokens.length == tokenConfigs_.length, "length doesn't match");
-        require(vTokens.length != 0, "length can't be 0");
-        for (uint256 i = 0; i < vTokens.length; i++) {
-            addTokenConfig(vTokens[i], tokenConfigs_[i]);
+    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner() {
+        require(tokenConfigs_.length != 0, "length can't be 0");
+        for (uint256 i = 0; i < tokenConfigs_.length; i++) {
+            setTokenConfig(tokenConfigs_[i]);
         }
     }
 
     /**
-     * @notice Set single token configs, vToken MUST have NOT be added before, and main oracle MUST not be zero address
-     * @param vToken vToken address
+     * @notice Set single token configs, vToken MUST HAVE NOT be added before, and main oracle MUST NOT be zero address
      * @param tokenConfig token config struct
      */
-    function addTokenConfig(address vToken, TokenConfig memory tokenConfig) public 
+    function setTokenConfig(TokenConfig memory tokenConfig) public 
         onlyOwner()
-        notNullAddress(vToken)
+        notNullAddress(tokenConfig.vToken)
         notNullAddress(tokenConfig.oracles[uint(OracleRole.MAIN)])
-        checkTokenConfigExistance(vToken, false)
     {
-        tokenConfigs[vToken] = tokenConfig;
+        tokenConfigs[tokenConfig.vToken] = tokenConfig;
         emit TokenConfigAdded(
-            vToken,
+            tokenConfig.vToken,
             tokenConfig.oracles[uint(OracleRole.MAIN)],
             tokenConfig.oracles[uint(OracleRole.PIVOT)],
             tokenConfig.oracles[uint(OracleRole.FALLBACK)]
@@ -141,7 +133,7 @@ contract VenusOracle is Ownable, Pausable {
     function setOracle(address vToken, address oracle, OracleRole role) external
         onlyOwner()
         notNullAddress(vToken)
-        checkTokenConfigExistance(vToken, true)
+        checkTokenConfigExistance(vToken)
     {
         require(!(oracle == address(0) && role == OracleRole.MAIN), "can't set zero address to main oracle");
         tokenConfigs[vToken].oracles[uint(role)] = oracle;
@@ -157,7 +149,7 @@ contract VenusOracle is Ownable, Pausable {
     function enableOracle(address vToken, OracleRole role, bool enable) external
         onlyOwner()
         notNullAddress(vToken)
-        checkTokenConfigExistance(vToken, true)
+        checkTokenConfigExistance(vToken)
     {
         tokenConfigs[vToken].enableFlagsForOracles[uint(role)] = enable;
         emit OracleEnabled(vToken, uint(role), enable);

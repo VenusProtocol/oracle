@@ -41,14 +41,14 @@ describe("Oracle plugin frame unit tests", function () {
         vToken: addr1111,
         maxStalePeriod: 10,
       };
-      // addTokenConfigs
+      // setTokenConfigs
       await expect(
-        this.pythOracle.connect(this.signers[2]).addTokenConfigs([config])
+        this.pythOracle.connect(this.signers[2]).setTokenConfigs([config])
       ).to.be.revertedWith("Ownable: caller is not the owner");
 
-      // addTokenConfig
+      // setTokenConfig
       await expect(
-        this.pythOracle.connect(this.signers[1]).addTokenConfig(config)
+        this.pythOracle.connect(this.signers[1]).setTokenConfig(config)
       ).to.be.revertedWith("Ownable: caller is not the owner");
 
       // setOracle
@@ -66,7 +66,7 @@ describe("Oracle plugin frame unit tests", function () {
       await this.pythOracle.transferOwnership(this.signers[2].address);
       const newOwner = await this.pythOracle.owner();
       expect(newOwner).to.equal(this.signers[2].address);
-      await this.pythOracle.connect(this.signers[2]).addTokenConfigs([config]);
+      await this.pythOracle.connect(this.signers[2]).setTokenConfigs([config]);
       expect((await this.pythOracle.tokenConfigs(addr1111)).vToken).to.equal(addr1111);
     })
   });
@@ -75,7 +75,7 @@ describe("Oracle plugin frame unit tests", function () {
     describe('add single token config', function () {
       it('vToken can"t be zero & maxStalePeriod can\'t be zero', async function () {
         await expect(
-          this.pythOracle.addTokenConfig({
+          this.pythOracle.setTokenConfig({
             pythId: getBytes32String(2),
             vToken: addr0000,
             maxStalePeriod: 10,
@@ -83,7 +83,7 @@ describe("Oracle plugin frame unit tests", function () {
         ).to.be.revertedWith("can't be zero address");
         
         await expect(
-          this.pythOracle.addTokenConfig({
+          this.pythOracle.setTokenConfig({
             pythId: getBytes32String(2),
             vToken: addr1111,
             maxStalePeriod: 0,
@@ -92,7 +92,7 @@ describe("Oracle plugin frame unit tests", function () {
       });
 
       it('token config added successfully & events check', async function () {
-        const result = await this.pythOracle.addTokenConfig({
+        const result = await this.pythOracle.setTokenConfig({
           vToken: addr1111,
           pythId: getBytes32String(2),
           maxStalePeriod: 111,
@@ -106,12 +106,12 @@ describe("Oracle plugin frame unit tests", function () {
     describe('batch add token configs', function () {
       it('length check', async function () {
         await expect(
-          this.pythOracle.addTokenConfigs([])
+          this.pythOracle.setTokenConfigs([])
         ).to.be.revertedWith("length can't be 0");
       })
 
       it('token config added successfully & data check', async function () {
-        await this.pythOracle.addTokenConfigs([{
+        await this.pythOracle.setTokenConfigs([{
           vToken: addr1111,
           pythId: getBytes32String(2),
           maxStalePeriod: 111,
@@ -175,7 +175,7 @@ describe("Oracle plugin frame unit tests", function () {
     })
 
     it('revert when price is expired', async function () {
-      await this.pythOracle.addTokenConfig({
+      await this.pythOracle.setTokenConfig({
         vToken: addr1111,
         pythId: getBytes32String(2),
         maxStalePeriod: 111,
@@ -206,7 +206,7 @@ describe("Oracle plugin frame unit tests", function () {
       };
       await this.underlyingPythOracle.updatePriceFeedsHarness([feed]);
 
-      await this.pythOracle.addTokenConfig({
+      await this.pythOracle.setTokenConfig({
         vToken: addr1111,
         pythId: getBytes32String(3),
         maxStalePeriod: 111,
@@ -219,7 +219,7 @@ describe("Oracle plugin frame unit tests", function () {
     })
 
     it('price should be 18 decimals', async function () {
-      await this.pythOracle.addTokenConfig({
+      await this.pythOracle.setTokenConfig({
         vToken: addr1111,
         pythId: getBytes32String(1),
         maxStalePeriod: 111,
@@ -230,7 +230,7 @@ describe("Oracle plugin frame unit tests", function () {
       expect(price).to.equal(BigNumber.from(10).pow(19))
 
       // test another token
-      await this.pythOracle.addTokenConfig({
+      await this.pythOracle.setTokenConfig({
         vToken: getSimpleAddress(2),
         pythId: getBytes32String(2),
         maxStalePeriod: 111,

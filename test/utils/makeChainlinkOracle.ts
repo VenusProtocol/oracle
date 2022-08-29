@@ -1,13 +1,14 @@
 import { Signer } from "ethers";
 import { artifacts, waffle } from "hardhat";
 
-import { VBEP20Harness, VenusChainlinkOracle } from "../../src/types";
+import { VBEP20Harness } from "../../src/types";
+import { ChainlinkOracle } from "../../src/types/contracts/oracles/ChainlinkOracle";
 
 export const makeChainlinkOracle = async (admin: Signer, decimals: number, initialAnswer: number) => {
   const oracleArtifact = await artifacts.readArtifact("MockV3Aggregator");
   const oracle = await waffle.deployContract(admin, oracleArtifact, [decimals, initialAnswer]);
   await oracle.deployed();
-  return <VenusChainlinkOracle>oracle;
+  return <ChainlinkOracle>oracle;
 };
 
 export const makeVToken = async (admin: Signer, name: string, symbol: string, underlying?: string) => {
