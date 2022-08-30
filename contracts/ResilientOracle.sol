@@ -162,28 +162,36 @@ contract ResilientOracle is Ownable, Pausable {
      * - check price against pivot oracle, if any
      * - if fallback flag is enabled and price is invalidated, fallback
      * @param vToken vToken address
+     * @return price USD price in 18 decimals
      */
     function getUnderlyingPrice(address vToken) external view returns (uint256) {
         uint256 price = getUnderlyingPriceInternal(vToken);
         (address fallbackOracle, bool fallbackEnabled) = getOracle(vToken, OracleRole.FALLBACK);
         if (price == INVALID_PRICE && fallbackEnabled && fallbackOracle != address(0)) {
-            return OracleInterface(fallbackOracle).getUnderlyingPrice(vToken);
+            uint256 fallbackPrice = OracleInterface(fallbackOracle).getUnderlyingPrice(vToken);
+            require(fallbackPrice != INVALID_PRICE, "fallback oracle price must be positive");
+            return fallbackPrice;
         }
+        // if price is 0 here, it means main oracle price is 0 or got invalidated by pivot oracle
+        // and fallback oracle is not active, we revert it
+        require(price != INVALID_PRICE, "invalid resilient oracle price");
         return price;
     }
 
+    /**
+     * @notice This function won't revert when price is 0, because the fallback oracle may come to play later
+     * @param vToken vToken address
+     * @return price USD price in 18 decimals
+     */
     function getUnderlyingPriceInternal(address vToken) internal view returns (uint256) {
         // Global emergency switch
-        if (paused()) {
-            return INVALID_PRICE;
-        }
+        require(!paused(), "resilient oracle is paused");
 
         (address mainOracle, bool mainOracleEnabled) = getOracle(vToken, OracleRole.MAIN);
 
         uint price = INVALID_PRICE;
 
-        // If tokenConfig doesn't exist or main oracle is not enabled, return
-        if (mainOracle == address(0) || !mainOracleEnabled) {
+        if (!mainOracleEnabled) {
             return price;
         }
 
