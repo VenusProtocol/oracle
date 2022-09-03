@@ -12,10 +12,17 @@ const func: DeployFunction = async function ({
     const { deployer, dev } = await getNamedAccounts()
     console.log(deployer, dev, await getChainId());
     
-    const res = await deploy('ChainlinkOracle', {
+    const res = await deploy('ResilientOracle', {
         from: deployer,
         log: true,
         deterministicDeployment: false,
+        proxy: {
+            proxyContract: 'OptimizedTransparentProxy',
+            execute: {
+                methodName: 'initialize',
+                args: []
+            }
+        }
     });
 
     console.log(`deployed to ${res.address}`);
