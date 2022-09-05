@@ -13,7 +13,7 @@ declare module "mocha" {
     // oracle plugin tests
     oracleBasement: ResilientOracle;
     // chainlink oracle tests
-    oracle: ChainlinkOracle;
+    chainlinkOracle: ChainlinkOracle;
     // twap oracle tests
     twapOracle: PivotTwapOracle;
     simplePair: PancakePairHarness;
