@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../libraries/PancakeLibrary.sol";
 import "../interfaces/OracleInterface.sol";
@@ -29,7 +29,7 @@ struct TokenConfig {
     uint256 anchorPeriod;
 }
 
-contract TwapOracle is Ownable, OracleInterface {
+contract TwapOracle is OwnableUpgradeable, OracleInterface {
     using SafeMath for uint256;
     using FixedPoint for *;
 
@@ -83,7 +83,8 @@ contract TwapOracle is Ownable, OracleInterface {
         _;
     }
 
-    constructor(address vBNB_) {
+    function initialize(address vBNB_) public initializer {
+        __Ownable_init();
         require(vBNB_ != address(0), "vBNB can't be zero address");
         vBNB = vBNB_;
     }

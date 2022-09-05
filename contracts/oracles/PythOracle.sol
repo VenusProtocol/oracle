@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/utils/math/SignedMath.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/PythInterface.sol";
 import "../interfaces/OracleInterface.sol";
 
@@ -18,7 +18,7 @@ struct TokenConfig {
  * PythOracle contract reads prices from actual Pyth oracle contract which accepts/verifies and stores the
  * updated prices from external sources
  */
-contract PythOracle is OracleInterface, Ownable {
+contract PythOracle is OwnableUpgradeable, OracleInterface {
     using SafeMath for uint256;
     
     // To calculate 10 ** n(which is a signed type)
@@ -51,10 +51,11 @@ contract PythOracle is OracleInterface, Ownable {
         _;
     }
 
-    constructor(IPyth underlyingPythOracle_) {
-        require(address(underlyingPythOracle_) != address(0), "pyth oracle cannot be zero address");
-        underlyingPythOracle = underlyingPythOracle_;
-        emit PythOracleSet(address(underlyingPythOracle_));
+    function initialize(address underlyingPythOracle_) public initializer {
+        __Ownable_init();
+        require(underlyingPythOracle_ != address(0), "pyth oracle cannot be zero address");
+        underlyingPythOracle = IPyth(underlyingPythOracle_);
+        emit PythOracleSet(underlyingPythOracle_);
     }
 
     /**
