@@ -1,7 +1,7 @@
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
-import { artifacts, ethers, waffle } from "hardhat";
+import { artifacts, ethers, upgrades, waffle } from "hardhat";
 import { PythOracle } from "../src/types/contracts/oracles/PythOracle";
 import { MockPyth } from "../src/types/contracts/test/MockPyth";
 import { addr0000, addr1111, getBytes32String, getSimpleAddress } from "./utils/data";
@@ -12,10 +12,10 @@ const getPythOracle = async (account: SignerWithAddress) => {
   const actualOracleArtifact = await artifacts.readArtifact("MockPyth");
   const actualOracle = await waffle.deployContract(account, actualOracleArtifact, []);
   await actualOracle.deployed();
-  const oracleArtifact = await artifacts.readArtifact("PythOracle");
-  const oracle = await waffle.deployContract(account, oracleArtifact, [actualOracle.address]);
-  await oracle.deployed();
-  return <PythOracle>oracle;
+
+  const PythOracle = await ethers.getContractFactory("PythOracle", account);
+  const instance = <PythOracle>await upgrades.deployProxy(PythOracle, [actualOracle.address]);
+  return instance;
 }
 
 describe("Oracle plugin frame unit tests", function () {

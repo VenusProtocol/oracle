@@ -1,7 +1,7 @@
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
-import { artifacts, ethers, waffle } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 import { PivotTwapOracle } from "../src/types/contracts/oracles/PivotTwapOracle";
 import { addr0000, addr1111, getSimpleAddress } from "./utils/data";
 import { makePairWithTokens } from "./utils/makePair";
@@ -38,10 +38,10 @@ describe("Twap Oracle unit tests", function () {
     this.signers = signers;
     this.admin = admin;
     const vBnb = getSimpleAddress(8);
-    const twapOracleArtifact = await artifacts.readArtifact("PivotTwapOracle");
-    const twapOracle = <PivotTwapOracle>await waffle.deployContract(admin, twapOracleArtifact, [vBnb]);
-    await twapOracle.deployed();
-    this.twapOracle = twapOracle;
+
+    const PivotTwapOracle = await ethers.getContractFactory("PivotTwapOracle", admin);
+    const instance = <PivotTwapOracle>await upgrades.deployProxy(PivotTwapOracle, [vBnb]);
+    this.twapOracle = instance;
 
     const token1 = await makeToken(this.admin, 'TOKEN1', 'TOKEN1', 18);
     const tokenBusd = await makeToken(this.admin, 'BUSD', 'BUSD', 18);

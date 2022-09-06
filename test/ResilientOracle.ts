@@ -1,6 +1,6 @@
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { expect } from "chai";
-import { artifacts, ethers, waffle } from "hardhat";
+import { artifacts, ethers, upgrades, waffle } from "hardhat";
 import { MockPivotOracle, MockSimpleOracle, ResilientOracle } from "../src/types";
 import { addr0000, addr1111, getSimpleAddress } from "./utils/data";
 
@@ -30,10 +30,9 @@ describe("Oracle plugin frame unit tests", function () {
   });
 
   beforeEach(async function () {
-    const oracleBasementArtifact = await artifacts.readArtifact("ResilientOracle");
-    const oracleBasement = await waffle.deployContract(this.admin, oracleBasementArtifact, []);
-    await oracleBasement.deployed();
-    this.oracleBasement = <ResilientOracle>oracleBasement;
+    const ResilientOracle = await ethers.getContractFactory("ResilientOracle", this.admin);
+    const instance = <ResilientOracle>await upgrades.deployProxy(ResilientOracle, []);
+    this.oracleBasement = instance;
   });
 
   describe('constructor', function () {

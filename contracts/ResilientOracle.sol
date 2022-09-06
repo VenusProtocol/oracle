@@ -3,12 +3,12 @@ pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./interfaces/OracleInterface.sol";
 
 
-contract ResilientOracle is Ownable, Pausable {
+contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable {
     using SafeMath for uint256;
 
     uint256 public constant INVALID_PRICE = 0;
@@ -61,6 +61,11 @@ contract ResilientOracle is Ownable, Pausable {
     modifier checkTokenConfigExistance(address vToken) {
         require(tokenConfigs[vToken].vToken != address(0), "token config must exist");
         _;
+    }
+
+    function initialize() public initializer {
+        __Ownable_init();
+        __Pausable_init();
     }
     
     /**

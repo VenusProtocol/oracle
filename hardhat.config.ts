@@ -1,5 +1,6 @@
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
+import '@openzeppelin/hardhat-upgrades';
 import "@typechain/hardhat";
 import "hardhat-deploy";
 import { config as dotenvConfig } from "dotenv";
@@ -28,6 +29,7 @@ const chainIds = {
   bsc: 56,
   bsctestnet: 97,
   hardhat: 31337,
+  goerli: 5,
   rinkeby: 4,
 };
 
@@ -62,6 +64,7 @@ const config: HardhatUserConfig = {
       bsc: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       bsctestnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       rinkeby: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
+      goerli: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
     },
   },
   gasReporter: {
@@ -74,6 +77,7 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: chainIds.hardhat,
     },
+    goerli: getChainConfig("goerli"),
     rinkeby: getChainConfig("rinkeby"),
     bsc: getChainConfig("bsc"),
     bsctestnet: getChainConfig("bsctestnet"),

@@ -32,10 +32,6 @@ contract PivotTwapOracle is TwapOracle, PivotValidator {
         uint256 indexed lowerBound
     );
 
-    constructor(address vBNB_) TwapOracle(vBNB_) {
-        // pass
-    }
-
     /**
      * @notice Add multiple validation configs at the same time
      * @param configs config array 

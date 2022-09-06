@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/AggregatorV2V3Interface.sol";
@@ -17,7 +17,7 @@ struct TokenConfig {
     uint256 maxStalePeriod;
 }
 
-contract ChainlinkOracle is Ownable, OracleInterface {
+contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
     using SafeMath for uint256;
 
     /// @notice VAI token is considered $1 constantly in oracle for now
@@ -44,6 +44,10 @@ contract ChainlinkOracle is Ownable, OracleInterface {
     modifier notNullAddress(address someone) {
         require(someone != address(0), "can't be zero address");
         _;
+    }
+
+    function initialize() public initializer {
+        __Ownable_init();
     }
 
     /**
