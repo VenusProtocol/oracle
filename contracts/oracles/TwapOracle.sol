@@ -159,14 +159,14 @@ contract TwapOracle is OwnableUpgradeable, OracleInterface {
         if (vToken != vBNB && tokenConfigs[vToken].isBnbBased) {
             updateTwap(vBNB);
         }
-        return updateTwapInternal(tokenConfigs[vToken]);
+        return _updateTwapInternal(tokenConfigs[vToken]);
     }
 
     /**
      * @notice Fetches the current token/BUSD price from PancakeSwap, with 18 decimals of precision.
      * @return price in USD, with 18 decimals
      */
-    function updateTwapInternal(TokenConfig memory config) internal virtual returns (uint256) {
+    function _updateTwapInternal(TokenConfig memory config) internal virtual returns (uint256) {
         // pokeWindowValues already handled reversed pool cases, 
         // priceAverage will always be Token/BNB or Token/BUSD TWAP price.
         (uint256 nowCumulativePrice, uint256 oldCumulativePrice, uint256 oldTimestamp) = pokeWindowValues(config);
