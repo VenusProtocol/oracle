@@ -30,12 +30,12 @@ contract MockPyth is IPyth {
         price.expo = priceFeed.expo;
         uint64 publishTime = priceFeed.publishTime;
 
-        require(diff(block.timestamp, publishTime) <= duration, "No available price within given duration");
+        require(_diff(block.timestamp, publishTime) <= duration, "No available price within given duration");
 
         return price;
     }
 
-    function diff(uint x, uint y) internal pure returns (uint) {
+    function _diff(uint x, uint y) internal pure returns (uint) {
         if (x > y) {
             return x - y;
         } else {

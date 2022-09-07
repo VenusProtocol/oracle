@@ -59,18 +59,18 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
         returns (uint256)
     {
         string memory symbol = VBep20Interface(vToken).symbol();
-        // VBNB token doesn't have `underlying` method, so it has to skip `getUnderlyingPriceInternal
-        // method and directly goes into `getChainlinkPrice`
-        if (compareStrings(symbol, "vBNB")) {
-            return getChainlinkPrice(vToken);
+        // VBNB token doesn't have `underlying` method, so it has to skip `_getUnderlyingPriceInternal
+        // method and directly goes into `_getChainlinkPrice`
+        if (_compareStrings(symbol, "vBNB")) {
+            return _getChainlinkPrice(vToken);
         // VAI price is constantly 1 at the moment, but not guarantee in the future
-        } else if (compareStrings(symbol, "VAI")) {
+        } else if (_compareStrings(symbol, "VAI")) {
             return VAI_VALUE;
         // @TODO: This is some history code, keep it here in case of messing up 
-        } else if (compareStrings(symbol, "XVS")) {
+        } else if (_compareStrings(symbol, "XVS")) {
             return prices[address(vToken)];
         } else {
-            return getUnderlyingPriceInternal(VBep20Interface(vToken));
+            return _getUnderlyingPriceInternal(VBep20Interface(vToken));
         }
     }
 
@@ -80,13 +80,13 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @param vToken vToken address
      * @return price in USD, with 18 decimals
      */
-    function getUnderlyingPriceInternal(VBep20Interface vToken) internal view returns (uint256 price) {
+    function _getUnderlyingPriceInternal(VBep20Interface vToken) internal view returns (uint256 price) {
         VBep20Interface token = VBep20Interface(vToken.underlying());
 
         if (prices[address(token)] != 0) {
             price = prices[address(token)];
         } else {
-            price = getChainlinkPrice(address(vToken));
+            price = _getChainlinkPrice(address(vToken));
         }
 
         uint256 decimalDelta = uint256(18).sub(uint256(token.decimals()));
@@ -99,7 +99,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @param vToken vToken address
      * @return price in USD, with 18 decimals
      */
-    function getChainlinkPrice(address vToken)
+    function _getChainlinkPrice(address vToken)
         internal view
         notNullAddress(tokenConfigs[address(vToken)].vToken)
         returns (uint256)
@@ -172,7 +172,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
         );
     }
 
-    function compareStrings(string memory a, string memory b) internal pure returns (bool) {
+    function _compareStrings(string memory a, string memory b) internal pure returns (bool) {
         return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
     }
 }

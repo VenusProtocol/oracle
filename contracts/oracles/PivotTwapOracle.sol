@@ -69,7 +69,7 @@ contract PivotTwapOracle is TwapOracle, PivotValidator {
     function validatePrice(address vToken, uint256 reporterPrice) external view returns (bool) {
         require(validateConfigs[vToken].upperBoundRatio != 0, "validation config not exist");
         require(prices[vToken] != 0, "stored price is not valid");
-        return isWithinAnchor(vToken, reporterPrice, prices[vToken]);
+        return _isWithinAnchor(vToken, reporterPrice, prices[vToken]);
     }
 
     /**
@@ -78,7 +78,7 @@ contract PivotTwapOracle is TwapOracle, PivotValidator {
      * @param reporterPrice the price to be tested
      * @param anchorPrice stored TWAP price as testing anchor
      */
-    function isWithinAnchor(address vToken, uint256 reporterPrice, uint256 anchorPrice) internal view returns (bool) {
+    function _isWithinAnchor(address vToken, uint256 reporterPrice, uint256 anchorPrice) internal view returns (bool) {
         if (reporterPrice > 0) {
             uint256 anchorRatio = anchorPrice.mul(100e16).div(reporterPrice);
             uint256 upperBoundAnchorRatio = validateConfigs[vToken].upperBoundRatio;
