@@ -4,15 +4,15 @@ pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./BoundValidator.sol";
-import "./TwapOracle.sol";
+import "./PythOracle.sol";
 
-contract PivotTwapOracle is TwapOracle, BoundValidator, PivotOracleInterface {
+contract PivotPythOracle is PythOracle, BoundValidator, PivotOracleInterface {
     /**
      * @notice Test reported vToken underlying price against stored TWAP
      * @param vToken vToken address
      * @param reporterPrice the price to be tested
      */
     function validatePrice(address vToken, uint256 reporterPrice) external view override returns (bool) {
-        return validatePriceWithAnchorPrice(vToken, reporterPrice, prices[vToken]);
+        return validatePriceWithAnchorPrice(vToken, reporterPrice, getUnderlyingPrice(vToken));
     }
 }

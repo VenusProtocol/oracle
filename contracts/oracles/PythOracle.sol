@@ -101,7 +101,7 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
      * @param vToken vToken address
      * @return price in 10 decimals
      */
-    function getUnderlyingPrice(address vToken) external view override returns (uint256) {
+    function getUnderlyingPrice(address vToken) public view override returns (uint256) {
         require(address(underlyingPythOracle) != address(0), "Pyth oracle is zero address");
         TokenConfig storage tokenConfig = tokenConfigs[vToken];
         require(tokenConfig.vToken != address(0), "vToken doesn't exist");
