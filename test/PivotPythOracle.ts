@@ -2,19 +2,20 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { artifacts, ethers, upgrades, waffle } from "hardhat";
-import { PythOracle } from "../src/types/contracts/oracles/PythOracle";
+import { PivotPythOracle } from "../src/types";
 import { MockPyth } from "../src/types/contracts/test/MockPyth";
 import { addr0000, addr1111, getBytes32String, getSimpleAddress } from "./utils/data";
 import { getTime, increaseTime } from "./utils/time";
 
+const EXP_SCALE = BigNumber.from(10).pow(18);
 
 const getPythOracle = async (account: SignerWithAddress) => {
   const actualOracleArtifact = await artifacts.readArtifact("MockPyth");
   const actualOracle = await waffle.deployContract(account, actualOracleArtifact, []);
   await actualOracle.deployed();
 
-  const PythOracle = await ethers.getContractFactory("PythOracle", account);
-  const instance = <PythOracle>await upgrades.deployProxy(PythOracle, [actualOracle.address]);
+  const PivotPythOracle = await ethers.getContractFactory("PivotPythOracle", account);
+  const instance = <PivotPythOracle>await upgrades.deployProxy(PivotPythOracle, [actualOracle.address]);
   return instance;
 }
 
@@ -247,4 +248,62 @@ describe("Oracle plugin frame unit tests", function () {
       expect(price).to.equal(BigNumber.from(10).pow(20))
     })
   });
+
+  describe('validation', function () {
+    it('validate price', async function () {
+      const token0 = getSimpleAddress(3);
+      const validationConfig = {
+        vToken: token0,
+        upperBoundRatio: EXP_SCALE.mul(12).div(10),
+        lowerBoundRatio: EXP_SCALE.mul(8).div(10),
+      }
+
+      // set price
+      await this.pythOracle.setTokenConfig({
+        vToken: token0,
+        pythId: getBytes32String(3),
+        maxStalePeriod: 111,
+      });
+      const feed = {
+        id: getBytes32String(3),
+        productId: getBytes32String(1),
+        price: BigNumber.from(10).pow(6),
+        conf: 10,
+        expo: BigNumber.from(-6),
+        status: 0,
+        maxNumPublishers: 0,
+        numPublishers: 0,
+        emaPrice: 0,
+        emaConf: 0,
+        publishTime: await getTime(),
+        prevPrice: 0,
+        prevConf: 0,
+        prevPublishTime: 0,
+      };
+      const underlyingPythAddress = await this.pythOracle.underlyingPythOracle();
+      const UnderlyingPythFactory = await ethers.getContractFactory('MockPyth');
+      const underlyingPyth = UnderlyingPythFactory.attach(underlyingPythAddress);
+      const underlyingPythOracle = <MockPyth>underlyingPyth;
+      await underlyingPythOracle.updatePriceFeedsHarness([feed]);
+
+      // sanity check
+      await expect(
+        this.pythOracle.validatePrice(token0, 100)
+      ).to.be.revertedWith("validation config not exist");
+
+      await this.pythOracle.setValidateConfigs([validationConfig]);
+      
+      // no need to test this, Pyth price must be positive
+      // await expect(
+      //   this.pythOracle.validatePrice(token0, 100)
+      // ).to.be.revertedWith("anchor price is not valid");
+        
+      let validateResult = await this.pythOracle.validatePrice(token0, EXP_SCALE)
+      expect(validateResult).to.equal(true);
+      validateResult = await this.pythOracle.validatePrice(token0, EXP_SCALE.mul(100).div(79))
+      expect(validateResult).to.equal(false);
+      validateResult = await this.pythOracle.validatePrice(token0, EXP_SCALE.mul(100).div(121))
+      expect(validateResult).to.equal(false);
+    })
+  })
 });

@@ -461,50 +461,6 @@ describe("Twap Oracle unit tests", function () {
   })
 
   describe('validation', function () {
-    describe('add validation config', function () {
-      it('length check', async function () {
-        await expect(
-          this.twapOracle.setValidateConfigs([])
-        ).to.be.revertedWith("invalid validate config length");
-      })
-      it('validation config check', async function () {
-        const config = {
-          vToken: addr0000,
-          upperBoundRatio: 0,
-          lowerBoundRatio: 0,
-        }
-        await expect(
-          this.twapOracle.setValidateConfigs([config])
-        ).to.be.revertedWith("can't be zero address");
-
-        config.vToken = addr1111;
-        await expect(
-          this.twapOracle.setValidateConfigs([config])
-        ).to.be.revertedWith("bound must be positive");
-
-        config.lowerBoundRatio = 100;
-        config.upperBoundRatio = 80;
-        await expect(
-          this.twapOracle.setValidateConfigs([config])
-        ).to.be.revertedWith("upper bound must be higher than lowner bound");
-      });
-      it('config added successfully & event check', async function () {
-        const config = {
-          vToken: addr1111,
-          upperBoundRatio: 100,
-          lowerBoundRatio: 80,
-        }
-        const result = await this.twapOracle.setValidateConfigs([config])
-        await expect(result).to.emit(this.twapOracle, 'ValidateConfigAdded').withArgs(
-          addr1111, 100, 80,
-        );
-        const savedConfig = await this.twapOracle.validateConfigs(addr1111);
-        expect(savedConfig.upperBoundRatio).to.equal(100);
-        expect(savedConfig.lowerBoundRatio).to.equal(80);
-        expect(savedConfig.vToken).to.equal(addr1111);
-      })
-    });
-
     it('validate price', async function () {
       const token0 = await this.simplePair.token0();
       const validationConfig = {
@@ -532,7 +488,7 @@ describe("Twap Oracle unit tests", function () {
       // without updateTwap the price is not written and should revert
       await expect(
         this.twapOracle.validatePrice(token0, 100)
-      ).to.be.revertedWith("stored price is not valid");
+      ).to.be.revertedWith("anchor price is not valid");
         
       await this.twapOracle.updateTwap(token0);
 
