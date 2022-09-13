@@ -90,4 +90,7 @@ contract BoundValidator is OwnableUpgradeable {
         return false;
     }
 
+    // BoundValidator is to get inherited, so it's a good practice to add some storage gaps like
+    // OpenZepplin proposed in their contracts: https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+    uint256[49] private __gap;
 }
