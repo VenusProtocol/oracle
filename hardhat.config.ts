@@ -1,3 +1,4 @@
+import "module-alias/register"
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
 import '@openzeppelin/hardhat-upgrades';
@@ -17,7 +18,7 @@ dotenvConfig({ path: resolve(__dirname, "./.env") });
 // Ensure that we have all the environment variables we need.
 const privateKey: string | undefined = process.env.PRIVATE_KEY;
 if (!privateKey) {
-  throw new Error("Please set your MNEMONIC in a .env file");
+  throw new Error("Please set your PRIVATE_KEY in a .env file");
 }
 
 const infuraApiKey: string | undefined = process.env.INFURA_API_KEY;
