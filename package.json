@@ -27,6 +27,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.6.0",
     "@openzeppelin/contracts-upgradeable": "^4.7.3",
+    "@venusprotocol/venus-protocol": "0.3.0",
     "module-alias": "^2.2.2"
   },
   "devDependencies": {

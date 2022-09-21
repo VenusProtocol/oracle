@@ -2,6 +2,7 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/dist/types'
 
+import networks from '@venusprotocol/venus-protocol/dist/networks/mainnet.json';
 
 const func: DeployFunction = async function ({
     getNamedAccounts,
@@ -39,7 +40,7 @@ const func: DeployFunction = async function ({
         }
     });
 
-    const vBNBAddress = '0xa07c5b74c9b40447a954e1466938b865b6bbea36';
+    const vBNBAddress = networks.Contracts.vBNB;
 
     await deploy('PivotTwapOracle', {
         from: deployer,
