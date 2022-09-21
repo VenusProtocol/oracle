@@ -7,6 +7,11 @@
   "files": [
     "dist"
   ],
+  "exports": {
+    "./deploy/*": "./dist/deploy/*.js",
+    "./networks/*": "./dist/networks/*",
+    "./artifacts/*": "./dist/artifacts/*"
+  },
   "scripts": {
     "clean": "shx rm -rf ./artifacts ./cache ./coverage ./src/types ./coverage.json",
     "commit": "git-cz",
