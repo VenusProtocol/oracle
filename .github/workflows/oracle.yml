@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [master, develop]
 
+env:
+  PRIVATE_KEY: 4433d156e8c53bf5b50af07aa95a29436f29a94e0ccc5d58df8e57bdc8583c32
+  INFURA_API_KEY: INFURA_API_KEY
+
 jobs:
   build:
       name: Test
@@ -22,11 +26,10 @@ jobs:
           uses: actions/setup-node@v2
           with:
             node-version: 16
+            cache: "yarn"
 
-        - run: npm install -g yarn
-        
         - name: Install dependencies
           run: yarn
 
         - name: Test
-          run: export PRIVATE_KEY=1111111111111111111111111111111111111111111111111111111111111111 INFURA_API_KEY=INFURA_API_KEY && yarn test
+          run: yarn test
