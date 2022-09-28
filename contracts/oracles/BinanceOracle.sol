@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.10;
 
-import "@openzeppelin/contracts-upgradeable/core/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "../interfaces/OracleInterface.sol";
 
 contract BinanceOracle is OracleInterface, Initializable {
     
-    function initialize() initializer {
+    function initialize() public initializer {
 
     }
 
