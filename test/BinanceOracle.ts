@@ -1,16 +1,9 @@
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { expect } from "chai";
-import { BigNumber } from "ethers";
 import { ethers, upgrades } from "hardhat";
 import { BinanceOracle, MockBinanceFeedRegistry } from "../src/types";
-import { ChainlinkOracle } from "../src/types/contracts/oracles/ChainlinkOracle";
 import { addr0000 } from "./utils/data";
-
-import { makeChainlinkOracle } from "./utils/makeChainlinkOracle";
 import { makeVToken } from "./utils/makeVToken";
-import { getTime, increaseTime } from "./utils/time";
-
-const MAX_STALE_PERIOD = 60 * 15; // 15min
 
 describe("Binance Oracle unit tests", function () {
   before(async function () {
