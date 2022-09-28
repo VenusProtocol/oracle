@@ -2324,7 +2324,7 @@ __metadata:
     "@types/node": ^17.0.42
     "@typescript-eslint/eslint-plugin": ^5.27.1
     "@typescript-eslint/parser": ^5.27.1
-    "@venusprotocol/venus-protocol": 0.3.0
+    "@venusprotocol/venus-protocol": 0.4.1
     chai: ^4.3.6
     commitizen: ^4.2.4
     cross-env: ^7.0.3
@@ -2358,14 +2358,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@venusprotocol/venus-protocol@npm:0.3.0":
-  version: 0.3.0
-  resolution: "@venusprotocol/venus-protocol@npm:0.3.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40venusprotocol%2Fvenus-protocol%2F0.3.0%2F044371a154f6822c66f8d2c7e6d674a70034f298"
+"@venusprotocol/venus-protocol@npm:0.4.1":
+  version: 0.4.1
+  resolution: "@venusprotocol/venus-protocol@npm:0.4.1"
   dependencies:
     dotenv: ^16.0.1
   peerDependencies:
     hardhat: ^2.10.1
-  checksum: a332aa34f7ba85b37376682cbee08a1e8fb9ca67add34f5b53d5f4bab1bcbc4736191fab7f308aa22909304457e6a792f134ca00ef4655ff2a0d42fdaf1de331
+  checksum: bdedd20a90c191b81c0674eab5f7a4d94fabbebff31126e3547572db920c806b4ddf971d610c0a6147b7e1feae57329a509744ccde452dbd3a27bf074cc0203e
   languageName: node
   linkType: hard
 
