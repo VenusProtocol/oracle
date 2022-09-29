@@ -71,6 +71,23 @@ const func: DeployFunction = async function ({
             }
         }
     });
+
+    // @todo: just testnet address, will be replaced to mainnet version in the future
+    const actualBinanceFeedRegistryAddress = '0x999DD49FeFdC043fDAC4FE12Bb1e4bb31cB4c47B';
+
+    await deploy('BinanceOracle', {
+        contract: network.live ? 'BinanceOracle' : 'MockBinanceOracle',
+        from: deployer,
+        log: true,
+        deterministicDeployment: false,
+        proxy: {
+            proxyContract: 'OptimizedTransparentProxy',
+            execute: {
+                methodName: 'initialize',
+                args: [actualBinanceFeedRegistryAddress]
+            }
+        }
+    });
 }
 
 export default func
