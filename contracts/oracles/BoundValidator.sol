@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 struct ValidateConfig {
     /// @notice vToken address
@@ -19,8 +18,6 @@ struct ValidateConfig {
 // BoundValidator provides some common functions and can be used
 // to wrap up other contracts to form pivot oracles
 contract BoundValidator is OwnableUpgradeable {
-    using SafeMath for uint256;
-    
     /// @notice validation configs by token
     mapping(address => ValidateConfig) public validateConfigs;
 
@@ -82,7 +79,7 @@ contract BoundValidator is OwnableUpgradeable {
      */
     function _isWithinAnchor(address vToken, uint256 reporterPrice, uint256 anchorPrice) internal view returns (bool) {
         if (reporterPrice > 0) {
-            uint256 anchorRatio = anchorPrice.mul(100e16).div(reporterPrice);
+            uint256 anchorRatio = (anchorPrice * 100e16) / reporterPrice;
             uint256 upperBoundAnchorRatio = validateConfigs[vToken].upperBoundRatio;
             uint256 lowerBoundAnchorRatio = validateConfigs[vToken].lowerBoundRatio;
             return anchorRatio <= upperBoundAnchorRatio && anchorRatio >= lowerBoundAnchorRatio;

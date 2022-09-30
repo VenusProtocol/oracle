@@ -2,14 +2,12 @@
 pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./interfaces/OracleInterface.sol";
 
 
 contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable {
-    using SafeMath for uint256;
 
     uint256 public constant INVALID_PRICE = 0;
 

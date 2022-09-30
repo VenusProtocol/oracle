@@ -3,10 +3,8 @@ pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../libraries/PancakeLibrary.sol";
 import "../interfaces/OracleInterface.sol";
-
 
 struct Observation {
     uint256 timestamp;
@@ -30,7 +28,6 @@ struct TokenConfig {
 }
 
 contract TwapOracle is OwnableUpgradeable, OracleInterface {
-    using SafeMath for uint256;
     using FixedPoint for *;
 
     /// @notice vBNB address
@@ -173,11 +170,11 @@ contract TwapOracle is OwnableUpgradeable, OracleInterface {
 
         // This should be impossible, but better safe than sorry
         require(block.timestamp > oldTimestamp, "now must come after before");
-        uint256 timeElapsed = block.timestamp.sub(oldTimestamp);
+        uint256 timeElapsed = block.timestamp - oldTimestamp;
 
         // Calculate Pancakge TWAP
         FixedPoint.uq112x112 memory priceAverage = FixedPoint.uq112x112(uint224(
-            nowCumulativePrice.sub(oldCumulativePrice).div(timeElapsed)
+            (nowCumulativePrice - oldCumulativePrice) / timeElapsed
         ));
         // TWAP price with 1e18 decimal mantissa
         uint256 priceAverageMantissa = priceAverage.decode112with18();
@@ -185,13 +182,13 @@ contract TwapOracle is OwnableUpgradeable, OracleInterface {
         // To cancel the decimals in cumulative price, we need to mulitply the average price with 
         // tokenBaseUnit / (wbnbBaseUnit or busdBaseUnit, which is 1e18)
         uint256 pairedTokenBaseUnit = config.isBnbBased ? bnbBaseUnit : busdBaseUnit;
-        uint256 anchorPriceMantissa = priceAverageMantissa.mul(config.baseUnit).div(pairedTokenBaseUnit);
+        uint256 anchorPriceMantissa = (priceAverageMantissa * config.baseUnit)/pairedTokenBaseUnit;
 
         // if this token is paired with BNB, convert its price to USD
         if (config.isBnbBased) {
             uint256 bnbPrice = prices[vBNB];
             require(bnbPrice != 0, "bnb price is invalid");
-            anchorPriceMantissa = anchorPriceMantissa.mul(bnbPrice).div(bnbBaseUnit);
+            anchorPriceMantissa = (anchorPriceMantissa * bnbPrice) / bnbBaseUnit;
         }
 
         require(anchorPriceMantissa != 0, "twap price cannot be 0");
@@ -214,7 +211,7 @@ contract TwapOracle is OwnableUpgradeable, OracleInterface {
         Observation memory newObservation = newObservations[config.vToken];
 
         // Update new and old observations if elapsed time is greater than or equal to anchor period
-        uint256 timeElapsed = block.timestamp.sub(newObservation.timestamp);
+        uint256 timeElapsed = block.timestamp - newObservation.timestamp;
         if (timeElapsed >= config.anchorPeriod) {
             oldObservations[config.vToken].timestamp = newObservation.timestamp;
             oldObservations[config.vToken].acc = newObservation.acc;
