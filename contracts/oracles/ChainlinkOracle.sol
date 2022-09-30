@@ -63,6 +63,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
         // VAI price is constantly 1 at the moment, but not guarantee in the future
         } else if (_compareStrings(symbol, "VAI")) {
             return VAI_VALUE;
+        // @TODO: This is some history code, keep it here in case of messing up 
         } else {
             return _getUnderlyingPriceInternal(VBep20Interface(vToken));
         }
