@@ -10,4 +10,8 @@ interface FeedRegistryInterface {
         uint256 updatedAt,
         uint80 answeredInRound
     );
+
+    function decimalsByName(string memory base, string memory quote) external view returns (
+        uint8
+    );
 }
