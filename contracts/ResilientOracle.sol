@@ -173,9 +173,12 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable {
         uint256 price = _getUnderlyingPriceInternal(vToken);
         (address fallbackOracle, bool fallbackEnabled) = getOracle(vToken, OracleRole.FALLBACK);
         if (price == INVALID_PRICE && fallbackEnabled && fallbackOracle != address(0)) {
-            uint256 fallbackPrice = OracleInterface(fallbackOracle).getUnderlyingPrice(vToken);
-            require(fallbackPrice != INVALID_PRICE, "fallback oracle price must be positive");
-            return fallbackPrice;
+            try OracleInterface(fallbackOracle).getUnderlyingPrice(vToken) returns (int256 fallbackPrice) { 
+                require(fallbackPrice != INVALID_PRICE, "fallback oracle price must be positive");
+                return fallbackPrice;
+            } catch (string memory) {
+                revert("invalid fallback oracle price");   
+            }
         }
         // if price is 0 here, it means main oracle price is 0 or got invalidated by pivot oracle
         // and fallback oracle is not active, we revert it
@@ -200,20 +203,25 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable {
             return price;
         }
 
-        price = OracleInterface(mainOracle).getUnderlyingPrice(vToken);
+        try OracleInterface(mainOracle).getUnderlyingPrice(vToken) returns (int256 _price) {
+            price = _price;
 
-        (address pivotOracle, bool pivotOracleEnabled) = getOracle(vToken, OracleRole.PIVOT);
-        
-        // Price oracle is not mandantory
-        if (pivotOracle == address(0) || !pivotOracleEnabled) {
+            (address pivotOracle, bool pivotOracleEnabled) = getOracle(vToken, OracleRole.PIVOT);
+            
+            // Price oracle is not mandantory
+            if (pivotOracle == address(0) || !pivotOracleEnabled) {
+                return price;
+            }
+
+            // Check the price with pivot oracle
+            bool pass = PivotOracleInterface(pivotOracle).validatePrice(vToken, price);
+            if (!pass) {
+                return INVALID_PRICE;
+            }
+        } catch (string memory) {
             return price;
         }
-
-        // Check the price with pivot oracle
-        bool pass = PivotOracleInterface(pivotOracle).validatePrice(vToken, price);
-        if (!pass) {
-            return INVALID_PRICE;
-        }
+        
 
         return price;
     }
