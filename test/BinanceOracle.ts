@@ -31,6 +31,6 @@ describe("Binance Oracle unit tests", function () {
   });
 
   it("fetch price", async function () {
-    expect(await this.binanceOracle.getUnderlyingPrice(this.vEth.address)).to.be.equal(this.ethPrice)
+    expect(await this.binanceOracle.getUnderlyingPrice(this.vEth.address)).to.be.equal("1333789241690000000000")
   });
 })

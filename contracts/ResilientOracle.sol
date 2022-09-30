@@ -173,10 +173,10 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable {
         uint256 price = _getUnderlyingPriceInternal(vToken);
         (address fallbackOracle, bool fallbackEnabled) = getOracle(vToken, OracleRole.FALLBACK);
         if (price == INVALID_PRICE && fallbackEnabled && fallbackOracle != address(0)) {
-            try OracleInterface(fallbackOracle).getUnderlyingPrice(vToken) returns (int256 fallbackPrice) { 
+            try OracleInterface(fallbackOracle).getUnderlyingPrice(vToken) returns (uint256 fallbackPrice) { 
                 require(fallbackPrice != INVALID_PRICE, "fallback oracle price must be positive");
                 return fallbackPrice;
-            } catch (string memory) {
+            } catch {
                 revert("invalid fallback oracle price");   
             }
         }
@@ -203,7 +203,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable {
             return price;
         }
 
-        try OracleInterface(mainOracle).getUnderlyingPrice(vToken) returns (int256 _price) {
+        try OracleInterface(mainOracle).getUnderlyingPrice(vToken) returns (uint256 _price) {
             price = _price;
 
             (address pivotOracle, bool pivotOracleEnabled) = getOracle(vToken, OracleRole.PIVOT);
@@ -218,7 +218,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable {
             if (!pass) {
                 return INVALID_PRICE;
             }
-        } catch (string memory) {
+        } catch {
             return price;
         }
         
