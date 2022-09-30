@@ -16,13 +16,10 @@ contract BinanceOracle is Initializable {
 
     function getUnderlyingPrice(VBep20Interface vToken) public view returns (uint256) {
         BEP20Interface underlyingToken = BEP20Interface(vToken.underlying());
+        (,int256 answer,,,) = feedRegistry.latestRoundDataByName(underlyingToken.symbol(), "USD");
 
-        try feedRegistry.latestRoundDataByName(underlyingToken.symbol(), "USD") returns (uint80,int256 answer,uint256,uint256,uint80) {
-            //price is returned in 18 decimal places
-            uint decimalDelta = feedRegistry.decimalsByName(underlyingToken.symbol(), "USD");
-            return (uint256(answer) * (10 ** (18 - decimalDelta)));
-        } catch Error(string memory) {
-            return 0;
-        }
+        //price is returned in 18 decimal places
+        uint decimalDelta = feedRegistry.decimalsByName(underlyingToken.symbol(), "USD");
+        return (uint256(answer) * (10 ** (18 - decimalDelta)));
     }
 }
