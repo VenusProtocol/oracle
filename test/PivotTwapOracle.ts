@@ -408,7 +408,7 @@ describe("Twap Oracle unit tests", function () {
       it('if no BNB config is added, revert', async function () {
         await expect(
           this.twapOracle.updateTwap(this.token0)
-        ).to.be.revertedWith("vTokne not exist");
+        ).to.be.revertedWith("vToken not exist");
       });
 
       it('twap calculation', async function () {
