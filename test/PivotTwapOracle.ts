@@ -501,5 +501,4 @@ describe("Twap Oracle unit tests", function () {
       expect(validateResult).to.equal(false);
     })
   })
-
 });

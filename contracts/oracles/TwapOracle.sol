@@ -97,6 +97,14 @@ contract TwapOracle is OwnableUpgradeable, OracleInterface {
     }
 
     /**
+     * @notice Update the price refresh interval
+     * @param _priceRefreshInterval new priceRefreshInterval value
+     */
+    function updatePriceRefreshInterval(uint256 _priceRefreshInterval) external onlyOwner() {
+        priceRefreshInterval = _priceRefreshInterval;
+    }
+
+    /**
      * @notice Add multiple token configs at the same time
      * @param configs config array
      */
