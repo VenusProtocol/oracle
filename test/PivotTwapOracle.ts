@@ -229,6 +229,12 @@ describe("Twap Oracle unit tests", function () {
         this.twapOracle.callStatic.getUnderlyingPrice(addr1111)
       ).to.be.revertedWith("vToken not exist");
     });
+    it('don\'t revert if get underlying price of token has not been updated', async function () {
+      await increaseTime(100);
+      expect(
+        await this.twapOracle.callStatic.getUnderlyingPrice(this.token0)
+      ).to.be.gt(0);
+    });
     it('twap window update', async function () {
       const ts = await getTime();
       const token0 = await this.simplePair.token0();
