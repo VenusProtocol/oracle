@@ -42,6 +42,9 @@ contract TwapOracle is OwnableUpgradeable, OracleInterface {
 
     uint256 public constant expScale = 1e18;
 
+    /// @notice After how many blocks the price can be refreshed
+    uint256 public priceRefreshInterval;
+
     /// @notice Configs by token
     mapping(address => TokenConfig) public tokenConfigs;
 
@@ -54,6 +57,9 @@ contract TwapOracle is OwnableUpgradeable, OracleInterface {
 
     /// @notice Stored price by token 
     mapping(address => uint256) public prices;
+
+    /// @notice Stores last updated price block number
+    mapping(address => uint256) public lastUpdatedBlock;
 
     /// @notice Emit this event when TWAP window is updated
     event TwapWindowUpdated(
@@ -83,10 +89,11 @@ contract TwapOracle is OwnableUpgradeable, OracleInterface {
         _;
     }
 
-    function initialize(address vBNB_) public initializer {
+    function initialize(address vBNB_, uint256 _priceRefreshInterval) public initializer {
         __Ownable_init();
         require(vBNB_ != address(0), "vBNB can't be zero address");
         vBNB = vBNB_;
+        priceRefreshInterval = _priceRefreshInterval;
     }
 
     /**
@@ -131,8 +138,9 @@ contract TwapOracle is OwnableUpgradeable, OracleInterface {
      * @param vToken vToken address
      * @return price in USD, with 18 decimals
      */
-    function getUnderlyingPrice(address vToken) external override view returns (uint256) {
+    function getUnderlyingPrice(address vToken) external override returns (uint256) {
         require(tokenConfigs[vToken].vToken != address(0), "vToken not exist");
+        updateTwap(vToken);
         uint256 price = prices[vToken];
 
         // if price is 0, it means the price hasn't been updated yet and it's meaningless, revert
@@ -167,6 +175,12 @@ contract TwapOracle is OwnableUpgradeable, OracleInterface {
      * @return price in USD, with 18 decimals
      */
     function _updateTwapInternal(TokenConfig memory config) internal virtual returns (uint256) {
+        if (block.number - lastUpdatedBlock[config.vToken] < priceRefreshInterval) {
+            return prices[config.vToken];
+        } else {
+            lastUpdatedBlock[config.vToken] = block.number;
+        }
+
         // pokeWindowValues already handled reversed pool cases, 
         // priceAverage will always be Token/BNB or Token/BUSD TWAP price.
         (uint256 nowCumulativePrice, uint256 oldCumulativePrice, uint256 oldTimestamp) = pokeWindowValues(config);

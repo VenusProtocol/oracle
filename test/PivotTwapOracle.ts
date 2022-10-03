@@ -40,7 +40,7 @@ describe("Twap Oracle unit tests", function () {
     const vBnb = getSimpleAddress(8);
 
     const PivotTwapOracle = await ethers.getContractFactory("PivotTwapOracle", admin);
-    const instance = <PivotTwapOracle>await upgrades.deployProxy(PivotTwapOracle, [vBnb]);
+    const instance = <PivotTwapOracle>await upgrades.deployProxy(PivotTwapOracle, [vBnb, 1]);
     this.twapOracle = instance;
 
     const token1 = await makeToken(this.admin, 'TOKEN1', 'TOKEN1', 18);
@@ -75,7 +75,7 @@ describe("Twap Oracle unit tests", function () {
         pancakePool: addr1111,
         isBnbBased: false,
         isReversedPool: false,
-        anchorPeriod: 30,
+        anchorPeriod: 30
       }
       await expect(
         this.twapOracle.connect(this.signers[2]).setTokenConfigs([config])
@@ -226,13 +226,8 @@ describe("Twap Oracle unit tests", function () {
     })
     it('revert if get underlying price of not existing token', async function () {
       await expect(
-        this.twapOracle.getUnderlyingPrice(addr1111)
+        this.twapOracle.callStatic.getUnderlyingPrice(addr1111)
       ).to.be.revertedWith("vToken not exist");
-    });
-    it('revert if get underlying price of token has not been updated', async function () {
-      await expect(
-        this.twapOracle.getUnderlyingPrice(this.token0)
-      ).to.be.revertedWith("TWAP price must be positive");
     });
     it('twap window update', async function () {
       const ts = await getTime();
@@ -345,7 +340,7 @@ describe("Twap Oracle unit tests", function () {
       );
 
       // check saved price
-      let price = await this.twapOracle.getUnderlyingPrice(token0);
+      let price = await this.twapOracle.callStatic.getUnderlyingPrice(token0);
       expect(price).to.equal(avgPrice0);
 
       // ============= increase another 888, price change ============
@@ -373,7 +368,7 @@ describe("Twap Oracle unit tests", function () {
       );
 
       // check saved price
-      price = await this.twapOracle.getUnderlyingPrice(token0);
+      price = await this.twapOracle.callStatic.getUnderlyingPrice(token0);
       expect(price).to.equal(avgPrice0);
       
       // @todo: maybe one more test - increase time no greater than anchorPeriod, nothing happen
@@ -430,14 +425,14 @@ describe("Twap Oracle unit tests", function () {
 
         // get bnb price here, after token0 twap updated, during which bnb price got updated again
         const vbnb = await this.twapOracle.vBNB();
-        let bnbPrice = await this.twapOracle.getUnderlyingPrice(vbnb);
+        let bnbPrice = await this.twapOracle.callStatic.getUnderlyingPrice(vbnb);
 
         let ts2 = await getTime();
         let newAcc = Q112.mul(100).div(200).mul(ts2 - pairLastTime).add(cp0);
         let oldAcc = oldObservation.acc;
         let avgPrice0InBnb = newAcc.sub(oldAcc).div(RATIO).div(ts2 - oldObservation.timestamp.toNumber());
         let expectedPrice = avgPrice0InBnb.mul(bnbPrice).div(EXP_SCALE);
-        expect(expectedPrice).to.equal(await this.twapOracle.getUnderlyingPrice(this.token0));
+        expect(expectedPrice).to.equal(await this.twapOracle.callStatic.getUnderlyingPrice(this.token0));
 
         // increase time and test again
         await increaseTime(800);
@@ -449,13 +444,13 @@ describe("Twap Oracle unit tests", function () {
         await this.twapOracle.updateTwap(this.token0);
 
         oldObservation = await this.twapOracle.oldObservations(this.token0);
-        bnbPrice = await this.twapOracle.getUnderlyingPrice(vbnb);
+        bnbPrice = await this.twapOracle.callStatic.getUnderlyingPrice(vbnb);
         ts2 = await getTime();
         newAcc = Q112.mul(100).div(200).mul(ts2 - pairLastTime).add(cp0);
         oldAcc = oldObservation.acc;
         avgPrice0InBnb = newAcc.sub(oldAcc).div(RATIO).div(ts2 - oldObservation.timestamp.toNumber());
         expectedPrice = avgPrice0InBnb.mul(bnbPrice).div(EXP_SCALE);
-        expect(expectedPrice).to.equal(await this.twapOracle.getUnderlyingPrice(this.token0));
+        expect(expectedPrice).to.equal(await this.twapOracle.callStatic.getUnderlyingPrice(this.token0));
       });
     });
   })

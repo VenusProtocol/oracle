@@ -169,7 +169,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable {
      * @param vToken vToken address
      * @return price USD price in 18 decimals
      */
-    function getUnderlyingPrice(address vToken) external view returns (uint256) {
+    function getUnderlyingPrice(address vToken) external returns (uint256) {
         uint256 price = _getUnderlyingPriceInternal(vToken);
         (address fallbackOracle, bool fallbackEnabled) = getOracle(vToken, OracleRole.FALLBACK);
         if (price == INVALID_PRICE && fallbackEnabled && fallbackOracle != address(0)) {
@@ -188,7 +188,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable {
      * @param vToken vToken address
      * @return price USD price in 18 decimals
      */
-    function _getUnderlyingPriceInternal(address vToken) internal view returns (uint256) {
+    function _getUnderlyingPriceInternal(address vToken) internal returns (uint256) {
         // Global emergency switch
         require(!paused(), "resilient oracle is paused");
 

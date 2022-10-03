@@ -235,19 +235,19 @@ describe("Oracle plugin frame unit tests", function () {
     it('revert when protocol paused', async function () {
       await this.oracleBasement.pause();
       await expect(
-        this.oracleBasement.getUnderlyingPrice(token1)
+        this.oracleBasement.callStatic.getUnderlyingPrice(token1)
       ).to.be.revertedWith("resilient oracle is paused");
     })
     it('revert price when main oracle is disabled and there is no fallback oracle', async function () {
       await this.oracleBasement.enableOracle(token1, 0, false);
       await expect(
-        this.oracleBasement.getUnderlyingPrice(token1)
+        this.oracleBasement.callStatic.getUnderlyingPrice(token1)
       ).to.be.revertedWith("invalid resilient oracle price");
     })
     it('revert price main oracle returns 0 and there is no fallback oracle', async function () {
       await this.mainOracle.setPrice(token1, 0);
       await expect(
-        this.oracleBasement.getUnderlyingPrice(token1)
+        this.oracleBasement.callStatic.getUnderlyingPrice(token1)
       ).to.be.revertedWith("invalid resilient oracle price");
     })
     it('revert if price fails checking', async function () {
@@ -255,7 +255,7 @@ describe("Oracle plugin frame unit tests", function () {
       // invalidate the main oracle
       await this.pivotOracle.setValidateResult(token1, false);
       await expect(
-        this.oracleBasement.getUnderlyingPrice(token1)
+        this.oracleBasement.callStatic.getUnderlyingPrice(token1)
       ).to.be.revertedWith("invalid resilient oracle price");
     })
     it('check price with/without pivot oracle', async function () {
@@ -263,7 +263,7 @@ describe("Oracle plugin frame unit tests", function () {
       await this.pivotOracle.setValidateResult(token1, false);
       // empty pivot oracle
       await this.oracleBasement.setOracle(token1, addr0000, 1);
-      const price = await this.oracleBasement.getUnderlyingPrice(token1);
+      const price = await this.oracleBasement.callStatic.getUnderlyingPrice(token1);
       expect(price).to.equal(1000);
 
       // set oracle back
@@ -272,7 +272,7 @@ describe("Oracle plugin frame unit tests", function () {
       // invalidate price
       await this.pivotOracle.setValidateResult(token1, false);
       await expect(
-        this.oracleBasement.getUnderlyingPrice(token1)
+        this.oracleBasement.callStatic.getUnderlyingPrice(token1)
       ).to.be.revertedWith("invalid resilient oracle price");
     })
 
@@ -282,7 +282,7 @@ describe("Oracle plugin frame unit tests", function () {
       await this.pivotOracle.setValidateResult(token1, true);
       // ...but pivot is disabled, so it won't come to invalidate
       await this.oracleBasement.enableOracle(token1, 1, false);
-      const price = await this.oracleBasement.getUnderlyingPrice(token1);
+      const price = await this.oracleBasement.callStatic.getUnderlyingPrice(token1);
       expect(price).to.equal(1000);
     })
 
@@ -291,18 +291,18 @@ describe("Oracle plugin frame unit tests", function () {
       // invalidate the price first
       await this.pivotOracle.setValidateResult(token2, false);
       await expect(
-        this.oracleBasement.getUnderlyingPrice(token2)
+        this.oracleBasement.callStatic.getUnderlyingPrice(token2)
       ).to.be.revertedWith("invalid resilient oracle price");
       
       // enable fallback oracle
       await this.oracleBasement.enableOracle(token2, 2, true);
-      const price = await this.oracleBasement.getUnderlyingPrice(token2);
+      const price = await this.oracleBasement.callStatic.getUnderlyingPrice(token2);
       expect(price).to.equal(token2FallbackPrice);
 
       // set fallback oracle to zero address
       await this.oracleBasement.setOracle(token2, addr0000, 2);
       await expect(
-        this.oracleBasement.getUnderlyingPrice(token2)
+        this.oracleBasement.callStatic.getUnderlyingPrice(token2)
       ).to.be.revertedWith("invalid resilient oracle price");
 
       // bring fallback oracle to action, but return 0 price
@@ -310,7 +310,7 @@ describe("Oracle plugin frame unit tests", function () {
       await this.fallbackOracle.setPrice(token2, 0);
       // notice: token2 is invalidated
       await expect(
-        this.oracleBasement.getUnderlyingPrice(token2)
+        this.oracleBasement.callStatic.getUnderlyingPrice(token2)
       ).to.be.revertedWith("fallback oracle price must be positive");
     })
   });
