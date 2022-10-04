@@ -232,7 +232,7 @@ describe("Twap Oracle unit tests", function () {
     it('don\'t revert if get underlying price of token has not been updated', async function () {
       await increaseTime(100);
       expect(
-        await this.twapOracle.callStatic.getUnderlyingPrice(this.token0)
+        await this.twapOracle.callStatic.fetchUnderlyingPrice(this.token0)
       ).to.be.gt(0);
     });
     it('twap window update', async function () {
