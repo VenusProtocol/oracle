@@ -75,6 +75,30 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
     }
 
     /**
+     * @notice Get the Chainlink price of underlying asset of input vToken, revert when vToken is zero address
+     * @param vToken vToken address
+     * @return price in USD, with 18 decimals
+     */
+    function fetchUnderlyingPrice(address vToken) public override
+        returns (uint256)
+    {
+        string memory symbol = VBep20Interface(vToken).symbol();
+        // VBNB token doesn't have `underlying` method, so it has to skip `_getUnderlyingPriceInternal
+        // method and directly goes into `_getChainlinkPrice`
+        if (_compareStrings(symbol, "vBNB")) {
+            return _getChainlinkPrice(vToken);
+        // VAI price is constantly 1 at the moment, but not guarantee in the future
+        } else if (_compareStrings(symbol, "VAI")) {
+            return VAI_VALUE;
+        // @TODO: This is some history code, keep it here in case of messing up 
+        } else if (_compareStrings(symbol, "XVS")) {
+            return prices[address(vToken)];
+        } else {
+            return _getUnderlyingPriceInternal(VBep20Interface(vToken));
+        }
+    }
+
+    /**
      * @notice Get the Chainlink price of underlying asset of input vToken or cached price when it's been set
      * @dev The decimals of underlying tokens is considered to ensure the returned prices are in 18 decimals
      * @param vToken vToken address

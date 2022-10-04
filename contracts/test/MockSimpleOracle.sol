@@ -17,6 +17,10 @@ contract MockSimpleOracle is OracleInterface {
     function getUnderlyingPrice(address vToken) external view returns (uint256) {
         return prices[vToken];
     }
+
+    function fetchUnderlyingPrice(address vToken) external returns (uint256) {
+        return prices[vToken];
+    }
 }
 
 contract MockPivotOracle is MockSimpleOracle, PivotOracleInterface {

@@ -4,7 +4,8 @@ pragma experimental ABIEncoderV2;
 
 
 interface OracleInterface {
-    function getUnderlyingPrice(address vToken) external returns (uint256);
+    function getUnderlyingPrice(address vToken) view external returns (uint256);
+    function fetchUnderlyingPrice(address vToken) external returns (uint256);
 }
 
 interface PivotValidatorInterface {

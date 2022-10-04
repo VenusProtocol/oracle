@@ -123,7 +123,36 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
         } else {
             return price.mul(EXP_SCALE).div(10 ** int256(-priceInfo.expo).toUint256());
         }
+    }
 
+    /**
+     * @notice Get price of underlying asset of the input vToken, under the hood this function
+     * get price from Pyth contract, the prices of which are updated externally
+     * @param vToken vToken address
+     * @return price in 10 decimals
+     */
+    function fetchUnderlyingPrice(address vToken) public override returns (uint256) {
+        require(address(underlyingPythOracle) != address(0), "Pyth oracle is zero address");
+        TokenConfig storage tokenConfig = tokenConfigs[vToken];
+        require(tokenConfig.vToken != address(0), "vToken doesn't exist");
+
+        // if the price is expired after it's compared against `maxStalePeriod`, the following call will revert 
+        PythStructs.Price memory priceInfo = underlyingPythOracle.getLatestAvailablePriceWithinDuration(
+            tokenConfig.pythId,
+            tokenConfig.maxStalePeriod
+        );
+        
+        uint256 price = int256(priceInfo.price).toUint256();
+
+        require(price > 0, "Pyth oracle price must be positive");
+        
+        // the price returned from Pyth is price ** 10^expo, which is the real dollar price of the assets
+        // we need to multiply it by 1e18 to make the price 18 decimals
+        if (priceInfo.expo > 0) {
+            return price.mul(EXP_SCALE).mul(10 ** int256(priceInfo.expo).toUint256());
+        } else {
+            return price.mul(EXP_SCALE).div(10 ** int256(-priceInfo.expo).toUint256());
+        }
     }
     
 }
