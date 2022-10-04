@@ -146,7 +146,7 @@ contract TwapOracle is OwnableUpgradeable, OracleInterface {
      * @param vToken vToken address
      * @return price in USD, with 18 decimals
      */
-    function getUnderlyingPrice(address vToken) external view override returns (uint256) {
+    function getUnderlyingPrice(address vToken) public view override returns (uint256) {
         require(tokenConfigs[vToken].vToken != address(0), "vToken not exist");
         uint256 price = prices[vToken];
 

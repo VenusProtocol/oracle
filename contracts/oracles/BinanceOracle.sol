@@ -14,16 +14,16 @@ contract BinanceOracle is Initializable, OracleInterface {
     function initialize(FeedRegistryInterface feed) public initializer {
         feedRegistry = feed;
     }
-
-    function fetchUnderlyingPrice(address vToken) external returns (uint256) {
-        return getUnderlyingPrice(vToken);
-
-    }
-    function getUnderlyingPrice(address vToken) external view returns (uint256) {
+    
+    function getUnderlyingPrice(address vToken) public view returns (uint256) {
         BEP20Interface underlyingToken = BEP20Interface(VBep20Interface(vToken).underlying());
         (,int256 answer,,,) = feedRegistry.latestRoundDataByName(underlyingToken.symbol(), "USD");
 
         //price is returned in 8 decimal places
         return uint256(answer);
+    }
+
+    function fetchUnderlyingPrice(address vToken) external returns (uint256) {
+        return getUnderlyingPrice(vToken);
     }
 }
