@@ -8,7 +8,7 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./interfaces/OracleInterface.sol";
 
 
-contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable {
+contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, OracleInterface {
     using SafeMath for uint256;
 
     uint256 public constant INVALID_PRICE = 0;
@@ -169,7 +169,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable {
      * @param vToken vToken address
      * @return price USD price in 18 decimals
      */
-    function getUnderlyingPrice(address vToken) external returns (uint256) {
+    function getUnderlyingPrice(address vToken) external view returns (uint256) {
         uint256 price = _getUnderlyingPriceInternal(vToken);
         (address fallbackOracle, bool fallbackEnabled) = getOracle(vToken, OracleRole.FALLBACK);
         if (price == INVALID_PRICE && fallbackEnabled && fallbackOracle != address(0)) {
@@ -184,11 +184,34 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable {
     }
 
     /**
+     * @notice Get price of underlying asset of the input vToken, check flow:
+     * - check the global pausing status
+     * - check price from main oracle
+     * - check price against pivot oracle, if any
+     * - if fallback flag is enabled and price is invalidated, fallback
+     * @param vToken vToken address
+     * @return price USD price in 18 decimals
+     */
+    function fetchUnderlyingPrice(address vToken) external returns (uint256) {
+        uint256 price = _fetchUnderlyingPriceInternal(vToken);
+        (address fallbackOracle, bool fallbackEnabled) = getOracle(vToken, OracleRole.FALLBACK);
+        if (price == INVALID_PRICE && fallbackEnabled && fallbackOracle != address(0)) {
+            uint256 fallbackPrice = OracleInterface(fallbackOracle).fetchUnderlyingPrice(vToken);
+            require(fallbackPrice != INVALID_PRICE, "fallback oracle price must be positive");
+            return fallbackPrice;
+        }
+        // if price is 0 here, it means main oracle price is 0 or got invalidated by pivot oracle
+        // and fallback oracle is not active, we revert it
+        require(price != INVALID_PRICE, "invalid resilient oracle price");
+        return price;
+    }
+
+    /**
      * @notice This function won't revert when price is 0, because the fallback oracle may come to play later
      * @param vToken vToken address
      * @return price USD price in 18 decimals
      */
-    function _getUnderlyingPriceInternal(address vToken) internal returns (uint256) {
+    function _getUnderlyingPriceInternal(address vToken) view internal returns (uint256) {
         // Global emergency switch
         require(!paused(), "resilient oracle is paused");
 
@@ -201,6 +224,41 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable {
         }
 
         price = OracleInterface(mainOracle).getUnderlyingPrice(vToken);
+
+        (address pivotOracle, bool pivotOracleEnabled) = getOracle(vToken, OracleRole.PIVOT);
+        
+        // Price oracle is not mandantory
+        if (pivotOracle == address(0) || !pivotOracleEnabled) {
+            return price;
+        }
+
+        // Check the price with pivot oracle
+        bool pass = PivotOracleInterface(pivotOracle).validatePrice(vToken, price);
+        if (!pass) {
+            return INVALID_PRICE;
+        }
+
+        return price;
+    }
+
+    /**
+     * @notice This function won't revert when price is 0, because the fallback oracle may come to play later
+     * @param vToken vToken address
+     * @return price USD price in 18 decimals
+     */
+    function _fetchUnderlyingPriceInternal(address vToken) internal returns (uint256) {
+        // Global emergency switch
+        require(!paused(), "resilient oracle is paused");
+
+        (address mainOracle, bool mainOracleEnabled) = getOracle(vToken, OracleRole.MAIN);
+
+        uint price = INVALID_PRICE;
+
+        if (!mainOracleEnabled) {
+            return price;
+        }
+
+        price = OracleInterface(mainOracle).fetchUnderlyingPrice(vToken);
 
         (address pivotOracle, bool pivotOracleEnabled) = getOracle(vToken, OracleRole.PIVOT);
         
