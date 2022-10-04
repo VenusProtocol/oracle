@@ -163,11 +163,7 @@ contract TwapOracle is OwnableUpgradeable, OracleInterface {
     function fetchUnderlyingPrice(address vToken) external override returns (uint256) {
         require(tokenConfigs[vToken].vToken != address(0), "vToken not exist");
         updateTwap(vToken);
-        uint256 price = prices[vToken];
-
-        // if price is 0, it means the price hasn't been updated yet and it's meaningless, revert
-        require(price > 0, "TWAP price must be positive"); 
-        return price;
+        return getUnderlyingPrice(vToken);
     }
 
     /**
