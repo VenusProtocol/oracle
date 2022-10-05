@@ -2,6 +2,7 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import { expect } from "chai";
 import { artifacts, ethers, upgrades, waffle } from "hardhat";
 import { MockPivotOracle, MockSimpleOracle, ResilientOracle } from "../src/types";
+import { token } from "../src/types/@openzeppelin/contracts";
 import { addr0000, addr1111, getSimpleAddress } from "./utils/data";
 
 const getSimpleOracle = async (account: SignerWithAddress) => {
@@ -312,6 +313,12 @@ describe("Oracle plugin frame unit tests", function () {
       await expect(
         this.oracleBasement.getUnderlyingPrice(token2)
       ).to.be.revertedWith("fallback oracle price must be positive");
+    })
+
+    it('update twap', async function () {
+      expect(await this.pivotOracle.twapUpdated()).to.be.equal(false)
+      await this.oracleBasement.updateOracle(token1)
+      expect(await this.pivotOracle.twapUpdated()).to.be.equal(true)
     })
   });
 });
