@@ -317,7 +317,7 @@ describe("Oracle plugin frame unit tests", function () {
 
     it('update twap', async function () {
       expect(await this.pivotOracle.twapUpdated()).to.be.equal(false)
-      await this.oracleBasement.updateOracle(token1)
+      await this.oracleBasement.updatePrice(token1)
       expect(await this.pivotOracle.twapUpdated()).to.be.equal(true)
     })
   });

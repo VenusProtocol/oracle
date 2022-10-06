@@ -164,7 +164,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @notice Currently it calls the updateTwap
      * @param vToken vToken address
      */
-    function updateOracle(address vToken) external override {
+    function updatePrice(address vToken) external override {
         (address pivotOracle, bool pivotOracleEnabled) = getOracle(vToken, OracleRole.PIVOT);
         if (pivotOracle != address(0) || pivotOracleEnabled) {
             //if PIVOT oracle is PythOrcle it will revert so we need to catch the revert

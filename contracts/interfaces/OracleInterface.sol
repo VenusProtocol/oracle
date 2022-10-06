@@ -8,7 +8,7 @@ interface OracleInterface {
 }
 
 interface ResilientOracleInterface is OracleInterface {
-    function updateOracle(address vToken) external;
+    function updatePrice(address vToken) external;
 }
 
 interface TwapInterface is OracleInterface {
