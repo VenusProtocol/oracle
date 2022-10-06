@@ -138,7 +138,7 @@ contract TwapOracle is OwnableUpgradeable, OracleInterface {
         require(price > 0, "TWAP price must be positive"); 
 
         BEP20Interface underlyingToken = BEP20Interface(VBep20Interface(vToken).underlying());
-        return (price * (18 - underlyingToken.decimals()));
+        return (price * (10 ** (18 - underlyingToken.decimals())));
     }
 
     /**

@@ -122,9 +122,9 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
         // we need to multiply it by 1e18 to make the price 18 decimals
         BEP20Interface underlyingToken = BEP20Interface(VBep20Interface(vToken).underlying());
         if (priceInfo.expo > 0) {
-            return price.mul(EXP_SCALE).mul(10 ** int256(priceInfo.expo).toUint256()) * (18 - underlyingToken.decimals());
+            return price.mul(EXP_SCALE).mul(10 ** int256(priceInfo.expo).toUint256()) * (10 ** (18 - underlyingToken.decimals()));
         } else {
-            return price.mul(EXP_SCALE).div(10 ** int256(-priceInfo.expo).toUint256()) * (18 - underlyingToken.decimals());
+            return price.mul(EXP_SCALE).div(10 ** int256(-priceInfo.expo).toUint256()) * (10 ** (18 - underlyingToken.decimals()));
         }
 
     }

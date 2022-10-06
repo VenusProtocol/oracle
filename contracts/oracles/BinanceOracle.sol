@@ -19,6 +19,6 @@ contract BinanceOracle is Initializable {
         (,int256 answer,,,) = feedRegistry.latestRoundDataByName(underlyingToken.symbol(), "USD");
 
         uint decimalDelta = feedRegistry.decimalsByName(underlyingToken.symbol(), "USD");
-        return (uint256(answer) * (10 ** (18 - decimalDelta))) * (18 - underlyingToken.decimals());
+        return (uint256(answer) * (10 ** (18 - decimalDelta))) * (10 ** (18 - underlyingToken.decimals()));
     }
 }
