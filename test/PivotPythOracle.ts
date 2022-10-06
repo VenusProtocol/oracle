@@ -5,6 +5,7 @@ import { artifacts, ethers, upgrades, waffle } from "hardhat";
 import { PivotPythOracle } from "../src/types";
 import { MockPyth } from "../src/types/contracts/test/MockPyth";
 import { addr0000, addr1111, getBytes32String, getSimpleAddress } from "./utils/data";
+import { makeVToken } from "./utils/makeVToken";
 import { getTime, increaseTime } from "./utils/time";
 
 const EXP_SCALE = BigNumber.from(10).pow(18);
@@ -226,41 +227,47 @@ describe("Oracle plugin frame unit tests", function () {
     })
 
     it('price should be 18 decimals', async function () {
+      let vToken = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
+
       await this.pythOracle.setTokenConfig({
-        vToken: addr1111,
+        vToken: vToken.address,
         pythId: getBytes32String(1),
         maxStalePeriod: 111,
       });
 
-      let price = await this.pythOracle.getUnderlyingPrice(addr1111);
-      // 10000000 * 10**-6 * 10**18 = 1e19
+      let price = await this.pythOracle.getUnderlyingPrice(vToken.address);
+      // 10000000 * 10**-6 * 10**18 * 10**0 = 1e19
       expect(price).to.equal(BigNumber.from(10).pow(19))
+
+      vToken = await makeVToken(this.admin, { name: "vBTC", symbol: "vBTC" }, { name: "Bitcoin", symbol: "BTC", decimals: 8 });
 
       // test another token
       await this.pythOracle.setTokenConfig({
-        vToken: getSimpleAddress(2),
+        vToken: vToken.address,
         pythId: getBytes32String(2),
         maxStalePeriod: 111,
       });
 
-      price = await this.pythOracle.getUnderlyingPrice(getSimpleAddress(2));
-      // 1 * 10**2 * 10**18 = 1e20
-      expect(price).to.equal(BigNumber.from(10).pow(20))
+      price = await this.pythOracle.getUnderlyingPrice(vToken.address);
+      // 1 * 10**2 * 10**18 * 10**10 = 1e30
+      expect(price).to.equal(BigNumber.from(10).pow(30))
     })
   });
 
   describe('validation', function () {
     it('validate price', async function () {
+      const vToken = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
+
       const token0 = getSimpleAddress(3);
       const validationConfig = {
-        vToken: token0,
+        vToken: vToken.address,
         upperBoundRatio: EXP_SCALE.mul(12).div(10),
         lowerBoundRatio: EXP_SCALE.mul(8).div(10),
       }
 
       // set price
       await this.pythOracle.setTokenConfig({
-        vToken: token0,
+        vToken: vToken.address,
         pythId: getBytes32String(3),
         maxStalePeriod: 111,
       });
@@ -288,7 +295,7 @@ describe("Oracle plugin frame unit tests", function () {
 
       // sanity check
       await expect(
-        this.pythOracle.validatePrice(token0, 100)
+        this.pythOracle.validatePrice(vToken.address, 100)
       ).to.be.revertedWith("validation config not exist");
 
       await this.pythOracle.setValidateConfigs([validationConfig]);
@@ -298,11 +305,11 @@ describe("Oracle plugin frame unit tests", function () {
       //   this.pythOracle.validatePrice(token0, 100)
       // ).to.be.revertedWith("anchor price is not valid");
         
-      let validateResult = await this.pythOracle.validatePrice(token0, EXP_SCALE)
+      let validateResult = await this.pythOracle.validatePrice(vToken.address, EXP_SCALE)
       expect(validateResult).to.equal(true);
-      validateResult = await this.pythOracle.validatePrice(token0, EXP_SCALE.mul(100).div(79))
+      validateResult = await this.pythOracle.validatePrice(vToken.address, EXP_SCALE.mul(100).div(79))
       expect(validateResult).to.equal(false);
-      validateResult = await this.pythOracle.validatePrice(token0, EXP_SCALE.mul(100).div(121))
+      validateResult = await this.pythOracle.validatePrice(vToken.address, EXP_SCALE.mul(100).div(121))
       expect(validateResult).to.equal(false);
     })
   })
