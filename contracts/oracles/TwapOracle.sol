@@ -5,6 +5,8 @@ pragma experimental ABIEncoderV2;
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../libraries/PancakeLibrary.sol";
 import "../interfaces/OracleInterface.sol";
+import "../interfaces/BEP20Interface.sol";
+import "../interfaces/VBep20Interface.sol";
 
 struct Observation {
     uint256 timestamp;
@@ -134,7 +136,9 @@ contract TwapOracle is OwnableUpgradeable, OracleInterface {
 
         // if price is 0, it means the price hasn't been updated yet and it's meaningless, revert
         require(price > 0, "TWAP price must be positive"); 
-        return price;
+
+        BEP20Interface underlyingToken = BEP20Interface(VBep20Interface(vToken).underlying());
+        return (price * (18 - underlyingToken.decimals()));
     }
 
     /**
