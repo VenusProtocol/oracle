@@ -7,7 +7,7 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./interfaces/OracleInterface.sol";
 
 
-contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable {
+contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOracleInterface {
 
     uint256 public constant INVALID_PRICE = 0;
 

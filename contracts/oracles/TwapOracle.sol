@@ -29,7 +29,7 @@ struct TokenConfig {
     uint256 anchorPeriod;
 }
 
-contract TwapOracle is OwnableUpgradeable, OracleInterface {
+contract TwapOracle is OwnableUpgradeable, TwapInterface {
     using FixedPoint for *;
 
     /// @notice vBNB address
