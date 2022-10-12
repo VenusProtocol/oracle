@@ -19,8 +19,9 @@ contract MockSimpleOracle is OracleInterface {
     }
 }
 
-contract MockPivotOracle is MockSimpleOracle, PivotOracleInterface {
+contract MockPivotOracle is MockSimpleOracle, PivotOracleInterface, TwapInterface {
     mapping(address => bool) public validateResults;
+    bool public twapUpdated;
 
     constructor() {
         //
@@ -32,6 +33,10 @@ contract MockPivotOracle is MockSimpleOracle, PivotOracleInterface {
 
     function validatePrice(address vToken, uint256 price) external view returns (bool) {
         return validateResults[vToken];
+    }
+
+    function updateTwap(address vToken) external override returns (uint256) {
+        twapUpdated = true;
     }
 }
 

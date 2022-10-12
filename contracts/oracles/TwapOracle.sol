@@ -29,7 +29,7 @@ struct TokenConfig {
     uint256 anchorPeriod;
 }
 
-contract TwapOracle is OwnableUpgradeable, OracleInterface {
+contract TwapOracle is OwnableUpgradeable, TwapInterface {
     using SafeMath for uint256;
     using FixedPoint for *;
 
@@ -153,7 +153,7 @@ contract TwapOracle is OwnableUpgradeable, OracleInterface {
         }
     }
 
-    function updateTwap(address vToken) public returns (uint256) {
+    function updateTwap(address vToken) override public returns (uint256) {
         require(tokenConfigs[vToken].vToken != address(0), "vTokne not exist");
         // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
         if (vToken != vBNB && tokenConfigs[vToken].isBnbBased) {
