@@ -154,13 +154,8 @@ contract TwapOracle is OwnableUpgradeable, OracleInterface {
         }
     }
 
-<<<<<<< HEAD
     function updateTwap(address vToken) public returns (uint256) {
         require(tokenConfigs[vToken].vToken != address(0), "vToken not exist");
-=======
-    function updateTwap(address vToken) override public returns (uint256) {
-        require(tokenConfigs[vToken].vToken != address(0), "vTokne not exist");
->>>>>>> develop
         // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
         if (vToken != vBNB && tokenConfigs[vToken].isBnbBased) {
             updateTwap(vBNB);
