@@ -38,26 +38,28 @@ describe("Twap Oracle unit tests", function () {
     const admin = signers[0];
     this.signers = signers;
     this.admin = admin;
-    const vBnb = (await makeVToken(this.admin, { name: "vBNB", symbol: "vBNB" }, { name: "BNB", symbol: "BNB" })).address; 
+    const vBnb = (await makeVToken(this.admin, { name: "vBNB", symbol: "vBNB" }, { name: "BNB", symbol: "BNB" })); 
 
     const PivotTwapOracle = await ethers.getContractFactory("PivotTwapOracle", admin);
-    const instance = <PivotTwapOracle>await upgrades.deployProxy(PivotTwapOracle, [vBnb]);
+    const instance = <PivotTwapOracle>await upgrades.deployProxy(PivotTwapOracle, [vBnb.address]);
     this.twapOracle = instance;
 
-    const token1 = await makeToken(this.admin, 'TOKEN1', 'TOKEN1', 18);
+    const vToken1 = (await makeVToken(this.admin, { name: "vTOKEN1", symbol: "vTOKEN1" }, { name: "TOKEN1", symbol: "TOKEN1" })); 
     const tokenBusd = await makeToken(this.admin, 'BUSD', 'BUSD', 18);
-    const simplePair = await makePairWithTokens(this.admin, token1, tokenBusd);
+    const simplePair = await makePairWithTokens(this.admin, await vToken1.underlying(), tokenBusd.address);
     this.simplePair = simplePair;
 
     // set up bnb based pair for later test
     const token3 = await makeToken(this.admin, 'TOKEN3', 'TOKEN3', 18);
     const BEP20HarnessFactory = await ethers.getContractFactory('BEP20Harness');
     const tokenWbnb = BEP20HarnessFactory.attach(await this.twapOracle.vBNB());
-    const bnbBasedPair = await makePairWithTokens(this.admin, token3, tokenWbnb);
+    const bnbBasedPair = await makePairWithTokens(this.admin, token3.address, tokenWbnb.address);
     this.bnbBasedPair = bnbBasedPair;
 
-    const bnbPair = await makePairWithTokens(this.admin, tokenBusd, tokenWbnb);
+    const bnbPair = await makePairWithTokens(this.admin, tokenBusd.address, tokenWbnb.address);
     this.bnbPair = bnbPair;
+    this.vBnb = vBnb
+    this.vToken1 = vToken1
   });
 
   describe('constructor', function () {
@@ -393,7 +395,6 @@ describe("Twap Oracle unit tests", function () {
 
         const token0 = (await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" }));
         const token1 = (await makeVToken(this.admin, { name: "vMATIC", symbol: "vMATIC" }, { name: "Matic", symbol: "MATIC" }));
-        const vBnb = (await makeVToken(this.admin, { name: "vBNB", symbol: "vBNB" }, { name: "BNB", symbol: "BNB" })); 
         this.tokenConfig = {
           asset:  await token0.underlying(),
           baseUnit: EXP_SCALE,
@@ -404,7 +405,7 @@ describe("Twap Oracle unit tests", function () {
         };
         // prepare busd-bnb config
         this.bnbConfig = {
-          asset: await vBnb.underlying(),
+          asset: await this.vBnb.underlying(),
           baseUnit: EXP_SCALE,
           pancakePool: this.bnbPair.address,
           isBnbBased: false,
@@ -413,13 +414,12 @@ describe("Twap Oracle unit tests", function () {
         }
         this.token0 = token0;
         this.token1 = token1;
-        this.vBnb = vBnb
         await this.twapOracle.setTokenConfig(this.tokenConfig);
       });
       it('if no BNB config is added, revert', async function () {
         await expect(
           this.twapOracle.updateTwap(this.token0.address)
-        ).to.be.revertedWith("vToken not exist");
+        ).to.be.revertedWith("asset not exist");
       });
 
       it('twap calculation', async function () {
@@ -459,7 +459,7 @@ describe("Twap Oracle unit tests", function () {
         await this.twapOracle.updateTwap(this.token0.address);
 
         oldObservation = await this.twapOracle.oldObservations(await this.token0.underlying());
-        bnbPrice = await this.twapOracle.getUnderlyingPrice(this.vbnb.address);
+        bnbPrice = await this.twapOracle.getUnderlyingPrice(this.vBnb.address);
         ts2 = await getTime();
         newAcc = Q112.mul(100).div(200).mul(ts2 - pairLastTime).add(cp0);
         oldAcc = oldObservation.acc;
@@ -472,9 +472,11 @@ describe("Twap Oracle unit tests", function () {
 
   describe('validation', function () {
     it('validate price', async function () {
-      const token0 = (await makeVToken(this.admin, { name: "vBNB1", symbol: "vBNB1" }, { name: "BNB1", symbol: "BNB1" })); 
+      const token0 = await this.simplePair.token0();
+      const token2 = (await makeVToken(this.admin, { name: "vBNB2", symbol: "vBNB2" }, { name: "BNB2", symbol: "BNB2" })); 
+
       const validationConfig = {
-        asset: await token0.underlying(),
+        asset: await this.vToken1.underlying(),
         upperBoundRatio: EXP_SCALE.mul(12).div(10),
         lowerBoundRatio: EXP_SCALE.mul(8).div(10),
       }
@@ -482,11 +484,11 @@ describe("Twap Oracle unit tests", function () {
 
       // sanity check
       await expect(
-        this.twapOracle.validatePrice(token0.address, 100)
+        this.twapOracle.validatePrice(token2.address, 100)
       ).to.be.revertedWith("validation config not exist");
       
       const tokenConfig = {
-        asset: await token0.underlying(),
+        asset: await this.vToken1.underlying(),
         baseUnit: EXP_SCALE,
         pancakePool: this.simplePair.address,
         isBnbBased: false,
@@ -497,16 +499,16 @@ describe("Twap Oracle unit tests", function () {
 
       // without updateTwap the price is not written and should revert
       await expect(
-        this.twapOracle.validatePrice(token0.address, 100)
+        this.twapOracle.validatePrice(this.vToken1.address, 100)
       ).to.be.revertedWith("anchor price is not valid");
         
-      await this.twapOracle.updateTwap(token0.address);
+      await this.twapOracle.updateTwap(this.vToken1.address);
 
-      let validateResult = await this.twapOracle.validatePrice(await token0.underlying(), EXP_SCALE)
+      let validateResult = await this.twapOracle.validatePrice(this.vToken1.address, EXP_SCALE)
       expect(validateResult).to.equal(true);
-      validateResult = await this.twapOracle.validatePrice(await token0.underlying(), EXP_SCALE.mul(100).div(79))
+      validateResult = await this.twapOracle.validatePrice(this.vToken1.address, EXP_SCALE.mul(100).div(79))
       expect(validateResult).to.equal(false);
-      validateResult = await this.twapOracle.validatePrice(await token0.underlying(), EXP_SCALE.mul(100).div(121))
+      validateResult = await this.twapOracle.validatePrice(this.vToken1.address, EXP_SCALE.mul(100).div(121))
       expect(validateResult).to.equal(false);
     })
   })

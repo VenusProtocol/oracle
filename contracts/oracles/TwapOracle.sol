@@ -193,7 +193,8 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
 
         // if this token is paired with BNB, convert its price to USD
         if (config.isBnbBased) {
-            uint256 bnbPrice = prices[vBNB];
+            address asset = VBep20Interface(vBNB).underlying();
+            uint256 bnbPrice = prices[asset];
             require(bnbPrice != 0, "bnb price is invalid");
             anchorPriceMantissa = (anchorPriceMantissa * bnbPrice) / bnbBaseUnit;
         }

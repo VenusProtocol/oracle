@@ -4,6 +4,8 @@ pragma experimental ABIEncoderV2;
 
 import "./BoundValidator.sol";
 import "./TwapOracle.sol";
+import "../interfaces/BEP20Interface.sol";
+import "../interfaces/VBep20Interface.sol";
 
 contract PivotTwapOracle is TwapOracle, BoundValidator, PivotOracleInterface {
     /**
@@ -12,6 +14,7 @@ contract PivotTwapOracle is TwapOracle, BoundValidator, PivotOracleInterface {
      * @param reporterPrice the price to be tested
      */
     function validatePrice(address vToken, uint256 reporterPrice) external view override returns (bool) {
-        return validatePriceWithAnchorPrice(vToken, reporterPrice, prices[vToken]);
+        address asset = VBep20Interface(vToken).underlying();
+        return validatePriceWithAnchorPrice(vToken, reporterPrice, prices[asset]);
     }
 }
