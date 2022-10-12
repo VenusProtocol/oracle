@@ -72,7 +72,7 @@ contract BoundValidator is OwnableUpgradeable {
 
         require(validateConfigs[asset].upperBoundRatio != 0, "validation config not exist");
         require(anchorPrice != 0, "anchor price is not valid");
-        return _isWithinAnchor(vToken, reporterPrice, anchorPrice);
+        return _isWithinAnchor(asset, reporterPrice, anchorPrice);
     }
 
     /**
