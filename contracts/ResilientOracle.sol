@@ -159,6 +159,18 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable {
     }
 
     /**
+     * @notice Currently it calls the updateTwap
+     * @param vToken vToken address
+     */
+    function updatePrice(address vToken) external override {
+        (address pivotOracle, bool pivotOracleEnabled) = getOracle(vToken, OracleRole.PIVOT);
+        if (pivotOracle != address(0) && pivotOracleEnabled) {
+            //if PIVOT oracle is PythOrcle it will revert so we need to catch the revert
+            try TwapInterface(pivotOracle).updateTwap(vToken) returns (uint256 _price) {} catch {}
+        }
+    }
+
+    /**
      * @notice Get price of underlying asset of the input vToken, check flow:
      * - check the global pausing status
      * - check price from main oracle
@@ -167,7 +179,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable {
      * @param vToken vToken address
      * @return price USD price in 18 decimals
      */
-    function getUnderlyingPrice(address vToken) external view returns (uint256) {
+    function getUnderlyingPrice(address vToken) external view override returns (uint256) {
         uint256 price = _getUnderlyingPriceInternal(vToken);
         (address fallbackOracle, bool fallbackEnabled) = getOracle(vToken, OracleRole.FALLBACK);
         if (price == INVALID_PRICE && fallbackEnabled && fallbackOracle != address(0)) {
