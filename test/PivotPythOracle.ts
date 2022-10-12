@@ -262,7 +262,7 @@ describe("Oracle plugin frame unit tests", function () {
 
       const token0 = getSimpleAddress(3);
       const validationConfig = {
-        vToken: vToken.address,
+        asset: await vToken.underlying(),
         upperBoundRatio: EXP_SCALE.mul(12).div(10),
         lowerBoundRatio: EXP_SCALE.mul(8).div(10),
       }

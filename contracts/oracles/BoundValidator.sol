@@ -3,10 +3,12 @@ pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "../interfaces/BEP20Interface.sol";
+import "../interfaces/VBep20Interface.sol";
 
 struct ValidateConfig {
-    /// @notice vToken address
-    address vToken;
+    /// @notice asset address
+    address asset;
     /// @notice upper bound of deviation between reported price and anchor price,
     /// beyond which the reported price will be invalidated 
     uint256 upperBoundRatio;
@@ -18,12 +20,12 @@ struct ValidateConfig {
 // BoundValidator provides some common functions and can be used
 // to wrap up other contracts to form pivot oracles
 contract BoundValidator is OwnableUpgradeable {
-    /// @notice validation configs by token
+    /// @notice validation configs by asset
     mapping(address => ValidateConfig) public validateConfigs;
 
     /// @notice Emit this event when new validate configs are added
     event ValidateConfigAdded(
-        address indexed vToken, 
+        address indexed asset, 
         uint256 indexed upperBound,
         uint256 indexed lowerBound
     );
@@ -45,19 +47,19 @@ contract BoundValidator is OwnableUpgradeable {
      */
     function setValidateConfig(ValidateConfig memory config) public virtual onlyOwner()
     {
-        require(config.vToken != address(0), "vToken can't be zero address");
+        require(config.asset != address(0), "asset can't be zero address");
         require(config.upperBoundRatio > 0 && config.lowerBoundRatio > 0, "bound must be positive");
         require(config.upperBoundRatio > config.lowerBoundRatio, "upper bound must be higher than lowner bound");
-        validateConfigs[config.vToken] = config;
+        validateConfigs[config.asset] = config;
         emit ValidateConfigAdded(
-            config.vToken, 
+            config.asset, 
             config.upperBoundRatio,
             config.lowerBoundRatio
         );
     }
     
     /**
-     * @notice Test reported vToken underlying price against anchor price
+     * @notice Test reported asset price against anchor price
      * @param vToken vToken address
      * @param reporterPrice the price to be tested
      */
@@ -66,22 +68,24 @@ contract BoundValidator is OwnableUpgradeable {
         uint256 reporterPrice, 
         uint256 anchorPrice) public view virtual returns (bool) 
     {
-        require(validateConfigs[vToken].upperBoundRatio != 0, "validation config not exist");
+        address asset = VBep20Interface(vToken).underlying();
+
+        require(validateConfigs[asset].upperBoundRatio != 0, "validation config not exist");
         require(anchorPrice != 0, "anchor price is not valid");
         return _isWithinAnchor(vToken, reporterPrice, anchorPrice);
     }
 
     /**
      * @notice Test whether the reported price is within the predefined bounds
-     * @param vToken vToken address
+     * @param asset asset address
      * @param reporterPrice the price to be tested
      * @param anchorPrice anchor price as testing anchor
      */
-    function _isWithinAnchor(address vToken, uint256 reporterPrice, uint256 anchorPrice) internal view returns (bool) {
+    function _isWithinAnchor(address asset, uint256 reporterPrice, uint256 anchorPrice) internal view returns (bool) {
         if (reporterPrice > 0) {
             uint256 anchorRatio = (anchorPrice * 100e16) / reporterPrice;
-            uint256 upperBoundAnchorRatio = validateConfigs[vToken].upperBoundRatio;
-            uint256 lowerBoundAnchorRatio = validateConfigs[vToken].lowerBoundRatio;
+            uint256 upperBoundAnchorRatio = validateConfigs[asset].upperBoundRatio;
+            uint256 lowerBoundAnchorRatio = validateConfigs[asset].lowerBoundRatio;
             return anchorRatio <= upperBoundAnchorRatio && anchorRatio >= lowerBoundAnchorRatio;
         }
         return false;
