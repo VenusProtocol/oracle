@@ -14,8 +14,8 @@ struct Observation {
 }
 
 struct TokenConfig {
-    /// @notice vToken address, which can't be zero address and can be used for existance check
-    address vToken;
+    /// @notice asset address, which can't be zero address and can be used for existance check
+    address asset;
     /// @notice Decimals of underlying asset
     uint256 baseUnit;
     /// @notice The address of pancake pair
@@ -56,7 +56,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
 
     /// @notice Emit this event when TWAP window is updated
     event TwapWindowUpdated(
-        address indexed vToken, 
+        address indexed asset, 
         uint256 oldTimestamp, 
         uint256 oldAcc, 
         uint256 newTimestamp, 
@@ -64,7 +64,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
 
     /// @notice Emit this event when TWAP price is updated
     event AnchorPriceUpdated(
-        address indexed vToken,
+        address indexed asset,
         uint256 price, 
         uint256 oldTimestamp, 
         uint256 newTimestamp
@@ -72,7 +72,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
 
     /// @notice Emit this event when new token configs are added
     event TokenConfigAdded(
-        address indexed vToken, 
+        address indexed asset, 
         address indexed pancakePool,
         uint256 indexed anchorPeriod
     );
@@ -105,7 +105,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
      */
     function setTokenConfig(TokenConfig memory config) public 
         onlyOwner()
-        notNullAddress(config.vToken)
+        notNullAddress(config.asset)
         notNullAddress(config.pancakePool)
     {
         require(config.anchorPeriod > 0, "anchor period must be positive");
@@ -113,13 +113,13 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
         uint256 cumulativePrice = currentCumulativePrice(config);
 
         // Initialize observation data
-        oldObservations[config.vToken].timestamp = block.timestamp;
-        newObservations[config.vToken].timestamp = block.timestamp;
-        oldObservations[config.vToken].acc = cumulativePrice;
-        newObservations[config.vToken].acc = cumulativePrice;
-        tokenConfigs[config.vToken] = config;
+        oldObservations[config.asset].timestamp = block.timestamp;
+        newObservations[config.asset].timestamp = block.timestamp;
+        oldObservations[config.asset].acc = cumulativePrice;
+        newObservations[config.asset].acc = cumulativePrice;
+        tokenConfigs[config.asset] = config;
         emit TokenConfigAdded(
-            config.vToken, 
+            config.asset, 
             config.pancakePool,
             config.anchorPeriod
         );
@@ -131,8 +131,10 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
      * @return price in USD, with 18 decimals
      */
     function getUnderlyingPrice(address vToken) external override view returns (uint256) {
-        require(tokenConfigs[vToken].vToken != address(0), "vToken not exist");
-        uint256 price = prices[vToken];
+        address asset = VBep20Interface(vToken).underlying();
+        require(tokenConfigs[asset].asset != address(0), "asset not exist");
+        
+        uint256 price = prices[asset];
 
         // if price is 0, it means the price hasn't been updated yet and it's meaningless, revert
         require(price > 0, "TWAP price must be positive"); 
@@ -155,12 +157,13 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     }
 
     function updateTwap(address vToken) public returns (uint256) {
-        require(tokenConfigs[vToken].vToken != address(0), "vToken not exist");
+        address asset = VBep20Interface(vToken).underlying();
+        require(tokenConfigs[asset].asset != address(0), "asset not exist");
         // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
-        if (vToken != vBNB && tokenConfigs[vToken].isBnbBased) {
+        if (vToken != vBNB && tokenConfigs[asset].isBnbBased) {
             updateTwap(vBNB);
         }
-        return _updateTwapInternal(tokenConfigs[vToken]);
+        return _updateTwapInternal(tokenConfigs[asset]);
     }
 
     /**
@@ -197,10 +200,10 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
 
         require(anchorPriceMantissa != 0, "twap price cannot be 0");
 
-        emit AnchorPriceUpdated(config.vToken, anchorPriceMantissa, oldTimestamp, block.timestamp);
+        emit AnchorPriceUpdated(config.asset, anchorPriceMantissa, oldTimestamp, block.timestamp);
         
         // save anchor price, which is 1e18 decimals
-        prices[config.vToken] = anchorPriceMantissa;
+        prices[config.asset] = anchorPriceMantissa;
 
         return anchorPriceMantissa;
     }
@@ -212,24 +215,24 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     function pokeWindowValues(TokenConfig memory config) internal returns (uint256, uint256, uint256) {
         uint256 cumulativePrice = currentCumulativePrice(config);
 
-        Observation memory newObservation = newObservations[config.vToken];
+        Observation memory newObservation = newObservations[config.asset];
 
         // Update new and old observations if elapsed time is greater than or equal to anchor period
         uint256 timeElapsed = block.timestamp - newObservation.timestamp;
         if (timeElapsed >= config.anchorPeriod) {
-            oldObservations[config.vToken].timestamp = newObservation.timestamp;
-            oldObservations[config.vToken].acc = newObservation.acc;
+            oldObservations[config.asset].timestamp = newObservation.timestamp;
+            oldObservations[config.asset].acc = newObservation.acc;
 
-            newObservations[config.vToken].timestamp = block.timestamp;
-            newObservations[config.vToken].acc = cumulativePrice;
+            newObservations[config.asset].timestamp = block.timestamp;
+            newObservations[config.asset].acc = cumulativePrice;
             emit TwapWindowUpdated(
-                config.vToken,
+                config.asset,
                 newObservation.timestamp,
                 block.timestamp, 
                 newObservation.acc, 
                 cumulativePrice
             );
         }
-        return (cumulativePrice, oldObservations[config.vToken].acc, oldObservations[config.vToken].timestamp);
+        return (cumulativePrice, oldObservations[config.asset].acc, oldObservations[config.asset].timestamp);
     }
 }
