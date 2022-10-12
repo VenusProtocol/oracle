@@ -20,4 +20,10 @@ contract MockBinanceFeedRegistry is FeedRegistryInterface {
         quote;
         return (0, int256(assetPrices[base]), 0, 0, 0);
     }
+
+    function decimalsByName(string memory base, string memory quote) override external view returns (
+        uint8
+    ) {
+        return 8;
+    }
 }

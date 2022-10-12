@@ -192,11 +192,6 @@ describe("Oracle unit tests", function () {
       expect(price).to.equal("1000000000000000000");
     });
 
-    it("gets the constant price of XVS", async function () {
-      const price = await this.chainlinkOracle.getUnderlyingPrice(this.xvs.address);
-      expect(price).to.equal("7");
-    });
-
     it("gets the direct price of a set asset", async function () {
       const price = await this.chainlinkOracle.getUnderlyingPrice(this.vExampleSet.address);
       expect(price).to.equal("1");

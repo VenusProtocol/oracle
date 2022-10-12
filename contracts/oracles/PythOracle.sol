@@ -7,6 +7,8 @@ import "@openzeppelin/contracts/utils/math/SignedMath.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/PythInterface.sol";
 import "../interfaces/OracleInterface.sol";
+import "../interfaces/BEP20Interface.sol";
+import "../interfaces/VBep20Interface.sol";
 
 struct TokenConfig {
     bytes32 pythId;
@@ -118,10 +120,11 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
         
         // the price returned from Pyth is price ** 10^expo, which is the real dollar price of the assets
         // we need to multiply it by 1e18 to make the price 18 decimals
+        BEP20Interface underlyingToken = BEP20Interface(VBep20Interface(vToken).underlying());
         if (priceInfo.expo > 0) {
-            return price.mul(EXP_SCALE).mul(10 ** int256(priceInfo.expo).toUint256());
+            return price.mul(EXP_SCALE).mul(10 ** int256(priceInfo.expo).toUint256()) * (10 ** (18 - underlyingToken.decimals()));
         } else {
-            return price.mul(EXP_SCALE).div(10 ** int256(-priceInfo.expo).toUint256());
+            return price.mul(EXP_SCALE).div(10 ** int256(-priceInfo.expo).toUint256()) * (10 ** (18 - underlyingToken.decimals()));
         }
 
     }

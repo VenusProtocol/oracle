@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/AggregatorV2V3Interface.sol";
 import "../interfaces/OracleInterface.sol";
@@ -18,8 +17,6 @@ struct TokenConfig {
 }
 
 contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
-    using SafeMath for uint256;
-
     /// @notice VAI token is considered $1 constantly in oracle for now
     uint256 public constant VAI_VALUE = 1e18;
 
@@ -67,8 +64,6 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
         } else if (_compareStrings(symbol, "VAI")) {
             return VAI_VALUE;
         // @TODO: This is some history code, keep it here in case of messing up 
-        } else if (_compareStrings(symbol, "XVS")) {
-            return prices[address(vToken)];
         } else {
             return _getUnderlyingPriceInternal(VBep20Interface(vToken));
         }
@@ -89,8 +84,8 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
             price = _getChainlinkPrice(address(vToken));
         }
 
-        uint256 decimalDelta = uint256(18).sub(uint256(token.decimals()));
-        return price.mul(10**decimalDelta);
+        uint256 decimalDelta = uint256(18) - uint256(token.decimals());
+        return price * (10 ** decimalDelta);
     }
 
     /**
@@ -111,15 +106,16 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
         uint256 maxStalePeriod = tokenConfig.maxStalePeriod;
 
         // Chainlink USD-denominated feeds store answers at 8 decimals, mostly
-        uint256 decimalDelta = uint256(18).sub(feed.decimals());
+        uint256 decimalDelta = uint256(18) - feed.decimals();
 
         (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
         require(answer > 0, "chainlink price must be positive");
-
-        uint256 deltaTime = block.timestamp.sub(updatedAt, "updatedAt exceeds block time");
+        
+        require(block.timestamp > updatedAt, "updatedAt exceeds block time");
+        uint256 deltaTime = block.timestamp - updatedAt;
         require(deltaTime <= maxStalePeriod, "chainlink price expired");
 
-        return uint256(answer).mul(10**decimalDelta);
+        return uint256(answer) * (10 ** decimalDelta);
     }
 
     /**
