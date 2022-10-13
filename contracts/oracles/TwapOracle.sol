@@ -32,8 +32,8 @@ struct TokenConfig {
 contract TwapOracle is OwnableUpgradeable, TwapInterface {
     using FixedPoint for *;
 
-    /// @notice vBNB address
-    address public vBNB;
+    /// @notice WBNB address
+    address public WBNB;
 
     /// @notice the base unit of WBNB and BUSD, which are the paired tokens for all assets
     uint256 public constant bnbBaseUnit = 1e18;
@@ -82,10 +82,10 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
         _;
     }
 
-    function initialize(address vBNB_) public initializer {
+    function initialize(address WBNB_) public initializer {
         __Ownable_init();
-        require(vBNB_ != address(0), "vBNB can't be zero address");
-        vBNB = vBNB_;
+        require(WBNB_ != address(0), "WBNB can't be zero address");
+        WBNB = WBNB_;
     }
 
     /**
@@ -160,8 +160,9 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
         address asset = VBep20Interface(vToken).underlying();
         require(tokenConfigs[asset].asset != address(0), "asset not exist");
         // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
-        if (vToken != vBNB && tokenConfigs[asset].isBnbBased) {
-            updateTwap(vBNB);
+        if (asset != WBNB && tokenConfigs[asset].isBnbBased) {
+            require(tokenConfigs[WBNB].asset != address(0), "WBNB not exist");
+            _updateTwapInternal(tokenConfigs[WBNB]);
         }
         return _updateTwapInternal(tokenConfigs[asset]);
     }
@@ -193,8 +194,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
 
         // if this token is paired with BNB, convert its price to USD
         if (config.isBnbBased) {
-            address asset = VBep20Interface(vBNB).underlying();
-            uint256 bnbPrice = prices[asset];
+            uint256 bnbPrice = prices[WBNB];
             require(bnbPrice != 0, "bnb price is invalid");
             anchorPriceMantissa = (anchorPriceMantissa * bnbPrice) / bnbBaseUnit;
         }

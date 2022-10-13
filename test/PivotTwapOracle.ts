@@ -41,21 +41,21 @@ describe("Twap Oracle unit tests", function () {
     const vBnb = (await makeVToken(this.admin, { name: "vBNB", symbol: "vBNB" }, { name: "BNB", symbol: "BNB" })); 
 
     const PivotTwapOracle = await ethers.getContractFactory("PivotTwapOracle", admin);
-    const instance = <PivotTwapOracle>await upgrades.deployProxy(PivotTwapOracle, [vBnb.address]);
+    const instance = <PivotTwapOracle>await upgrades.deployProxy(PivotTwapOracle, [await vBnb.underlying()]);
     this.twapOracle = instance;
 
     const vToken1 = (await makeVToken(this.admin, { name: "vTOKEN1", symbol: "vTOKEN1" }, { name: "TOKEN1", symbol: "TOKEN1" })); 
     const tokenBusd = await makeToken(this.admin, 'BUSD', 'BUSD', 18);
     const simplePair = await makePairWithTokens(this.admin, await vToken1.underlying(), tokenBusd.address);
     this.simplePair = simplePair;
-
+    
     // set up bnb based pair for later test
     const token3 = await makeToken(this.admin, 'TOKEN3', 'TOKEN3', 18);
     const BEP20HarnessFactory = await ethers.getContractFactory('BEP20Harness');
-    const tokenWbnb = BEP20HarnessFactory.attach(await this.twapOracle.vBNB());
+    const tokenWbnb = BEP20HarnessFactory.attach(await this.twapOracle.WBNB());
     const bnbBasedPair = await makePairWithTokens(this.admin, token3.address, tokenWbnb.address);
     this.bnbBasedPair = bnbBasedPair;
-
+   
     const bnbPair = await makePairWithTokens(this.admin, tokenBusd.address, tokenWbnb.address);
     this.bnbPair = bnbPair;
     this.vBnb = vBnb
@@ -419,7 +419,7 @@ describe("Twap Oracle unit tests", function () {
       it('if no BNB config is added, revert', async function () {
         await expect(
           this.twapOracle.updateTwap(this.token0.address)
-        ).to.be.revertedWith("asset not exist");
+        ).to.be.revertedWith("WBNB not exist");
       });
 
       it('twap calculation', async function () {
