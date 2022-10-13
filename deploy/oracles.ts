@@ -10,7 +10,7 @@ const func: DeployFunction = async function ({
     network
 }: HardhatRuntimeEnvironment) {
     const { deploy } = deployments
-    const { deployer, dev } = await getNamedAccounts()
+    const { deployer } = await getNamedAccounts()
 
     await deploy('ResilientOracle', {
         from: deployer,
@@ -39,7 +39,8 @@ const func: DeployFunction = async function ({
         }
     });
 
-    const vBNBAddress = networks.Contracts.vBNB;
+    // @todo: just testnet address, will be replaced to mainnet version in the future
+    const WBNBAddress = "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd";
 
     await deploy('PivotTwapOracle', {
         contract: network.live ? 'PivotTwapOracle' : 'MockPivotTwapOracle',
@@ -50,7 +51,7 @@ const func: DeployFunction = async function ({
             proxyContract: 'OptimizedTransparentProxy',
             execute: {
                 methodName: 'initialize',
-                args: [vBNBAddress]
+                args: [WBNBAddress]
             }
         }
     });
