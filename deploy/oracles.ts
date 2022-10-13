@@ -2,7 +2,7 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/dist/types'
 
-import networks from '@venusprotocol/venus-protocol/networks/mainnet.json';
+// import networks from '@venusprotocol/venus-protocol/networks/mainnet.json';
 
 const func: DeployFunction = async function ({
     getNamedAccounts,
