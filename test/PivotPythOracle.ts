@@ -40,7 +40,7 @@ describe("Oracle plugin frame unit tests", function () {
     it('only admin can call the setters', async function () {
       const config = {
         pythId: getBytes32String(2),
-        vToken: addr1111,
+        asset: addr1111,
         maxStalePeriod: 10,
       };
       // setTokenConfigs
@@ -62,14 +62,14 @@ describe("Oracle plugin frame unit tests", function () {
     it('transfer owner', async function () {
       const config = {
         pythId: getBytes32String(2),
-        vToken: addr1111,
+        asset: addr1111,
         maxStalePeriod: 10,
       };
       await this.pythOracle.transferOwnership(this.signers[2].address);
       const newOwner = await this.pythOracle.owner();
       expect(newOwner).to.equal(this.signers[2].address);
       await this.pythOracle.connect(this.signers[2]).setTokenConfigs([config]);
-      expect((await this.pythOracle.tokenConfigs(addr1111)).vToken).to.equal(addr1111);
+      expect((await this.pythOracle.tokenConfigs(addr1111)).asset).to.equal(addr1111);
     })
   });
 
@@ -79,7 +79,7 @@ describe("Oracle plugin frame unit tests", function () {
         await expect(
           this.pythOracle.setTokenConfig({
             pythId: getBytes32String(2),
-            vToken: addr0000,
+            asset: addr0000,
             maxStalePeriod: 10,
           })
         ).to.be.revertedWith("can't be zero address");
@@ -87,7 +87,7 @@ describe("Oracle plugin frame unit tests", function () {
         await expect(
           this.pythOracle.setTokenConfig({
             pythId: getBytes32String(2),
-            vToken: addr1111,
+            asset: addr1111,
             maxStalePeriod: 0,
           })
         ).to.be.revertedWith("max stale period cannot be 0");
@@ -95,7 +95,7 @@ describe("Oracle plugin frame unit tests", function () {
 
       it('token config added successfully & events check', async function () {
         const result = await this.pythOracle.setTokenConfig({
-          vToken: addr1111,
+          asset: addr1111,
           pythId: getBytes32String(2),
           maxStalePeriod: 111,
         });
@@ -114,15 +114,15 @@ describe("Oracle plugin frame unit tests", function () {
 
       it('token config added successfully & data check', async function () {
         await this.pythOracle.setTokenConfigs([{
-          vToken: addr1111,
+          asset: addr1111,
           pythId: getBytes32String(2),
           maxStalePeriod: 111,
         }, {
-          vToken: getSimpleAddress(2),
+          asset: getSimpleAddress(2),
           pythId: getBytes32String(3),
           maxStalePeriod: 222,
         }]);
-        expect((await this.pythOracle.tokenConfigs(addr1111)).vToken).to.equal(addr1111);
+        expect((await this.pythOracle.tokenConfigs(addr1111)).asset).to.equal(addr1111);
         expect((await this.pythOracle.tokenConfigs(getSimpleAddress(2))).maxStalePeriod).to.equal(222);
       })
     });
@@ -169,22 +169,24 @@ describe("Oracle plugin frame unit tests", function () {
         prevConf: 0,
         prevPublishTime: 0,
       }])
+
+      this.vETH = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
     })
-    it('revert when vToken not exist', async function () {
+    it('revert when asset not exist', async function () {
       await expect(
-        this.pythOracle.getUnderlyingPrice(addr1111)
-      ).to.be.revertedWith("vToken doesn't exist");
+        this.pythOracle.getUnderlyingPrice(this.vETH.address)
+      ).to.be.revertedWith("asset doesn't exist");
     })
 
     it('revert when price is expired', async function () {
       await this.pythOracle.setTokenConfig({
-        vToken: addr1111,
+        asset: await this.vETH.underlying(),
         pythId: getBytes32String(2),
         maxStalePeriod: 111,
       });
       await increaseTime(120);
       await expect(
-        this.pythOracle.getUnderlyingPrice(addr1111)
+        this.pythOracle.getUnderlyingPrice(this.vETH.address)
       ).to.be.revertedWith("No available price within given duration");
     })
 
@@ -209,20 +211,20 @@ describe("Oracle plugin frame unit tests", function () {
       await this.underlyingPythOracle.updatePriceFeedsHarness([feed]);
 
       await this.pythOracle.setTokenConfig({
-        vToken: addr1111,
+        asset: await this.vETH.underlying(),
         pythId: getBytes32String(3),
         maxStalePeriod: 111,
       });
       
       // test negative price
       await expect(
-        this.pythOracle.getUnderlyingPrice(addr1111)
+        this.pythOracle.getUnderlyingPrice(this.vETH.address)
       ).to.be.revertedWith("SafeCast: value must be positive");
 
       feed.price = BigNumber.from(0);
       await this.underlyingPythOracle.updatePriceFeedsHarness([feed]);
       await expect(
-        this.pythOracle.getUnderlyingPrice(addr1111)
+        this.pythOracle.getUnderlyingPrice(this.vETH.address)
       ).to.be.revertedWith("Pyth oracle price must be positive");
     })
 
@@ -230,12 +232,12 @@ describe("Oracle plugin frame unit tests", function () {
       let vToken = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
 
       await this.pythOracle.setTokenConfig({
-        vToken: vToken.address,
+        asset: await this.vETH.underlying(),
         pythId: getBytes32String(1),
         maxStalePeriod: 111,
       });
 
-      let price = await this.pythOracle.getUnderlyingPrice(vToken.address);
+      let price = await this.pythOracle.getUnderlyingPrice(this.vETH.address);
       // 10000000 * 10**-6 * 10**18 * 10**0 = 1e19
       expect(price).to.equal(BigNumber.from(10).pow(19))
 
@@ -243,7 +245,7 @@ describe("Oracle plugin frame unit tests", function () {
 
       // test another token
       await this.pythOracle.setTokenConfig({
-        vToken: vToken.address,
+        asset: await vToken.underlying(),
         pythId: getBytes32String(2),
         maxStalePeriod: 111,
       });
@@ -260,14 +262,14 @@ describe("Oracle plugin frame unit tests", function () {
 
       const token0 = getSimpleAddress(3);
       const validationConfig = {
-        vToken: vToken.address,
+        asset: await vToken.underlying(),
         upperBoundRatio: EXP_SCALE.mul(12).div(10),
         lowerBoundRatio: EXP_SCALE.mul(8).div(10),
       }
 
       // set price
       await this.pythOracle.setTokenConfig({
-        vToken: vToken.address,
+        asset: await vToken.underlying(),
         pythId: getBytes32String(3),
         maxStalePeriod: 111,
       });

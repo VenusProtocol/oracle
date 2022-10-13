@@ -59,7 +59,7 @@ describe("Oracle unit tests", function () {
     it("only admin may set token config", async function () {
       await expect(
         this.chainlinkOracle.connect(this.signers[2]).setTokenConfig({
-          vToken: this.vBnb.address,
+          asset: await this.vBnb.underlying(),
           feed: this.bnbFeed.address,
           maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
         })
@@ -69,7 +69,7 @@ describe("Oracle unit tests", function () {
     it("cannot set feed to zero address", async function () {
       await expect(
         this.chainlinkOracle.setTokenConfig({
-          vToken: this.vBnb.address,
+          asset: await this.vBnb.underlying(),
           feed: addr0000,
           maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
       })).to.be.revertedWith("can't be zero address")
@@ -77,11 +77,11 @@ describe("Oracle unit tests", function () {
 
     it("sets a token config", async function () {
       await this.chainlinkOracle.setTokenConfig({
-        vToken: this.vBnb.address,
+        asset: await this.vBnb.underlying(),
         feed: this.bnbFeed.address,
         maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
       });
-      const tokenConfig = await this.chainlinkOracle.tokenConfigs(this.vBnb.address);
+      const tokenConfig = await this.chainlinkOracle.tokenConfigs(await this.vBnb.underlying());
       expect(tokenConfig.feed).to.be.equal(this.bnbFeed.address);
     });
   });
@@ -90,7 +90,7 @@ describe("Oracle unit tests", function () {
     it("only admin may set token configs", async function () {
       await expect(
         this.chainlinkOracle.connect(this.signers[2]).setTokenConfigs([{
-          vToken: this.vBnb.address,
+          asset: await this.vBnb.underlying(),
           feed: this.bnbFeed.address,
           maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
         }])
@@ -100,14 +100,14 @@ describe("Oracle unit tests", function () {
     it('cannot set feed or vtoken to zero address', async function () {
       await expect(
         this.chainlinkOracle.setTokenConfigs([{
-          vToken: this.vBnb.address,
+          asset: await this.vBnb.underlying(),
           feed: addr0000,
           maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
         }])
       ).to.be.revertedWith("can't be zero address");
       await expect(
         this.chainlinkOracle.setTokenConfigs([{
-          vToken: addr0000,
+          asset: addr0000,
           feed: this.bnbFeed.address,
           maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
         }])
@@ -122,17 +122,17 @@ describe("Oracle unit tests", function () {
 
     it("set multiple feeds", async function () {
       await this.chainlinkOracle.setTokenConfigs([{
-        vToken: this.vBnb.address,
+        asset: await this.vBnb.underlying(),
         feed: this.bnbFeed.address,
         maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD).mul(2),
       }, {
-        vToken: this.vUsdt.address,
+        asset: await this.vUsdt.underlying(),
         feed: this.usdtFeed.address,
         maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD).mul(3),
       }]);
 
-      const [,newBnbFeed, newBnbStalePeriod] = await this.chainlinkOracle.tokenConfigs(this.vBnb.address);
-      const [,newUsdtFeed, newUsdtStalePeriod] = await this.chainlinkOracle.tokenConfigs(this.vUsdt.address);
+      const [,newBnbFeed, newBnbStalePeriod] = await this.chainlinkOracle.tokenConfigs(await this.vBnb.underlying());
+      const [,newUsdtFeed, newUsdtStalePeriod] = await this.chainlinkOracle.tokenConfigs(await this.vUsdt.underlying());
 
       expect(newBnbFeed).to.equal(this.bnbFeed.address);
       expect(newUsdtFeed).to.equal(this.usdtFeed.address);
@@ -144,22 +144,22 @@ describe("Oracle unit tests", function () {
   describe("getUnderlyingPrice", () => {
     beforeEach(async function () {
       await this.chainlinkOracle.setTokenConfig({
-        vToken: this.vBnb.address,
+        asset: await this.vBnb.underlying(),
         feed: this.bnbFeed.address,
         maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
       });
       await this.chainlinkOracle.setTokenConfig({
-        vToken: this.vUsdc.address,
+        asset: await this.vUsdc.underlying(),
         feed: this.usdcFeed.address,
         maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
       });
       await this.chainlinkOracle.setTokenConfig({
-        vToken: this.vUsdt.address,
+        asset: await this.vUsdt.underlying(),
         feed: this.usdtFeed.address,
         maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
       });
       await this.chainlinkOracle.setTokenConfig({
-        vToken: this.vDai.address,
+        asset: await this.vDai.underlying(),
         feed: this.daiFeed.address,
         maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
       });
@@ -236,7 +236,7 @@ describe("Oracle unit tests", function () {
   describe('stale price validation', () => {
     beforeEach(async function () {
       await this.chainlinkOracle.setTokenConfig({
-        vToken: this.vBnb.address,
+        asset: await this.vBnb.underlying(),
         feed: this.bnbFeed.address,
         maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
       });
@@ -245,7 +245,7 @@ describe("Oracle unit tests", function () {
     it('stale price period cannot be 0', async function () {
       await expect(
         this.chainlinkOracle.setTokenConfig({
-          vToken: this.vBnb.address,
+          asset: await this.vBnb.underlying(),
           feed: this.bnbFeed.address,
           maxStalePeriod: 0,
         })
@@ -254,12 +254,12 @@ describe("Oracle unit tests", function () {
 
     it('modify stale price period will emit an event', async function () {
       const result = await this.chainlinkOracle.setTokenConfig({
-        vToken: this.vBnb.address,
+        asset: await this.vBnb.underlying(),
         feed: this.bnbFeed.address,
         maxStalePeriod: MAX_STALE_PERIOD,
       })
       await expect(result).to.emit(this.chainlinkOracle, 'TokenConfigAdded').withArgs(
-        this.vBnb.address, this.bnbFeed.address, MAX_STALE_PERIOD
+        await this.vBnb.underlying(), this.bnbFeed.address, MAX_STALE_PERIOD
       )
     });
 

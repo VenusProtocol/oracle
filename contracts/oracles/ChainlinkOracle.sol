@@ -8,8 +8,8 @@ import "../interfaces/AggregatorV2V3Interface.sol";
 import "../interfaces/OracleInterface.sol";
 
 struct TokenConfig {
-    /// @notice vToken address, which can't be zero address and can be used for existance check
-    address vToken;
+    /// @notice underlying token address, which can't be zero address and can be used for existance check
+    address asset;
     /// @notice chainlink feed address
     address feed;
     /// @notice expiration period of this asset
@@ -36,7 +36,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
     );
 
     /// @notice emit when token config is added
-    event TokenConfigAdded(address vToken, address feed, uint256 maxStalePeriod);
+    event TokenConfigAdded(address asset, address feed, uint256 maxStalePeriod);
 
     modifier notNullAddress(address someone) {
         require(someone != address(0), "can't be zero address");
@@ -96,10 +96,12 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      */
     function _getChainlinkPrice(address vToken)
         internal view
-        notNullAddress(tokenConfigs[address(vToken)].vToken)
+        notNullAddress(tokenConfigs[VBep20Interface(vToken).underlying()].asset)
         returns (uint256)
     {
-        TokenConfig storage tokenConfig = tokenConfigs[vToken];
+        address asset = VBep20Interface(vToken).underlying();
+
+        TokenConfig storage tokenConfig = tokenConfigs[asset];
         AggregatorV2V3Interface feed = AggregatorV2V3Interface(tokenConfig.feed);
 
         // note: maxStalePeriod cannot be 0
@@ -156,13 +158,13 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      */
     function setTokenConfig(TokenConfig memory tokenConfig) public
         onlyOwner()
-        notNullAddress(tokenConfig.vToken)
+        notNullAddress(tokenConfig.asset)
         notNullAddress(tokenConfig.feed)
     {
         require(tokenConfig.maxStalePeriod > 0, "stale period can't be zero");
-        tokenConfigs[tokenConfig.vToken] = tokenConfig;
+        tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(
-            tokenConfig.vToken, 
+            tokenConfig.asset, 
             tokenConfig.feed,
             tokenConfig.maxStalePeriod
         );

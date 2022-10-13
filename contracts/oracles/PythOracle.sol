@@ -12,7 +12,7 @@ import "../interfaces/VBep20Interface.sol";
 
 struct TokenConfig {
     bytes32 pythId;
-    address vToken;
+    address asset;
     uint64 maxStalePeriod;
 }
 
@@ -45,7 +45,7 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
         uint64 indexed maxStalePeriod
     );
 
-    /// @notice token configs by vToken address
+    /// @notice token configs by asset address
     mapping(address => TokenConfig) public tokenConfigs;
 
     modifier notNullAddress(address someone) {
@@ -77,11 +77,11 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
      */
     function setTokenConfig(TokenConfig memory tokenConfig) public 
         onlyOwner()
-        notNullAddress(tokenConfig.vToken)
+        notNullAddress(tokenConfig.asset)
     {
         require(tokenConfig.maxStalePeriod != 0, "max stale period cannot be 0");
-        tokenConfigs[tokenConfig.vToken] = tokenConfig;
-        emit TokenConfigAdded(tokenConfig.vToken, tokenConfig.pythId, tokenConfig.maxStalePeriod);
+        tokenConfigs[tokenConfig.asset] = tokenConfig;
+        emit TokenConfigAdded(tokenConfig.asset, tokenConfig.pythId, tokenConfig.maxStalePeriod);
     }
 
     /**
@@ -105,8 +105,10 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
      */
     function getUnderlyingPrice(address vToken) public view override returns (uint256) {
         require(address(underlyingPythOracle) != address(0), "Pyth oracle is zero address");
-        TokenConfig storage tokenConfig = tokenConfigs[vToken];
-        require(tokenConfig.vToken != address(0), "vToken doesn't exist");
+
+        address asset = VBep20Interface(vToken).underlying();
+        TokenConfig storage tokenConfig = tokenConfigs[asset];
+        require(tokenConfig.asset != address(0), "asset doesn't exist");
 
         // if the price is expired after it's compared against `maxStalePeriod`, the following call will revert 
         PythStructs.Price memory priceInfo = underlyingPythOracle.getLatestAvailablePriceWithinDuration(
@@ -120,13 +122,11 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
         
         // the price returned from Pyth is price ** 10^expo, which is the real dollar price of the assets
         // we need to multiply it by 1e18 to make the price 18 decimals
-        BEP20Interface underlyingToken = BEP20Interface(VBep20Interface(vToken).underlying());
+        BEP20Interface underlyingToken = BEP20Interface(asset);
         if (priceInfo.expo > 0) {
             return price.mul(EXP_SCALE).mul(10 ** int256(priceInfo.expo).toUint256()) * (10 ** (18 - underlyingToken.decimals()));
         } else {
             return price.mul(EXP_SCALE).div(10 ** int256(-priceInfo.expo).toUint256()) * (10 ** (18 - underlyingToken.decimals()));
         }
-
     }
-    
 }
