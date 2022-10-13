@@ -6,7 +6,8 @@
   "files": [
     "artifacts",
     "networks",
-    "deploy"
+    "deploy",
+    "deployments"
   ],
   "scripts": {
     "clean": "shx rm -rf ./artifacts ./cache ./coverage ./src/types ./coverage.json",
@@ -22,7 +23,7 @@
     "prettier:check": "prettier --check --config ./.prettierrc.yaml \"**/*.{js,json,md,sol,ts,yaml,yml}\"",
     "test": "npm run compile && hardhat test",
     "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
-    "build": "rm -rf dist && tsc --declaration && hardhat compile && cp -r ./artifacts ./dist && cp -r networks dist/ && cp ./{package.json,yarn.lock} dist/",
+    "build": "rm -rf dist && tsc --declaration && hardhat compile && cp -r ./{package.json,yarn.lock,artifacts,networks,contracts,deployments} dist/",
     "publish": "yarn build && cd dist && yarn npm publish"
   },
   "dependencies": {
