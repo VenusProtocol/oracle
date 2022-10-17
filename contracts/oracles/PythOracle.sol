@@ -22,7 +22,7 @@ struct TokenConfig {
  */
 contract PythOracle is OwnableUpgradeable, OracleInterface {
     using SafeMath for uint256;
-    
+
     // To calculate 10 ** n(which is a signed type)
     using SignedMath for int256;
 
@@ -35,15 +35,11 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     /// @notice the actual pyth oracle address fetch & store the prices
     IPyth public underlyingPythOracle;
 
-    /// @notice emit when setting a new pyth oracle address 
+    /// @notice emit when setting a new pyth oracle address
     event PythOracleSet(address indexed newPythOracle);
 
     /// @notice emit when token config added
-    event TokenConfigAdded(
-        address indexed vToken,
-        bytes32 indexed pythId, 
-        uint64 indexed maxStalePeriod
-    );
+    event TokenConfigAdded(address indexed vToken, bytes32 indexed pythId, uint64 indexed maxStalePeriod);
 
     /// @notice token configs by asset address
     mapping(address => TokenConfig) public tokenConfigs;
@@ -64,7 +60,7 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
      * @notice Batch set token configs
      * @param tokenConfigs_ token config array
      */
-    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner() {
+    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
         require(tokenConfigs_.length != 0, "length can't be 0");
         for (uint256 i = 0; i < tokenConfigs_.length; i++) {
             setTokenConfig(tokenConfigs_[i]);
@@ -75,10 +71,7 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
      * @notice Set single token config, `maxStalePeriod` cannot be 0 and `vToken` can be zero address
      * @param tokenConfig token config struct
      */
-    function setTokenConfig(TokenConfig memory tokenConfig) public 
-        onlyOwner()
-        notNullAddress(tokenConfig.asset)
-    {
+    function setTokenConfig(TokenConfig memory tokenConfig) public onlyOwner notNullAddress(tokenConfig.asset) {
         require(tokenConfig.maxStalePeriod != 0, "max stale period cannot be 0");
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(tokenConfig.asset, tokenConfig.pythId, tokenConfig.maxStalePeriod);
@@ -89,14 +82,14 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
      * @param underlyingPythOracle_ pyth oracle contract address
      */
     function setUnderlyingPythOracle(IPyth underlyingPythOracle_)
-        external 
-        onlyOwner() 
+        external
+        onlyOwner
         notNullAddress(address(underlyingPythOracle_))
     {
         underlyingPythOracle = underlyingPythOracle_;
         emit PythOracleSet(address(underlyingPythOracle_));
     }
-    
+
     /**
      * @notice Get price of underlying asset of the input vToken, under the hood this function
      * get price from Pyth contract, the prices of which are updated externally
@@ -110,23 +103,27 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
         TokenConfig storage tokenConfig = tokenConfigs[asset];
         require(tokenConfig.asset != address(0), "asset doesn't exist");
 
-        // if the price is expired after it's compared against `maxStalePeriod`, the following call will revert 
+        // if the price is expired after it's compared against `maxStalePeriod`, the following call will revert
         PythStructs.Price memory priceInfo = underlyingPythOracle.getLatestAvailablePriceWithinDuration(
             tokenConfig.pythId,
             tokenConfig.maxStalePeriod
         );
-        
+
         uint256 price = int256(priceInfo.price).toUint256();
 
         require(price > 0, "Pyth oracle price must be positive");
-        
+
         // the price returned from Pyth is price ** 10^expo, which is the real dollar price of the assets
         // we need to multiply it by 1e18 to make the price 18 decimals
         BEP20Interface underlyingToken = BEP20Interface(asset);
         if (priceInfo.expo > 0) {
-            return price.mul(EXP_SCALE).mul(10 ** int256(priceInfo.expo).toUint256()) * (10 ** (18 - underlyingToken.decimals()));
+            return
+                price.mul(EXP_SCALE).mul(10**int256(priceInfo.expo).toUint256()) *
+                (10**(18 - underlyingToken.decimals()));
         } else {
-            return price.mul(EXP_SCALE).div(10 ** int256(-priceInfo.expo).toUint256()) * (10 ** (18 - underlyingToken.decimals()));
+            return
+                price.mul(EXP_SCALE).div(10**int256(-priceInfo.expo).toUint256()) *
+                (10**(18 - underlyingToken.decimals()));
         }
     }
 }

@@ -27,7 +27,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
     /// @notice token config by assets
     mapping(address => TokenConfig) public tokenConfigs;
 
-    /// @notice emit when forced price is set 
+    /// @notice emit when forced price is set
     event PricePosted(
         address asset,
         uint256 previousPriceMantissa,
@@ -52,18 +52,16 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @param vToken vToken address
      * @return price in USD, with 18 decimals
      */
-    function getUnderlyingPrice(address vToken) public view override
-        returns (uint256)
-    {
+    function getUnderlyingPrice(address vToken) public view override returns (uint256) {
         string memory symbol = VBep20Interface(vToken).symbol();
         // VBNB token doesn't have `underlying` method, so it has to skip `_getUnderlyingPriceInternal
         // method and directly goes into `_getChainlinkPrice`
         if (_compareStrings(symbol, "vBNB")) {
             return _getChainlinkPrice(vToken);
-        // VAI price is constantly 1 at the moment, but not guarantee in the future
+            // VAI price is constantly 1 at the moment, but not guarantee in the future
         } else if (_compareStrings(symbol, "VAI")) {
             return VAI_VALUE;
-        // @TODO: This is some history code, keep it here in case of messing up 
+            // @TODO: This is some history code, keep it here in case of messing up
         } else {
             return _getUnderlyingPriceInternal(VBep20Interface(vToken));
         }
@@ -85,7 +83,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
         }
 
         uint256 decimalDelta = uint256(18) - uint256(token.decimals());
-        return price * (10 ** decimalDelta);
+        return price * (10**decimalDelta);
     }
 
     /**
@@ -95,7 +93,8 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @return price in USD, with 18 decimals
      */
     function _getChainlinkPrice(address vToken)
-        internal view
+        internal
+        view
         notNullAddress(tokenConfigs[VBep20Interface(vToken).underlying()].asset)
         returns (uint256)
     {
@@ -112,12 +111,12 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
 
         (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
         require(answer > 0, "chainlink price must be positive");
-        
+
         require(block.timestamp > updatedAt, "updatedAt exceeds block time");
         uint256 deltaTime = block.timestamp - updatedAt;
         require(deltaTime <= maxStalePeriod, "chainlink price expired");
 
-        return uint256(answer) * (10 ** decimalDelta);
+        return uint256(answer) * (10**decimalDelta);
     }
 
     /**
@@ -125,7 +124,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @param vToken vToken address
      * @param underlyingPriceMantissa price in 18 decimals
      */
-    function setUnderlyingPrice(VBep20Interface vToken, uint256 underlyingPriceMantissa) external onlyOwner() {
+    function setUnderlyingPrice(VBep20Interface vToken, uint256 underlyingPriceMantissa) external onlyOwner {
         address asset = address(vToken.underlying());
         emit PricePosted(asset, prices[asset], underlyingPriceMantissa, underlyingPriceMantissa);
         prices[asset] = underlyingPriceMantissa;
@@ -136,7 +135,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @param asset asset address
      * @param price price in 18 decimals
      */
-    function setDirectPrice(address asset, uint256 price) external onlyOwner() {
+    function setDirectPrice(address asset, uint256 price) external onlyOwner {
         emit PricePosted(asset, prices[asset], price, price);
         prices[asset] = price;
     }
@@ -145,7 +144,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @notice Add multiple token configs at the same time
      * @param tokenConfigs_ config array
      */
-    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner() {
+    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
         require(tokenConfigs_.length > 0, "length can't be 0");
         for (uint256 i = 0; i < tokenConfigs_.length; i++) {
             setTokenConfig(tokenConfigs_[i]);
@@ -156,18 +155,15 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @notice Add single token config, vToken & feed cannot be zero address, and maxStalePeriod must be positive
      * @param tokenConfig token config struct
      */
-    function setTokenConfig(TokenConfig memory tokenConfig) public
-        onlyOwner()
+    function setTokenConfig(TokenConfig memory tokenConfig)
+        public
+        onlyOwner
         notNullAddress(tokenConfig.asset)
         notNullAddress(tokenConfig.feed)
     {
         require(tokenConfig.maxStalePeriod > 0, "stale period can't be zero");
         tokenConfigs[tokenConfig.asset] = tokenConfig;
-        emit TokenConfigAdded(
-            tokenConfig.asset, 
-            tokenConfig.feed,
-            tokenConfig.maxStalePeriod
-        );
+        emit TokenConfigAdded(tokenConfig.asset, tokenConfig.feed, tokenConfig.maxStalePeriod);
     }
 
     function _compareStrings(string memory a, string memory b) internal pure returns (bool) {
