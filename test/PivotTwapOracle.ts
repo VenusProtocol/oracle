@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers, upgrades } from "hardhat";
 import { PivotTwapOracle } from "../src/types/contracts/oracles/PivotTwapOracle";
-import { addr0000, addr1111, getSimpleAddress } from "./utils/data";
+import { addr0000, addr1111 } from "./utils/data";
 import { makePairWithTokens } from "./utils/makePair";
 import { makeToken } from "./utils/makeToken";
 import { makeVToken } from "./utils/makeVToken";
@@ -472,7 +472,6 @@ describe("Twap Oracle unit tests", function () {
 
   describe('validation', function () {
     it('validate price', async function () {
-      const token0 = await this.simplePair.token0();
       const token2 = (await makeVToken(this.admin, { name: "vBNB2", symbol: "vBNB2" }, { name: "BNB2", symbol: "BNB2" })); 
 
       const validationConfig = {

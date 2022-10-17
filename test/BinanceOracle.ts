@@ -2,7 +2,6 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
 import { BinanceOracle, MockBinanceFeedRegistry } from "../src/types";
-import { addr0000 } from "./utils/data";
 import { makeVToken } from "./utils/makeVToken";
 
 describe("Binance Oracle unit tests", function () {

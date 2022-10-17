@@ -1,6 +1,5 @@
 import { Signer } from "ethers";
 import { artifacts, waffle } from "hardhat";
-import { BEP20Harness } from "../../src/types";
 import { PancakePairHarness } from "../../src/types/contracts/test/PancakePairHarness";
 
 export const makePairWithTokens = async (addr: Signer, token1: string, token2: string,

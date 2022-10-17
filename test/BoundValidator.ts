@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { artifacts, ethers, waffle } from "hardhat";
 import { BoundValidator, MockBoundValidator } from "../src/types";
-import { addr0000, addr1111, getSimpleAddress } from "./utils/data";
+import { addr0000, addr1111 } from "./utils/data";
 import { makeVToken } from "./utils/makeVToken";
 
 const EXP_SCALE = BigNumber.from(10).pow(18);

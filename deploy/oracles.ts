@@ -10,7 +10,7 @@ const func: DeployFunction = async function ({
     network
 }: HardhatRuntimeEnvironment) {
     const { deploy } = deployments
-    const { deployer, dev } = await getNamedAccounts()
+    const { deployer } = await getNamedAccounts()
 
     await deploy('ResilientOracle', {
         from: deployer,

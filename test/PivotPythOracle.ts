@@ -260,7 +260,6 @@ describe("Oracle plugin frame unit tests", function () {
     it('validate price', async function () {
       const vToken = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
 
-      const token0 = getSimpleAddress(3);
       const validationConfig = {
         asset: await vToken.underlying(),
         upperBoundRatio: EXP_SCALE.mul(12).div(10),

@@ -20,5 +20,5 @@
   },
   "exclude": ["node_modules"],
   "files": ["./hardhat.config.ts"],
-  "include": ["deploy/**/*"]
+  "include": ["deploy"]
 }
