@@ -1,10 +1,12 @@
-import "module-alias/register"
+// this needs to come first
+import "module-alias/register";
+
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
-import '@openzeppelin/hardhat-upgrades';
+import "@openzeppelin/hardhat-upgrades";
 import "@typechain/hardhat";
-import "hardhat-deploy";
 import { config as dotenvConfig } from "dotenv";
+import "hardhat-deploy";
 import "hardhat-gas-reporter";
 import { HardhatUserConfig } from "hardhat/config";
 import { NetworkUserConfig } from "hardhat/types";
@@ -58,7 +60,7 @@ const config: HardhatUserConfig = {
   namedAccounts: {
     deployer: {
       default: 0, // here this will by default take the first account as deployer
-    }
+    },
   },
   etherscan: {
     apiKey: {
@@ -104,9 +106,9 @@ const config: HardhatUserConfig = {
       },
       outputSelection: {
         "*": {
-          "*": ["storageLayout"]
-        }
-      }
+          "*": ["storageLayout"],
+        },
+      },
     },
   },
   typechain: {
