@@ -7,9 +7,8 @@ import "../interfaces/VBep20Interface.sol";
 import "../interfaces/BEP20Interface.sol";
 
 contract BinanceOracle is Initializable {
-
     FeedRegistryInterface public feedRegistry;
-    
+
     function initialize(FeedRegistryInterface feed) public initializer {
         feedRegistry = feed;
     }
@@ -19,13 +18,13 @@ contract BinanceOracle is Initializable {
 
         string memory symbol = underlyingToken.symbol();
 
-        if ( keccak256(bytes(symbol)) == keccak256(bytes("WBNB"))) {
+        if (keccak256(bytes(symbol)) == keccak256(bytes("WBNB"))) {
             symbol = "BNB";
         }
 
-        (,int256 answer,,,) = feedRegistry.latestRoundDataByName(symbol, "USD");
+        (, int256 answer, , , ) = feedRegistry.latestRoundDataByName(symbol, "USD");
 
-        uint decimalDelta = feedRegistry.decimalsByName(symbol, "USD");
-        return (uint256(answer) * (10 ** (18 - decimalDelta))) * (10 ** (18 - underlyingToken.decimals()));
+        uint256 decimalDelta = feedRegistry.decimalsByName(symbol, "USD");
+        return (uint256(answer) * (10**(18 - decimalDelta))) * (10**(18 - underlyingToken.decimals()));
     }
 }

@@ -16,13 +16,13 @@ library FixedPoint {
     }
 
     // decode a uq112x112 into a uint with 18 decimals of precision
-    function decode112with18(uq112x112 memory self) internal pure returns (uint) {
+    function decode112with18(uq112x112 memory self) internal pure returns (uint256) {
         // we only have 256 - 224 = 32 bits to spare, so scaling up by ~60 bits is dangerous
         // instead, get close to:
         //  (x * 1e18) >> 112
         // without risk of overflowing, e.g.:
         //  (x) / 2 ** (112 - lg(1e18))
-        return uint(self._x) / 5192296858534827;
+        return uint256(self._x) / 5192296858534827;
     }
 }
 
@@ -32,13 +32,19 @@ library PancakeOracleLibrary {
 
     // helper function that returns the current block timestamp within the range of uint32, i.e. [0, 2**32 - 1]
     function currentBlockTimestamp() internal view returns (uint32) {
-        return uint32(block.timestamp % 2 ** 32);
+        return uint32(block.timestamp % 2**32);
     }
 
     // produces the cumulative price using counterfactuals to save gas and avoid a call to sync.
-    function currentCumulativePrices(
-        address pair
-    ) internal view returns (uint price0Cumulative, uint price1Cumulative, uint32 blockTimestamp) {
+    function currentCumulativePrices(address pair)
+        internal
+        view
+        returns (
+            uint256 price0Cumulative,
+            uint256 price1Cumulative,
+            uint32 blockTimestamp
+        )
+    {
         blockTimestamp = currentBlockTimestamp();
         price0Cumulative = IPancakePair(pair).price0CumulativeLast();
         price1Cumulative = IPancakePair(pair).price1CumulativeLast();
@@ -51,17 +57,25 @@ library PancakeOracleLibrary {
                 uint32 timeElapsed = blockTimestamp - blockTimestampLast;
                 // addition overflow is desired
                 // counterfactual
-                price0Cumulative += uint(FixedPoint.fraction(reserve1, reserve0)._x) * timeElapsed;
+                price0Cumulative += uint256(FixedPoint.fraction(reserve1, reserve0)._x) * timeElapsed;
                 // counterfactual
-                price1Cumulative += uint(FixedPoint.fraction(reserve0, reserve1)._x) * timeElapsed;
+                price1Cumulative += uint256(FixedPoint.fraction(reserve0, reserve1)._x) * timeElapsed;
             }
-            
         }
     }
 }
 
 interface IPancakePair {
-    function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast);
-    function price0CumulativeLast() external view returns (uint);
-    function price1CumulativeLast() external view returns (uint);
+    function getReserves()
+        external
+        view
+        returns (
+            uint112 reserve0,
+            uint112 reserve1,
+            uint32 blockTimestampLast
+        );
+
+    function price0CumulativeLast() external view returns (uint256);
+
+    function price1CumulativeLast() external view returns (uint256);
 }

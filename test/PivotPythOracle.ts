@@ -2,6 +2,7 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { artifacts, ethers, upgrades, waffle } from "hardhat";
+
 import { PivotPythOracle } from "../src/types";
 import { MockPyth } from "../src/types/contracts/test/MockPyth";
 import { addr0000, addr1111, getBytes32String, getSimpleAddress } from "./utils/data";
@@ -18,7 +19,7 @@ const getPythOracle = async (account: SignerWithAddress) => {
   const PivotPythOracle = await ethers.getContractFactory("PivotPythOracle", account);
   const instance = <PivotPythOracle>await upgrades.deployProxy(PivotPythOracle, [actualOracle.address]);
   return instance;
-}
+};
 
 describe("Oracle plugin frame unit tests", function () {
   beforeEach(async function () {
@@ -29,37 +30,37 @@ describe("Oracle plugin frame unit tests", function () {
     this.pythOracle = await getPythOracle(admin);
   });
 
-  describe('constructor', function () {
-    it('sets address of owner', async function () {
+  describe("constructor", function () {
+    it("sets address of owner", async function () {
       const owner = await this.pythOracle.owner();
       expect(owner).to.equal(this.admin.address);
     });
   });
 
-  describe('admin check', function () {
-    it('only admin can call the setters', async function () {
+  describe("admin check", function () {
+    it("only admin can call the setters", async function () {
       const config = {
         pythId: getBytes32String(2),
         asset: addr1111,
         maxStalePeriod: 10,
       };
       // setTokenConfigs
-      await expect(
-        this.pythOracle.connect(this.signers[2]).setTokenConfigs([config])
-      ).to.be.revertedWith("Ownable: caller is not the owner");
+      await expect(this.pythOracle.connect(this.signers[2]).setTokenConfigs([config])).to.be.revertedWith(
+        "Ownable: caller is not the owner",
+      );
 
       // setTokenConfig
-      await expect(
-        this.pythOracle.connect(this.signers[1]).setTokenConfig(config)
-      ).to.be.revertedWith("Ownable: caller is not the owner");
+      await expect(this.pythOracle.connect(this.signers[1]).setTokenConfig(config)).to.be.revertedWith(
+        "Ownable: caller is not the owner",
+      );
 
       // setOracle
-      await expect(
-        this.pythOracle.connect(this.signers[2]).setUnderlyingPythOracle(addr1111)
-      ).to.be.revertedWith("Ownable: caller is not the owner");
-    })
+      await expect(this.pythOracle.connect(this.signers[2]).setUnderlyingPythOracle(addr1111)).to.be.revertedWith(
+        "Ownable: caller is not the owner",
+      );
+    });
 
-    it('transfer owner', async function () {
+    it("transfer owner", async function () {
       const config = {
         pythId: getBytes32String(2),
         asset: addr1111,
@@ -70,127 +71,125 @@ describe("Oracle plugin frame unit tests", function () {
       expect(newOwner).to.equal(this.signers[2].address);
       await this.pythOracle.connect(this.signers[2]).setTokenConfigs([config]);
       expect((await this.pythOracle.tokenConfigs(addr1111)).asset).to.equal(addr1111);
-    })
+    });
   });
 
-  describe('token config', function () {
-    describe('add single token config', function () {
-      it('vToken can"t be zero & maxStalePeriod can\'t be zero', async function () {
+  describe("token config", function () {
+    describe("add single token config", function () {
+      it("vToken can\"t be zero & maxStalePeriod can't be zero", async function () {
         await expect(
           this.pythOracle.setTokenConfig({
             pythId: getBytes32String(2),
             asset: addr0000,
             maxStalePeriod: 10,
-          })
+          }),
         ).to.be.revertedWith("can't be zero address");
-        
+
         await expect(
           this.pythOracle.setTokenConfig({
             pythId: getBytes32String(2),
             asset: addr1111,
             maxStalePeriod: 0,
-          })
+          }),
         ).to.be.revertedWith("max stale period cannot be 0");
       });
 
-      it('token config added successfully & events check', async function () {
+      it("token config added successfully & events check", async function () {
         const result = await this.pythOracle.setTokenConfig({
           asset: addr1111,
           pythId: getBytes32String(2),
           maxStalePeriod: 111,
         });
-        await expect(result).to.emit(this.pythOracle, 'TokenConfigAdded').withArgs(
-          addr1111, getBytes32String(2), 111
-        )
+        await expect(result).to.emit(this.pythOracle, "TokenConfigAdded").withArgs(addr1111, getBytes32String(2), 111);
       });
-    })
-
-    describe('batch add token configs', function () {
-      it('length check', async function () {
-        await expect(
-          this.pythOracle.setTokenConfigs([])
-        ).to.be.revertedWith("length can't be 0");
-      })
-
-      it('token config added successfully & data check', async function () {
-        await this.pythOracle.setTokenConfigs([{
-          asset: addr1111,
-          pythId: getBytes32String(2),
-          maxStalePeriod: 111,
-        }, {
-          asset: getSimpleAddress(2),
-          pythId: getBytes32String(3),
-          maxStalePeriod: 222,
-        }]);
-        expect((await this.pythOracle.tokenConfigs(addr1111)).asset).to.equal(addr1111);
-        expect((await this.pythOracle.tokenConfigs(getSimpleAddress(2))).maxStalePeriod).to.equal(222);
-      })
     });
 
+    describe("batch add token configs", function () {
+      it("length check", async function () {
+        await expect(this.pythOracle.setTokenConfigs([])).to.be.revertedWith("length can't be 0");
+      });
+
+      it("token config added successfully & data check", async function () {
+        await this.pythOracle.setTokenConfigs([
+          {
+            asset: addr1111,
+            pythId: getBytes32String(2),
+            maxStalePeriod: 111,
+          },
+          {
+            asset: getSimpleAddress(2),
+            pythId: getBytes32String(3),
+            maxStalePeriod: 222,
+          },
+        ]);
+        expect((await this.pythOracle.tokenConfigs(addr1111)).asset).to.equal(addr1111);
+        expect((await this.pythOracle.tokenConfigs(getSimpleAddress(2))).maxStalePeriod).to.equal(222);
+      });
+    });
   });
 
-
-  describe('get underlying price', function () {
+  describe("get underlying price", function () {
     beforeEach(async function () {
       const underlyingPythAddress = await this.pythOracle.underlyingPythOracle();
-      const UnderlyingPythFactory = await ethers.getContractFactory('MockPyth');
+      const UnderlyingPythFactory = await ethers.getContractFactory("MockPyth");
       const underlyingPyth = UnderlyingPythFactory.attach(underlyingPythAddress);
       this.underlyingPythOracle = <MockPyth>underlyingPyth;
       const ts = await getTime();
       // update some feeds
-      await this.underlyingPythOracle.updatePriceFeedsHarness([{
-        id: getBytes32String(1),
-        productId: getBytes32String(1),
-        price: BigNumber.from(10000000), // 10000000 * 10 ** -6 = $10
-        conf: 10,
-        expo: -6,
-        status: 0,
-        maxNumPublishers: 0,
-        numPublishers: 0,
-        emaPrice: 0,
-        emaConf: 0,
-        publishTime: ts,
-        prevPrice: 0,
-        prevConf: 0,
-        prevPublishTime: 0,
-      }, {
-        id: getBytes32String(2),
-        productId: getBytes32String(2),
-        price: BigNumber.from(1), // 10000000 * 10 ** 8 = $100
-        conf: 10,
-        expo: 2,
-        status: 0,
-        maxNumPublishers: 0,
-        numPublishers: 0,
-        emaPrice: 0,
-        emaConf: 0,
-        publishTime: ts,
-        prevPrice: 0,
-        prevConf: 0,
-        prevPublishTime: 0,
-      }])
+      await this.underlyingPythOracle.updatePriceFeedsHarness([
+        {
+          id: getBytes32String(1),
+          productId: getBytes32String(1),
+          price: BigNumber.from(10000000), // 10000000 * 10 ** -6 = $10
+          conf: 10,
+          expo: -6,
+          status: 0,
+          maxNumPublishers: 0,
+          numPublishers: 0,
+          emaPrice: 0,
+          emaConf: 0,
+          publishTime: ts,
+          prevPrice: 0,
+          prevConf: 0,
+          prevPublishTime: 0,
+        },
+        {
+          id: getBytes32String(2),
+          productId: getBytes32String(2),
+          price: BigNumber.from(1), // 10000000 * 10 ** 8 = $100
+          conf: 10,
+          expo: 2,
+          status: 0,
+          maxNumPublishers: 0,
+          numPublishers: 0,
+          emaPrice: 0,
+          emaConf: 0,
+          publishTime: ts,
+          prevPrice: 0,
+          prevConf: 0,
+          prevPublishTime: 0,
+        },
+      ]);
 
       this.vETH = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
-    })
-    it('revert when asset not exist', async function () {
-      await expect(
-        this.pythOracle.getUnderlyingPrice(this.vETH.address)
-      ).to.be.revertedWith("asset doesn't exist");
-    })
+    });
+    it("revert when asset not exist", async function () {
+      await expect(this.pythOracle.getUnderlyingPrice(this.vETH.address)).to.be.revertedWith("asset doesn't exist");
+    });
 
-    it('revert when price is expired', async function () {
+    it("revert when price is expired", async function () {
       await this.pythOracle.setTokenConfig({
         asset: await this.vETH.underlying(),
         pythId: getBytes32String(2),
         maxStalePeriod: 111,
       });
       await increaseTime(120);
-      await expect(
-        this.pythOracle.getUnderlyingPrice(this.vETH.address)
-      ).to.be.revertedWith("No available price within given duration");
-    })
+      await expect(this.pythOracle.getUnderlyingPrice(this.vETH.address)).to.be.revertedWith(
+        "No available price within given duration",
+      );
+    });
 
-    it('revert when price is not positive (just in case Pyth return insane data)', async function () {
+    it("revert when price is not positive (just in case Pyth return insane data)", async function () {
       const ts = await getTime();
       const feed = {
         id: getBytes32String(3),
@@ -215,20 +214,20 @@ describe("Oracle plugin frame unit tests", function () {
         pythId: getBytes32String(3),
         maxStalePeriod: 111,
       });
-      
+
       // test negative price
-      await expect(
-        this.pythOracle.getUnderlyingPrice(this.vETH.address)
-      ).to.be.revertedWith("SafeCast: value must be positive");
+      await expect(this.pythOracle.getUnderlyingPrice(this.vETH.address)).to.be.revertedWith(
+        "SafeCast: value must be positive",
+      );
 
       feed.price = BigNumber.from(0);
       await this.underlyingPythOracle.updatePriceFeedsHarness([feed]);
-      await expect(
-        this.pythOracle.getUnderlyingPrice(this.vETH.address)
-      ).to.be.revertedWith("Pyth oracle price must be positive");
-    })
+      await expect(this.pythOracle.getUnderlyingPrice(this.vETH.address)).to.be.revertedWith(
+        "Pyth oracle price must be positive",
+      );
+    });
 
-    it('price should be 18 decimals', async function () {
+    it("price should be 18 decimals", async function () {
       let vToken = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
 
       await this.pythOracle.setTokenConfig({
@@ -239,9 +238,13 @@ describe("Oracle plugin frame unit tests", function () {
 
       let price = await this.pythOracle.getUnderlyingPrice(this.vETH.address);
       // 10000000 * 10**-6 * 10**18 * 10**0 = 1e19
-      expect(price).to.equal(BigNumber.from(10).pow(19))
+      expect(price).to.equal(BigNumber.from(10).pow(19));
 
-      vToken = await makeVToken(this.admin, { name: "vBTC", symbol: "vBTC" }, { name: "Bitcoin", symbol: "BTC", decimals: 8 });
+      vToken = await makeVToken(
+        this.admin,
+        { name: "vBTC", symbol: "vBTC" },
+        { name: "Bitcoin", symbol: "BTC", decimals: 8 },
+      );
 
       // test another token
       await this.pythOracle.setTokenConfig({
@@ -252,20 +255,23 @@ describe("Oracle plugin frame unit tests", function () {
 
       price = await this.pythOracle.getUnderlyingPrice(vToken.address);
       // 1 * 10**2 * 10**18 * 10**10 = 1e30
-      expect(price).to.equal(BigNumber.from(10).pow(30))
-    })
+      expect(price).to.equal(BigNumber.from(10).pow(30));
+    });
   });
 
-  describe('validation', function () {
-    it('validate price', async function () {
-      const vToken = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
+  describe("validation", function () {
+    it("validate price", async function () {
+      const vToken = await makeVToken(
+        this.admin,
+        { name: "vETH", symbol: "vETH" },
+        { name: "Ethereum", symbol: "ETH" },
+      );
 
-      const token0 = getSimpleAddress(3);
       const validationConfig = {
         asset: await vToken.underlying(),
         upperBoundRatio: EXP_SCALE.mul(12).div(10),
         lowerBoundRatio: EXP_SCALE.mul(8).div(10),
-      }
+      };
 
       // set price
       await this.pythOracle.setTokenConfig({
@@ -290,29 +296,29 @@ describe("Oracle plugin frame unit tests", function () {
         prevPublishTime: 0,
       };
       const underlyingPythAddress = await this.pythOracle.underlyingPythOracle();
-      const UnderlyingPythFactory = await ethers.getContractFactory('MockPyth');
+      const UnderlyingPythFactory = await ethers.getContractFactory("MockPyth");
       const underlyingPyth = UnderlyingPythFactory.attach(underlyingPythAddress);
       const underlyingPythOracle = <MockPyth>underlyingPyth;
       await underlyingPythOracle.updatePriceFeedsHarness([feed]);
 
       // sanity check
-      await expect(
-        this.pythOracle.validatePrice(vToken.address, 100)
-      ).to.be.revertedWith("validation config not exist");
+      await expect(this.pythOracle.validatePrice(vToken.address, 100)).to.be.revertedWith(
+        "validation config not exist",
+      );
 
       await this.pythOracle.setValidateConfigs([validationConfig]);
-      
+
       // no need to test this, Pyth price must be positive
       // await expect(
       //   this.pythOracle.validatePrice(token0, 100)
       // ).to.be.revertedWith("anchor price is not valid");
-        
-      let validateResult = await this.pythOracle.validatePrice(vToken.address, EXP_SCALE)
+
+      let validateResult = await this.pythOracle.validatePrice(vToken.address, EXP_SCALE);
       expect(validateResult).to.equal(true);
-      validateResult = await this.pythOracle.validatePrice(vToken.address, EXP_SCALE.mul(100).div(79))
+      validateResult = await this.pythOracle.validatePrice(vToken.address, EXP_SCALE.mul(100).div(79));
       expect(validateResult).to.equal(false);
-      validateResult = await this.pythOracle.validatePrice(vToken.address, EXP_SCALE.mul(100).div(121))
+      validateResult = await this.pythOracle.validatePrice(vToken.address, EXP_SCALE.mul(100).div(121));
       expect(validateResult).to.equal(false);
-    })
-  })
+    });
+  });
 });

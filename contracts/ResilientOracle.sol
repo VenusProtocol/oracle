@@ -6,9 +6,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./interfaces/OracleInterface.sol";
 
-
 contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOracleInterface {
-
     uint256 public constant INVALID_PRICE = 0;
 
     /**
@@ -26,7 +24,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     struct TokenConfig {
         /// @notice vToken address
         address vToken;
-        /// @notice `oracles` stores the oracles in the order of: [main, pivot, fallback], 
+        /// @notice `oracles` stores the oracles in the order of: [main, pivot, fallback],
         /// it can be indexed with enum OracleRole value
         address[3] oracles;
         /// @notice `enableFlagsForOracles` stores the oracle enable statuses
@@ -39,12 +37,12 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     event GlobalEnable(bool indexed isEnable);
     event TokenConfigAdded(
         address indexed token,
-        address indexed mainOracle, 
-        address indexed pivotOracle, 
+        address indexed mainOracle,
+        address indexed pivotOracle,
         address fallbackOracle
     );
-    event OracleSet(address indexed vToken, address indexed oracle, uint indexed role);
-    event OracleEnabled(address indexed vToken, uint indexed role, bool indexed enable);
+    event OracleSet(address indexed vToken, address indexed oracle, uint256 indexed role);
+    event OracleEnabled(address indexed vToken, uint256 indexed role, bool indexed enable);
 
     modifier notNullAddress(address someone) {
         require(someone != address(0), "can't be zero address");
@@ -65,23 +63,23 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
         __Ownable_init();
         __Pausable_init();
     }
-    
+
     /**
      * @notice Pause protocol
      */
-    function pause() external onlyOwner() {
+    function pause() external onlyOwner {
         _pause();
     }
 
     /**
      * @notice Unpause protocol
      */
-    function unpause() external onlyOwner() {
+    function unpause() external onlyOwner {
         _unpause();
     }
 
     /**
-     * @dev Get token config by vToken address 
+     * @dev Get token config by vToken address
      * @param vToken vtoken address
      */
     function getTokenConfig(address vToken) external view returns (TokenConfig memory) {
@@ -89,20 +87,20 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     }
 
     /**
-     * @notice Get oracle & enabling status by vToken address 
+     * @notice Get oracle & enabling status by vToken address
      * @param vToken vtoken address
      * @param role oracle role
      */
     function getOracle(address vToken, OracleRole role) public view returns (address oracle, bool enabled) {
-        oracle = tokenConfigs[vToken].oracles[uint(role)];
-        enabled = tokenConfigs[vToken].enableFlagsForOracles[uint(role)];
+        oracle = tokenConfigs[vToken].oracles[uint256(role)];
+        enabled = tokenConfigs[vToken].enableFlagsForOracles[uint256(role)];
     }
 
     /**
      * @notice Batch set token configs
      * @param tokenConfigs_ token config array
      */
-    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner() {
+    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
         require(tokenConfigs_.length != 0, "length can't be 0");
         for (uint256 i = 0; i < tokenConfigs_.length; i++) {
             setTokenConfig(tokenConfigs_[i]);
@@ -113,17 +111,18 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @notice Set single token configs, vToken MUST HAVE NOT be added before, and main oracle MUST NOT be zero address
      * @param tokenConfig token config struct
      */
-    function setTokenConfig(TokenConfig memory tokenConfig) public 
-        onlyOwner()
+    function setTokenConfig(TokenConfig memory tokenConfig)
+        public
+        onlyOwner
         notNullAddress(tokenConfig.vToken)
-        notNullAddress(tokenConfig.oracles[uint(OracleRole.MAIN)])
+        notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)])
     {
         tokenConfigs[tokenConfig.vToken] = tokenConfig;
         emit TokenConfigAdded(
             tokenConfig.vToken,
-            tokenConfig.oracles[uint(OracleRole.MAIN)],
-            tokenConfig.oracles[uint(OracleRole.PIVOT)],
-            tokenConfig.oracles[uint(OracleRole.FALLBACK)]
+            tokenConfig.oracles[uint256(OracleRole.MAIN)],
+            tokenConfig.oracles[uint256(OracleRole.PIVOT)],
+            tokenConfig.oracles[uint256(OracleRole.FALLBACK)]
         );
     }
 
@@ -133,14 +132,14 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @param oracle oracle address
      * @param role oracle role
      */
-    function setOracle(address vToken, address oracle, OracleRole role) external
-        onlyOwner()
-        notNullAddress(vToken)
-        checkTokenConfigExistance(vToken)
-    {
+    function setOracle(
+        address vToken,
+        address oracle,
+        OracleRole role
+    ) external onlyOwner notNullAddress(vToken) checkTokenConfigExistance(vToken) {
         require(!(oracle == address(0) && role == OracleRole.MAIN), "can't set zero address to main oracle");
-        tokenConfigs[vToken].oracles[uint(role)] = oracle;
-        emit OracleSet(vToken, oracle, uint(role));
+        tokenConfigs[vToken].oracles[uint256(role)] = oracle;
+        emit OracleSet(vToken, oracle, uint256(role));
     }
 
     /**
@@ -149,13 +148,13 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @param role oracle role
      * @param enable expected status
      */
-    function enableOracle(address vToken, OracleRole role, bool enable) external
-        onlyOwner()
-        notNullAddress(vToken)
-        checkTokenConfigExistance(vToken)
-    {
-        tokenConfigs[vToken].enableFlagsForOracles[uint(role)] = enable;
-        emit OracleEnabled(vToken, uint(role), enable);
+    function enableOracle(
+        address vToken,
+        OracleRole role,
+        bool enable
+    ) external onlyOwner notNullAddress(vToken) checkTokenConfigExistance(vToken) {
+        tokenConfigs[vToken].enableFlagsForOracles[uint256(role)] = enable;
+        emit OracleEnabled(vToken, uint256(role), enable);
     }
 
     /**
@@ -183,11 +182,11 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
         uint256 price = _getUnderlyingPriceInternal(vToken);
         (address fallbackOracle, bool fallbackEnabled) = getOracle(vToken, OracleRole.FALLBACK);
         if (price == INVALID_PRICE && fallbackEnabled && fallbackOracle != address(0)) {
-            try OracleInterface(fallbackOracle).getUnderlyingPrice(vToken) returns (uint256 fallbackPrice) { 
+            try OracleInterface(fallbackOracle).getUnderlyingPrice(vToken) returns (uint256 fallbackPrice) {
                 require(fallbackPrice != INVALID_PRICE, "fallback oracle price must be positive");
                 return fallbackPrice;
             } catch {
-                revert("invalid fallback oracle price");   
+                revert("invalid fallback oracle price");
             }
         }
         // if price is 0 here, it means main oracle price is 0 or got invalidated by pivot oracle
@@ -207,7 +206,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
 
         (address mainOracle, bool mainOracleEnabled) = getOracle(vToken, OracleRole.MAIN);
 
-        uint price = INVALID_PRICE;
+        uint256 price = INVALID_PRICE;
 
         if (!mainOracleEnabled) {
             return price;
@@ -217,7 +216,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
             price = _price;
 
             (address pivotOracle, bool pivotOracleEnabled) = getOracle(vToken, OracleRole.PIVOT);
-            
+
             // Price oracle is not mandantory
             if (pivotOracle == address(0) || !pivotOracleEnabled) {
                 return price;
@@ -231,7 +230,6 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
         } catch {
             return price;
         }
-        
 
         return price;
     }

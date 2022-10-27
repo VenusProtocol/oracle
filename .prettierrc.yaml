@@ -1,7 +1,7 @@
 arrowParens: avoid
 bracketSpacing: true
 endOfLine: auto
-importOrder: ["<THIRD_PARTY_MODULES>", "^[./]"]
+importOrder: ["module-alias/register", "<THIRD_PARTY_MODULES>", "^[./]"]
 importOrderParserPlugins: ["typescript"]
 importOrderSeparation: true
 importOrderSortSpecifiers: true

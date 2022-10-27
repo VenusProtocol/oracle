@@ -108,9 +108,7 @@
           "userdoc",
           "evm.gasEstimates"
         ],
-        "": [
-          "ast"
-        ]
+        "": ["ast"]
       }
     }
   }

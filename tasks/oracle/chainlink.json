@@ -1,1621 +1,1805 @@
-[{
-  "name": "BNB Chain Mainnet",
-  "url": "https://bscscan.com/address/%s",
-  "networkType": "mainnet",
-  "proxies": [{
-    "pair": "AAPL / USD",
-    "assetName": "Apple",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xb7Ed5bE7977d61E83534230f3256C021e0fae0B6",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "AAVE / USD",
-    "assetName": "Aave",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0xA8357BF572460fC40f4B0aCacbB2a6A61c89f475",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "ADA / BNB",
-    "assetName": "Cardano",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x2d5Fc41d1365fFe13d03d91E82e04Ca878D69f4B",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "ADA / USD",
-    "assetName": "Cardano",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0xa767f745331D267c7751297D982b050c93985627",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "ALPACA / USD",
-    "assetName": "Alpaca Finance",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xe0073b60833249ffd1bb2af809112c2fbf221DF6",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "ALPHA / BNB",
-    "assetName": "Alpha Finance",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x7bC032A7C19B1BdCb981D892854d090cfB0f238E",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "AMZN / USD",
-    "assetName": "Amazon",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x51d08ca89d3e8c12535BA8AEd33cDf2557ab5b2a",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "ARKK / USD",
-    "assetName": "ARK Innovation ETF",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x234c7a1da64Bdf44E1B8A25C94af53ff2A199dE0",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "ARPA / USD",
-    "assetName": "ARPA Chain",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x31E0110f8c1376a699C8e3E65b5110e0525A811d",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "ATOM / USD",
-    "assetName": "Cosmos",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xb056B7C804297279A9a673289264c17E6Dc6055d",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "AUD / USD",
-    "assetName": "Australian Dollar",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0x498F912B09B5dF618c77fcC9E8DA503304Df92bF",
-    "feedCategory": "verified",
-    "feedType": "Forex"
-  }, {
-    "pair": "AUTO / USD",
-    "assetName": "Auto",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x88E71E6520E5aC75f5338F5F0c9DeD9d4f692cDA",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "AVAX / USD",
-    "assetName": "Avalanche",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x5974855ce31EE8E1fff2e76591CbF83D7110F151",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "AXS / USD",
-    "assetName": "Axie Infinity",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x7B49524ee5740c99435f52d731dFC94082fE61Ab",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "BAC / USD",
-    "assetName": "Bank of America",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x368b7ab0a0Ff94E23fF5e4A7F04327dF7079E174",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "BAND / BNB",
-    "assetName": "Band Protocol",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x3334bF7ec892Ca03D1378B51769b7782EAF318C4",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "BAND / USD",
-    "assetName": "Band Protocol",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xC78b99Ae87fF43535b0C782128DB3cB49c74A4d3",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "BCH / BNB",
-    "assetName": "Bitcoin Cash",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x2a548935a323Bb7329a5E3F1667B979f16Bc890b",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "BCH / USD",
-    "assetName": "Bitcoin Cash",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x43d80f616DAf0b0B42a928EeD32147dC59027D41",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "BETH / USD",
-    "assetName": "Binance ETH",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x2A3796273d47c4eD363b361D3AEFb7F7E2A13782",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "BIDU / USD",
-    "assetName": "Baidu",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xb9344e4Ffa6d5885B2C5830adc27ddF3FdBF883c",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "BIFI / USD",
-    "assetName": "Beefy Finance",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xaB827b69daCd586A37E80A7d552a4395d576e645",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "BNB / USD",
-    "assetName": "BNB",
-    "deviationThreshold": 1,
-    "heartbeat": "1m",
-    "decimals": 8,
-    "proxy": "0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "BRK.B / USD",
-    "assetName": "Berkshire Hathaway",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x5289A08b6d5D2f8fAd4cC169c65177f68C0f0A99",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "BRL / USD",
-    "assetName": "Brazilian Real",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x5cb1Cb3eA5FB46de1CE1D0F3BaDB3212e8d8eF48",
-    "feedCategory": "verified",
-    "feedType": "Forex"
-  }, {
-    "pair": "BTC / BNB",
-    "assetName": "Bitcoin",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x116EeB23384451C78ed366D4f67D5AD44eE771A0",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "BTC / ETH",
-    "assetName": "Bitcoin",
-    "deviationThreshold": 2,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0xf1769eB4D1943AF02ab1096D7893759F6177D6B8",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "BTC / USD",
-    "assetName": "Bitcoin",
-    "deviationThreshold": 0.1,
-    "heartbeat": "1m",
-    "decimals": 8,
-    "proxy": "0x264990fbd0A4796A3E3d8E37C4d5F87a3aCa5Ebf",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "BTT / USD",
-    "assetName": "BitTorrent-New",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x17e68B6EAf5BFF73da611B3AaD543dd8Aeb13a4d",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "BUSD / BNB",
-    "assetName": "Binance USD",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x87Ea38c9F24264Ec1Fff41B04ec94a97Caf99941",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "BUSD / USD",
-    "assetName": "Binance USD",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xcBb98864Ef56E9042e7d2efef76141f15731B82f",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "C98 / USD",
-    "assetName": "C98",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x889158E39628C0397DC54B84F6b1cbe0AaEb7FFc",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "CAKE / BNB",
-    "assetName": "PancakeSwap",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0xcB23da9EA243f53194CBc2380A6d4d9bC046161f",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "CAKE / USD",
-    "assetName": "PancakeSwap",
-    "deviationThreshold": 0.2,
-    "heartbeat": "1m",
-    "decimals": 8,
-    "proxy": "0xB6064eD41d4f67e353768aA239cA86f4F73665a1",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "CFX / USD",
-    "assetName": "Conflux",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xe3cA2f3Bad1D8327820f648C759f17162b5383ae",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "CHF / USD",
-    "assetName": "Swiss Franc",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x964261740356cB4aaD0C3D2003Ce808A4176a46d",
-    "feedCategory": "verified",
-    "feedType": "Forex"
-  }, {
-    "pair": "CHR / USD",
-    "assetName": "Chromaway",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x1f771B2b1F3c3Db6C7A1d5F38961a49CEcD116dA",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "COIN / USD",
-    "assetName": "Coinbase",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x2d1AB79D059e21aE519d88F978cAF39d74E31AEB",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "COMP / USD",
-    "assetName": "Compound",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x0Db8945f9aEf5651fa5bd52314C5aAe78DfDe540",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "CREAM / BNB",
-    "assetName": "CREAM",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x6f55DFAf098a813d87BB4e6392275b502360Bb9D",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "CREAM / USD",
-    "assetName": "CREAM",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xa12Fc27A873cf114e6D8bBAf8BD9b8AC56110b39",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "CRV / USD",
-    "assetName": "Curve",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x2e1C3b6Fcae47b20Dd343D9354F7B1140a1E6B27",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "Calculated SAVAX / USD",
-    "assetName": "Calculated Liquid Staked AVAX",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x3b37C6f1e3207DE5a4664E837072Bd9A25269B39",
-    "feedCategory": "custom",
-    "feedType": "Crypto"
-  }, {
-    "pair": "DAI / BNB",
-    "assetName": "DAI",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x8EC213E7191488C7873cEC6daC8e97cdbAdb7B35",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "DAI / USD",
-    "assetName": "DAI",
-    "deviationThreshold": 0.1,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x132d3C0B1D2cEa0BC552588063bdBb210FDeecfA",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "DEGO / USD",
-    "assetName": "Dego Finance",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x39F1275366D130eB677D4F47D40F9296B62D877A",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "DF / USD",
-    "assetName": "dForce",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x1b816F5E122eFa230300126F97C018716c4e47F5",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "DODO / BNB",
-    "assetName": "Dodo",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x120ae15CB86060527BFD431Abd3FF51890D2032C",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "DODO / USD",
-    "assetName": "Dodo",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x87701B15C08687341c2a847ca44eCfBc8d7873E1",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "DOGE / USD",
-    "assetName": "Dogecoin",
-    "deviationThreshold": 0.2,
-    "heartbeat": "47s",
-    "decimals": 8,
-    "proxy": "0x3AB0A0d137D4F946fBB19eecc6e92E64660231C8",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "DOT / BNB",
-    "assetName": "Polkadot",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0xBA8683E9c3B1455bE6e18E7768e8cAD95Eb5eD49",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "DOT / USD",
-    "assetName": "Polkadot",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0xC333eb0086309a16aa7c8308DfD32c8BBA0a2592",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "DYDX / USD",
-    "assetName": "dYdX",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xF62B743a49A42716fCF0a81886DAe1f8763FEE3E",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "EOS / BNB",
-    "assetName": "EOS",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0xed93F3764334788f2f6628b30e505fe1fc5d1D7b",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "EOS / USD",
-    "assetName": "EOS",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xd5508c8Ffdb8F15cE336e629fD4ca9AdB48f50F0",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "ETH / BNB",
-    "assetName": "Ethereum",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x63D407F32Aa72E63C7209ce1c2F5dA40b3AaE726",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "ETH / USD",
-    "assetName": "Ethereum",
-    "deviationThreshold": 0.1,
-    "heartbeat": "1m",
-    "decimals": 8,
-    "proxy": "0x9ef1B8c0E4F7dc8bF5719Ea496883DC6401d5b2e",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "EUR / USD",
-    "assetName": "Euro",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0x0bf79F617988C472DcA68ff41eFe1338955b9A80",
-    "feedCategory": "verified",
-    "feedType": "Forex"
-  }, {
-    "pair": "FB / USD",
-    "assetName": "Meta",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xfc76E9445952A3C31369dFd26edfdfb9713DF5Bb",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "FET / USD",
-    "assetName": "Fetch.ai",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x657e700c66C48c135c4A29c4292908DbdA7aa280",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "FIL / USD",
-    "assetName": "Filecoin",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xE5dbFD9003bFf9dF5feB2f4F445Ca00fb121fb83",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "FRAX / USD",
-    "assetName": "FRAX",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x13A9c98b07F098c5319f4FF786eB16E22DC738e1",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "FTM / USD",
-    "assetName": "Fantom",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xe2A47e87C0f4134c8D06A41975F6860468b2F925",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "FTT / USD",
-    "assetName": "FTX Token",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x38E05754Eb00171cBE72bA1eE792933d6e8d2891",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "FXS / USD",
-    "assetName": "Frax Share",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x0E9D55932893Fb1308882C7857285B2B0bcc4f4a",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "GBP / USD",
-    "assetName": "Pound Sterling",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x8FAf16F710003E538189334541F5D4a391Da46a0",
-    "feedCategory": "verified",
-    "feedType": "Forex"
-  }, {
-    "pair": "GME / USD",
-    "assetName": "Gamestop",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x66cD2975d02f5F5cdEF2E05cBca12549B1a5022D",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "GOOGL / USD",
-    "assetName": "Alphabet",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xeDA73F8acb669274B15A977Cb0cdA57a84F18c2a",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "HIGH / USD",
-    "assetName": "Highstreet",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xdF4Dd957a84F798acFADd448badd2D8b9bC99047",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "ICP / USD",
-    "assetName": "Internet Computer Protocol",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x84210d9013A30C6ab169e28840A6CC54B60fa042",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "INJ / USD",
-    "assetName": "Injective Protocol",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x63A9133cd7c611d6049761038C16f238FddA71d7",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "INR / USD",
-    "assetName": "Indian Rupee",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xeF0a3109ce97e0B58557F0e3Ba95eA16Bfa4A89d",
-    "feedCategory": "verified",
-    "feedType": "Forex"
-  }, {
-    "pair": "JPM / USD",
-    "assetName": "JP Morgan",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x8f26ba94180371baA2D2C143f96b6886DCACA250",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "JPY / USD",
-    "assetName": "Japanese Yen",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0x22Db8397a6E77E41471dE256a7803829fDC8bC57",
-    "feedCategory": "verified",
-    "feedType": "Forex"
-  }, {
-    "pair": "KNC / USD",
-    "assetName": "",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xF2f8273F6b9Fc22C90891DC802cAf60eeF805cDF",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "LINA / USD",
-    "assetName": "Linear",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0x38393201952f2764E04B290af9df427217D56B41",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "LINK / BNB",
-    "assetName": "Chainlink",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0xB38722F6A608646a538E882Ee9972D15c86Fc597",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "LINK / USD",
-    "assetName": "Chainlink",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0xca236E327F629f9Fc2c30A4E95775EbF0B89fac8",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "LIT / USD",
-    "assetName": "Litentry",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x83766bA8d964fEAeD3819b145a69c947Df9Cb035",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "LTC / BNB",
-    "assetName": "Litecoin",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x4e5a43A79f53c0a8e83489648Ea7e429278f8b2D",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "LTC / USD",
-    "assetName": "Litecoin",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x74E72F37A8c415c8f1a98Ed42E78Ff997435791D",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "MASK / USD",
-    "assetName": "Mask Network",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x4978c0abE6899178c1A74838Ee0062280888E2Cf",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "MATIC / USD",
-    "assetName": "Polygon (MATIC)",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0x7CA57b0cA6367191c94C8914d7Df09A57655905f",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "MDX / USD",
-    "assetName": "MDex",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x9165366bf450a6906D25549f0E0f8E6586Fc93E2",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "MIM / USD",
-    "assetName": "Magic Internet Money",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xc9D267542B23B41fB93397a93e5a1D7B80Ea5A01",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "MIR / USD",
-    "assetName": "Mirror Protocol",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x291B2983b995870779C36A102Da101f8765244D6",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "MRNA / USD",
-    "assetName": "Moderna",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x6101F4DFBb24Cac3D64e28A815255B428b93639f",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "MS / USD",
-    "assetName": "Morgan Stanley",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x6b25F7f189c3f26d3caC43b754578b67Fc8d952A",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "MSFT / USD",
-    "assetName": "Microsoft",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x5D209cE1fBABeAA8E6f9De4514A74FFB4b34560F",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "NFLX / USD",
-    "assetName": "Netflix",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x1fE6c9Bd9B29e5810c2819f37dDa8559739ebeC9",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "NGN / USD",
-    "assetName": "Nigerian Naira",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x1FF2B48ed0A1669d6CcC83f4B3c84FDdF13Ea594",
-    "feedCategory": "verified",
-    "feedType": "Forex"
-  }, {
-    "pair": "NULS / USD",
-    "assetName": "Nuls",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xaCFBE73231d312AC6954496b3f786E892bF0f7e5",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "NVDA / USD",
-    "assetName": "Nvidia",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xea5c2Cbb5cD57daC24E26180b19a929F3E9699B8",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "ONG / USD",
-    "assetName": "Ong",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xcF95796f3016801A1dA5C518Fc7A59C51dcEf793",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "ONT / USD",
-    "assetName": "Ontology",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x887f177CBED2cf555a64e7bF125E1825EB69dB82",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "PACB / USD",
-    "assetName": "Pacific Biosciences",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xe9bEC24f14AB49b0a81a482a4224e7505d2d29e9",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "PAXG / USD",
-    "assetName": "Pax Gold",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x7F8caD4690A38aC28BDA3D132eF83DB1C17557Df",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "PFE / USD",
-    "assetName": "Pfizer",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xe96fFdE2ba50E0e869520475ee1bC73cA2dEE326",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "PHP / USD",
-    "assetName": "Philippine Peso",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x1CcaD765D39Aa2060eB4f6dD94e5874db786C16f",
-    "feedCategory": "verified",
-    "feedType": "Forex"
-  }, {
-    "pair": "QQQ / USD",
-    "assetName": "QQQ Nasdaq 100 ETF",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x9A41B56b2c24683E2f23BdE15c14BC7c4a58c3c4",
-    "feedCategory": "custom",
-    "feedType": "Equities"
-  }, {
-    "pair": "RAMP / USD",
-    "assetName": "Ramp",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xD1225da5FC21d17CaE526ee4b6464787c6A71b4C",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "REEF / USD",
-    "assetName": "Reef Finance",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x46f13472A4d4FeC9E07E8A00eE52f4Fa77810736",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "SHIB / USD",
-    "assetName": "Shiba Inu",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xA615Be6cb0f3F36A641858dB6F30B9242d0ABeD8",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "SOL / USD",
-    "assetName": "Solana",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0x0E8a53DD9c13589df6382F13dA6B3Ec8F919B323",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "SPCE / USD",
-    "assetName": "Virgin Galactic",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xC861a351b2b50985b9061a5b68EBF9018e7FfB7b",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "SPELL / USD",
-    "assetName": "Spell Token",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x47e01580C537Cd47dA339eA3a4aFb5998CCf037C",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "SPY / USD",
-    "assetName": "SPY S&P 500 ETF",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xb24D1DeE5F9a3f761D286B56d2bC44CE1D02DF7e",
-    "feedCategory": "custom",
-    "feedType": "Equities"
-  }, {
-    "pair": "SUSHI / USD",
-    "assetName": "Sushi",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xa679C72a97B654CFfF58aB704de3BA15Cde89B07",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "SXP / USD",
-    "assetName": "Swipe",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xE188A9875af525d25334d75F3327863B2b8cd0F1",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "TORN / USD",
-    "assetName": "Tornado Cash",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xfb2431593D1d0Ec2CDf1ECc0debA1f348639A248",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "TRX / USD",
-    "assetName": "Tron",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0xF4C5e535756D11994fCBB12Ba8adD0192D9b88be",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "TSLA / USD",
-    "assetName": "Tesla",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xEEA2ae9c074E87596A85ABE698B2Afebc9B57893",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "TSM / USD",
-    "assetName": "Taiwan Semiconductor",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x685fC5acB74CE3d5DF03543c9813C73DFCe50de8",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "TUSD / USD",
-    "assetName": "True USD",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xa3334A9762090E827413A7495AfeCE76F41dFc06",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "TUSD Reserves",
-    "assetName": "True USD",
-    "deviationThreshold": 5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x098351281d2D67A33c425840f5505A3ee96f6aee",
-    "feedCategory": "specialized",
-    "feedType": "Crypto"
-  }, {
-    "pair": "TWT / BNB",
-    "assetName": "Trust Wallet Token",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x7E728dFA6bCa9023d9aBeE759fDF56BEAb8aC7aD",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "Total Marketcap USD",
-    "assetName": "Total cryptocurrency market cap",
-    "deviationThreshold": 1,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xA7dd120a00aCf4161FdA187b864b73bdc8283D77",
-    "feedCategory": "custom",
-    "feedType": "Crypto"
-  }, {
-    "pair": "UNH / USD",
-    "assetName": "United Health",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xC18c5A32c84CbbAc7D0F06Dd370198DA711c73C9",
-    "feedCategory": "verified",
-    "feedType": "Equities"
-  }, {
-    "pair": "UNI / BNB",
-    "assetName": "Uniswap",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x25298F020c3CA1392da76Eb7Ac844813b218ccf7",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "UNI / USD",
-    "assetName": "Uniswap",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0xb57f259E7C24e56a1dA00F66b55A5640d9f9E7e4",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "USDC / BNB",
-    "assetName": "Circle USD",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x45f86CA2A8BC9EBD757225B19a1A0D7051bE46Db",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "USDC / USD",
-    "assetName": "Circle USD",
-    "deviationThreshold": 0.1,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x51597f405303C4377E36123cBc172b13269EA163",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "USDN / USD",
-    "assetName": "Neutrino USD",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x7C0BC703Dc56645203CFeBE1928E34B8e885ae37",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "USDT / BNB",
-    "assetName": "Tether USD",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0xD5c40f5144848Bd4EF08a9605d860e727b991513",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "USDT / USD",
-    "assetName": "Tether USD",
-    "deviationThreshold": 0.1,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xB97Ad0E74fa7d920791E90258A6E2085088b4320",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "VAI / USD",
-    "assetName": "Vai",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x058316f8Bb13aCD442ee7A216C7b60CFB4Ea1B53",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "VT / USD",
-    "assetName": "Vanguard Total World ETF",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xa3D5BB7e8ccc2Dc7492537cc2Ec4e4E7BBA32fa0",
-    "feedCategory": "custom",
-    "feedType": "Equities"
-  }, {
-    "pair": "WING / USD",
-    "assetName": "Wing Finance",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xf7E7c0ffCB11dAC6eCA1434C67faB9aE000e10a7",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "WOO / USD",
-    "assetName": "Woo Network",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x02Bfe714e78E2Ad1bb1C2beE93eC8dc5423B66d4",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "WTI / USD",
-    "assetName": "WTI Crude",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0xb1BED6C1fC1adE2A975F54F24851c7F410e27718",
-    "feedCategory": "verified",
-    "feedType": "Commodities"
-  }, {
-    "pair": "XAG / USD",
-    "assetName": "Silver",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0x817326922c909b16944817c207562B25C4dF16aD",
-    "feedCategory": "verified",
-    "feedType": "Commodities"
-  }, {
-    "pair": "XAU / USD",
-    "assetName": "Gold",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0x86896fEB19D8A607c3b11f2aF50A0f239Bd71CD0",
-    "feedCategory": "verified",
-    "feedType": "Commodities"
-  }, {
-    "pair": "XLM / USD",
-    "assetName": "Stellar",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0x27Cc356A5891A3Fe6f84D0457dE4d108C6078888",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "XRP / BNB",
-    "assetName": "Ripple",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x798A65D349B2B5E6645695912880b54dfFd79074",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "XRP / USD",
-    "assetName": "Ripple",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0x93A67D414896A280bF8FFB3b389fE3686E014fda",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "XTZ / BNB",
-    "assetName": "Tezos",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x8264d6983B219be65C4D62f1c82B3A2999944cF2",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "XTZ / USD",
-    "assetName": "Tezos",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x9A18137ADCF7b05f033ad26968Ed5a9cf0Bf8E6b",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "XVS / BNB",
-    "assetName": "Venus",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0xf369A13E7f2449E58DdE8302F008eE9131f8d859",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "XVS / USD",
-    "assetName": "Venus",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xBF63F430A79D4036A5900C19818aFf1fa710f206",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "YFI / BNB",
-    "assetName": "Yearn Finance",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0xF841761481DF19831cCC851A54D8350aE6022583",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "YFI / USD",
-    "assetName": "Yearn Finance",
-    "deviationThreshold": 2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0xD7eAa5Bf3013A96e3d515c055Dbd98DbdC8c620D",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "YFII / USD",
-    "assetName": "YFII Finance",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xC94580FAaF145B2FD0ab5215031833c98D3B77E4",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }, {
-    "pair": "ZAR / USD",
-    "assetName": "South African Rand",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xDE1952A1bF53f8E558cc761ad2564884E55B2c6F",
-    "feedCategory": "verified",
-    "feedType": "Forex"
-  }, {
-    "pair": "ZIL / USD",
-    "assetName": "Ziliqa",
-    "deviationThreshold": 0.2,
-    "heartbeat": "10m",
-    "decimals": 8,
-    "proxy": "0x3e3aA4FC329529C8Ab921c810850626021dbA7e6",
-    "feedCategory": "verified",
-    "feedType": "Crypto"
-  }]
-}, {
-  "name": "BNB Chain Testnet",
-  "url": "https://testnet.bscscan.com/address/%s",
-  "networkType": "testnet",
-  "proxies": [{
-    "pair": "AAVE / USD",
-    "assetName": "",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x298619601ebCd58d0b526963Deb2365B485Edc74",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "ADA / USD",
-    "assetName": "",
-    "deviationThreshold": 5,
-    "heartbeat": "1h",
-    "decimals": 8,
-    "proxy": "0x5e66a1775BbC249b5D51C13d29245522582E671C",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "BAKE / USD",
-    "assetName": "",
-    "deviationThreshold": 1,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xbe75E0725922D78769e3abF0bcb560d1E2675d5d",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "BCH / USD",
-    "assetName": "",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x887f177CBED2cf555a64e7bF125E1825EB69dB82",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "BNB / USD",
-    "assetName": "",
-    "deviationThreshold": 0.3,
-    "heartbeat": "1h",
-    "decimals": 8,
-    "proxy": "0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "BTC / ETH",
-    "assetName": "",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x1a602D4928faF0A153A520f58B332f9CAFF320f7",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "BTC / USD",
-    "assetName": "",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x5741306c21795FdCBb9b265Ea0255F499DFe515C",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "BUSD / ETH",
-    "assetName": "",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x5ea7D6A33D3655F661C298ac8086708148883c34",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "BUSD / USD",
-    "assetName": "",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x9331b55D9830EF609A2aBCfAc0FBCE050A52fdEa",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "CAKE / USD",
-    "assetName": "",
-    "deviationThreshold": 2,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x81faeDDfeBc2F8Ac524327d70Cf913001732224C",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "CREAM / USD",
-    "assetName": "",
-    "deviationThreshold": 1,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xB8eADfD8B78aDA4F85680eD96e0f50e1B5762b0a",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "DAI / BNB",
-    "assetName": "",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 18,
-    "proxy": "0x0630521aC362bc7A19a4eE44b57cE72Ea34AD01c",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "DAI / USD",
-    "assetName": "",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xE4eE17114774713d2De0eC0f035d4F7665fc025D",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "DODO / USD",
-    "assetName": "",
-    "deviationThreshold": 1,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x2939E0089e61C5c9493C2013139885444c73a398",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "DOGE / USD",
-    "assetName": "",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x963D5e7f285Cc84ed566C486c3c1bC911291be38",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "DOT / USD",
-    "assetName": "",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xEA8731FD0685DB8AeAde9EcAE90C4fdf1d8164ed",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "EQZ / USD",
-    "assetName": "",
-    "deviationThreshold": 1,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x6C2441920404835155f33d88faf0545B895871b1",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "ETH / USD",
-    "assetName": "",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x143db3CEEfbdfe5631aDD3E50f7614B6ba708BA7",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "FIL / USD",
-    "assetName": "",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x17308A18d4a50377A4E1C37baaD424360025C74D",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "FRONT / USD",
-    "assetName": "",
-    "deviationThreshold": 1,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x101E51C0Bc2D2213a9b0c991A991958aAd3fF96A",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "INJ / USD",
-    "assetName": "",
-    "deviationThreshold": 1,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x58b299Fa027E1d9514dBbEeBA7944FD744553d61",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "LINK / BNB",
-    "assetName": "",
-    "deviationThreshold": 0.5,
-    "heartbeat": "1h",
-    "decimals": 18,
-    "proxy": "0x351Ff08FF5077d6E8704A4763836Fe187f074380",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "LINK / USD",
-    "assetName": "",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x1B329402Cb1825C6F30A0d92aB9E2862BE47333f",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "LTC / USD",
-    "assetName": "",
-    "deviationThreshold": 5,
-    "heartbeat": "1h",
-    "decimals": 8,
-    "proxy": "0x9Dcf949BCA2F4A8a62350E0065d18902eE87Dca3",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "MATIC / USD",
-    "assetName": "",
-    "deviationThreshold": 1,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x957Eb0316f02ba4a9De3D308742eefd44a3c1719",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "REEF / USD",
-    "assetName": "",
-    "deviationThreshold": 1,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x902fA2495a8c5E89F7496F91678b8CBb53226D06",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "SFP / USD",
-    "assetName": "",
-    "deviationThreshold": 1,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x4b531A318B0e44B549F3b2f824721b3D0d51930A",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "SXP / USD",
-    "assetName": "",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x678AC35ACbcE272651874E782DB5343F9B8a7D66",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "TRX / USD",
-    "assetName": "",
-    "deviationThreshold": 0.5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x135deD16bFFEB51E01afab45362D3C4be31AA2B0",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "TWT / USD",
-    "assetName": "",
-    "deviationThreshold": 1,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x7671d7EDb66E4C10d5FFaA6a0d8842B5d880F0B3",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "USDC / USD",
-    "assetName": "",
-    "deviationThreshold": 5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x90c069C4538adAc136E051052E14c1cD799C41B7",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "USDT / USD",
-    "assetName": "",
-    "deviationThreshold": 5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xEca2605f0BCF2BA5966372C99837b1F182d3D620",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "XRP / USD",
-    "assetName": "",
-    "deviationThreshold": 5,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0x4046332373C24Aed1dC8bAd489A04E187833B28d",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "XVS / USD",
-    "assetName": "",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "proxy": "0xCfA786C17d6739CBC702693F23cA4417B5945491",
-    "feedCategory": "",
-    "feedType": "-"
-  }, {
-    "pair": "TUSD / USD",
-    "proxy": "0xC6222C9fA907B9Ed797d6feA08139cDABd14bcB9",
-    "assetName": "",
-    "deviationThreshold": 0.3,
-    "heartbeat": "24h",
-    "decimals": 8,
-    "feedCategory": ""
-  }]
-}]
+[
+  {
+    "name": "BNB Chain Mainnet",
+    "url": "https://bscscan.com/address/%s",
+    "networkType": "mainnet",
+    "proxies": [
+      {
+        "pair": "AAPL / USD",
+        "assetName": "Apple",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xb7Ed5bE7977d61E83534230f3256C021e0fae0B6",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "AAVE / USD",
+        "assetName": "Aave",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0xA8357BF572460fC40f4B0aCacbB2a6A61c89f475",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "ADA / BNB",
+        "assetName": "Cardano",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x2d5Fc41d1365fFe13d03d91E82e04Ca878D69f4B",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "ADA / USD",
+        "assetName": "Cardano",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0xa767f745331D267c7751297D982b050c93985627",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "ALPACA / USD",
+        "assetName": "Alpaca Finance",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xe0073b60833249ffd1bb2af809112c2fbf221DF6",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "ALPHA / BNB",
+        "assetName": "Alpha Finance",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x7bC032A7C19B1BdCb981D892854d090cfB0f238E",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "AMZN / USD",
+        "assetName": "Amazon",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x51d08ca89d3e8c12535BA8AEd33cDf2557ab5b2a",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "ARKK / USD",
+        "assetName": "ARK Innovation ETF",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x234c7a1da64Bdf44E1B8A25C94af53ff2A199dE0",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "ARPA / USD",
+        "assetName": "ARPA Chain",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x31E0110f8c1376a699C8e3E65b5110e0525A811d",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "ATOM / USD",
+        "assetName": "Cosmos",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xb056B7C804297279A9a673289264c17E6Dc6055d",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "AUD / USD",
+        "assetName": "Australian Dollar",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0x498F912B09B5dF618c77fcC9E8DA503304Df92bF",
+        "feedCategory": "verified",
+        "feedType": "Forex"
+      },
+      {
+        "pair": "AUTO / USD",
+        "assetName": "Auto",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x88E71E6520E5aC75f5338F5F0c9DeD9d4f692cDA",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "AVAX / USD",
+        "assetName": "Avalanche",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x5974855ce31EE8E1fff2e76591CbF83D7110F151",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "AXS / USD",
+        "assetName": "Axie Infinity",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x7B49524ee5740c99435f52d731dFC94082fE61Ab",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "BAC / USD",
+        "assetName": "Bank of America",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x368b7ab0a0Ff94E23fF5e4A7F04327dF7079E174",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "BAND / BNB",
+        "assetName": "Band Protocol",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x3334bF7ec892Ca03D1378B51769b7782EAF318C4",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "BAND / USD",
+        "assetName": "Band Protocol",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xC78b99Ae87fF43535b0C782128DB3cB49c74A4d3",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "BCH / BNB",
+        "assetName": "Bitcoin Cash",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x2a548935a323Bb7329a5E3F1667B979f16Bc890b",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "BCH / USD",
+        "assetName": "Bitcoin Cash",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x43d80f616DAf0b0B42a928EeD32147dC59027D41",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "BETH / USD",
+        "assetName": "Binance ETH",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x2A3796273d47c4eD363b361D3AEFb7F7E2A13782",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "BIDU / USD",
+        "assetName": "Baidu",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xb9344e4Ffa6d5885B2C5830adc27ddF3FdBF883c",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "BIFI / USD",
+        "assetName": "Beefy Finance",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xaB827b69daCd586A37E80A7d552a4395d576e645",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "BNB / USD",
+        "assetName": "BNB",
+        "deviationThreshold": 1,
+        "heartbeat": "1m",
+        "decimals": 8,
+        "proxy": "0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "BRK.B / USD",
+        "assetName": "Berkshire Hathaway",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x5289A08b6d5D2f8fAd4cC169c65177f68C0f0A99",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "BRL / USD",
+        "assetName": "Brazilian Real",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x5cb1Cb3eA5FB46de1CE1D0F3BaDB3212e8d8eF48",
+        "feedCategory": "verified",
+        "feedType": "Forex"
+      },
+      {
+        "pair": "BTC / BNB",
+        "assetName": "Bitcoin",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x116EeB23384451C78ed366D4f67D5AD44eE771A0",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "BTC / ETH",
+        "assetName": "Bitcoin",
+        "deviationThreshold": 2,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0xf1769eB4D1943AF02ab1096D7893759F6177D6B8",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "BTC / USD",
+        "assetName": "Bitcoin",
+        "deviationThreshold": 0.1,
+        "heartbeat": "1m",
+        "decimals": 8,
+        "proxy": "0x264990fbd0A4796A3E3d8E37C4d5F87a3aCa5Ebf",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "BTT / USD",
+        "assetName": "BitTorrent-New",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x17e68B6EAf5BFF73da611B3AaD543dd8Aeb13a4d",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "BUSD / BNB",
+        "assetName": "Binance USD",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x87Ea38c9F24264Ec1Fff41B04ec94a97Caf99941",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "BUSD / USD",
+        "assetName": "Binance USD",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xcBb98864Ef56E9042e7d2efef76141f15731B82f",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "C98 / USD",
+        "assetName": "C98",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x889158E39628C0397DC54B84F6b1cbe0AaEb7FFc",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "CAKE / BNB",
+        "assetName": "PancakeSwap",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0xcB23da9EA243f53194CBc2380A6d4d9bC046161f",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "CAKE / USD",
+        "assetName": "PancakeSwap",
+        "deviationThreshold": 0.2,
+        "heartbeat": "1m",
+        "decimals": 8,
+        "proxy": "0xB6064eD41d4f67e353768aA239cA86f4F73665a1",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "CFX / USD",
+        "assetName": "Conflux",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xe3cA2f3Bad1D8327820f648C759f17162b5383ae",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "CHF / USD",
+        "assetName": "Swiss Franc",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x964261740356cB4aaD0C3D2003Ce808A4176a46d",
+        "feedCategory": "verified",
+        "feedType": "Forex"
+      },
+      {
+        "pair": "CHR / USD",
+        "assetName": "Chromaway",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x1f771B2b1F3c3Db6C7A1d5F38961a49CEcD116dA",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "COIN / USD",
+        "assetName": "Coinbase",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x2d1AB79D059e21aE519d88F978cAF39d74E31AEB",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "COMP / USD",
+        "assetName": "Compound",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x0Db8945f9aEf5651fa5bd52314C5aAe78DfDe540",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "CREAM / BNB",
+        "assetName": "CREAM",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x6f55DFAf098a813d87BB4e6392275b502360Bb9D",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "CREAM / USD",
+        "assetName": "CREAM",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xa12Fc27A873cf114e6D8bBAf8BD9b8AC56110b39",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "CRV / USD",
+        "assetName": "Curve",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x2e1C3b6Fcae47b20Dd343D9354F7B1140a1E6B27",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "Calculated SAVAX / USD",
+        "assetName": "Calculated Liquid Staked AVAX",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x3b37C6f1e3207DE5a4664E837072Bd9A25269B39",
+        "feedCategory": "custom",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "DAI / BNB",
+        "assetName": "DAI",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x8EC213E7191488C7873cEC6daC8e97cdbAdb7B35",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "DAI / USD",
+        "assetName": "DAI",
+        "deviationThreshold": 0.1,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x132d3C0B1D2cEa0BC552588063bdBb210FDeecfA",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "DEGO / USD",
+        "assetName": "Dego Finance",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x39F1275366D130eB677D4F47D40F9296B62D877A",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "DF / USD",
+        "assetName": "dForce",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x1b816F5E122eFa230300126F97C018716c4e47F5",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "DODO / BNB",
+        "assetName": "Dodo",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x120ae15CB86060527BFD431Abd3FF51890D2032C",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "DODO / USD",
+        "assetName": "Dodo",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x87701B15C08687341c2a847ca44eCfBc8d7873E1",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "DOGE / USD",
+        "assetName": "Dogecoin",
+        "deviationThreshold": 0.2,
+        "heartbeat": "47s",
+        "decimals": 8,
+        "proxy": "0x3AB0A0d137D4F946fBB19eecc6e92E64660231C8",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "DOT / BNB",
+        "assetName": "Polkadot",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0xBA8683E9c3B1455bE6e18E7768e8cAD95Eb5eD49",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "DOT / USD",
+        "assetName": "Polkadot",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0xC333eb0086309a16aa7c8308DfD32c8BBA0a2592",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "DYDX / USD",
+        "assetName": "dYdX",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xF62B743a49A42716fCF0a81886DAe1f8763FEE3E",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "EOS / BNB",
+        "assetName": "EOS",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0xed93F3764334788f2f6628b30e505fe1fc5d1D7b",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "EOS / USD",
+        "assetName": "EOS",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xd5508c8Ffdb8F15cE336e629fD4ca9AdB48f50F0",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "ETH / BNB",
+        "assetName": "Ethereum",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x63D407F32Aa72E63C7209ce1c2F5dA40b3AaE726",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "ETH / USD",
+        "assetName": "Ethereum",
+        "deviationThreshold": 0.1,
+        "heartbeat": "1m",
+        "decimals": 8,
+        "proxy": "0x9ef1B8c0E4F7dc8bF5719Ea496883DC6401d5b2e",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "EUR / USD",
+        "assetName": "Euro",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0x0bf79F617988C472DcA68ff41eFe1338955b9A80",
+        "feedCategory": "verified",
+        "feedType": "Forex"
+      },
+      {
+        "pair": "FB / USD",
+        "assetName": "Meta",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xfc76E9445952A3C31369dFd26edfdfb9713DF5Bb",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "FET / USD",
+        "assetName": "Fetch.ai",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x657e700c66C48c135c4A29c4292908DbdA7aa280",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "FIL / USD",
+        "assetName": "Filecoin",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xE5dbFD9003bFf9dF5feB2f4F445Ca00fb121fb83",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "FRAX / USD",
+        "assetName": "FRAX",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x13A9c98b07F098c5319f4FF786eB16E22DC738e1",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "FTM / USD",
+        "assetName": "Fantom",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xe2A47e87C0f4134c8D06A41975F6860468b2F925",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "FTT / USD",
+        "assetName": "FTX Token",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x38E05754Eb00171cBE72bA1eE792933d6e8d2891",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "FXS / USD",
+        "assetName": "Frax Share",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x0E9D55932893Fb1308882C7857285B2B0bcc4f4a",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "GBP / USD",
+        "assetName": "Pound Sterling",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x8FAf16F710003E538189334541F5D4a391Da46a0",
+        "feedCategory": "verified",
+        "feedType": "Forex"
+      },
+      {
+        "pair": "GME / USD",
+        "assetName": "Gamestop",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x66cD2975d02f5F5cdEF2E05cBca12549B1a5022D",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "GOOGL / USD",
+        "assetName": "Alphabet",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xeDA73F8acb669274B15A977Cb0cdA57a84F18c2a",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "HIGH / USD",
+        "assetName": "Highstreet",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xdF4Dd957a84F798acFADd448badd2D8b9bC99047",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "ICP / USD",
+        "assetName": "Internet Computer Protocol",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x84210d9013A30C6ab169e28840A6CC54B60fa042",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "INJ / USD",
+        "assetName": "Injective Protocol",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x63A9133cd7c611d6049761038C16f238FddA71d7",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "INR / USD",
+        "assetName": "Indian Rupee",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xeF0a3109ce97e0B58557F0e3Ba95eA16Bfa4A89d",
+        "feedCategory": "verified",
+        "feedType": "Forex"
+      },
+      {
+        "pair": "JPM / USD",
+        "assetName": "JP Morgan",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x8f26ba94180371baA2D2C143f96b6886DCACA250",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "JPY / USD",
+        "assetName": "Japanese Yen",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0x22Db8397a6E77E41471dE256a7803829fDC8bC57",
+        "feedCategory": "verified",
+        "feedType": "Forex"
+      },
+      {
+        "pair": "KNC / USD",
+        "assetName": "",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xF2f8273F6b9Fc22C90891DC802cAf60eeF805cDF",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "LINA / USD",
+        "assetName": "Linear",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0x38393201952f2764E04B290af9df427217D56B41",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "LINK / BNB",
+        "assetName": "Chainlink",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0xB38722F6A608646a538E882Ee9972D15c86Fc597",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "LINK / USD",
+        "assetName": "Chainlink",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0xca236E327F629f9Fc2c30A4E95775EbF0B89fac8",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "LIT / USD",
+        "assetName": "Litentry",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x83766bA8d964fEAeD3819b145a69c947Df9Cb035",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "LTC / BNB",
+        "assetName": "Litecoin",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x4e5a43A79f53c0a8e83489648Ea7e429278f8b2D",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "LTC / USD",
+        "assetName": "Litecoin",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x74E72F37A8c415c8f1a98Ed42E78Ff997435791D",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "MASK / USD",
+        "assetName": "Mask Network",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x4978c0abE6899178c1A74838Ee0062280888E2Cf",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "MATIC / USD",
+        "assetName": "Polygon (MATIC)",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0x7CA57b0cA6367191c94C8914d7Df09A57655905f",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "MDX / USD",
+        "assetName": "MDex",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x9165366bf450a6906D25549f0E0f8E6586Fc93E2",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "MIM / USD",
+        "assetName": "Magic Internet Money",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xc9D267542B23B41fB93397a93e5a1D7B80Ea5A01",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "MIR / USD",
+        "assetName": "Mirror Protocol",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x291B2983b995870779C36A102Da101f8765244D6",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "MRNA / USD",
+        "assetName": "Moderna",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x6101F4DFBb24Cac3D64e28A815255B428b93639f",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "MS / USD",
+        "assetName": "Morgan Stanley",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x6b25F7f189c3f26d3caC43b754578b67Fc8d952A",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "MSFT / USD",
+        "assetName": "Microsoft",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x5D209cE1fBABeAA8E6f9De4514A74FFB4b34560F",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "NFLX / USD",
+        "assetName": "Netflix",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x1fE6c9Bd9B29e5810c2819f37dDa8559739ebeC9",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "NGN / USD",
+        "assetName": "Nigerian Naira",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x1FF2B48ed0A1669d6CcC83f4B3c84FDdF13Ea594",
+        "feedCategory": "verified",
+        "feedType": "Forex"
+      },
+      {
+        "pair": "NULS / USD",
+        "assetName": "Nuls",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xaCFBE73231d312AC6954496b3f786E892bF0f7e5",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "NVDA / USD",
+        "assetName": "Nvidia",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xea5c2Cbb5cD57daC24E26180b19a929F3E9699B8",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "ONG / USD",
+        "assetName": "Ong",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xcF95796f3016801A1dA5C518Fc7A59C51dcEf793",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "ONT / USD",
+        "assetName": "Ontology",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x887f177CBED2cf555a64e7bF125E1825EB69dB82",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "PACB / USD",
+        "assetName": "Pacific Biosciences",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xe9bEC24f14AB49b0a81a482a4224e7505d2d29e9",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "PAXG / USD",
+        "assetName": "Pax Gold",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x7F8caD4690A38aC28BDA3D132eF83DB1C17557Df",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "PFE / USD",
+        "assetName": "Pfizer",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xe96fFdE2ba50E0e869520475ee1bC73cA2dEE326",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "PHP / USD",
+        "assetName": "Philippine Peso",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x1CcaD765D39Aa2060eB4f6dD94e5874db786C16f",
+        "feedCategory": "verified",
+        "feedType": "Forex"
+      },
+      {
+        "pair": "QQQ / USD",
+        "assetName": "QQQ Nasdaq 100 ETF",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x9A41B56b2c24683E2f23BdE15c14BC7c4a58c3c4",
+        "feedCategory": "custom",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "RAMP / USD",
+        "assetName": "Ramp",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xD1225da5FC21d17CaE526ee4b6464787c6A71b4C",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "REEF / USD",
+        "assetName": "Reef Finance",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x46f13472A4d4FeC9E07E8A00eE52f4Fa77810736",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "SHIB / USD",
+        "assetName": "Shiba Inu",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xA615Be6cb0f3F36A641858dB6F30B9242d0ABeD8",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "SOL / USD",
+        "assetName": "Solana",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0x0E8a53DD9c13589df6382F13dA6B3Ec8F919B323",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "SPCE / USD",
+        "assetName": "Virgin Galactic",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xC861a351b2b50985b9061a5b68EBF9018e7FfB7b",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "SPELL / USD",
+        "assetName": "Spell Token",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x47e01580C537Cd47dA339eA3a4aFb5998CCf037C",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "SPY / USD",
+        "assetName": "SPY S&P 500 ETF",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xb24D1DeE5F9a3f761D286B56d2bC44CE1D02DF7e",
+        "feedCategory": "custom",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "SUSHI / USD",
+        "assetName": "Sushi",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xa679C72a97B654CFfF58aB704de3BA15Cde89B07",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "SXP / USD",
+        "assetName": "Swipe",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xE188A9875af525d25334d75F3327863B2b8cd0F1",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "TORN / USD",
+        "assetName": "Tornado Cash",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xfb2431593D1d0Ec2CDf1ECc0debA1f348639A248",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "TRX / USD",
+        "assetName": "Tron",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0xF4C5e535756D11994fCBB12Ba8adD0192D9b88be",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "TSLA / USD",
+        "assetName": "Tesla",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xEEA2ae9c074E87596A85ABE698B2Afebc9B57893",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "TSM / USD",
+        "assetName": "Taiwan Semiconductor",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x685fC5acB74CE3d5DF03543c9813C73DFCe50de8",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "TUSD / USD",
+        "assetName": "True USD",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xa3334A9762090E827413A7495AfeCE76F41dFc06",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "TUSD Reserves",
+        "assetName": "True USD",
+        "deviationThreshold": 5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x098351281d2D67A33c425840f5505A3ee96f6aee",
+        "feedCategory": "specialized",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "TWT / BNB",
+        "assetName": "Trust Wallet Token",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x7E728dFA6bCa9023d9aBeE759fDF56BEAb8aC7aD",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "Total Marketcap USD",
+        "assetName": "Total cryptocurrency market cap",
+        "deviationThreshold": 1,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xA7dd120a00aCf4161FdA187b864b73bdc8283D77",
+        "feedCategory": "custom",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "UNH / USD",
+        "assetName": "United Health",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xC18c5A32c84CbbAc7D0F06Dd370198DA711c73C9",
+        "feedCategory": "verified",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "UNI / BNB",
+        "assetName": "Uniswap",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x25298F020c3CA1392da76Eb7Ac844813b218ccf7",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "UNI / USD",
+        "assetName": "Uniswap",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0xb57f259E7C24e56a1dA00F66b55A5640d9f9E7e4",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "USDC / BNB",
+        "assetName": "Circle USD",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x45f86CA2A8BC9EBD757225B19a1A0D7051bE46Db",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "USDC / USD",
+        "assetName": "Circle USD",
+        "deviationThreshold": 0.1,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x51597f405303C4377E36123cBc172b13269EA163",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "USDN / USD",
+        "assetName": "Neutrino USD",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x7C0BC703Dc56645203CFeBE1928E34B8e885ae37",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "USDT / BNB",
+        "assetName": "Tether USD",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0xD5c40f5144848Bd4EF08a9605d860e727b991513",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "USDT / USD",
+        "assetName": "Tether USD",
+        "deviationThreshold": 0.1,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xB97Ad0E74fa7d920791E90258A6E2085088b4320",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "VAI / USD",
+        "assetName": "Vai",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x058316f8Bb13aCD442ee7A216C7b60CFB4Ea1B53",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "VT / USD",
+        "assetName": "Vanguard Total World ETF",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xa3D5BB7e8ccc2Dc7492537cc2Ec4e4E7BBA32fa0",
+        "feedCategory": "custom",
+        "feedType": "Equities"
+      },
+      {
+        "pair": "WING / USD",
+        "assetName": "Wing Finance",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xf7E7c0ffCB11dAC6eCA1434C67faB9aE000e10a7",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "WOO / USD",
+        "assetName": "Woo Network",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x02Bfe714e78E2Ad1bb1C2beE93eC8dc5423B66d4",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "WTI / USD",
+        "assetName": "WTI Crude",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0xb1BED6C1fC1adE2A975F54F24851c7F410e27718",
+        "feedCategory": "verified",
+        "feedType": "Commodities"
+      },
+      {
+        "pair": "XAG / USD",
+        "assetName": "Silver",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0x817326922c909b16944817c207562B25C4dF16aD",
+        "feedCategory": "verified",
+        "feedType": "Commodities"
+      },
+      {
+        "pair": "XAU / USD",
+        "assetName": "Gold",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0x86896fEB19D8A607c3b11f2aF50A0f239Bd71CD0",
+        "feedCategory": "verified",
+        "feedType": "Commodities"
+      },
+      {
+        "pair": "XLM / USD",
+        "assetName": "Stellar",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0x27Cc356A5891A3Fe6f84D0457dE4d108C6078888",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "XRP / BNB",
+        "assetName": "Ripple",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x798A65D349B2B5E6645695912880b54dfFd79074",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "XRP / USD",
+        "assetName": "Ripple",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0x93A67D414896A280bF8FFB3b389fE3686E014fda",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "XTZ / BNB",
+        "assetName": "Tezos",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x8264d6983B219be65C4D62f1c82B3A2999944cF2",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "XTZ / USD",
+        "assetName": "Tezos",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x9A18137ADCF7b05f033ad26968Ed5a9cf0Bf8E6b",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "XVS / BNB",
+        "assetName": "Venus",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0xf369A13E7f2449E58DdE8302F008eE9131f8d859",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "XVS / USD",
+        "assetName": "Venus",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xBF63F430A79D4036A5900C19818aFf1fa710f206",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "YFI / BNB",
+        "assetName": "Yearn Finance",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0xF841761481DF19831cCC851A54D8350aE6022583",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "YFI / USD",
+        "assetName": "Yearn Finance",
+        "deviationThreshold": 2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0xD7eAa5Bf3013A96e3d515c055Dbd98DbdC8c620D",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "YFII / USD",
+        "assetName": "YFII Finance",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xC94580FAaF145B2FD0ab5215031833c98D3B77E4",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      },
+      {
+        "pair": "ZAR / USD",
+        "assetName": "South African Rand",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xDE1952A1bF53f8E558cc761ad2564884E55B2c6F",
+        "feedCategory": "verified",
+        "feedType": "Forex"
+      },
+      {
+        "pair": "ZIL / USD",
+        "assetName": "Ziliqa",
+        "deviationThreshold": 0.2,
+        "heartbeat": "10m",
+        "decimals": 8,
+        "proxy": "0x3e3aA4FC329529C8Ab921c810850626021dbA7e6",
+        "feedCategory": "verified",
+        "feedType": "Crypto"
+      }
+    ]
+  },
+  {
+    "name": "BNB Chain Testnet",
+    "url": "https://testnet.bscscan.com/address/%s",
+    "networkType": "testnet",
+    "proxies": [
+      {
+        "pair": "AAVE / USD",
+        "assetName": "",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x298619601ebCd58d0b526963Deb2365B485Edc74",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "ADA / USD",
+        "assetName": "",
+        "deviationThreshold": 5,
+        "heartbeat": "1h",
+        "decimals": 8,
+        "proxy": "0x5e66a1775BbC249b5D51C13d29245522582E671C",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "BAKE / USD",
+        "assetName": "",
+        "deviationThreshold": 1,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xbe75E0725922D78769e3abF0bcb560d1E2675d5d",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "BCH / USD",
+        "assetName": "",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x887f177CBED2cf555a64e7bF125E1825EB69dB82",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "BNB / USD",
+        "assetName": "",
+        "deviationThreshold": 0.3,
+        "heartbeat": "1h",
+        "decimals": 8,
+        "proxy": "0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "BTC / ETH",
+        "assetName": "",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x1a602D4928faF0A153A520f58B332f9CAFF320f7",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "BTC / USD",
+        "assetName": "",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x5741306c21795FdCBb9b265Ea0255F499DFe515C",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "BUSD / ETH",
+        "assetName": "",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x5ea7D6A33D3655F661C298ac8086708148883c34",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "BUSD / USD",
+        "assetName": "",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x9331b55D9830EF609A2aBCfAc0FBCE050A52fdEa",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "CAKE / USD",
+        "assetName": "",
+        "deviationThreshold": 2,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x81faeDDfeBc2F8Ac524327d70Cf913001732224C",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "CREAM / USD",
+        "assetName": "",
+        "deviationThreshold": 1,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xB8eADfD8B78aDA4F85680eD96e0f50e1B5762b0a",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "DAI / BNB",
+        "assetName": "",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 18,
+        "proxy": "0x0630521aC362bc7A19a4eE44b57cE72Ea34AD01c",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "DAI / USD",
+        "assetName": "",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xE4eE17114774713d2De0eC0f035d4F7665fc025D",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "DODO / USD",
+        "assetName": "",
+        "deviationThreshold": 1,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x2939E0089e61C5c9493C2013139885444c73a398",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "DOGE / USD",
+        "assetName": "",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x963D5e7f285Cc84ed566C486c3c1bC911291be38",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "DOT / USD",
+        "assetName": "",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xEA8731FD0685DB8AeAde9EcAE90C4fdf1d8164ed",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "EQZ / USD",
+        "assetName": "",
+        "deviationThreshold": 1,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x6C2441920404835155f33d88faf0545B895871b1",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "ETH / USD",
+        "assetName": "",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x143db3CEEfbdfe5631aDD3E50f7614B6ba708BA7",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "FIL / USD",
+        "assetName": "",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x17308A18d4a50377A4E1C37baaD424360025C74D",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "FRONT / USD",
+        "assetName": "",
+        "deviationThreshold": 1,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x101E51C0Bc2D2213a9b0c991A991958aAd3fF96A",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "INJ / USD",
+        "assetName": "",
+        "deviationThreshold": 1,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x58b299Fa027E1d9514dBbEeBA7944FD744553d61",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "LINK / BNB",
+        "assetName": "",
+        "deviationThreshold": 0.5,
+        "heartbeat": "1h",
+        "decimals": 18,
+        "proxy": "0x351Ff08FF5077d6E8704A4763836Fe187f074380",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "LINK / USD",
+        "assetName": "",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x1B329402Cb1825C6F30A0d92aB9E2862BE47333f",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "LTC / USD",
+        "assetName": "",
+        "deviationThreshold": 5,
+        "heartbeat": "1h",
+        "decimals": 8,
+        "proxy": "0x9Dcf949BCA2F4A8a62350E0065d18902eE87Dca3",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "MATIC / USD",
+        "assetName": "",
+        "deviationThreshold": 1,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x957Eb0316f02ba4a9De3D308742eefd44a3c1719",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "REEF / USD",
+        "assetName": "",
+        "deviationThreshold": 1,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x902fA2495a8c5E89F7496F91678b8CBb53226D06",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "SFP / USD",
+        "assetName": "",
+        "deviationThreshold": 1,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x4b531A318B0e44B549F3b2f824721b3D0d51930A",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "SXP / USD",
+        "assetName": "",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x678AC35ACbcE272651874E782DB5343F9B8a7D66",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "TRX / USD",
+        "assetName": "",
+        "deviationThreshold": 0.5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x135deD16bFFEB51E01afab45362D3C4be31AA2B0",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "TWT / USD",
+        "assetName": "",
+        "deviationThreshold": 1,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x7671d7EDb66E4C10d5FFaA6a0d8842B5d880F0B3",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "USDC / USD",
+        "assetName": "",
+        "deviationThreshold": 5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x90c069C4538adAc136E051052E14c1cD799C41B7",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "USDT / USD",
+        "assetName": "",
+        "deviationThreshold": 5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xEca2605f0BCF2BA5966372C99837b1F182d3D620",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "XRP / USD",
+        "assetName": "",
+        "deviationThreshold": 5,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0x4046332373C24Aed1dC8bAd489A04E187833B28d",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "XVS / USD",
+        "assetName": "",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "proxy": "0xCfA786C17d6739CBC702693F23cA4417B5945491",
+        "feedCategory": "",
+        "feedType": "-"
+      },
+      {
+        "pair": "TUSD / USD",
+        "proxy": "0xC6222C9fA907B9Ed797d6feA08139cDABd14bcB9",
+        "assetName": "",
+        "deviationThreshold": 0.3,
+        "heartbeat": "24h",
+        "decimals": 8,
+        "feedCategory": ""
+      }
+    ]
+  }
+]

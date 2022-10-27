@@ -23,7 +23,6 @@ library Math {
     }
 }
 
-
 // range: [0, 2**112 - 1]
 // resolution: 1 / 2**112
 
@@ -42,7 +41,6 @@ library UQ112x112 {
     }
 }
 
-
 contract PancakePairHarness {
     using UQ112x112 for uint224;
 
@@ -58,7 +56,7 @@ contract PancakePairHarness {
     uint256 public kLast; // reserve0 * reserve1, as of immediately after the most recent liquidity event
 
     function currentBlockTimestamp() external view returns (uint32) {
-        return uint32(block.timestamp % 2 ** 32);
+        return uint32(block.timestamp % 2**32);
     }
 
     function getReserves()
@@ -75,7 +73,6 @@ contract PancakePairHarness {
         _blockTimestampLast = blockTimestampLast;
     }
 
-
     // called once by the factory at time of deployment
     function initialize(address _token0, address _token1) external {
         token0 = _token0;
@@ -89,21 +86,14 @@ contract PancakePairHarness {
         uint112 _reserve0,
         uint112 _reserve1
     ) external {
-        require(
-            balance0 <= type(uint112).max && balance1 <= type(uint112).max,
-            "PancakeV2: OVERFLOW"
-        );
+        require(balance0 <= type(uint112).max && balance1 <= type(uint112).max, "PancakeV2: OVERFLOW");
         uint32 blockTimestamp = uint32(block.timestamp % 2**32);
         unchecked {
             uint32 timeElapsed = blockTimestamp - blockTimestampLast; // overflow is desired
             if (timeElapsed > 0 && _reserve0 != 0 && _reserve1 != 0) {
                 // * never overflows, and + overflow is desired
-                price0CumulativeLast +=
-                    uint256(UQ112x112.encode(_reserve1).uqdiv(_reserve0)) *
-                    timeElapsed;
-                price1CumulativeLast +=
-                    uint256(UQ112x112.encode(_reserve0).uqdiv(_reserve1)) *
-                    timeElapsed;
+                price0CumulativeLast += uint256(UQ112x112.encode(_reserve1).uqdiv(_reserve0)) * timeElapsed;
+                price1CumulativeLast += uint256(UQ112x112.encode(_reserve0).uqdiv(_reserve1)) * timeElapsed;
             }
         }
         reserve0 = uint112(balance0);

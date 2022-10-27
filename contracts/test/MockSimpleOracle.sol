@@ -12,7 +12,7 @@ contract MockSimpleOracle is OracleInterface {
 
     function setPrice(address vToken, uint256 price) public {
         prices[vToken] = price;
-    } 
+    }
 
     function getUnderlyingPrice(address vToken) external view returns (uint256) {
         return prices[vToken];
@@ -39,4 +39,3 @@ contract MockPivotOracle is MockSimpleOracle, PivotOracleInterface, TwapInterfac
         twapUpdated = true;
     }
 }
-
