@@ -5,6 +5,7 @@ pragma experimental ABIEncoderV2;
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/BEP20Interface.sol";
 import "../interfaces/VBep20Interface.sol";
+import "../interfaces/OracleInterface.sol";
 
 struct ValidateConfig {
     /// @notice asset address
@@ -19,12 +20,16 @@ struct ValidateConfig {
 
 // BoundValidator provides some common functions and can be used
 // to wrap up other contracts to form pivot oracles
-contract BoundValidator is OwnableUpgradeable {
+contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
     /// @notice validation configs by asset
     mapping(address => ValidateConfig) public validateConfigs;
 
     /// @notice Emit this event when new validate configs are added
     event ValidateConfigAdded(address indexed asset, uint256 indexed upperBound, uint256 indexed lowerBound);
+
+    function initialize() public initializer {
+        __Ownable_init();
+    }
 
     /**
      * @notice Add multiple validation configs at the same time
@@ -58,7 +63,7 @@ contract BoundValidator is OwnableUpgradeable {
         address vToken,
         uint256 reporterPrice,
         uint256 anchorPrice
-    ) public view virtual returns (bool) {
+    ) public view virtual override returns (bool) {
         address asset = VBep20Interface(vToken).underlying();
 
         require(validateConfigs[asset].upperBoundRatio != 0, "validation config not exist");

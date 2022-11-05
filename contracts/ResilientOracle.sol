@@ -9,6 +9,8 @@ import "./interfaces/OracleInterface.sol";
 contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOracleInterface {
     uint256 public constant INVALID_PRICE = 0;
 
+    BoundValidatorInterface boundValidator;
+
     /**
      * @dev oracle role, we have 3 roles at the moment
      * MAIN: The most trustworthy price source
@@ -59,7 +61,10 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
         _;
     }
 
-    function initialize() public initializer {
+    function initialize(BoundValidatorInterface _boundValidator) public initializer {
+        require(address(_boundValidator) != address(0), "invaliud bound validator address");
+        boundValidator = _boundValidator;
+
         __Ownable_init();
         __Pausable_init();
     }
@@ -223,7 +228,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
             }
 
             // Check the price with pivot oracle
-            bool pass = PivotOracleInterface(pivotOracle).validatePrice(vToken, price);
+            bool pass = boundValidator.validatePriceWithAnchorPrice(vToken, price, OracleInterface(pivotOracle).getUnderlyingPrice(vToken));
             if (!pass) {
                 return INVALID_PRICE;
             }

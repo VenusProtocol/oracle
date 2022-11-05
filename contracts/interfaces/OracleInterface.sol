@@ -14,8 +14,10 @@ interface TwapInterface is OracleInterface {
     function updateTwap(address vToken) external returns (uint256);
 }
 
-interface PivotValidatorInterface {
-    function validatePrice(address vToken, uint256 price) external view returns (bool);
+interface BoundValidatorInterface {
+    function validatePriceWithAnchorPrice(
+        address vToken,
+        uint256 reporterPrice,
+        uint256 anchorPrice
+    ) external view returns (bool);
 }
-
-interface PivotOracleInterface is OracleInterface, PivotValidatorInterface {}

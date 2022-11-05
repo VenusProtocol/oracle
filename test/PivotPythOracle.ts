@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { artifacts, ethers, upgrades, waffle } from "hardhat";
 
-import { PivotPythOracle } from "../src/types";
+import { BoundValidator, PythOracle } from "../src/types";
 import { MockPyth } from "../src/types/contracts/test/MockPyth";
 import { addr0000, addr1111, getBytes32String, getSimpleAddress } from "./utils/data";
 import { makeVToken } from "./utils/makeVToken";
@@ -16,8 +16,14 @@ const getPythOracle = async (account: SignerWithAddress) => {
   const actualOracle = await waffle.deployContract(account, actualOracleArtifact, []);
   await actualOracle.deployed();
 
-  const PivotPythOracle = await ethers.getContractFactory("PivotPythOracle", account);
-  const instance = <PivotPythOracle>await upgrades.deployProxy(PivotPythOracle, [actualOracle.address]);
+  const PythOracle = await ethers.getContractFactory("PythOracle", account);
+  const instance = <PythOracle>await upgrades.deployProxy(PythOracle, [actualOracle.address]);
+  return instance;
+};
+
+const getBoundValidator = async (account: SignerWithAddress) => {
+  const BoundValidator = await ethers.getContractFactory("BoundValidator", account);
+  const instance = <BoundValidator>await upgrades.deployProxy(BoundValidator, []);
   return instance;
 };
 
@@ -28,6 +34,7 @@ describe("Oracle plugin frame unit tests", function () {
     this.signers = signers;
     this.admin = admin;
     this.pythOracle = await getPythOracle(admin);
+    this.boundValidator = await getBoundValidator(admin);
   });
 
   describe("constructor", function () {
@@ -302,22 +309,22 @@ describe("Oracle plugin frame unit tests", function () {
       await underlyingPythOracle.updatePriceFeedsHarness([feed]);
 
       // sanity check
-      await expect(this.pythOracle.validatePrice(vToken.address, 100)).to.be.revertedWith(
+      await expect(this.boundValidator.validatePriceWithAnchorPrice(vToken.address, 100, 0)).to.be.revertedWith(
         "validation config not exist",
       );
 
-      await this.pythOracle.setValidateConfigs([validationConfig]);
+      await this.boundValidator.setValidateConfigs([validationConfig]);
 
       // no need to test this, Pyth price must be positive
       // await expect(
       //   this.pythOracle.validatePrice(token0, 100)
       // ).to.be.revertedWith("anchor price is not valid");
 
-      let validateResult = await this.pythOracle.validatePrice(vToken.address, EXP_SCALE);
+      let validateResult = await this.boundValidator.validatePriceWithAnchorPrice(vToken.address, EXP_SCALE, await this.pythOracle.getUnderlyingPrice(vToken.address));
       expect(validateResult).to.equal(true);
-      validateResult = await this.pythOracle.validatePrice(vToken.address, EXP_SCALE.mul(100).div(79));
+      validateResult = await this.boundValidator.validatePriceWithAnchorPrice(vToken.address, EXP_SCALE.mul(100).div(79), await this.pythOracle.getUnderlyingPrice(vToken.address));
       expect(validateResult).to.equal(false);
-      validateResult = await this.pythOracle.validatePrice(vToken.address, EXP_SCALE.mul(100).div(121));
+      validateResult = await this.boundValidator.validatePriceWithAnchorPrice(vToken.address, EXP_SCALE.mul(100).div(121), await this.pythOracle.getUnderlyingPrice(vToken.address));
       expect(validateResult).to.equal(false);
     });
   });

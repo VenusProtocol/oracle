@@ -2,8 +2,9 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers, upgrades } from "hardhat";
+import { BoundValidator } from "../src/types";
 
-import { PivotTwapOracle } from "../src/types/contracts/oracles/PivotTwapOracle";
+import { TwapOracle } from "../src/types/contracts/oracles/TwapOracle";
 import { addr0000, addr1111 } from "./utils/data";
 import { makePairWithTokens } from "./utils/makePair";
 import { makeToken } from "./utils/makeToken";
@@ -16,7 +17,7 @@ const RATIO = Q112.div(EXP_SCALE);
 
 // helper functions
 async function checkObservations(
-  twapOracleContract: PivotTwapOracle,
+  twapOracleContract: TwapOracle,
   token: string,
   newTime: number,
   oldTime: number,
@@ -40,9 +41,13 @@ describe("Twap Oracle unit tests", function () {
     this.admin = admin;
     const vBnb = await makeVToken(this.admin, { name: "vBNB", symbol: "vBNB" }, { name: "BNB", symbol: "BNB" });
 
-    const PivotTwapOracle = await ethers.getContractFactory("PivotTwapOracle", admin);
-    const instance = <PivotTwapOracle>await upgrades.deployProxy(PivotTwapOracle, [await vBnb.underlying()]);
-    this.twapOracle = instance;
+    const TwapOracle = await ethers.getContractFactory("TwapOracle", admin);
+    const twapInstance = <TwapOracle>await upgrades.deployProxy(TwapOracle, [await vBnb.underlying()]);
+    this.twapOracle = twapInstance;
+
+    const BoundValidator = await ethers.getContractFactory("BoundValidator", admin);
+    const boundValidatorInstance = <BoundValidator>await upgrades.deployProxy(BoundValidator, []);
+    this.boundValidator = boundValidatorInstance;
 
     const vToken1 = await makeVToken(
       this.admin,
@@ -102,11 +107,11 @@ describe("Twap Oracle unit tests", function () {
         upperBoundRatio: EXP_SCALE.mul(12).div(10),
         lowerBoundRatio: EXP_SCALE.mul(8).div(10),
       };
-      await expect(this.twapOracle.connect(this.signers[2]).setValidateConfigs([config])).to.be.revertedWith(
+      await expect(this.boundValidator.connect(this.signers[2]).setValidateConfigs([config])).to.be.revertedWith(
         "Ownable: caller is not the owner",
       );
 
-      await expect(this.twapOracle.connect(this.signers[1]).setValidateConfig(config)).to.be.revertedWith(
+      await expect(this.boundValidator.connect(this.signers[1]).setValidateConfig(config)).to.be.revertedWith(
         "Ownable: caller is not the owner",
       );
     });
@@ -524,10 +529,10 @@ describe("Twap Oracle unit tests", function () {
         upperBoundRatio: EXP_SCALE.mul(12).div(10),
         lowerBoundRatio: EXP_SCALE.mul(8).div(10),
       };
-      await this.twapOracle.setValidateConfigs([validationConfig]);
+      await this.boundValidator.setValidateConfigs([validationConfig]);
 
       // sanity check
-      await expect(this.twapOracle.validatePrice(token2.address, 100)).to.be.revertedWith(
+      await expect(this.boundValidator.validatePriceWithAnchorPrice(token2.address, 100, 100)).to.be.revertedWith(
         "validation config not exist",
       );
 
@@ -542,17 +547,17 @@ describe("Twap Oracle unit tests", function () {
       await this.twapOracle.setTokenConfig(tokenConfig);
 
       // without updateTwap the price is not written and should revert
-      await expect(this.twapOracle.validatePrice(this.vToken1.address, 100)).to.be.revertedWith(
-        "anchor price is not valid",
+      await expect(this.twapOracle.getUnderlyingPrice(this.vToken1.address)).to.be.revertedWith(
+        "TWAP price must be positive",
       );
 
       await this.twapOracle.updateTwap(this.vToken1.address);
-
-      let validateResult = await this.twapOracle.validatePrice(this.vToken1.address, EXP_SCALE);
+      
+      let validateResult = await this.boundValidator.validatePriceWithAnchorPrice(this.vToken1.address, EXP_SCALE, await this.twapOracle.getUnderlyingPrice(this.vToken1.address));
       expect(validateResult).to.equal(true);
-      validateResult = await this.twapOracle.validatePrice(this.vToken1.address, EXP_SCALE.mul(100).div(79));
+      validateResult = await this.boundValidator.validatePriceWithAnchorPrice(this.vToken1.address, EXP_SCALE.mul(100).div(79), await this.twapOracle.getUnderlyingPrice(this.vToken1.address));
       expect(validateResult).to.equal(false);
-      validateResult = await this.twapOracle.validatePrice(this.vToken1.address, EXP_SCALE.mul(100).div(121));
+      validateResult = await this.boundValidator.validatePriceWithAnchorPrice(this.vToken1.address, EXP_SCALE.mul(100).div(121), await this.twapOracle.getUnderlyingPrice(this.vToken1.address));
       expect(validateResult).to.equal(false);
     });
   });

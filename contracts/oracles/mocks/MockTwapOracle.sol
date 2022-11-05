@@ -2,10 +2,9 @@
 pragma solidity ^0.8.10;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "../PivotTwapOracle.sol";
 import "../../interfaces/VBep20Interface.sol";
 
-contract MockPivotTwapOracle is OwnableUpgradeable {
+contract MockTwapOracle is OwnableUpgradeable {
     mapping(address => uint256) public assetPrices;
 
     /// @notice vBNB address
