@@ -259,6 +259,7 @@ describe("Oracle plugin frame unit tests", function () {
     it("revert if price fails checking", async function () {
       await this.mainOracle.setPrice(token1, 1000);
       // invalidate the main oracle
+      await this.pivotOracle.setPrice(token1, 10000);
       await this.boundValidator.setValidateResult(token1, false);
       await expect(this.oracleBasement.getUnderlyingPrice(token1)).to.be.revertedWith("invalid resilient oracle price");
     });
@@ -273,6 +274,7 @@ describe("Oracle plugin frame unit tests", function () {
       // set oracle back
       await this.oracleBasement.setOracle(token1, this.pivotOracle.address, 1);
       await this.mainOracle.setPrice(token1, 1000);
+      await this.pivotOracle.setPrice(token1, 10000);
       // invalidate price
       await this.boundValidator.setValidateResult(token1, false);
       await expect(this.oracleBasement.getUnderlyingPrice(token1)).to.be.revertedWith("invalid resilient oracle price");
@@ -291,10 +293,13 @@ describe("Oracle plugin frame unit tests", function () {
     it("enable fallback oracle", async function () {
       await this.mainOracle.setPrice(token2, 1000);
       // invalidate the price first
+      await this.pivotOracle.setPrice(token2, 1000);
       await this.boundValidator.setValidateResult(token2, false);
       await expect(this.oracleBasement.getUnderlyingPrice(token2)).to.be.revertedWith("invalid resilient oracle price");
 
       // enable fallback oracle
+      await this.mainOracle.setPrice(token2, 0);
+      await this.boundValidator.setValidateResult(token2, true);
       await this.oracleBasement.enableOracle(token2, 2, true);
       const price = await this.oracleBasement.getUnderlyingPrice(token2);
       expect(price).to.equal(token2FallbackPrice);
@@ -308,7 +313,7 @@ describe("Oracle plugin frame unit tests", function () {
       await this.fallbackOracle.setPrice(token2, 0);
       // notice: token2 is invalidated
       await expect(this.oracleBasement.getUnderlyingPrice(token2)).to.be.revertedWith(
-        "fallback oracle price must be positive",
+        "invalid resilient oracle price",
       );
     });
   });
