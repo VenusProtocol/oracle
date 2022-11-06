@@ -2,7 +2,7 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import { expect } from "chai";
 import { artifacts, ethers, upgrades, waffle } from "hardhat";
 
-import { TwapOracle, MockSimpleOracle, ResilientOracle, MockBoundValidator } from "../src/types";
+import { MockSimpleOracle, ResilientOracle, MockBoundValidator } from "../src/types";
 import { addr0000, addr1111, getSimpleAddress } from "./utils/data";
 
 const getSimpleOracle = async (account: SignerWithAddress) => {
