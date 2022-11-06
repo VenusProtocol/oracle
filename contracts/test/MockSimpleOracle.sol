@@ -36,6 +36,6 @@ contract MockBoundValidator is BoundValidatorInterface {
         uint256 reporterPrice,
         uint256 anchorPrice
     ) external view returns (bool) {
-         return validateResults[vToken];
+        return validateResults[vToken];
     }
 }

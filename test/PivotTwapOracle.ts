@@ -2,8 +2,8 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers, upgrades } from "hardhat";
-import { BoundValidator } from "../src/types";
 
+import { BoundValidator } from "../src/types";
 import { TwapOracle } from "../src/types/contracts/oracles/TwapOracle";
 import { addr0000, addr1111 } from "./utils/data";
 import { makePairWithTokens } from "./utils/makePair";
@@ -552,12 +552,24 @@ describe("Twap Oracle unit tests", function () {
       );
 
       await this.twapOracle.updateTwap(this.vToken1.address);
-      
-      let validateResult = await this.boundValidator.validatePriceWithAnchorPrice(this.vToken1.address, EXP_SCALE, await this.twapOracle.getUnderlyingPrice(this.vToken1.address));
+
+      let validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
+        this.vToken1.address,
+        EXP_SCALE,
+        await this.twapOracle.getUnderlyingPrice(this.vToken1.address),
+      );
       expect(validateResult).to.equal(true);
-      validateResult = await this.boundValidator.validatePriceWithAnchorPrice(this.vToken1.address, EXP_SCALE.mul(100).div(79), await this.twapOracle.getUnderlyingPrice(this.vToken1.address));
+      validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
+        this.vToken1.address,
+        EXP_SCALE.mul(100).div(79),
+        await this.twapOracle.getUnderlyingPrice(this.vToken1.address),
+      );
       expect(validateResult).to.equal(false);
-      validateResult = await this.boundValidator.validatePriceWithAnchorPrice(this.vToken1.address, EXP_SCALE.mul(100).div(121), await this.twapOracle.getUnderlyingPrice(this.vToken1.address));
+      validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
+        this.vToken1.address,
+        EXP_SCALE.mul(100).div(121),
+        await this.twapOracle.getUnderlyingPrice(this.vToken1.address),
+      );
       expect(validateResult).to.equal(false);
     });
   });

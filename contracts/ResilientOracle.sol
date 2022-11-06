@@ -211,13 +211,13 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
 
                 if (pivotOracleEnabled && pivotOracle != address(0)) {
                     try OracleInterface(pivotOracle).getUnderlyingPrice(vToken) returns (uint256 pivotPrice) {
-                        if(pivotPrice != INVALID_PRICE) {
+                        if (pivotPrice != INVALID_PRICE) {
                             bool isPriceValid = boundValidator.validatePriceWithAnchorPrice(vToken, price, pivotPrice);
                             if (!isPriceValid) {
                                 return INVALID_PRICE;
                             }
                         }
-                    } catch {}      
+                    } catch {}
                 }
             } catch {}
         }
@@ -242,14 +242,20 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
                 (address pivotOracle, bool pivotOracleEnabled) = getOracle(vToken, OracleRole.PIVOT);
                 if (pivotOracleEnabled && pivotOracle != address(0)) {
                     try OracleInterface(pivotOracle).getUnderlyingPrice(vToken) returns (uint256 pivotPrice) {
-                        if(pivotPrice != INVALID_PRICE) {
+                        if (pivotPrice != INVALID_PRICE) {
                             bool isPriceValid = boundValidator.validatePriceWithAnchorPrice(vToken, price, pivotPrice);
-                            if(!isPriceValid) {
+                            if (!isPriceValid) {
                                 compareWithMain = true;
                             }
-                        } else { compareWithMain = true; }
-                    } catch { compareWithMain = true; }      
-                } else { compareWithMain = true; }
+                        } else {
+                            compareWithMain = true;
+                        }
+                    } catch {
+                        compareWithMain = true;
+                    }
+                } else {
+                    compareWithMain = true;
+                }
             } catch {}
         }
 
@@ -260,9 +266,15 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
                     bool isPriceValid = boundValidator.validatePriceWithAnchorPrice(vToken, price, mainOraclePrice);
                     if (!isPriceValid) {
                         return INVALID_PRICE;
-                    } else { price = mainOraclePrice; }
-                } catch { price = INVALID_PRICE; }
-            } else { price = INVALID_PRICE; }
+                    } else {
+                        price = mainOraclePrice;
+                    }
+                } catch {
+                    price = INVALID_PRICE;
+                }
+            } else {
+                price = INVALID_PRICE;
+            }
         }
 
         return price;

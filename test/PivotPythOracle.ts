@@ -320,11 +320,23 @@ describe("Oracle plugin frame unit tests", function () {
       //   this.pythOracle.validatePrice(token0, 100)
       // ).to.be.revertedWith("anchor price is not valid");
 
-      let validateResult = await this.boundValidator.validatePriceWithAnchorPrice(vToken.address, EXP_SCALE, await this.pythOracle.getUnderlyingPrice(vToken.address));
+      let validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
+        vToken.address,
+        EXP_SCALE,
+        await this.pythOracle.getUnderlyingPrice(vToken.address),
+      );
       expect(validateResult).to.equal(true);
-      validateResult = await this.boundValidator.validatePriceWithAnchorPrice(vToken.address, EXP_SCALE.mul(100).div(79), await this.pythOracle.getUnderlyingPrice(vToken.address));
+      validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
+        vToken.address,
+        EXP_SCALE.mul(100).div(79),
+        await this.pythOracle.getUnderlyingPrice(vToken.address),
+      );
       expect(validateResult).to.equal(false);
-      validateResult = await this.boundValidator.validatePriceWithAnchorPrice(vToken.address, EXP_SCALE.mul(100).div(121), await this.pythOracle.getUnderlyingPrice(vToken.address));
+      validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
+        vToken.address,
+        EXP_SCALE.mul(100).div(121),
+        await this.pythOracle.getUnderlyingPrice(vToken.address),
+      );
       expect(validateResult).to.equal(false);
     });
   });
