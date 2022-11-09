@@ -19,7 +19,7 @@ contract MockSimpleOracle is OracleInterface {
     }
 }
 
-contract MockPivotOracle is MockSimpleOracle, PivotOracleInterface, TwapInterface {
+contract MockBoundValidator is BoundValidatorInterface {
     mapping(address => bool) public validateResults;
     bool public twapUpdated;
 
@@ -31,11 +31,11 @@ contract MockPivotOracle is MockSimpleOracle, PivotOracleInterface, TwapInterfac
         validateResults[vToken] = pass;
     }
 
-    function validatePrice(address vToken, uint256 price) external view returns (bool) {
+    function validatePriceWithAnchorPrice(
+        address vToken,
+        uint256 reporterPrice,
+        uint256 anchorPrice
+    ) external view returns (bool) {
         return validateResults[vToken];
-    }
-
-    function updateTwap(address vToken) external override returns (uint256) {
-        twapUpdated = true;
     }
 }

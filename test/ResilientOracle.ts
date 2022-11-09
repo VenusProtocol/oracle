@@ -2,7 +2,7 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import { expect } from "chai";
 import { artifacts, ethers, upgrades, waffle } from "hardhat";
 
-import { MockPivotOracle, MockSimpleOracle, ResilientOracle } from "../src/types";
+import { MockBoundValidator, MockSimpleOracle, ResilientOracle } from "../src/types";
 import { addr0000, addr1111, getSimpleAddress } from "./utils/data";
 
 const getSimpleOracle = async (account: SignerWithAddress) => {
@@ -13,10 +13,17 @@ const getSimpleOracle = async (account: SignerWithAddress) => {
 };
 
 const getPivotOracle = async (account: SignerWithAddress) => {
-  const oracleArtifact = await artifacts.readArtifact("MockPivotOracle");
+  const oracleArtifact = await artifacts.readArtifact("MockSimpleOracle");
   const oracle = await waffle.deployContract(account, oracleArtifact, []);
   await oracle.deployed();
-  return <MockPivotOracle>oracle;
+  return <MockSimpleOracle>oracle;
+};
+
+const getBoundValidator = async (account: SignerWithAddress) => {
+  const validatorArtifact = await artifacts.readArtifact("MockBoundValidator");
+  const validator = await waffle.deployContract(account, validatorArtifact, []);
+  await validator.deployed();
+  return <MockBoundValidator>validator;
 };
 
 describe("Oracle plugin frame unit tests", function () {
@@ -28,11 +35,12 @@ describe("Oracle plugin frame unit tests", function () {
     this.mainOracle = await getSimpleOracle(admin);
     this.pivotOracle = await getPivotOracle(admin);
     this.fallbackOracle = await getSimpleOracle(admin);
+    this.boundValidator = await getBoundValidator(admin);
   });
 
   beforeEach(async function () {
     const ResilientOracle = await ethers.getContractFactory("ResilientOracle", this.admin);
-    const instance = <ResilientOracle>await upgrades.deployProxy(ResilientOracle, []);
+    const instance = <ResilientOracle>await upgrades.deployProxy(ResilientOracle, [this.boundValidator.address]);
     this.oracleBasement = instance;
   });
 
@@ -251,12 +259,13 @@ describe("Oracle plugin frame unit tests", function () {
     it("revert if price fails checking", async function () {
       await this.mainOracle.setPrice(token1, 1000);
       // invalidate the main oracle
-      await this.pivotOracle.setValidateResult(token1, false);
+      await this.pivotOracle.setPrice(token1, 10000);
+      await this.boundValidator.setValidateResult(token1, false);
       await expect(this.oracleBasement.getUnderlyingPrice(token1)).to.be.revertedWith("invalid resilient oracle price");
     });
     it("check price with/without pivot oracle", async function () {
       await this.mainOracle.setPrice(token1, 1000);
-      await this.pivotOracle.setValidateResult(token1, false);
+      await this.boundValidator.setValidateResult(token1, false);
       // empty pivot oracle
       await this.oracleBasement.setOracle(token1, addr0000, 1);
       const price = await this.oracleBasement.getUnderlyingPrice(token1);
@@ -265,15 +274,16 @@ describe("Oracle plugin frame unit tests", function () {
       // set oracle back
       await this.oracleBasement.setOracle(token1, this.pivotOracle.address, 1);
       await this.mainOracle.setPrice(token1, 1000);
+      await this.pivotOracle.setPrice(token1, 10000);
       // invalidate price
-      await this.pivotOracle.setValidateResult(token1, false);
+      await this.boundValidator.setValidateResult(token1, false);
       await expect(this.oracleBasement.getUnderlyingPrice(token1)).to.be.revertedWith("invalid resilient oracle price");
     });
 
     it("disable pivot oracle", async function () {
       await this.mainOracle.setPrice(token1, 1000);
       // pivot passes the price...
-      await this.pivotOracle.setValidateResult(token1, true);
+      await this.boundValidator.setValidateResult(token1, true);
       // ...but pivot is disabled, so it won't come to invalidate
       await this.oracleBasement.enableOracle(token1, 1, false);
       const price = await this.oracleBasement.getUnderlyingPrice(token1);
@@ -283,10 +293,13 @@ describe("Oracle plugin frame unit tests", function () {
     it("enable fallback oracle", async function () {
       await this.mainOracle.setPrice(token2, 1000);
       // invalidate the price first
-      await this.pivotOracle.setValidateResult(token2, false);
+      await this.pivotOracle.setPrice(token2, 1000);
+      await this.boundValidator.setValidateResult(token2, false);
       await expect(this.oracleBasement.getUnderlyingPrice(token2)).to.be.revertedWith("invalid resilient oracle price");
 
       // enable fallback oracle
+      await this.mainOracle.setPrice(token2, 0);
+      await this.boundValidator.setValidateResult(token2, true);
       await this.oracleBasement.enableOracle(token2, 2, true);
       const price = await this.oracleBasement.getUnderlyingPrice(token2);
       expect(price).to.equal(token2FallbackPrice);
@@ -299,15 +312,7 @@ describe("Oracle plugin frame unit tests", function () {
       await this.oracleBasement.setOracle(token2, this.fallbackOracle.address, 2);
       await this.fallbackOracle.setPrice(token2, 0);
       // notice: token2 is invalidated
-      await expect(this.oracleBasement.getUnderlyingPrice(token2)).to.be.revertedWith(
-        "fallback oracle price must be positive",
-      );
-    });
-
-    it("update twap", async function () {
-      expect(await this.pivotOracle.twapUpdated()).to.be.equal(false);
-      await this.oracleBasement.updatePrice(token1);
-      expect(await this.pivotOracle.twapUpdated()).to.be.equal(true);
+      await expect(this.oracleBasement.getUnderlyingPrice(token2)).to.be.revertedWith("invalid resilient oracle price");
     });
   });
 });

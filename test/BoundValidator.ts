@@ -3,15 +3,15 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { artifacts, ethers, waffle } from "hardhat";
 
-import { BoundValidator, MockBoundValidator } from "../src/types";
+import { BoundValidator } from "../src/types";
 import { addr0000, addr1111 } from "./utils/data";
 import { makeVToken } from "./utils/makeVToken";
 
 const EXP_SCALE = BigNumber.from(10).pow(18);
 
 const getBoundValidator = async (account: SignerWithAddress) => {
-  const artifact = await artifacts.readArtifact("MockBoundValidator");
-  const instance = <MockBoundValidator>await waffle.deployContract(account, artifact, []);
+  const artifact = await artifacts.readArtifact("BoundValidator");
+  const instance = <BoundValidator>await waffle.deployContract(account, artifact, []);
   await instance.deployed();
   await instance.initialize();
   return instance;
