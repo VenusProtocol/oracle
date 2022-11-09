@@ -9,7 +9,7 @@ import "./interfaces/OracleInterface.sol";
 contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOracleInterface {
     uint256 public constant INVALID_PRICE = 0;
 
-    BoundValidatorInterface boundValidator;
+    BoundValidatorInterface public boundValidator;
 
     /**
      * @dev oracle role, we have 3 roles at the moment
