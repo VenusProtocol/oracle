@@ -13,7 +13,7 @@ const EXP_SCALE = BigNumber.from(10).pow(18);
 
 const getPythOracle = async (account: SignerWithAddress) => {
   const actualOracleArtifact = await artifacts.readArtifact("MockPyth");
-  const actualOracle = await waffle.deployContract(account, actualOracleArtifact, []);
+  const actualOracle = await waffle.deployContract(account, actualOracleArtifact, [0, 0]);
   await actualOracle.deployed();
 
   const PythOracle = await ethers.getContractFactory("PythOracle", account);
@@ -146,35 +146,33 @@ describe("Oracle plugin frame unit tests", function () {
       await this.underlyingPythOracle.updatePriceFeedsHarness([
         {
           id: getBytes32String(1),
-          productId: getBytes32String(1),
-          price: BigNumber.from(10000000), // 10000000 * 10 ** -6 = $10
-          conf: 10,
-          expo: -6,
-          status: 0,
-          maxNumPublishers: 0,
-          numPublishers: 0,
-          emaPrice: 0,
-          emaConf: 0,
-          publishTime: ts,
-          prevPrice: 0,
-          prevConf: 0,
-          prevPublishTime: 0,
+          price: {
+            price: BigNumber.from(10000000), // 10000000 * 10 ** -6 = $10
+            conf: 10,
+            expo: -6,
+            publishTime: ts,
+          },
+          emaPrice: {
+            price: 0,
+            conf: 0,
+            expo: 0,
+            publishTime: 0,
+          },
         },
         {
           id: getBytes32String(2),
-          productId: getBytes32String(2),
-          price: BigNumber.from(1), // 10000000 * 10 ** 8 = $100
-          conf: 10,
-          expo: 2,
-          status: 0,
-          maxNumPublishers: 0,
-          numPublishers: 0,
-          emaPrice: 0,
-          emaConf: 0,
-          publishTime: ts,
-          prevPrice: 0,
-          prevConf: 0,
-          prevPublishTime: 0,
+          price: {
+            price: BigNumber.from(1),
+            conf: 10,
+            expo: 2,
+            publishTime: ts,
+          },
+          emaPrice: {
+            price: 0,
+            conf: 0,
+            expo: 0,
+            publishTime: 0,
+          },
         },
       ]);
 
@@ -192,7 +190,7 @@ describe("Oracle plugin frame unit tests", function () {
       });
       await increaseTime(120);
       await expect(this.pythOracle.getUnderlyingPrice(this.vETH.address)).to.be.revertedWith(
-        "No available price within given duration",
+        "no price available which is recent enough",
       );
     });
 
@@ -200,19 +198,18 @@ describe("Oracle plugin frame unit tests", function () {
       const ts = await getTime();
       const feed = {
         id: getBytes32String(3),
-        productId: getBytes32String(1),
-        price: BigNumber.from(-10),
-        conf: 10,
-        expo: BigNumber.from(-10),
-        status: 0,
-        maxNumPublishers: 0,
-        numPublishers: 0,
-        emaPrice: 0,
-        emaConf: 0,
-        publishTime: ts,
-        prevPrice: 0,
-        prevConf: 0,
-        prevPublishTime: 0,
+        price: {
+          price: BigNumber.from(-10),
+          conf: 10,
+          expo: BigNumber.from(-10),
+          publishTime: ts,
+        },
+        emaPrice: {
+          price: 0,
+          conf: 0,
+          expo: 0,
+          publishTime: 0,
+        },
       };
       await this.underlyingPythOracle.updatePriceFeedsHarness([feed]);
 
@@ -227,7 +224,7 @@ describe("Oracle plugin frame unit tests", function () {
         "SafeCast: value must be positive",
       );
 
-      feed.price = BigNumber.from(0);
+      feed.price.price = BigNumber.from(0);
       await this.underlyingPythOracle.updatePriceFeedsHarness([feed]);
       await expect(this.pythOracle.getUnderlyingPrice(this.vETH.address)).to.be.revertedWith(
         "Pyth oracle price must be positive",
@@ -288,20 +285,20 @@ describe("Oracle plugin frame unit tests", function () {
       });
       const feed = {
         id: getBytes32String(3),
-        productId: getBytes32String(1),
-        price: BigNumber.from(10).pow(6),
-        conf: 10,
-        expo: BigNumber.from(-6),
-        status: 0,
-        maxNumPublishers: 0,
-        numPublishers: 0,
-        emaPrice: 0,
-        emaConf: 0,
-        publishTime: await getTime(),
-        prevPrice: 0,
-        prevConf: 0,
-        prevPublishTime: 0,
+        price: {
+          price: BigNumber.from(10).pow(6),
+          conf: 10,
+          expo: BigNumber.from(-6),
+          publishTime: await getTime(),
+        },
+        emaPrice: {
+          price: 0,
+          conf: 0,
+          expo: 0,
+          publishTime: 0,
+        },
       };
+
       const underlyingPythAddress = await this.pythOracle.underlyingPythOracle();
       const UnderlyingPythFactory = await ethers.getContractFactory("MockPyth");
       const underlyingPyth = UnderlyingPythFactory.attach(underlyingPythAddress);

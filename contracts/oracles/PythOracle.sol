@@ -104,7 +104,7 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
         require(tokenConfig.asset != address(0), "asset doesn't exist");
 
         // if the price is expired after it's compared against `maxStalePeriod`, the following call will revert
-        PythStructs.Price memory priceInfo = underlyingPythOracle.getLatestAvailablePriceWithinDuration(
+        PythStructs.Price memory priceInfo = underlyingPythOracle.getPriceNoOlderThan(
             tokenConfig.pythId,
             tokenConfig.maxStalePeriod
         );
