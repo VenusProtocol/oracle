@@ -1,11 +1,27 @@
 // npx hardhat deploy --network bsctestnet
 import networks from "@venusprotocol/venus-protocol/networks/mainnet.json";
+import { ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
+
+  await deploy("BoundValidator", {
+    from: deployer,
+    log: true,
+    deterministicDeployment: false,
+    proxy: {
+      proxyContract: "OptimizedTransparentProxy",
+      execute: {
+        methodName: "initialize",
+        args: [],
+      },
+    },
+  });
+
+  const boundValidator = await ethers.getContract("BoundValidator");
 
   await deploy("ResilientOracle", {
     from: deployer,
@@ -15,7 +31,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: [],
+        args: [boundValidator.address],
       },
     },
   });
