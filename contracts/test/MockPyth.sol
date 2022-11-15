@@ -3,10 +3,19 @@ pragma solidity ^0.8.0;
 
 import "../interfaces/PythInterface.sol";
 
-contract MockPyth is IPyth {
-    mapping(bytes32 => PythStructs.PriceFeed) public priceFeeds;
+contract MockPyth is AbstractPyth {
+    mapping(bytes32 => PythStructs.PriceFeed) priceFeeds;
+    uint64 sequenceNumber;
 
-    function queryPriceFeed(bytes32 id) public view returns (PythStructs.PriceFeed memory priceFeed) {
+    uint singleUpdateFeeInWei;
+    uint validTimePeriod;
+
+    constructor(uint _validTimePeriod, uint _singleUpdateFeeInWei) {
+        singleUpdateFeeInWei = _singleUpdateFeeInWei;
+        validTimePeriod = _validTimePeriod;
+    }
+
+    function queryPriceFeed(bytes32 id) public override view returns (PythStructs.PriceFeed memory priceFeed) {
         require(priceFeeds[id].id != 0, "no price feed found for the given price id");
         return priceFeeds[id];
     }
@@ -19,70 +28,86 @@ contract MockPyth is IPyth {
         }
     }
 
-    // a very simple version get price with timestamp expiration check, just for test
-    function getLatestAvailablePriceWithinDuration(bytes32 id, uint64 duration)
-        external
-        view
-        override
-        returns (PythStructs.Price memory price)
-    {
-        PythStructs.PriceFeed memory priceFeed = queryPriceFeed(id);
-
-        price.price = priceFeed.price;
-        price.conf = priceFeed.conf;
-        price.expo = priceFeed.expo;
-        uint64 publishTime = priceFeed.publishTime;
-
-        require(_diff(block.timestamp, publishTime) <= duration, "No available price within given duration");
-
-        return price;
+    function priceFeedExists(bytes32 id) public override view returns (bool) {
+        return (priceFeeds[id].id != 0);
     }
 
-    function _diff(uint256 x, uint256 y) internal pure returns (uint256) {
-        if (x > y) {
-            return x - y;
-        } else {
-            return y - x;
+    function getValidTimePeriod() public override view returns (uint) {
+        return validTimePeriod;
+    }
+
+    // Takes an array of encoded price feeds and stores them.
+    // You can create this data either by calling createPriceFeedData or
+    // by using web3.js or ethers abi utilities.
+    function updatePriceFeeds(bytes[] calldata updateData) public override payable {
+        uint requiredFee = getUpdateFee(updateData.length);
+        require(msg.value >= requiredFee, "Insufficient paid fee amount");
+
+        if (msg.value > requiredFee) {
+            (bool success, ) = payable(msg.sender).call{value: msg.value - requiredFee}("");
+            require(success, "failed to transfer update fee");
         }
+
+        uint freshPrices = 0;
+
+        // Chain ID is id of the source chain that the price update comes from. Since it is just a mock contract
+        // We set it to 1.
+        uint16 chainId = 1;
+
+        for(uint i = 0; i < updateData.length; i++) {
+            PythStructs.PriceFeed memory priceFeed = abi.decode(updateData[i], (PythStructs.PriceFeed));
+
+            bool fresh = false;
+            uint lastPublishTime = priceFeeds[priceFeed.id].price.publishTime;
+
+            if (lastPublishTime < priceFeed.price.publishTime) {
+                // Price information is more recent than the existing price information.
+                fresh = true;
+                priceFeeds[priceFeed.id] = priceFeed;
+                freshPrices += 1;
+            }
+
+            emit PriceFeedUpdate(priceFeed.id, fresh, chainId, sequenceNumber, priceFeed.price.publishTime,
+                lastPublishTime, priceFeed.price.price, priceFeed.price.conf);
+        }
+
+        // In the real contract, the input of this function contains multiple batches that each contain multiple prices.
+        // This event is emitted when a batch is processed. In this mock contract we consider there is only one batch of prices.
+        // Each batch has (chainId, sequenceNumber) as it's unique identifier. Here chainId is set to 1 and an increasing sequence number is used.
+        emit BatchPriceFeedUpdate(chainId, sequenceNumber, updateData.length, freshPrices);
+        sequenceNumber += 1;
+
+        // There is only 1 batch of prices
+        emit UpdatePriceFeeds(msg.sender, 1, requiredFee);
     }
 
-    // not implemented
-    function updatePriceFeedsIfNecessary(
-        bytes[] memory updateData,
-        bytes32[] memory priceIds,
-        uint64[] memory publishTimes
-    ) external payable {
-        updateData;
-        priceIds;
-        publishTimes;
+    function getUpdateFee(uint updateDataSize) public override view returns (uint feeAmount) {
+        return singleUpdateFeeInWei * updateDataSize;
     }
 
-    function getUpdateFee(uint256 updateDataSize) external pure override returns (uint256 feeAmount) {
-        updateDataSize;
-        return 0;
-    }
+    function createPriceFeedUpdateData(
+        bytes32 id,
+        int64 price,
+        uint64 conf,
+        int32 expo,
+        int64 emaPrice,
+        uint64 emaConf,
+        uint64 publishTime
+    ) public pure returns (bytes memory priceFeedData) {
+        PythStructs.PriceFeed memory priceFeed;
 
-    function updatePriceFeeds(bytes[] memory updateData) external payable {
-        updateData;
-    }
+        priceFeed.id = id;
 
-    function getCurrentPrice(bytes32 id) external pure override returns (PythStructs.Price memory price) {
-        id;
-        return PythStructs.Price({ price: 0, conf: 0, expo: 0 });
-    }
+        priceFeed.price.price = price;
+        priceFeed.price.conf = conf;
+        priceFeed.price.expo = expo;
+        priceFeed.price.publishTime = publishTime;
 
-    function getEmaPrice(bytes32 id) external pure override returns (PythStructs.Price memory price) {
-        id;
-        return PythStructs.Price({ price: 0, conf: 0, expo: 0 });
-    }
+        priceFeed.emaPrice.price = emaPrice;
+        priceFeed.emaPrice.conf = emaConf;
+        priceFeed.emaPrice.expo = expo;
+        priceFeed.emaPrice.publishTime = publishTime;
 
-    function getLatestAvailablePriceUnsafe(bytes32 id)
-        external
-        pure
-        override
-        returns (PythStructs.Price memory price, uint64 publishTime)
-    {
-        id;
-        return (PythStructs.Price({ price: 0, conf: 0, expo: 0 }), 0);
+        priceFeedData = abi.encode(priceFeed);
     }
 }
