@@ -1,7 +1,7 @@
 {
   "name": "@venusprotocol/oracle",
   "description": "Venus Protocol Price Oracle",
-  "version": "1.2.0",
+  "version": "1.2.4",
   "author": "",
   "files": [
     "artifacts",
