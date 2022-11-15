@@ -49,6 +49,10 @@ npx hardhat test
 
 - To run fork tests add FORK_MAINNET=true PRIVATE_KEY and QUICK_NODE_KEY in the .env file.
 
+## Releases and Versioning
+
+Releases are automatically managed using semantic-release and commit messages.
+
 ### Deployment
 
 ```
