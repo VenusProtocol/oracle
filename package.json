@@ -1,13 +1,14 @@
 {
   "name": "@venusprotocol/oracle",
   "description": "Venus Protocol Price Oracle",
-  "version": "1.2.0",
+  "version": "1.2.3",
   "author": "",
   "files": [
     "artifacts",
     "networks",
     "deploy",
-    "deployments"
+    "deployments",
+    "contracts"
   ],
   "scripts": {
     "clean": "shx rm -rf ./artifacts ./cache ./coverage ./src/types ./coverage.json",
