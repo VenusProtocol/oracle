@@ -80,9 +80,9 @@ contract MockPyth is AbstractPyth {
         }
 
         // In the real contract, the input of this function contains multiple batches that each contain multiple prices.
-        // This event is emitted when a batch is processed. In this mock contract we consider 
+        // This event is emitted when a batch is processed. In this mock contract we consider
         // there is only one batch of prices.
-        // Each batch has (chainId, sequenceNumber) as it's unique identifier. Here chainId 
+        // Each batch has (chainId, sequenceNumber) as it's unique identifier. Here chainId
         // is set to 1 and an increasing sequence number is used.
         emit BatchPriceFeedUpdate(chainId, sequenceNumber, updateData.length, freshPrices);
         sequenceNumber += 1;

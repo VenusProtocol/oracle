@@ -33,7 +33,7 @@ contract PythStructs {
 }
 
 /// @title Consume prices from the Pyth Network (https://pyth.network/).
-/// @dev Please refer to the guidance at https://docs.pyth.network/consumers/best-practices 
+/// @dev Please refer to the guidance at https://docs.pyth.network/consumers/best-practices
 /// for how to consume prices safely.
 /// @author Pyth Data Association
 interface IPyth {
@@ -41,7 +41,7 @@ interface IPyth {
     /// @param id The Pyth Price Feed ID.
     /// @param fresh True if the price update is more recent and stored.
     /// @param chainId ID of the source chain that the batch price update containing this price.
-    /// This value comes from Wormhole, and you can find the corresponding chains 
+    /// This value comes from Wormhole, and you can find the corresponding chains
     /// at https://docs.wormholenetwork.com/wormhole/contracts.
     /// @param sequenceNumber Sequence number of the batch price update containing this price.
     /// @param lastPublishTime Publish time of the previously stored price.
@@ -136,7 +136,7 @@ interface IPyth {
 
     /// @notice Wrapper around updatePriceFeeds that rejects fast if a price update is not necessary. A price update is
     /// necessary if the current on-chain publishTime is older than the given publishTime. It relies solely on the
-    /// given `publishTimes` for the price feeds and does not read the actual price 
+    /// given `publishTimes` for the price feeds and does not read the actual price
     /// update publish time within `updateData`.
     ///
     /// This method requires the caller to pay a fee in wei; the required fee can be computed by calling
