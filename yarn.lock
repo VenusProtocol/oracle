@@ -504,6 +504,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@commitlint/config-conventional@npm:^17.0.2":
+  version: 17.3.0
+  resolution: "@commitlint/config-conventional@npm:17.3.0"
+  dependencies:
+    conventional-changelog-conventionalcommits: ^5.0.0
+  checksum: c91f8f4aac263d907f94c0ddba482f5d5a590bbbc8466c1afcb94bb0a2dfc891561647d8544744a4d0ae4c80034aa9e931197a6cdf2fb1c64f8f9e5e25c01e81
+  languageName: node
+  linkType: hard
+
 "@commitlint/config-conventional@npm:^17.0.3":
   version: 17.2.0
   resolution: "@commitlint/config-conventional@npm:17.2.0"
@@ -636,9 +645,9 @@ __metadata:
   dependencies:
     "@commitlint/is-ignored": ^17.2.0
     "@commitlint/parse": ^17.2.0
-    "@commitlint/rules": ^17.3.0
+    "@commitlint/rules": ^17.2.0
     "@commitlint/types": ^17.0.0
-  checksum: 71a7b2cbb0eaeebcf50d66260112abe30c1118a55c7c4c89f72c40bdc52149455023877a9906d272d53f6c9673713dbd3baac14a7bcf6c81e618db3fc8d83e05
+  checksum: e35f30b89e6126b6491b062c003b26afe129c9243e1866a569676ae0e3b04a6bce11ee348df82332a984dc38aabbeb139df0fb94a7d421f981ef352fe0c5420c
   languageName: node
   linkType: hard
 
@@ -667,8 +676,8 @@ __metadata:
   linkType: hard
 
 "@commitlint/load@npm:>6.1.1":
-  version: 17.3.0
-  resolution: "@commitlint/load@npm:17.3.0"
+  version: 17.1.2
+  resolution: "@commitlint/load@npm:17.1.2"
   dependencies:
     "@commitlint/config-validator": ^17.1.0
     "@commitlint/execute-rule": ^17.0.0
@@ -931,12 +940,12 @@ __metadata:
   version: 17.3.0
   resolution: "@commitlint/rules@npm:17.3.0"
   dependencies:
-    "@commitlint/ensure": ^17.3.0
+    "@commitlint/ensure": ^17.0.0
     "@commitlint/message": ^17.2.0
     "@commitlint/to-lines": ^17.0.0
     "@commitlint/types": ^17.0.0
     execa: ^5.0.0
-  checksum: bc8c16701af4634e7ef260c41602d628dc49bcaaa0cae97674d9ce303db68b703a5fa7f2e8edfc67dfb115e4d0d8616261d11a472833d61c248b54bee9d84748
+  checksum: d13250a0a9c012944fee13426521500fd1da9ae5bac9597c4689ff8e1a0f04875614a90beddfca147165690a34e12ec277ff0b11dce43463aa559ebdf90ba397
   languageName: node
   linkType: hard
 
@@ -3976,10 +3985,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@venusprotocol/oracle@workspace:."
   dependencies:
-    "@chainlink/contracts": ^0.5.1
-    "@commitlint/cli": ^17.0.2
-    "@commitlint/config-conventional": ^17.0.2
-    "@defi-wonderland/smock": ^2.3.4
+    "@commitlint/cli": ^17.0.3
+    "@commitlint/config-conventional": ^17.0.3
     "@ethersproject/abstract-signer": ^5.6.2
     "@ethersproject/bignumber": ^5.6.2
     "@ethersproject/bytes": ^5.6.1
@@ -4027,7 +4034,7 @@ __metadata:
     mocha: ^10.0.0
     module-alias: ^2.2.2
     prettier: ^2.6.2
-    prettier-plugin-solidity: ^1.0.0
+    prettier-plugin-solidity: ^1.0.0-dev.21
     semantic-release: ^19.0.3
     shelljs: ^0.8.5
     shx: ^0.3.4
@@ -11348,7 +11355,7 @@ __metadata:
   resolution: "is-core-module@npm:2.11.0"
   dependencies:
     has: ^1.0.3
-  checksum: f7f7eb2ab71fd769ee9fb2385c095d503aa4b5ce0028c04557de03f1e67a87c85e5bac1f215945fc3c955867a139a415a3ec4c4234a0bffdf715232660f440a6
+  checksum: f96fd490c6b48eb4f6d10ba815c6ef13f410b0ba6f7eb8577af51697de523e5f2cd9de1c441b51d27251bf0e4aebc936545e33a5d26d5d51f28d25698d4a8bab
   languageName: node
   linkType: hard
 
@@ -11578,7 +11585,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-path-inside@npm:^3.0.2":
+  version: 3.0.3
+  resolution: "is-path-inside@npm:3.0.3"
+  checksum: abd50f06186a052b349c15e55b182326f1936c89a78bf6c8f2b707412517c097ce04bc49a0ca221787bc44e1049f51f09a2ffb63d22899051988d3a618ba13e9
+  languageName: node
+  linkType: hard
+
 "is-path-inside@npm:^3.0.2, is-path-inside@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "is-path-inside@npm:3.0.3"
+  checksum: abd50f06186a052b349c15e55b182326f1936c89a78bf6c8f2b707412517c097ce04bc49a0ca221787bc44e1049f51f09a2ffb63d22899051988d3a618ba13e9
+  languageName: node
+  linkType: hard
+
+"is-path-inside@npm:^3.0.3":
   version: 3.0.3
   resolution: "is-path-inside@npm:3.0.3"
   checksum: abd50f06186a052b349c15e55b182326f1936c89a78bf6c8f2b707412517c097ce04bc49a0ca221787bc44e1049f51f09a2ffb63d22899051988d3a618ba13e9
@@ -13067,9 +13088,9 @@ __metadata:
   linkType: hard
 
 "lru-cache@npm:^7.7.1":
-  version: 7.18.3
-  resolution: "lru-cache@npm:7.18.3"
-  checksum: e550d772384709deea3f141af34b6d4fa392e2e418c1498c078de0ee63670f1f46f5eee746e8ef7e69e1c895af0d4224e62ee33e66a543a14763b0f2e74c1356
+  version: 7.14.1
+  resolution: "lru-cache@npm:7.14.1"
+  checksum: d72c6713c6a6d86836a7a6523b3f1ac6764768cca47ec99341c3e76db06aacd4764620e5e2cda719a36848785a52a70e531822dc2b33fb071fa709683746c104
   languageName: node
   linkType: hard
 
@@ -14159,6 +14180,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-gyp@npm:^9.0.0, node-gyp@npm:^9.1.0":
+  version: 9.3.0
+  resolution: "node-gyp@npm:9.3.0"
+  dependencies:
+    env-paths: ^2.2.0
+    glob: ^7.1.4
+    graceful-fs: ^4.2.6
+    make-fetch-happen: ^10.0.3
+    nopt: ^6.0.0
+    npmlog: ^6.0.0
+    rimraf: ^3.0.2
+    semver: ^7.3.5
+    tar: ^6.1.2
+    which: ^2.0.2
+  bin:
+    node-gyp: bin/node-gyp.js
+  checksum: 589ddd3ed967724ef425f9624bfa47cf73022640ab3eba6d556e92cdc4ddef33b63fce3a467c93b995a3f61df92eafd3c3d1e8dbe4a2c00c383334487dea99c3
+  languageName: node
+  linkType: hard
+
 "node-gyp@npm:^9.0.0, node-gyp@npm:^9.1.0, node-gyp@npm:latest":
   version: 9.3.0
   resolution: "node-gyp@npm:9.3.0"
@@ -14179,10 +14220,44 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-gyp@npm:latest":
+  version: 9.3.0
+  resolution: "node-gyp@npm:9.3.0"
+  dependencies:
+    env-paths: ^2.2.0
+    glob: ^7.1.4
+    graceful-fs: ^4.2.6
+    make-fetch-happen: ^10.0.3
+    nopt: ^6.0.0
+    npmlog: ^6.0.0
+    rimraf: ^3.0.2
+    semver: ^7.3.5
+    tar: ^6.1.2
+    which: ^2.0.2
+  bin:
+    node-gyp: bin/node-gyp.js
+  checksum: 589ddd3ed967724ef425f9624bfa47cf73022640ab3eba6d556e92cdc4ddef33b63fce3a467c93b995a3f61df92eafd3c3d1e8dbe4a2c00c383334487dea99c3
+  languageName: node
+  linkType: hard
+
+"node-releases@npm:^2.0.6":
+  version: 2.0.6
+  resolution: "node-releases@npm:2.0.6"
+  checksum: e86a926dc9fbb3b41b4c4a89d998afdf140e20a4e8dbe6c0a807f7b2948b42ea97d7fd3ad4868041487b6e9ee98409829c6e4d84a734a4215dff060a7fbeb4bf
+  languageName: node
+  linkType: hard
+
 "node-releases@npm:^2.0.8":
   version: 2.0.10
   resolution: "node-releases@npm:2.0.10"
   checksum: d784ecde25696a15d449c4433077f5cce620ed30a1656c4abf31282bfc691a70d9618bae6868d247a67914d1be5cc4fde22f65a05f4398cdfb92e0fc83cadfbc
+  languageName: node
+  linkType: hard
+
+"nofilter@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "nofilter@npm:1.0.4"
+  checksum: 54d864f745de5c3312994e880cf2d4f55e34830d6adc8275dce3731507ca380d21040336e4a277a4901551c07f04c452fbeffd57fad1dc8f68a2943eaf894a04
   languageName: node
   linkType: hard
 
@@ -15746,6 +15821,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"qs@npm:^6.4.0, qs@npm:^6.7.0, qs@npm:^6.9.4":
+  version: 6.11.0
+  resolution: "qs@npm:6.11.0"
+  dependencies:
+    side-channel: ^1.0.4
+  checksum: 6e1f29dd5385f7488ec74ac7b6c92f4d09a90408882d0c208414a34dd33badc1a621019d4c799a3df15ab9b1d0292f97c1dd71dc7c045e69f81a8064e5af7297
+  languageName: node
+  linkType: hard
+
 "qs@npm:~6.5.2":
   version: 6.5.3
   resolution: "qs@npm:6.5.3"
@@ -16844,6 +16928,17 @@ __metadata:
   bin:
     semver: ./bin/semver.js
   checksum: 1b26ecf6db9e8292dd90df4e781d91875c0dcc1b1909e70f5d12959a23c7eebb8f01ea581c00783bbee72ceeaad9505797c381756326073850dc36ed284b21b9
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.0.0, semver@npm:^7.1.1, semver@npm:^7.1.2, semver@npm:^7.3.2":
+  version: 7.3.8
+  resolution: "semver@npm:7.3.8"
+  dependencies:
+    lru-cache: ^6.0.0
+  bin:
+    semver: bin/semver.js
+  checksum: ba9c7cbbf2b7884696523450a61fee1a09930d888b7a8d7579025ad93d459b2d1949ee5bbfeb188b2be5f4ac163544c5e98491ad6152df34154feebc2cc337c1
   languageName: node
   linkType: hard
 
@@ -18103,6 +18198,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tar@npm:^6.1.0":
+  version: 6.1.12
+  resolution: "tar@npm:6.1.12"
+  dependencies:
+    chownr: ^2.0.0
+    fs-minipass: ^2.0.0
+    minipass: ^3.0.0
+    minizlib: ^2.1.1
+    mkdirp: ^1.0.3
+    yallist: ^4.0.0
+  checksum: 49d72e4420944e7ede2782d6b0826a6ede6cdab23c7de63470917e7a78166bc4d5b1a96279d3d79a85f1ba5a17cd37c0acbb3cbff19a07447691445b8b051c55
+  languageName: node
+  linkType: hard
+
 "tar@npm:^6.1.0, tar@npm:^6.1.11, tar@npm:^6.1.2":
   version: 6.1.12
   resolution: "tar@npm:6.1.12"
@@ -18110,6 +18219,20 @@ __metadata:
     chownr: ^2.0.0
     fs-minipass: ^2.0.0
     minipass: ^4.0.0
+    minizlib: ^2.1.1
+    mkdirp: ^1.0.3
+    yallist: ^4.0.0
+  checksum: 49d72e4420944e7ede2782d6b0826a6ede6cdab23c7de63470917e7a78166bc4d5b1a96279d3d79a85f1ba5a17cd37c0acbb3cbff19a07447691445b8b051c55
+  languageName: node
+  linkType: hard
+
+"tar@npm:^6.1.11, tar@npm:^6.1.2":
+  version: 6.1.12
+  resolution: "tar@npm:6.1.12"
+  dependencies:
+    chownr: ^2.0.0
+    fs-minipass: ^2.0.0
+    minipass: ^3.0.0
     minizlib: ^2.1.1
     mkdirp: ^1.0.3
     yallist: ^4.0.0
