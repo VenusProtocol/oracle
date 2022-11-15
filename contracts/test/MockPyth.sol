@@ -7,15 +7,15 @@ contract MockPyth is AbstractPyth {
     mapping(bytes32 => PythStructs.PriceFeed) priceFeeds;
     uint64 sequenceNumber;
 
-    uint singleUpdateFeeInWei;
-    uint validTimePeriod;
+    uint256 singleUpdateFeeInWei;
+    uint256 validTimePeriod;
 
-    constructor(uint _validTimePeriod, uint _singleUpdateFeeInWei) {
+    constructor(uint256 _validTimePeriod, uint256 _singleUpdateFeeInWei) {
         singleUpdateFeeInWei = _singleUpdateFeeInWei;
         validTimePeriod = _validTimePeriod;
     }
 
-    function queryPriceFeed(bytes32 id) public override view returns (PythStructs.PriceFeed memory priceFeed) {
+    function queryPriceFeed(bytes32 id) public view override returns (PythStructs.PriceFeed memory priceFeed) {
         require(priceFeeds[id].id != 0, "no price feed found for the given price id");
         return priceFeeds[id];
     }
@@ -28,37 +28,37 @@ contract MockPyth is AbstractPyth {
         }
     }
 
-    function priceFeedExists(bytes32 id) public override view returns (bool) {
+    function priceFeedExists(bytes32 id) public view override returns (bool) {
         return (priceFeeds[id].id != 0);
     }
 
-    function getValidTimePeriod() public override view returns (uint) {
+    function getValidTimePeriod() public view override returns (uint256) {
         return validTimePeriod;
     }
 
     // Takes an array of encoded price feeds and stores them.
     // You can create this data either by calling createPriceFeedData or
     // by using web3.js or ethers abi utilities.
-    function updatePriceFeeds(bytes[] calldata updateData) public override payable {
-        uint requiredFee = getUpdateFee(updateData.length);
+    function updatePriceFeeds(bytes[] calldata updateData) public payable override {
+        uint256 requiredFee = getUpdateFee(updateData.length);
         require(msg.value >= requiredFee, "Insufficient paid fee amount");
 
         if (msg.value > requiredFee) {
-            (bool success, ) = payable(msg.sender).call{value: msg.value - requiredFee}("");
+            (bool success, ) = payable(msg.sender).call{ value: msg.value - requiredFee }("");
             require(success, "failed to transfer update fee");
         }
 
-        uint freshPrices = 0;
+        uint256 freshPrices = 0;
 
         // Chain ID is id of the source chain that the price update comes from. Since it is just a mock contract
         // We set it to 1.
         uint16 chainId = 1;
 
-        for(uint i = 0; i < updateData.length; i++) {
+        for (uint256 i = 0; i < updateData.length; i++) {
             PythStructs.PriceFeed memory priceFeed = abi.decode(updateData[i], (PythStructs.PriceFeed));
 
             bool fresh = false;
-            uint lastPublishTime = priceFeeds[priceFeed.id].price.publishTime;
+            uint256 lastPublishTime = priceFeeds[priceFeed.id].price.publishTime;
 
             if (lastPublishTime < priceFeed.price.publishTime) {
                 // Price information is more recent than the existing price information.
@@ -67,8 +67,16 @@ contract MockPyth is AbstractPyth {
                 freshPrices += 1;
             }
 
-            emit PriceFeedUpdate(priceFeed.id, fresh, chainId, sequenceNumber, priceFeed.price.publishTime,
-                lastPublishTime, priceFeed.price.price, priceFeed.price.conf);
+            emit PriceFeedUpdate(
+                priceFeed.id,
+                fresh,
+                chainId,
+                sequenceNumber,
+                priceFeed.price.publishTime,
+                lastPublishTime,
+                priceFeed.price.price,
+                priceFeed.price.conf
+            );
         }
 
         // In the real contract, the input of this function contains multiple batches that each contain multiple prices.
@@ -81,7 +89,7 @@ contract MockPyth is AbstractPyth {
         emit UpdatePriceFeeds(msg.sender, 1, requiredFee);
     }
 
-    function getUpdateFee(uint updateDataSize) public override view returns (uint feeAmount) {
+    function getUpdateFee(uint256 updateDataSize) public view override returns (uint256 feeAmount) {
         return singleUpdateFeeInWei * updateDataSize;
     }
 

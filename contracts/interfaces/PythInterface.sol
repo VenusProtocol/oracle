@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 contract PythStructs {
-
     // A price with a degree of uncertainty, represented as a price +- a confidence interval.
     //
     // The confidence interval roughly corresponds to the standard error of a normal distribution.
@@ -19,7 +18,7 @@ contract PythStructs {
         // Price exponent
         int32 expo;
         // Unix timestamp describing when the price was published
-        uint publishTime;
+        uint256 publishTime;
     }
 
     // PriceFeed represents a current aggregate price from pyth publisher feeds.
@@ -47,23 +46,32 @@ interface IPyth {
     /// @param publishTime Publish time of the given price update.
     /// @param price Price of the given price update.
     /// @param conf Confidence interval of the given price update.
-    event PriceFeedUpdate(bytes32 indexed id, bool indexed fresh, uint16 chainId, uint64 sequenceNumber, uint lastPublishTime, uint publishTime, int64 price, uint64 conf);
+    event PriceFeedUpdate(
+        bytes32 indexed id,
+        bool indexed fresh,
+        uint16 chainId,
+        uint64 sequenceNumber,
+        uint256 lastPublishTime,
+        uint256 publishTime,
+        int64 price,
+        uint64 conf
+    );
 
     /// @dev Emitted when a batch price update is processed successfully.
     /// @param chainId ID of the source chain that the batch price update comes from.
     /// @param sequenceNumber Sequence number of the batch price update.
     /// @param batchSize Number of prices within the batch price update.
     /// @param freshPricesInBatch Number of prices that were more recent and were stored.
-    event BatchPriceFeedUpdate(uint16 chainId, uint64 sequenceNumber, uint batchSize, uint freshPricesInBatch);
+    event BatchPriceFeedUpdate(uint16 chainId, uint64 sequenceNumber, uint256 batchSize, uint256 freshPricesInBatch);
 
     /// @dev Emitted when a call to `updatePriceFeeds` is processed successfully.
     /// @param sender Sender of the call (`msg.sender`).
     /// @param batchCount Number of batches that this function processed.
     /// @param fee Amount of paid fee for updating the prices.
-    event UpdatePriceFeeds(address indexed sender, uint batchCount, uint fee);
+    event UpdatePriceFeeds(address indexed sender, uint256 batchCount, uint256 fee);
 
     /// @notice Returns the period (in seconds) that a price feed is considered valid since its publish time
-    function getValidTimePeriod() external view returns (uint validTimePeriod);
+    function getValidTimePeriod() external view returns (uint256 validTimePeriod);
 
     /// @notice Returns the price and confidence interval.
     /// @dev Reverts if the price has not been updated within the last `getValidTimePeriod()` seconds.
@@ -92,7 +100,7 @@ interface IPyth {
     /// applications that require a sufficiently-recent price. Reverts if the price wasn't updated sufficiently
     /// recently.
     /// @return price - please read the documentation of PythStructs.Price to understand how to use this safely.
-    function getPriceNoOlderThan(bytes32 id, uint age) external view returns (PythStructs.Price memory price);
+    function getPriceNoOlderThan(bytes32 id, uint256 age) external view returns (PythStructs.Price memory price);
 
     /// @notice Returns the exponentially-weighted moving average price of a price feed without any sanity checks.
     /// @dev This function returns the same price as `getEmaPrice` in the case where the price is available.
@@ -113,7 +121,7 @@ interface IPyth {
     /// applications that require a sufficiently-recent price. Reverts if the price wasn't updated sufficiently
     /// recently.
     /// @return price - please read the documentation of PythStructs.Price to understand how to use this safely.
-    function getEmaPriceNoOlderThan(bytes32 id, uint age) external view returns (PythStructs.Price memory price);
+    function getEmaPriceNoOlderThan(bytes32 id, uint256 age) external view returns (PythStructs.Price memory price);
 
     /// @notice Update price feeds with given update messages.
     /// This method requires the caller to pay a fee in wei; the required fee can be computed by calling
@@ -140,12 +148,16 @@ interface IPyth {
     /// @param updateData Array of price update data.
     /// @param priceIds Array of price ids.
     /// @param publishTimes Array of publishTimes. `publishTimes[i]` corresponds to known `publishTime` of `priceIds[i]`
-    function updatePriceFeedsIfNecessary(bytes[] calldata updateData, bytes32[] calldata priceIds, uint64[] calldata publishTimes) external payable;
+    function updatePriceFeedsIfNecessary(
+        bytes[] calldata updateData,
+        bytes32[] calldata priceIds,
+        uint64[] calldata publishTimes
+    ) external payable;
 
     /// @notice Returns the required fee to update an array of price updates.
     /// @param updateDataSize Number of price updates.
     /// @return feeAmount The required fee in Wei.
-    function getUpdateFee(uint updateDataSize) external view returns (uint feeAmount);
+    function getUpdateFee(uint256 updateDataSize) external view returns (uint256 feeAmount);
 }
 
 abstract contract AbstractPyth is IPyth {
@@ -158,7 +170,7 @@ abstract contract AbstractPyth is IPyth {
     /// @param id The Pyth Price Feed ID of which to check its existence.
     function priceFeedExists(bytes32 id) public view virtual returns (bool exists);
 
-    function getValidTimePeriod() public view virtual override returns (uint validTimePeriod);
+    function getValidTimePeriod() public view virtual override returns (uint256 validTimePeriod);
 
     function getPrice(bytes32 id) external view override returns (PythStructs.Price memory price) {
         return getPriceNoOlderThan(id, getValidTimePeriod());
@@ -173,7 +185,12 @@ abstract contract AbstractPyth is IPyth {
         return priceFeed.price;
     }
 
-    function getPriceNoOlderThan(bytes32 id, uint age) public view override returns (PythStructs.Price memory price) {
+    function getPriceNoOlderThan(bytes32 id, uint256 age)
+        public
+        view
+        override
+        returns (PythStructs.Price memory price)
+    {
         price = getPriceUnsafe(id);
 
         require(diff(block.timestamp, price.publishTime) <= age, "no price available which is recent enough");
@@ -186,7 +203,12 @@ abstract contract AbstractPyth is IPyth {
         return priceFeed.emaPrice;
     }
 
-    function getEmaPriceNoOlderThan(bytes32 id, uint age) public view override returns (PythStructs.Price memory price) {
+    function getEmaPriceNoOlderThan(bytes32 id, uint256 age)
+        public
+        view
+        override
+        returns (PythStructs.Price memory price)
+    {
         price = getEmaPriceUnsafe(id);
 
         require(diff(block.timestamp, price.publishTime) <= age, "no ema price available which is recent enough");
@@ -194,8 +216,7 @@ abstract contract AbstractPyth is IPyth {
         return price;
     }
 
-
-    function diff(uint x, uint y) internal pure returns (uint) {
+    function diff(uint256 x, uint256 y) internal pure returns (uint256) {
         if (x > y) {
             return x - y;
         } else {
@@ -204,13 +225,17 @@ abstract contract AbstractPyth is IPyth {
     }
 
     // Access modifier is overridden to public to be able to call it locally.
-    function updatePriceFeeds(bytes[] calldata updateData) public virtual payable override;
+    function updatePriceFeeds(bytes[] calldata updateData) public payable virtual override;
 
-    function updatePriceFeedsIfNecessary(bytes[] calldata updateData, bytes32[] calldata priceIds, uint64[] calldata publishTimes) external payable override {
+    function updatePriceFeedsIfNecessary(
+        bytes[] calldata updateData,
+        bytes32[] calldata priceIds,
+        uint64[] calldata publishTimes
+    ) external payable override {
         require(priceIds.length == publishTimes.length, "priceIds and publishTimes arrays should have same length");
 
         bool updateNeeded = false;
-        for(uint i = 0; i < priceIds.length; i++) {
+        for (uint256 i = 0; i < priceIds.length; i++) {
             if (!priceFeedExists(priceIds[i]) || queryPriceFeed(priceIds[i]).price.publishTime < publishTimes[i]) {
                 updateNeeded = true;
                 break;

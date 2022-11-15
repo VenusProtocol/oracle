@@ -150,14 +150,14 @@ describe("Oracle plugin frame unit tests", function () {
             price: BigNumber.from(10000000), // 10000000 * 10 ** -6 = $10
             conf: 10,
             expo: -6,
-            publishTime: ts
+            publishTime: ts,
           },
           emaPrice: {
             price: 0,
             conf: 0,
             expo: 0,
-            publishTime: 0
-          }
+            publishTime: 0,
+          },
         },
         {
           id: getBytes32String(2),
@@ -165,14 +165,14 @@ describe("Oracle plugin frame unit tests", function () {
             price: BigNumber.from(1),
             conf: 10,
             expo: 2,
-            publishTime: ts
+            publishTime: ts,
           },
           emaPrice: {
             price: 0,
             conf: 0,
             expo: 0,
-            publishTime: 0
-          }
+            publishTime: 0,
+          },
         },
       ]);
 
@@ -202,14 +202,14 @@ describe("Oracle plugin frame unit tests", function () {
           price: BigNumber.from(-10),
           conf: 10,
           expo: BigNumber.from(-10),
-          publishTime: ts
+          publishTime: ts,
         },
         emaPrice: {
           price: 0,
           conf: 0,
           expo: 0,
-          publishTime: 0
-        }
+          publishTime: 0,
+        },
       };
       await this.underlyingPythOracle.updatePriceFeedsHarness([feed]);
 
@@ -295,8 +295,8 @@ describe("Oracle plugin frame unit tests", function () {
           price: 0,
           conf: 0,
           expo: 0,
-          publishTime: 0
-        }
+          publishTime: 0,
+        },
       };
 
       const underlyingPythAddress = await this.pythOracle.underlyingPythOracle();
