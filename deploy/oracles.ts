@@ -1,6 +1,6 @@
 // npx hardhat deploy --network bsctestnet
 import networks from "@venusprotocol/venus-protocol/networks/mainnet.json";
-import { ethers } from "hardhat";
+import hre from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
@@ -21,7 +21,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
-  const boundValidator = await ethers.getContract("BoundValidator");
+  const boundValidator = await hre.ethers.getContract("BoundValidator");
 
   await deploy("ResilientOracle", {
     from: deployer,
