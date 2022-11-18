@@ -7,6 +7,8 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./interfaces/VBep20Interface.sol";
 import "./interfaces/OracleInterface.sol";
 
+import "hardhat/console.sol";
+
 contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOracleInterface {
     uint256 public constant INVALID_PRICE = 0;
 
@@ -263,6 +265,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
         }
 
         if (compareWithMain) {
+            console.log("comparing with main");
             (address mainOracle, bool mainOracleEnabled) = getOracle(vToken, OracleRole.MAIN);
             if (mainOracleEnabled && mainOracle != address(0)) {
                 try OracleInterface(mainOracle).getUnderlyingPrice(vToken) returns (uint256 mainOraclePrice) {
