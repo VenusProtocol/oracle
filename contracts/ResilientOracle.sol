@@ -4,6 +4,7 @@ pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "./interfaces/VBep20Interface.sol";
 import "./interfaces/OracleInterface.sol";
 
 contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOracleInterface {
@@ -24,8 +25,8 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     }
 
     struct TokenConfig {
-        /// @notice vToken address
-        address vToken;
+        /// @notice asset address
+        address asset;
         /// @notice `oracles` stores the oracles in the order of: [main, pivot, fallback],
         /// it can be indexed with enum OracleRole value
         address[3] oracles;
@@ -38,13 +39,13 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
 
     event GlobalEnable(bool indexed isEnable);
     event TokenConfigAdded(
-        address indexed token,
+        address indexed asset,
         address indexed mainOracle,
         address indexed pivotOracle,
         address fallbackOracle
     );
-    event OracleSet(address indexed vToken, address indexed oracle, uint256 indexed role);
-    event OracleEnabled(address indexed vToken, uint256 indexed role, bool indexed enable);
+    event OracleSet(address indexed asset, address indexed oracle, uint256 indexed role);
+    event OracleEnabled(address indexed asset, uint256 indexed role, bool indexed enable);
 
     modifier notNullAddress(address someone) {
         require(someone != address(0), "can't be zero address");
@@ -54,10 +55,10 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     /**
      * @notice Check whether token config exist by checking whether vToken is zero address
      * @dev vToken can't be set to zero, so it's suitable to be used to check
-     * @param vToken vtoken address
+     * @param asset asset address
      */
-    modifier checkTokenConfigExistance(address vToken) {
-        require(tokenConfigs[vToken].vToken != address(0), "token config must exist");
+    modifier checkTokenConfigExistance(address asset) {
+        require(tokenConfigs[asset].asset != address(0), "token config must exist");
         _;
     }
 
@@ -88,7 +89,8 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @param vToken vtoken address
      */
     function getTokenConfig(address vToken) external view returns (TokenConfig memory) {
-        return tokenConfigs[vToken];
+        address asset = VBep20Interface(vToken).underlying();
+        return tokenConfigs[asset];
     }
 
     /**
@@ -97,8 +99,9 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @param role oracle role
      */
     function getOracle(address vToken, OracleRole role) public view returns (address oracle, bool enabled) {
-        oracle = tokenConfigs[vToken].oracles[uint256(role)];
-        enabled = tokenConfigs[vToken].enableFlagsForOracles[uint256(role)];
+        address asset = VBep20Interface(vToken).underlying();
+        oracle = tokenConfigs[asset].oracles[uint256(role)];
+        enabled = tokenConfigs[asset].enableFlagsForOracles[uint256(role)];
     }
 
     /**
@@ -119,12 +122,12 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     function setTokenConfig(TokenConfig memory tokenConfig)
         public
         onlyOwner
-        notNullAddress(tokenConfig.vToken)
+        notNullAddress(tokenConfig.asset)
         notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)])
     {
-        tokenConfigs[tokenConfig.vToken] = tokenConfig;
+        tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(
-            tokenConfig.vToken,
+            tokenConfig.asset,
             tokenConfig.oracles[uint256(OracleRole.MAIN)],
             tokenConfig.oracles[uint256(OracleRole.PIVOT)],
             tokenConfig.oracles[uint256(OracleRole.FALLBACK)]
@@ -133,33 +136,33 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
 
     /**
      * @notice Set oracle of any type for the input vToken, input vToken MUST exist
-     * @param vToken vToken address
+     * @param asset asset address
      * @param oracle oracle address
      * @param role oracle role
      */
     function setOracle(
-        address vToken,
+        address asset,
         address oracle,
         OracleRole role
-    ) external onlyOwner notNullAddress(vToken) checkTokenConfigExistance(vToken) {
+    ) external onlyOwner notNullAddress(asset) checkTokenConfigExistance(asset) {
         require(!(oracle == address(0) && role == OracleRole.MAIN), "can't set zero address to main oracle");
-        tokenConfigs[vToken].oracles[uint256(role)] = oracle;
-        emit OracleSet(vToken, oracle, uint256(role));
+        tokenConfigs[asset].oracles[uint256(role)] = oracle;
+        emit OracleSet(asset, oracle, uint256(role));
     }
 
     /**
      * @notice Enable/disable oracle for the input vToken, input vToken MUST exist
-     * @param vToken vToken address
+     * @param asset asset address
      * @param role oracle role
      * @param enable expected status
      */
     function enableOracle(
-        address vToken,
+        address asset,
         OracleRole role,
         bool enable
-    ) external onlyOwner notNullAddress(vToken) checkTokenConfigExistance(vToken) {
-        tokenConfigs[vToken].enableFlagsForOracles[uint256(role)] = enable;
-        emit OracleEnabled(vToken, uint256(role), enable);
+    ) external onlyOwner notNullAddress(asset) checkTokenConfigExistance(asset) {
+        tokenConfigs[asset].enableFlagsForOracles[uint256(role)] = enable;
+        emit OracleEnabled(asset, uint256(role), enable);
     }
 
     /**
