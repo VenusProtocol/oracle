@@ -1,5 +1,3 @@
-import mainnetDeployments from "@venusprotocol/venus-protocol/networks/mainnet.json";
-import testnetDeployments from "@venusprotocol/venus-protocol/networks/testnet.json";
 import hre from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -39,10 +37,7 @@ const assets:Config = {
 
 const addr0000 = "0x0000000000000000000000000000000000000000";
 
-const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
-  const { deploy } = deployments;
-  const { deployer } = await getNamedAccounts();
-
+const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironment) {
   const networkName:string = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
 
   const resilientOracle:ResilientOracle = await hre.ethers.getContract("ResilientOracle");
