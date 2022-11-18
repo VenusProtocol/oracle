@@ -37,6 +37,7 @@ const assets: Config = {
 };
 
 const addr0000 = "0x0000000000000000000000000000000000000000";
+const DEFAULT_STALE_PERIOD = 1200; //20 min
 
 const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironment) {
   const networkName: string = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
@@ -50,7 +51,7 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
   let tx = await chainlinkOracle.setTokenConfig({
     asset: assets[networkName]["BNX"],
     feed: chainlinkFeed[networkName]["BNX"],
-    maxStalePeriod: 1200, // 20 minutes
+    maxStalePeriod: DEFAULT_STALE_PERIOD
   });
 
   await tx.wait(1);
@@ -58,7 +59,7 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
   tx = await pythOracle.setTokenConfig({
     pythId: pythID[networkName]["BNX"],
     asset: assets[networkName]["BNX"],
-    maxStalePeriod: 1200,
+    maxStalePeriod: DEFAULT_STALE_PERIOD,
   });
 
   await tx.wait(1);
@@ -83,7 +84,7 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
   tx = await pythOracle.setTokenConfig({
     pythId: pythID[networkName]["BSW"],
     asset: assets[networkName]["BSW"],
-    maxStalePeriod: 1200,
+    maxStalePeriod: DEFAULT_STALE_PERIOD,
   });
 
   await tx.wait(1);
