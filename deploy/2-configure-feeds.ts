@@ -48,14 +48,18 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
   const boundValidator: BoundValidator = await hre.ethers.getContract("BoundValidator");
 
   //configure BNX
+  console.log("Configure BNX");
+
+  console.log("Configuring Chainlink");
   let tx = await chainlinkOracle.setTokenConfig({
     asset: assets[networkName]["BNX"],
     feed: chainlinkFeed[networkName]["BNX"],
-    maxStalePeriod: DEFAULT_STALE_PERIOD
+    maxStalePeriod: DEFAULT_STALE_PERIOD,
   });
 
   await tx.wait(1);
 
+  console.log("Configuring Pyth");
   tx = await pythOracle.setTokenConfig({
     pythId: pythID[networkName]["BNX"],
     asset: assets[networkName]["BNX"],
@@ -64,6 +68,7 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
 
   await tx.wait(1);
 
+  console.log("Configuring Resilient Oracle");
   tx = await resilientOracle.setTokenConfig({
     asset: assets[networkName]["BNX"],
     oracles: [chainlinkOracle.address, pythOracle.address, addr0000],
@@ -72,15 +77,19 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
 
   await tx.wait(1);
 
+  console.log("Configuring Bound Validator");
   tx = await boundValidator.setValidateConfig({
     asset: assets[networkName]["BNX"],
-    upperBoundRatio: BigNumber.from(95).pow(18),
-    lowerBoundRatio: BigNumber.from(105).pow(18),
+    upperBoundRatio: BigNumber.from(105).pow(18),
+    lowerBoundRatio: BigNumber.from(95).pow(18),
   });
 
   await tx.wait(1);
 
   //configure BSW
+  console.log("Configure BSW");
+
+  console.log("Configuring Pyth");
   tx = await pythOracle.setTokenConfig({
     pythId: pythID[networkName]["BSW"],
     asset: assets[networkName]["BSW"],
@@ -89,6 +98,7 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
 
   await tx.wait(1);
 
+  console.log("Configuring Resilient Oracle");
   tx = await resilientOracle.setTokenConfig({
     asset: assets[networkName]["BSW"],
     oracles: [pythOracle.address, addr0000, addr0000],
