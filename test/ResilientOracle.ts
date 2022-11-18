@@ -55,7 +55,11 @@ describe("Oracle plugin frame unit tests", function () {
   describe("admin check", function () {
     it("only admin can call the setters", async function () {
       // setTokenConfigs
-      const vToken = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
+      const vToken = await makeVToken(
+        this.admin,
+        { name: "vETH", symbol: "vETH" },
+        { name: "Ethereum", symbol: "ETH" },
+      );
       const asset = await vToken.underlying();
 
       await expect(
@@ -97,7 +101,11 @@ describe("Oracle plugin frame unit tests", function () {
     });
 
     it("transfer owner", async function () {
-      const vToken = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
+      const vToken = await makeVToken(
+        this.admin,
+        { name: "vETH", symbol: "vETH" },
+        { name: "Ethereum", symbol: "ETH" },
+      );
       const asset = await vToken.underlying();
 
       await this.oracleBasement.transferOwnership(this.signers[2].address);
@@ -133,7 +141,11 @@ describe("Oracle plugin frame unit tests", function () {
       });
 
       it("reset token config", async function () {
-        const vToken = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
+        const vToken = await makeVToken(
+          this.admin,
+          { name: "vETH", symbol: "vETH" },
+          { name: "Ethereum", symbol: "ETH" },
+        );
         const asset = await vToken.underlying();
 
         await this.oracleBasement.setTokenConfig({
@@ -151,7 +163,11 @@ describe("Oracle plugin frame unit tests", function () {
       });
 
       it("token config added successfully & events check", async function () {
-        const vToken = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
+        const vToken = await makeVToken(
+          this.admin,
+          { name: "vETH", symbol: "vETH" },
+          { name: "Ethereum", symbol: "ETH" },
+        );
         const asset = await vToken.underlying();
 
         const result = await this.oracleBasement.setTokenConfig({
@@ -171,10 +187,18 @@ describe("Oracle plugin frame unit tests", function () {
       });
 
       it("token config added successfully & data check", async function () {
-        const vToken1 = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
+        const vToken1 = await makeVToken(
+          this.admin,
+          { name: "vETH", symbol: "vETH" },
+          { name: "Ethereum", symbol: "ETH" },
+        );
         const asset1 = await vToken1.underlying();
 
-        const vToken2 = await makeVToken(this.admin, { name: "vBTC", symbol: "vBTC" }, { name: "Bitcoin", symbol: "BTC" });
+        const vToken2 = await makeVToken(
+          this.admin,
+          { name: "vBTC", symbol: "vBTC" },
+          { name: "Bitcoin", symbol: "BTC" },
+        );
         const asset2 = await vToken2.underlying();
 
         await this.oracleBasement.setTokenConfigs([
@@ -190,12 +214,10 @@ describe("Oracle plugin frame unit tests", function () {
           },
         ]);
         expect((await this.oracleBasement.getTokenConfig(vToken1.address)).oracles[0]).to.equal(addr1111);
-        expect((await this.oracleBasement.getTokenConfig(vToken2.address)).oracles[1]).to.equal(
-          getSimpleAddress(2),
-        );
+        expect((await this.oracleBasement.getTokenConfig(vToken2.address)).oracles[1]).to.equal(getSimpleAddress(2));
         expect((await this.oracleBasement.getTokenConfig(vToken2.address)).enableFlagsForOracles[0]).to.equal(true);
         // non exist config
-        await expect((this.oracleBasement.getTokenConfig(getSimpleAddress(8)))).to.be.reverted
+        await expect(this.oracleBasement.getTokenConfig(getSimpleAddress(8))).to.be.reverted;
       });
     });
   });
@@ -203,7 +225,11 @@ describe("Oracle plugin frame unit tests", function () {
   describe("change oracle", function () {
     describe("set oracle", function () {
       it("null check", async function () {
-        const vToken = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
+        const vToken = await makeVToken(
+          this.admin,
+          { name: "vETH", symbol: "vETH" },
+          { name: "Ethereum", symbol: "ETH" },
+        );
         const asset = await vToken.underlying();
 
         // vToken can't be zero
@@ -224,16 +250,22 @@ describe("Oracle plugin frame unit tests", function () {
       });
 
       it("existance check", async function () {
-        const vToken = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
+        const vToken = await makeVToken(
+          this.admin,
+          { name: "vETH", symbol: "vETH" },
+          { name: "Ethereum", symbol: "ETH" },
+        );
         const asset = await vToken.underlying();
 
-        await expect(this.oracleBasement.setOracle(asset, addr1111, 0)).to.be.revertedWith(
-          "token config must exist",
-        );
+        await expect(this.oracleBasement.setOracle(asset, addr1111, 0)).to.be.revertedWith("token config must exist");
       });
 
       it("oracle set successfully & data check", async function () {
-        const vToken = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
+        const vToken = await makeVToken(
+          this.admin,
+          { name: "vETH", symbol: "vETH" },
+          { name: "Ethereum", symbol: "ETH" },
+        );
         const asset = await vToken.underlying();
 
         await this.oracleBasement.setTokenConfig({
@@ -243,7 +275,11 @@ describe("Oracle plugin frame unit tests", function () {
         });
 
         await this.oracleBasement.setOracle(asset, getSimpleAddress(2), 1);
-        expect((await this.oracleBasement.getTokenConfig(vToken.address)).enableFlagsForOracles).to.eql([true, false, true]);
+        expect((await this.oracleBasement.getTokenConfig(vToken.address)).enableFlagsForOracles).to.eql([
+          true,
+          false,
+          true,
+        ]);
         expect((await this.oracleBasement.getTokenConfig(vToken.address)).oracles).to.eql([
           addr1111,
           getSimpleAddress(2),
@@ -265,11 +301,11 @@ describe("Oracle plugin frame unit tests", function () {
     beforeEach(async function () {
       token1 = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
       asset1 = await token1.underlying();
-      token1 = token1.address
+      token1 = token1.address;
 
       token2 = await makeVToken(this.admin, { name: "vBTC", symbol: "vBTC" }, { name: "Bitcoin", symbol: "BTC" });
       asset2 = await token2.underlying();
-      token2 = token2.address
+      token2 = token2.address;
 
       await this.oracleBasement.setTokenConfigs([
         {
