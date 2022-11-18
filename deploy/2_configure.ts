@@ -6,6 +6,8 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { ChainlinkOracle } from "../src/types/contracts/oracles/ChainlinkOracle";
 import { PythOracle } from "../src/types/contracts/oracles/PythOracle";
 import { ResilientOracle } from "../src/types/contracts/ResilientOracle";
+import { BoundValidator } from "../src/types/contracts/oracles/BoundValidator";
+import { BigNumber } from "ethers";
 
 interface Feed {
   [key: string]: string
@@ -35,6 +37,8 @@ const assets:Config = {
   }
 }
 
+const addr0000 = "0x0000000000000000000000000000000000000000";
+
 const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
@@ -44,7 +48,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const resilientOracle:ResilientOracle = await hre.ethers.getContract("ResilientOracle");
   const pythOracle:PythOracle = await hre.ethers.getContract("PythOracle");
   const chainlinkOracle:ChainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
-  const boundValidator = await hre.ethers.getContract("BoundValidator");
+  const boundValidator:BoundValidator = await hre.ethers.getContract("BoundValidator");
   
   //configure BNX
   let tx = await chainlinkOracle.setTokenConfig({
@@ -64,8 +68,37 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   await tx.wait(1)
 
   tx = await resilientOracle.setTokenConfig({
-    
+    asset: assets[networkName]['BNX'],
+    oracles: [chainlinkOracle.address, pythOracle.address, addr0000],
+    enableFlagsForOracles: [true, true, false]
   })
+
+  await tx.wait(1)
+
+  tx = await boundValidator.setValidateConfig({
+    asset: assets[networkName]['BNX'],
+    upperBoundRatio: BigNumber.from(95).pow(18),
+    lowerBoundRatio: BigNumber.from(105).pow(18),
+  })
+
+  await tx.wait(1)
+
+  //configure BSW
+  tx = await pythOracle.setTokenConfig({
+    pythId: pythID[networkName]['BSW'],
+    asset: assets[networkName]['BSW'],
+    maxStalePeriod: 1200
+  })
+
+  await tx.wait(1)
+
+  tx = await resilientOracle.setTokenConfig({
+    asset: assets[networkName]['BSW'],
+    oracles: [pythOracle.address, addr0000, addr0000],
+    enableFlagsForOracles: [true, false, false]
+  })
+
+  await tx.wait(1)
 };
 
 export default func;
