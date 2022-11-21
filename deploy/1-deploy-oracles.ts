@@ -67,8 +67,8 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
   const vBNBAddress = ADDRESSES[networkName].vBNBAddress;
 
-  await deploy("PivotTwapOracle", {
-    contract: network.live ? "PivotTwapOracle" : "MockTwapOracle",
+  await deploy("TwapOracle", {
+    contract: network.live ? "TwapOracle" : "MockTwapOracle",
     from: deployer,
     log: true,
     deterministicDeployment: false,
