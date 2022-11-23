@@ -120,6 +120,10 @@ const config: HardhatUserConfig = {
     pages: "files",
     templates: "./docgen-templates",
   },
+  docgen: {
+    outputDir: './docs',
+    pages: 'files'
+  }
 };
 
 export default config;
