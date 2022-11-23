@@ -25,13 +25,16 @@
     "test": "npm run compile && hardhat test",
     "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
     "build": "rm -rf dist && tsc --declaration && hardhat compile && cp -r ./{package.json,yarn.lock,artifacts,networks,contracts,deployments} dist/",
-    "publish": "yarn build && cd dist && yarn npm publish"
+    "publish": "yarn build && cd dist && yarn npm publish",
+    "postinstall": "./copy_contracts.sh",
+    "docgen": "hardhat docgen"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.6.0",
     "@openzeppelin/contracts-upgradeable": "^4.7.3",
     "@venusprotocol/venus-protocol": "0.4.1",
-    "module-alias": "^2.2.2"
+    "module-alias": "^2.2.2",
+    "solidity-docgen": "^0.6.0-beta.29"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",

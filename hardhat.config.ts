@@ -12,6 +12,8 @@ import { HardhatUserConfig } from "hardhat/config";
 import { NetworkUserConfig } from "hardhat/types";
 import { resolve } from "path";
 import "solidity-coverage";
+import "solidity-docgen";
+
 
 import "./tasks";
 
@@ -127,6 +129,10 @@ const config: HardhatUserConfig = {
     outDir: "src/types",
     target: "ethers-v5",
   },
+  docgen: {
+    outputDir: './docs',
+    pages: 'files'
+  }
 };
 
 export default config;

@@ -43,6 +43,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
         _;
     }
 
+    /// @notice Initializes the owner of the contract
     function initialize() public initializer {
         __Ownable_init();
     }
@@ -50,7 +51,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
     /**
      * @notice Get the Chainlink price of underlying asset of input vToken, revert when vToken is zero address
      * @param vToken vToken address
-     * @return price in USD, with 18 decimals
+     * @return price in USD
      */
     function getUnderlyingPrice(address vToken) public view override returns (uint256) {
         string memory symbol = VBep20Interface(vToken).symbol();
@@ -71,7 +72,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @notice Get the Chainlink price of underlying asset of input vToken or cached price when it's been set
      * @dev The decimals of underlying tokens is considered to ensure the returned prices are in 18 decimals
      * @param vToken vToken address
-     * @return price in USD, with 18 decimals
+     * @return price in USD
      */
     function _getUnderlyingPriceInternal(VBep20Interface vToken) internal view returns (uint256 price) {
         VBep20Interface token = VBep20Interface(vToken.underlying());
