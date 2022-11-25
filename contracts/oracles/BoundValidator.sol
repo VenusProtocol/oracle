@@ -80,11 +80,7 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
      * @param reporterPrice the price to be tested
      * @param anchorPrice anchor price as testing anchor
      */
-    function _isWithinAnchor(
-        address asset,
-        uint256 reporterPrice,
-        uint256 anchorPrice
-    ) internal view returns (bool) {
+    function _isWithinAnchor(address asset, uint256 reporterPrice, uint256 anchorPrice) internal view returns (bool) {
         if (reporterPrice > 0) {
             uint256 anchorRatio = (anchorPrice * 100e16) / reporterPrice;
             uint256 upperBoundAnchorRatio = validateConfigs[asset].upperBoundRatio;

@@ -17,7 +17,7 @@ contract BinanceOracle is Initializable {
         feedRegistry = feed;
     }
 
-     /**
+    /**
      * @notice Gets the price of vToken from binance oracle
      * @param vToken Address of the vToken
      * @return price in USD
@@ -34,6 +34,6 @@ contract BinanceOracle is Initializable {
         (, int256 answer, , , ) = feedRegistry.latestRoundDataByName(symbol, "USD");
 
         uint256 decimalDelta = feedRegistry.decimalsByName(symbol, "USD");
-        return (uint256(answer) * (10**(18 - decimalDelta))) * (10**(18 - underlyingToken.decimals()));
+        return (uint256(answer) * (10 ** (18 - decimalDelta))) * (10 ** (18 - underlyingToken.decimals()));
     }
 }

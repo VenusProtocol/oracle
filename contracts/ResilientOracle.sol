@@ -120,7 +120,9 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @notice Set single token configs, vToken MUST HAVE NOT be added before, and main oracle MUST NOT be zero address
      * @param tokenConfig token config struct
      */
-    function setTokenConfig(TokenConfig memory tokenConfig)
+    function setTokenConfig(
+        TokenConfig memory tokenConfig
+    )
         public
         onlyOwner
         notNullAddress(tokenConfig.vToken)
@@ -167,7 +169,8 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     }
 
     /**
-     * @notice Currently it calls the updateTwap. This function should be called everytime before calling getUnderlyingPrice
+     * @notice Currently it calls the updateTwap.
+     * This function should be called everytime before calling getUnderlyingPrice
      * @param vToken vToken address
      */
     function updatePrice(address vToken) external override {
@@ -201,7 +204,8 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     /**
      * @notice This function won't revert when price is 0, because the fallback oracle may come to play later
      * @param vToken vToken address
-     * @return price USD price in scaled decimals e.g., vToken decimals is 8 then price is returned as 10**18 * 10**(18-8) = 10**28 decimals 
+     * @return price USD price in scaled decimals
+     * e.g., vToken decimals is 8 then price is returned as 10**18 * 10**(18-8) = 10**28 decimals
      */
     function _getMainOraclePrice(address vToken) internal view returns (uint256) {
         uint256 price = INVALID_PRICE;

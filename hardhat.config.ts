@@ -14,7 +14,6 @@ import { resolve } from "path";
 import "solidity-coverage";
 import "solidity-docgen";
 
-
 import "./tasks";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
@@ -130,9 +129,9 @@ const config: HardhatUserConfig = {
     target: "ethers-v5",
   },
   docgen: {
-    outputDir: './docs',
-    pages: 'files'
-  }
+    outputDir: "./docs",
+    pages: "files",
+  },
 };
 
 export default config;
