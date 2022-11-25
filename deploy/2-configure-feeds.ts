@@ -5,8 +5,6 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ResilientOracle } from "../src/types/contracts/ResilientOracle";
 import { BoundValidator } from "../src/types/contracts/oracles/BoundValidator";
-import { ChainlinkOracle } from "../src/types/contracts/oracles/ChainlinkOracle";
-import { PythOracle } from "../src/types/contracts/oracles/PythOracle";
 
 interface Feed {
   [key: string]: string;
@@ -43,39 +41,59 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
   const networkName: string = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
 
   const resilientOracle: ResilientOracle = await hre.ethers.getContract("ResilientOracle");
-  const pythOracle: PythOracle = await hre.ethers.getContract("PythOracle");
-  const chainlinkOracle: ChainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
+  const pythOracle = await hre.ethers.getContract("PythOracle");
+  const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
   const boundValidator: BoundValidator = await hre.ethers.getContract("BoundValidator");
 
   //configure BNX
   console.log("Configure BNX");
 
-  console.log("Configuring Chainlink");
-  let tx = await chainlinkOracle.setTokenConfig({
-    asset: assets[networkName]["BNX"],
-    feed: chainlinkFeed[networkName]["BNX"],
-    maxStalePeriod: DEFAULT_STALE_PERIOD,
-  });
+  let tx;
+  console.log("Configuring BNX on Chainlink");
+  if (network.live) {
+    tx = await chainlinkOracle.setTokenConfig({
+      asset: assets[networkName]["BNX"],
+      feed: chainlinkFeed[networkName]["BNX"],
+      maxStalePeriod: DEFAULT_STALE_PERIOD,
+    });
 
-  await tx.wait(1);
+    await tx.wait(1);
 
-  console.log("Configuring Pyth");
-  tx = await pythOracle.setTokenConfig({
-    pythId: pythID[networkName]["BNX"],
-    asset: assets[networkName]["BNX"],
-    maxStalePeriod: DEFAULT_STALE_PERIOD,
-  });
+    console.log("Configuring BNX on Pyth");
+    tx = await pythOracle.setTokenConfig({
+      pythId: pythID[networkName]["BNX"],
+      asset: assets[networkName]["BNX"],
+      maxStalePeriod: DEFAULT_STALE_PERIOD,
+    });
+    await tx.wait(1);
 
-  await tx.wait(1);
+    console.log("Configuring Resilient Oracle");
+    tx = await resilientOracle.setTokenConfig({
+      asset: assets[networkName]["BNX"],
+      oracles: [chainlinkOracle.address, pythOracle.address, addr0000],
+      enableFlagsForOracles: [true, true, false],
+    });
+  } else {
+    const mockBNX = await hre.ethers.getContract("MockBNX");
+    tx = await resilientOracle.setTokenConfig({
+      asset: mockBNX.address,
+      oracles: [chainlinkOracle.address, addr0000, pythOracle.address],
+      enableFlagsForOracles: [true, false, true],
+    });
+    await tx.wait(1);
 
-  console.log("Configuring Resilient Oracle");
-  tx = await resilientOracle.setTokenConfig({
-    asset: assets[networkName]["BNX"],
-    oracles: [chainlinkOracle.address, pythOracle.address, addr0000],
-    enableFlagsForOracles: [true, true, false],
-  });
+    console.log("Configuring mock Chainlink price for BNX");
 
-  await tx.wait(1);
+    tx = await resilientOracle.setOracle(mockBNX.address, chainlinkOracle.address, 0);
+    await tx.wait(1);
+
+    tx = await chainlinkOracle.setPrice(mockBNX.address, "159990000000000000000");
+    await tx.wait(1);
+
+    console.log("Configuring mock Pyth price for BNX");
+    tx = await pythOracle.setPrice(mockBNX.address, "159990000000000000000");
+    await tx.wait(1);
+  }
 
   console.log("Configuring Bound Validator");
   tx = await boundValidator.setValidateConfig({
@@ -89,14 +107,31 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
   //configure BSW
   console.log("Configure BSW");
 
-  console.log("Configuring Pyth");
-  tx = await pythOracle.setTokenConfig({
-    pythId: pythID[networkName]["BSW"],
-    asset: assets[networkName]["BSW"],
-    maxStalePeriod: DEFAULT_STALE_PERIOD,
-  });
+  if (network.live) {
+    console.log("Configuring BSW on Pyth");
+    tx = await pythOracle.setTokenConfig({
+      pythId: pythID[networkName]["BSW"],
+      asset: assets[networkName]["BSW"],
+      maxStalePeriod: DEFAULT_STALE_PERIOD,
+    });
+    await tx.wait(1);
+  } else {
+    const mockBSW = await hre.ethers.getContract("MockBSW");
 
-  await tx.wait(1);
+    tx = await resilientOracle.setTokenConfig({
+      asset: mockBSW.address,
+      oracles: [chainlinkOracle.address, addr0000, pythOracle.address],
+      enableFlagsForOracles: [true, false, true],
+    });
+    await tx.wait(1);
+
+    console.log("Configuring mock Pyth price for BSW");
+    tx = await resilientOracle.setOracle(mockBSW.address, pythOracle.address, 0);
+    await tx.wait(1);
+
+    tx = await pythOracle.setPrice(mockBSW.address, "208000000000000000");
+    await tx.wait(1);
+  }
 
   console.log("Configuring Resilient Oracle");
   tx = await resilientOracle.setTokenConfig({

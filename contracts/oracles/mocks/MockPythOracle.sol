@@ -26,6 +26,7 @@ contract MockPythOracle is OwnableUpgradeable {
 
     //https://compound.finance/docs/prices
     function getUnderlyingPrice(address vToken) public view returns (uint256) {
-        return assetPrices[vToken];
+        address token = VBep20Interface(vToken).underlying();
+        return assetPrices[token];
     }
 }
