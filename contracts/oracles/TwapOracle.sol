@@ -95,12 +95,9 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
      * @notice Add single token configs
      * @param config token config struct
      */
-    function setTokenConfig(TokenConfig memory config)
-        public
-        onlyOwner
-        notNullAddress(config.asset)
-        notNullAddress(config.pancakePool)
-    {
+    function setTokenConfig(
+        TokenConfig memory config
+    ) public onlyOwner notNullAddress(config.asset) notNullAddress(config.pancakePool) {
         require(config.anchorPeriod > 0, "anchor period must be positive");
         require(config.baseUnit > 0, "base unit must be positive");
         uint256 cumulativePrice = currentCumulativePrice(config);
@@ -129,7 +126,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
         require(price > 0, "TWAP price must be positive");
 
         BEP20Interface underlyingToken = BEP20Interface(VBep20Interface(vToken).underlying());
-        return (price * (10**(18 - underlyingToken.decimals())));
+        return (price * (10 ** (18 - underlyingToken.decimals())));
     }
 
     /**
@@ -202,14 +199,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
      * @notice Update new and old observations of lagging window if period elapsed.
      * @return cumulative price & old observation
      */
-    function pokeWindowValues(TokenConfig memory config)
-        internal
-        returns (
-            uint256,
-            uint256,
-            uint256
-        )
-    {
+    function pokeWindowValues(TokenConfig memory config) internal returns (uint256, uint256, uint256) {
         uint256 cumulativePrice = currentCumulativePrice(config);
 
         Observation memory newObservation = newObservations[config.asset];

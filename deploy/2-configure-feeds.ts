@@ -5,8 +5,6 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ResilientOracle } from "../src/types/contracts/ResilientOracle";
 import { BoundValidator } from "../src/types/contracts/oracles/BoundValidator";
-import { ChainlinkOracle } from "../src/types/contracts/oracles/ChainlinkOracle";
-import { PythOracle } from "../src/types/contracts/oracles/PythOracle";
 
 interface Feed {
   [key: string]: string;
@@ -53,7 +51,7 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
   console.log("Configure BNX");
 
   let tx;
-  if(network.live) {
+  if (network.live) {
     console.log("Configuring Chainlink");
 
     tx = await chainlinkOracle.setTokenConfig({
@@ -61,27 +59,26 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
       feed: chainlinkFeed[networkName]["BNX"],
       maxStalePeriod: DEFAULT_STALE_PERIOD,
     });
-  
+
     await tx.wait(1);
-  
+
     console.log("Configuring Pyth");
     tx = await pythOracle.setTokenConfig({
       pythId: pythID[networkName]["BNX"],
       asset: assets[networkName]["BNX"],
       maxStalePeriod: DEFAULT_STALE_PERIOD,
     });
-  
+
     await tx.wait(1);
   } else {
     console.log("Configuring Chainlink");
-    tx = await chainlinkOracle.setPrice(mockBNX.address, "159990000000000000000")
+    tx = await chainlinkOracle.setPrice(mockBNX.address, "159990000000000000000");
     await tx.wait(1);
 
     console.log("Configuring Pyth");
-    tx = await pythOracle.setPrice(mockBNX.address, "159990000000000000000")
+    tx = await pythOracle.setPrice(mockBNX.address, "159990000000000000000");
     await tx.wait(1);
   }
-  
 
   console.log("Configuring Resilient Oracle");
   tx = await resilientOracle.setTokenConfig({
@@ -104,7 +101,7 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
   //configure BSW
   console.log("Configure BSW");
 
-  if(network.live) {
+  if (network.live) {
     console.log("Configuring Pyth");
     tx = await pythOracle.setTokenConfig({
       pythId: pythID[networkName]["BSW"],
@@ -115,7 +112,7 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
     await tx.wait(1);
   } else {
     console.log("Configuring Pyth");
-    tx = await pythOracle.setPrice(mockBSW.address, "208000000000000000")
+    tx = await pythOracle.setPrice(mockBSW.address, "208000000000000000");
     await tx.wait(1);
   }
 
