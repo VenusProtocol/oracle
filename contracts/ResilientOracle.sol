@@ -119,9 +119,12 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @notice Set single token configs, vToken MUST HAVE NOT be added before, and main oracle MUST NOT be zero address
      * @param tokenConfig token config struct
      */
-    function setTokenConfig(
-        TokenConfig memory tokenConfig
-    ) public onlyOwner notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)]) {
+    function setTokenConfig(TokenConfig memory tokenConfig)
+        public
+        onlyOwner
+        notNullAddress(tokenConfig.asset)
+        notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)])
+    {
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(
             tokenConfig.asset,

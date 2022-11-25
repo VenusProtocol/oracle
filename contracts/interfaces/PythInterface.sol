@@ -188,10 +188,12 @@ abstract contract AbstractPyth is IPyth {
         return priceFeed.price;
     }
 
-    function getPriceNoOlderThan(
-        bytes32 id,
-        uint256 age
-    ) public view override returns (PythStructs.Price memory price) {
+    function getPriceNoOlderThan(bytes32 id, uint256 age)
+        public
+        view
+        override
+        returns (PythStructs.Price memory price)
+    {
         price = getPriceUnsafe(id);
 
         require(diff(block.timestamp, price.publishTime) <= age, "no price available which is recent enough");
@@ -204,10 +206,12 @@ abstract contract AbstractPyth is IPyth {
         return priceFeed.emaPrice;
     }
 
-    function getEmaPriceNoOlderThan(
-        bytes32 id,
-        uint256 age
-    ) public view override returns (PythStructs.Price memory price) {
+    function getEmaPriceNoOlderThan(bytes32 id, uint256 age)
+        public
+        view
+        override
+        returns (PythStructs.Price memory price)
+    {
         price = getEmaPriceUnsafe(id);
 
         require(diff(block.timestamp, price.publishTime) <= age, "no ema price available which is recent enough");
