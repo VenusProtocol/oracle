@@ -41,11 +41,9 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
   const networkName: string = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
 
   const resilientOracle: ResilientOracle = await hre.ethers.getContract("ResilientOracle");
-  const pythOracle = await hre.ethers.getContract(network.live ? "PythOracle" : "MockPythOracle");
-  const chainlinkOracle = await hre.ethers.getContract(network.live ? "ChainlinkOracle" : "MockChainlinkOracle");
+  const pythOracle = await hre.ethers.getContract("PythOracle");
+  const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
   const boundValidator: BoundValidator = await hre.ethers.getContract("BoundValidator");
-  const mockBNX = await hre.ethers.getContract("MockBNX");
-  const mockBSW = await hre.ethers.getContract("MockBSW");
 
   //configure BNX
   console.log("Configure BNX");
@@ -72,6 +70,7 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
     await tx.wait(1);
   } else {
     console.log("Configuring Chainlink");
+    const mockBNX = await hre.ethers.getContract("MockBNX");
     tx = await chainlinkOracle.setPrice(mockBNX.address, "159990000000000000000");
     await tx.wait(1);
 
@@ -112,6 +111,7 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
     await tx.wait(1);
   } else {
     console.log("Configuring Pyth");
+    const mockBSW = await hre.ethers.getContract("MockBSW");
     tx = await pythOracle.setPrice(mockBSW.address, "208000000000000000");
     await tx.wait(1);
   }
