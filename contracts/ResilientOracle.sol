@@ -62,7 +62,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     }
 
     /**
-     * @notice Initializes the contract admin and sets the required contracts
+     * @notice Initializes the contract admin and sets the bound validator contract address
      * @param _boundValidator Address of the bound validator contract
      */
     function initialize(BoundValidatorInterface _boundValidator) public initializer {
