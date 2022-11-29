@@ -125,18 +125,8 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      */
     function setTokenConfig(
         TokenConfig memory tokenConfig
-<<<<<<< HEAD
-    )
-        public
-        onlyOwner
-        notNullAddress(tokenConfig.vToken)
-        notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)])
-    {
-        tokenConfigs[tokenConfig.vToken] = tokenConfig;
-=======
     ) public onlyOwner notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)]) {
         tokenConfigs[tokenConfig.asset] = tokenConfig;
->>>>>>> develop
         emit TokenConfigAdded(
             tokenConfig.asset,
             tokenConfig.oracles[uint256(OracleRole.MAIN)],
