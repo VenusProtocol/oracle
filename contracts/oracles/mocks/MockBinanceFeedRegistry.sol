@@ -10,17 +10,14 @@ contract MockBinanceFeedRegistry is FeedRegistryInterface {
         assetPrices[base] = price;
     }
 
-    function latestRoundDataByName(string memory base, string memory quote)
+    function latestRoundDataByName(
+        string memory base,
+        string memory quote
+    )
         external
         view
         override
-        returns (
-            uint80 roundId,
-            int256 answer,
-            uint256 startedAt,
-            uint256 updatedAt,
-            uint80 answeredInRound
-        )
+        returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)
     {
         quote;
         return (0, int256(assetPrices[base]), 0, 0, 0);

@@ -29,20 +29,27 @@ Compile the smart contracts and generate TypeChain artifacts:
 $ yarn typechain
 ```
 
-### Lint Solidity
+### Linting and code formatting
 
-Lint the Solidity code:
+Linting is done using eslint for typescript and solhint for solidity. Prettier is used to format solidity and typescript files.
+
+To check linting and formatting on all files run:
 
 ```sh
-$ yarn lint:sol
+$ yarn lint
 ```
 
-### Lint TypeScript
-
-Lint the TypeScript code:
+Linting command can be run with the fix flag to fix eligible errors automatically
 
 ```sh
-$ yarn lint:ts
+$ yarn lint:sol --fix
+$ yarn lint:ts --fix
+```
+
+To pretty all files run:
+
+```sh
+$ yarn prettier
 ```
 
 ### Test

@@ -83,7 +83,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
         }
 
         uint256 decimalDelta = uint256(18) - uint256(token.decimals());
-        return price * (10**decimalDelta);
+        return price * (10 ** decimalDelta);
     }
 
     /**
@@ -92,12 +92,9 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @param vToken vToken address
      * @return price in USD, with 18 decimals
      */
-    function _getChainlinkPrice(address vToken)
-        internal
-        view
-        notNullAddress(tokenConfigs[VBep20Interface(vToken).underlying()].asset)
-        returns (uint256)
-    {
+    function _getChainlinkPrice(
+        address vToken
+    ) internal view notNullAddress(tokenConfigs[VBep20Interface(vToken).underlying()].asset) returns (uint256) {
         address asset = VBep20Interface(vToken).underlying();
 
         TokenConfig storage tokenConfig = tokenConfigs[asset];
@@ -116,7 +113,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
         uint256 deltaTime = block.timestamp - updatedAt;
         require(deltaTime <= maxStalePeriod, "chainlink price expired");
 
-        return uint256(answer) * (10**decimalDelta);
+        return uint256(answer) * (10 ** decimalDelta);
     }
 
     /**
@@ -155,12 +152,9 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @notice Add single token config, vToken & feed cannot be zero address, and maxStalePeriod must be positive
      * @param tokenConfig token config struct
      */
-    function setTokenConfig(TokenConfig memory tokenConfig)
-        public
-        onlyOwner
-        notNullAddress(tokenConfig.asset)
-        notNullAddress(tokenConfig.feed)
-    {
+    function setTokenConfig(
+        TokenConfig memory tokenConfig
+    ) public onlyOwner notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.feed) {
         require(tokenConfig.maxStalePeriod > 0, "stale period can't be zero");
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(tokenConfig.asset, tokenConfig.feed, tokenConfig.maxStalePeriod);

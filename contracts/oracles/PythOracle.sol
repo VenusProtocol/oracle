@@ -81,11 +81,9 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
      * @notice set the underlying pyth oracle contract address
      * @param underlyingPythOracle_ pyth oracle contract address
      */
-    function setUnderlyingPythOracle(IPyth underlyingPythOracle_)
-        external
-        onlyOwner
-        notNullAddress(address(underlyingPythOracle_))
-    {
+    function setUnderlyingPythOracle(
+        IPyth underlyingPythOracle_
+    ) external onlyOwner notNullAddress(address(underlyingPythOracle_)) {
         underlyingPythOracle = underlyingPythOracle_;
         emit PythOracleSet(address(underlyingPythOracle_));
     }
@@ -118,12 +116,12 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
         BEP20Interface underlyingToken = BEP20Interface(asset);
         if (priceInfo.expo > 0) {
             return
-                price.mul(EXP_SCALE).mul(10**int256(priceInfo.expo).toUint256()) *
-                (10**(18 - underlyingToken.decimals()));
+                price.mul(EXP_SCALE).mul(10 ** int256(priceInfo.expo).toUint256()) *
+                (10 ** (18 - underlyingToken.decimals()));
         } else {
             return
-                price.mul(EXP_SCALE).div(10**int256(-priceInfo.expo).toUint256()) *
-                (10**(18 - underlyingToken.decimals()));
+                price.mul(EXP_SCALE).div(10 ** int256(-priceInfo.expo).toUint256()) *
+                (10 ** (18 - underlyingToken.decimals()));
         }
     }
 }
