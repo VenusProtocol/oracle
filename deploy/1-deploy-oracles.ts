@@ -1,12 +1,27 @@
-// npx hardhat deploy --network bsctestnet
-import networks from "@venusprotocol/venus-protocol/networks/mainnet.json";
-import { ethers } from "hardhat";
+import mainnetDeployments from "@venusprotocol/venus-protocol/networks/mainnet.json";
+import testnetDeployments from "@venusprotocol/venus-protocol/networks/testnet.json";
+import hre from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+
+const ADDRESSES = {
+  bsctestnet: {
+    vBNBAddress: testnetDeployments.Contracts.vBNB,
+    pythOracleAddress: "0xd7308b14BF4008e7C7196eC35610B1427C5702EA",
+    binanceFeedRegistryAddress: "0x999DD49FeFdC043fDAC4FE12Bb1e4bb31cB4c47B",
+  },
+  bscmainnet: {
+    vBNBAddress: mainnetDeployments.Contracts.vBNB,
+    pythOracleAddress: "",
+    binanceFeedRegistryAddress: "",
+  },
+};
 
 const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
+
+  const networkName = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
 
   await deploy("BoundValidator", {
     from: deployer,
@@ -21,7 +36,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
-  const boundValidator = await ethers.getContract("BoundValidator");
+  const boundValidator = await hre.ethers.getContract("BoundValidator");
 
   await deploy("ResilientOracle", {
     from: deployer,
@@ -50,10 +65,10 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
-  const vBNBAddress = networks.Contracts.vBNB;
+  const vBNBAddress = ADDRESSES[networkName].vBNBAddress;
 
-  await deploy("PivotTwapOracle", {
-    contract: network.live ? "PivotTwapOracle" : "MockTwapOracle",
+  await deploy("TwapOracle", {
+    contract: network.live ? "TwapOracle" : "MockTwapOracle",
     from: deployer,
     log: true,
     deterministicDeployment: false,
@@ -66,8 +81,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
-  // @todo: just testnet address, will be replaced to mainnet version in the future
-  const actualPythOracleAddress = "0xd7308b14BF4008e7C7196eC35610B1427C5702EA";
+  const pythOracleAddress = ADDRESSES[networkName].pythOracleAddress;
 
   await deploy("PythOracle", {
     contract: network.live ? "PythOracle" : "MockPythOracle",
@@ -78,13 +92,12 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: [actualPythOracleAddress],
+        args: [pythOracleAddress],
       },
     },
   });
 
-  // @todo: just testnet address, will be replaced to mainnet version in the future
-  const actualBinanceFeedRegistryAddress = "0x999DD49FeFdC043fDAC4FE12Bb1e4bb31cB4c47B";
+  const binanceFeedRegistryAddress = ADDRESSES[networkName].binanceFeedRegistryAddress;
 
   await deploy("BinanceOracle", {
     contract: network.live ? "BinanceOracle" : "MockBinanceOracle",
@@ -95,7 +108,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: [actualBinanceFeedRegistryAddress],
+        args: [binanceFeedRegistryAddress],
       },
     },
   });

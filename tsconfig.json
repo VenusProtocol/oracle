@@ -16,7 +16,11 @@
     "sourceMap": true,
     "strict": true,
     "target": "es6",
-    "outDir": "dist"
+    "outDir": "dist",
+    "paths": {
+      "@nomiclabs/hardhat-ethers": ["node_modules/hardhat-deploy-ethers"],
+      "@nomiclabs/hardhat-ethers/types": ["hardhat-deploy-ethers/types"]
+    }
   },
   "exclude": ["node_modules"],
   "files": ["./hardhat.config.ts"],

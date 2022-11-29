@@ -1,6 +1,6 @@
-pragma solidity ^0.5.16;
+pragma solidity >=0.5.16;
 
-contract PriceOracle {
+abstract contract PriceOracle {
     /// @notice Indicator that this is a PriceOracle contract (for inspection)
     bool public constant isPriceOracle = true;
 
@@ -10,7 +10,7 @@ contract PriceOracle {
      * @return The underlying asset price mantissa (scaled by 1e18).
      *  Zero means the price is unavailable.
      */
-    function getUnderlyingPrice(address vToken) external view returns (uint256);
+    function getUnderlyingPrice(address vToken) external view virtual returns (uint256);
 
-    function updatePrice(address vToken) external;
+    function updatePrice(address vToken) external virtual;
 }

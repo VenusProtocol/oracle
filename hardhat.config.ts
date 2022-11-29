@@ -44,7 +44,7 @@ function getChainConfig(chain: keyof typeof chainIds): NetworkUserConfig {
       jsonRpcUrl = process.env.BSC_RPC || "https://bsc-dataseed1.binance.org";
       break;
     case "bsctestnet":
-      jsonRpcUrl = process.env.BSC_TESTNET_NODE || "https://data-seed-prebsc-2-s1.binance.org:8545";
+      jsonRpcUrl = process.env.BSC_TESTNET_NODE || "https://data-seed-prebsc-1-s1.binance.org:8545";
       break;
     default:
       jsonRpcUrl = "https://" + chain + ".infura.io/v3/" + infuraApiKey;
@@ -99,19 +99,6 @@ const config: HardhatUserConfig = {
         settings: {
           // Disable the optimizer when debugging
           // https://hardhat.org/hardhat-network/#solidity-optimizer-support
-          optimizer: {
-            enabled: true,
-          },
-          outputSelection: {
-            "*": {
-              "*": ["storageLayout"],
-            },
-          },
-        },
-      },
-      {
-        version: "0.5.16",
-        settings: {
           optimizer: {
             enabled: true,
           },
