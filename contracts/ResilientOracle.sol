@@ -204,7 +204,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @devThis function won't revert when price is 0, because the fallback oracle may still be able to fetch a correct price
      * @param vToken vToken address
      * @return price USD price in scaled decimals
-     * e.g., vToken decimals is 8 then price is returned as 10**18 * 10**(18-8) = 10**28 decimals
+     * e.g. vToken decimals is 8 then price is returned as 10**18 * 10**(18-8) = 10**28 decimals
      */
     function _getMainOraclePrice(address vToken) internal view returns (uint256) {
         uint256 price = INVALID_PRICE;
