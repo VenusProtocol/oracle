@@ -7,6 +7,7 @@ import "../libraries/PancakeLibrary.sol";
 import "../interfaces/OracleInterface.sol";
 import "../interfaces/BEP20Interface.sol";
 import "../interfaces/VBep20Interface.sol";
+import "hardhat/console.sol";
 
 struct Observation {
     uint256 timestamp;
@@ -44,13 +45,6 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     /// @notice Configs by token
     mapping(address => TokenConfig) public tokenConfigs;
 
-    /// @notice The current price observation of TWAP. With old and current observations
-    /// we can calculate the TWAP between this range
-    mapping(address => Observation) public newObservations;
-
-    /// @notice The old price observation of TWAP
-    mapping(address => Observation) public oldObservations;
-
     /// @notice Stored price by token
     mapping(address => uint256) public prices;
 
@@ -62,6 +56,12 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
         uint256 newTimestamp,
         uint256 newAcc
     );
+
+    ///@notice Keeps track of observation of token mapped by address , update on evry updateTwap invocation.
+    mapping(address => Observation[]) public observations;
+
+    ///@notice index of array which probably falls in current anchor period
+    uint256 public windowStart;
 
     /// @notice Emit this event when TWAP price is updated
     event AnchorPriceUpdated(address indexed asset, uint256 price, uint256 oldTimestamp, uint256 newTimestamp);
@@ -103,10 +103,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
         uint256 cumulativePrice = currentCumulativePrice(config);
 
         // Initialize observation data
-        oldObservations[config.asset].timestamp = block.timestamp;
-        newObservations[config.asset].timestamp = block.timestamp;
-        oldObservations[config.asset].acc = cumulativePrice;
-        newObservations[config.asset].acc = cumulativePrice;
+        observations[config.asset].push(Observation(block.timestamp, cumulativePrice));
         tokenConfigs[config.asset] = config;
         emit TokenConfigAdded(config.asset, config.pancakePool, config.anchorPeriod);
     }
@@ -196,30 +193,48 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     }
 
     /**
-     * @notice Update new and old observations of lagging window if period elapsed.
+     * @notice Append current Observation and pick equal or just greater than window start timestamp,
+     * The observation which we are using except that we will delete rest of the observationn which are prior to this.
      * @return cumulative price & old observation
      */
-    function pokeWindowValues(TokenConfig memory config) internal returns (uint256, uint256, uint256) {
+    function pokeWindowValues(
+        TokenConfig memory config
+    ) internal returns (uint256, uint256 startCumulativePrice, uint256 startCumulativeTimestamp) {
         uint256 cumulativePrice = currentCumulativePrice(config);
+        uint256 currentTimestamp = block.timestamp;
+        uint256 windowStartTimestamp = currentTimestamp - config.anchorPeriod;
+        Observation[] memory storedObservations = observations[config.asset];
 
-        Observation memory newObservation = newObservations[config.asset];
+        uint256 storedObservationsLength = storedObservations.length;
+        require(storedObservationsLength > 0, "TwapOracle : TokenConfig not available");
+        Observation memory lastObservation = storedObservations[storedObservationsLength - 1];
 
-        // Update new and old observations if elapsed time is greater than or equal to anchor period
-        uint256 timeElapsed = block.timestamp - newObservation.timestamp;
-        if (timeElapsed >= config.anchorPeriod) {
-            oldObservations[config.asset].timestamp = newObservation.timestamp;
-            oldObservations[config.asset].acc = newObservation.acc;
-
-            newObservations[config.asset].timestamp = block.timestamp;
-            newObservations[config.asset].acc = cumulativePrice;
-            emit TwapWindowUpdated(
-                config.asset,
-                newObservation.timestamp,
-                block.timestamp,
-                newObservation.acc,
-                cumulativePrice
-            );
+        //Scenerio when we don't have any observation which falls between (currentTime - anchorPeriod) and currentTime.
+        if (lastObservation.timestamp <= windowStartTimestamp) {
+            startCumulativePrice = lastObservation.acc;
+            startCumulativeTimestamp = lastObservation.timestamp;
+            windowStart = storedObservationsLength - 1;
+        } else {
+            for (uint256 i = windowStart; i < storedObservationsLength; i++) {
+                if (storedObservations[i].timestamp >= windowStartTimestamp) {
+                    startCumulativePrice = storedObservations[i].acc;
+                    startCumulativeTimestamp = storedObservations[i].timestamp;
+                    windowStart = i;
+                    break;
+                } else {
+                    delete observations[config.asset][i];
+                }
+            }
         }
-        return (cumulativePrice, oldObservations[config.asset].acc, oldObservations[config.asset].timestamp);
+
+        observations[config.asset].push(Observation(currentTimestamp, cumulativePrice));
+        emit TwapWindowUpdated(
+            config.asset,
+            startCumulativeTimestamp,
+            startCumulativePrice,
+            block.timestamp,
+            cumulativePrice
+        );
+        return (cumulativePrice, startCumulativePrice, startCumulativeTimestamp);
     }
 }
