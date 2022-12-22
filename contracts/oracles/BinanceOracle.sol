@@ -9,10 +9,19 @@ import "../interfaces/BEP20Interface.sol";
 contract BinanceOracle is Initializable {
     FeedRegistryInterface public feedRegistry;
 
+    /**
+     * @notice Sets the contracts required to fetch price
+     * @param feed Address of binance oracle feed registry.
+     */
     function initialize(FeedRegistryInterface feed) public initializer {
         feedRegistry = feed;
     }
 
+    /**
+     * @notice Gets the price of vToken from binance oracle
+     * @param vToken Address of the vToken
+     * @return price in USD
+     */
     function getUnderlyingPrice(VBep20Interface vToken) public view returns (uint256) {
         BEP20Interface underlyingToken = BEP20Interface(vToken.underlying());
 

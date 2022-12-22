@@ -74,6 +74,10 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
         _;
     }
 
+    /**
+     * @notice Initializes the owner of the contract and sets the contracts required
+     * @param WBNB_ Address of the WBNB token contract
+     */
     function initialize(address WBNB_) public initializer {
         __Ownable_init();
         require(WBNB_ != address(0), "WBNB can't be zero address");
@@ -114,7 +118,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     /**
      * @notice Get the underlying TWAP price of input vToken
      * @param vToken vToken address
-     * @return price in USD, with 18 decimals
+     * @return price in USD
      */
     function getUnderlyingPrice(address vToken) external view override returns (uint256) {
         address asset = VBep20Interface(vToken).underlying();
@@ -142,6 +146,10 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
         }
     }
 
+    /**
+     * @notice Updates the current token/BUSD price from PancakeSwap, with 18 decimals of precision.
+     * @return vToken Address of vToken
+     */
     function updateTwap(address vToken) public returns (uint256) {
         address asset = VBep20Interface(vToken).underlying();
         require(tokenConfigs[asset].asset != address(0), "asset not exist");
