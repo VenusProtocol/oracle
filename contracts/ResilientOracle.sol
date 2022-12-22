@@ -167,8 +167,8 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     }
 
     /**
-     * @notice Currently it calls the updateTwap.
-     * This function should be called everytime before calling getUnderlyingPrice
+     * @notice Update the pivot oracle price. Currently using TWAP
+     * @dev This function should be called every time before calling getUnderlyingPrice
      * @param vToken vToken address
      */
     function updatePrice(address vToken) external override {
