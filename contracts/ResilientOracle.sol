@@ -201,7 +201,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
 
     /**
      * @notice Get asset underlying vToken asset price
-     * @devThis function won't revert when price is 0, because the fallback oracle may still be
+     * @dev This function won't revert when price is 0, because the fallback oracle may still be
      * able to fetch a correct price
      * @param vToken vToken address
      * @return price USD price in scaled decimals
