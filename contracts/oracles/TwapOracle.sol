@@ -205,7 +205,6 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
         Observation[] memory storedObservations = observations[config.asset];
 
         uint256 storedObservationsLength = storedObservations.length;
-        require(storedObservationsLength > 0, "TwapOracle : TokenConfig not available");
         Observation memory lastObservation = storedObservations[storedObservationsLength - 1];
 
         //Scenerio when we don't have any observation which falls between (currentTime - anchorPeriod) and currentTime.

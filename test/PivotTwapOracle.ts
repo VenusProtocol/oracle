@@ -119,6 +119,9 @@ describe("Twap Oracle unit tests", function () {
     });
 
     describe("add single token config", function () {
+      it("should revert on calling updateTwap without sertting token configs", async function () {
+        await expect(this.twapOracle.updateTwap(this.vBnb.address)).to.be.revertedWith("asset not exist");
+      });
       it("vToken can\"t be zero & pool address can't be zero & anchorPeriod can't be 0", async function () {
         const config = {
           asset: addr0000,
