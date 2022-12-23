@@ -59,8 +59,8 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     ///@notice Keeps track of observation of token mapped by address , update on evry updateTwap invocation.
     mapping(address => Observation[]) public observations;
 
-    ///@notice index of array which probably falls in current anchor period
-    uint256 public windowStart;
+    ///@notice index of array which probably falls in current anchor period mapped with asset address
+    mapping(address => uint256) public windowStart;
 
     /// @notice Emit this event when TWAP price is updated
     event AnchorPriceUpdated(address indexed asset, uint256 price, uint256 oldTimestamp, uint256 newTimestamp);
@@ -212,13 +212,13 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
         if (lastObservation.timestamp <= windowStartTimestamp) {
             startCumulativePrice = lastObservation.acc;
             startCumulativeTimestamp = lastObservation.timestamp;
-            windowStart = storedObservationsLength - 1;
+            windowStart[config.asset] = storedObservationsLength - 1;
         } else {
-            for (uint256 i = windowStart; i < storedObservationsLength; i++) {
+            for (uint256 i = windowStart[config.asset]; i < storedObservationsLength; i++) {
                 if (storedObservations[i].timestamp >= windowStartTimestamp) {
                     startCumulativePrice = storedObservations[i].acc;
                     startCumulativeTimestamp = storedObservations[i].timestamp;
-                    windowStart = i;
+                    windowStart[config.asset] = i;
                     break;
                 } else {
                     delete observations[config.asset][i];
