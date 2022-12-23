@@ -282,7 +282,7 @@ describe("Twap Oracle unit tests", function () {
           acc.add(Q112.mul(timeDelta)),
         );
     });
-    it("twap window update edge check", async function () {
+    it("should delete observation which does not fall in current window", async function () {
       const ts = await getTime();
       const acc = Q112.mul(ts);
       await checkObservations(this.twapOracle, await this.token0.underlying(), ts, acc, 0);
@@ -292,9 +292,9 @@ describe("Twap Oracle unit tests", function () {
       await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
       // window changed
       const firstObservation = await this.twapOracle.observations(this.token0.underlying(), 0);
-      expect(firstObservation.acc).to.be.equal(0)
+      expect(firstObservation.acc).to.be.equal(0);
     });
-    it("twap window update edge check2", async function () {
+    it("should pick last available observation if none observations are in window", async function () {
       const ts = await getTime();
       const acc = Q112.mul(ts);
       await checkObservations(this.twapOracle, await this.token0.underlying(), ts, acc, 0);
@@ -306,16 +306,10 @@ describe("Twap Oracle unit tests", function () {
 
       const secondObservation = await this.twapOracle.observations(this.token0.underlying(), 1);
       expect(secondObservation.timestamp).to.be.equal(ts + 902);
-      
+
       await expect(result)
         .to.emit(this.twapOracle, "TwapWindowUpdated")
-        .withArgs(
-          await this.token0.underlying(),
-          ts,
-          acc,
-          ts + 902,
-          acc.add(Q112.mul(902)),
-        );
+        .withArgs(await this.token0.underlying(), ts, acc, ts + 902, acc.add(Q112.mul(902)));
     });
     it("cumulative value", async function () {
       const currentTimestamp = await getTime();
