@@ -62,6 +62,10 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
         _;
     }
 
+    /**
+     * @notice Initializes the contract admin and sets the BoundValidator contract address
+     * @param _boundValidator Address of the bound validator contract
+     */
     function initialize(BoundValidatorInterface _boundValidator) public initializer {
         require(address(_boundValidator) != address(0), "invaliud bound validator address");
         boundValidator = _boundValidator;
@@ -163,7 +167,8 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     }
 
     /**
-     * @notice Currently it calls the updateTwap
+     * @notice Update the pivot oracle price. Currently using TWAP
+     * @dev This function should be called every time before calling getUnderlyingPrice
      * @param vToken vToken address
      */
     function updatePrice(address vToken) external override {
@@ -180,7 +185,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * - check price from main oracle against pivot oracle
      * - check price from fallback oracle against pivot oracle or main oracle if fails
      * @param vToken vToken address
-     * @return price USD price in 18 decimals
+     * @return price USD price in scaled decimal places
      */
     function getUnderlyingPrice(address vToken) external view override returns (uint256) {
         require(!paused(), "resilient oracle is paused");
@@ -202,9 +207,12 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     }
 
     /**
-     * @notice This function won't revert when price is 0, because the fallback oracle may come to play later
+     * @notice Get asset underlying vToken asset price
+     * @dev This function won't revert when price is 0, because the fallback oracle may still be
+     * able to fetch a correct price
      * @param vToken vToken address
-     * @return price USD price in 18 decimals
+     * @return price USD price in scaled decimals
+     * e.g. vToken decimals is 8 then price is returned as 10**18 * 10**(18-8) = 10**28 decimals
      */
     function _getMainOraclePrice(address vToken, uint256 pivotPrice) internal view returns (uint256) {
         uint256 price = INVALID_PRICE;
