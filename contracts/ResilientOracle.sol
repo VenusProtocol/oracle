@@ -71,14 +71,14 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     }
 
     /**
-     * @notice Pause protocol
+     * @notice Pause oracle
      */
     function pause() external onlyOwner {
         _pause();
     }
 
     /**
-     * @notice Unpause protocol
+     * @notice Unpause oracle
      */
     function unpause() external onlyOwner {
         _unpause();
