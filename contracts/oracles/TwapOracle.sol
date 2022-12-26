@@ -213,7 +213,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
             startCumulativeTimestamp = lastObservation.timestamp;
             windowStart[config.asset] = storedObservationsLength - 1;
         } else {
-            for (uint256 i = windowStart[config.asset]; i < storedObservationsLength; i++) {
+            for (uint256 i = windowStart[config.asset]; i < storedObservationsLength; ++i) {
                 if (storedObservations[i].timestamp >= windowStartTimestamp) {
                     startCumulativePrice = storedObservations[i].acc;
                     startCumulativeTimestamp = storedObservations[i].timestamp;
