@@ -200,8 +200,13 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
         }
 
         // Compare main price and pivot price, return main price and if validation was succesfull
-        // note: In case pivot oracle is not available and main price is available, validation is succesfull and main oracle price is returned.
-        (uint256 mainPrice, bool validatedPivotMain) = _getMainOraclePrice(vToken, pivotPrice, pivotOracleEnabled && pivotOracle != address(0));
+        // note: In case pivot oracle is not available and main price is available,
+        // validation is succesfull and main oracle price is returned.
+        (uint256 mainPrice, bool validatedPivotMain) = _getMainOraclePrice(
+            vToken,
+            pivotPrice,
+            pivotOracleEnabled && pivotOracle != address(0)
+        );
         if (mainPrice != INVALID_PRICE && validatedPivotMain) return mainPrice;
 
         // Compare fallback and pivot if main oracle comparision fails with pivot
@@ -234,7 +239,11 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * and pivot oracle price was succesfull
      * e.g. vToken decimals is 8 then price is returned as 10**18 * 10**(18-8) = 10**28 decimals
      */
-    function _getMainOraclePrice(address vToken, uint256 pivotPrice, bool pivotEnabled) internal view returns (uint256, bool) {
+    function _getMainOraclePrice(
+        address vToken,
+        uint256 pivotPrice,
+        bool pivotEnabled
+    ) internal view returns (uint256, bool) {
         (address mainOracle, bool mainOracleEnabled) = getOracle(vToken, OracleRole.MAIN);
         if (mainOracleEnabled && mainOracle != address(0)) {
             try OracleInterface(mainOracle).getUnderlyingPrice(vToken) returns (uint256 mainOraclePrice) {
@@ -244,8 +253,13 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
                 if (pivotPrice == INVALID_PRICE) {
                     return (mainOraclePrice, false);
                 }
-                return (mainOraclePrice, boundValidator.validatePriceWithAnchorPrice(vToken, mainOraclePrice, pivotPrice));
-            } catch { return (INVALID_PRICE, false); }
+                return (
+                    mainOraclePrice,
+                    boundValidator.validatePriceWithAnchorPrice(vToken, mainOraclePrice, pivotPrice)
+                );
+            } catch {
+                return (INVALID_PRICE, false);
+            }
         }
 
         return (INVALID_PRICE, false);
@@ -258,18 +272,20 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @return pivotValidated Boolean representing if the validation of fallback oracle price
      * and pivot oracle price was succesfull
      */
-    function _getFallbackOraclePrice(
-        address vToken,
-        uint256 pivotPrice
-    ) internal view returns (uint256, bool) {
+    function _getFallbackOraclePrice(address vToken, uint256 pivotPrice) internal view returns (uint256, bool) {
         (address fallbackOracle, bool fallbackEnabled) = getOracle(vToken, OracleRole.FALLBACK);
         if (fallbackEnabled && fallbackOracle != address(0)) {
             try OracleInterface(fallbackOracle).getUnderlyingPrice(vToken) returns (uint256 fallbackOraclePrice) {
                 if (pivotPrice == INVALID_PRICE) {
                     return (fallbackOraclePrice, false);
                 }
-                return (fallbackOraclePrice, boundValidator.validatePriceWithAnchorPrice(vToken, fallbackOraclePrice, pivotPrice));
-            } catch { return (INVALID_PRICE, false); }
+                return (
+                    fallbackOraclePrice,
+                    boundValidator.validatePriceWithAnchorPrice(vToken, fallbackOraclePrice, pivotPrice)
+                );
+            } catch {
+                return (INVALID_PRICE, false);
+            }
         }
 
         return (INVALID_PRICE, false);
