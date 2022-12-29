@@ -76,6 +76,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
         vBnb = vBnbAddress;
         _disableInitializers();
     }
+
     /**
      * @notice Initializes the contract admin and sets the BoundValidator contract address
      * @param _boundValidator Address of the bound validator contract

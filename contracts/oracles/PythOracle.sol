@@ -144,13 +144,9 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
         // the price returned from Pyth is price ** 10^expo, which is the real dollar price of the assets
         // we need to multiply it by 1e18 to make the price 18 decimals
         if (priceInfo.expo > 0) {
-            return
-                price.mul(EXP_SCALE).mul(10 ** int256(priceInfo.expo).toUint256()) *
-                (10 ** (18 - decimals));
+            return price.mul(EXP_SCALE).mul(10 ** int256(priceInfo.expo).toUint256()) * (10 ** (18 - decimals));
         } else {
-            return
-                price.mul(EXP_SCALE).div(10 ** int256(-priceInfo.expo).toUint256()) *
-                (10 ** (18 - decimals));
+            return price.mul(EXP_SCALE).div(10 ** int256(-priceInfo.expo).toUint256()) * (10 ** (18 - decimals));
         }
     }
 }

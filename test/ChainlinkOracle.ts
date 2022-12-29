@@ -44,7 +44,7 @@ describe("Oracle unit tests", function () {
 
     const ChainlinkOracle = await ethers.getContractFactory("ChainlinkOracle", admin);
     const instance = <ChainlinkOracle>await upgrades.deployProxy(ChainlinkOracle, [], {
-      constructorArgs: [this.vBnb.address]
+      constructorArgs: [this.vBnb.address],
     });
     this.chainlinkOracle = instance;
     return instance;

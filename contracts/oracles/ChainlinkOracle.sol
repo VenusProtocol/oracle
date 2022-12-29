@@ -115,7 +115,9 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @param asset underlying asset address
      * @return price in USD, with 18 decimals
      */
-    function _getChainlinkPrice(address asset) internal view notNullAddress(tokenConfigs[asset].asset) returns (uint256) {
+    function _getChainlinkPrice(
+        address asset
+    ) internal view notNullAddress(tokenConfigs[asset].asset) returns (uint256) {
         TokenConfig storage tokenConfig = tokenConfigs[asset];
         AggregatorV2V3Interface feed = AggregatorV2V3Interface(tokenConfig.feed);
 

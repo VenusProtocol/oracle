@@ -342,66 +342,66 @@ describe("Oracle plugin frame unit tests", function () {
       expect(validateResult).to.equal(false);
     });
     it("validate BNB price", async function () {
-        const bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"
-        const validationConfig = {
-          asset: bnbAddr,
-          upperBoundRatio: EXP_SCALE.mul(12).div(10),
-          lowerBoundRatio: EXP_SCALE.mul(8).div(10),
-        };
-  
-        // set price
-        await this.pythOracle.setTokenConfig({
-          asset: bnbAddr,
-          pythId: getBytes32String(3),
-          maxStalePeriod: 111,
-        });
-        const feed = {
-          id: getBytes32String(3),
-          price: {
-            price: BigNumber.from(10).pow(6),
-            conf: 10,
-            expo: BigNumber.from(-6),
-            publishTime: await getTime(),
-          },
-          emaPrice: {
-            price: 0,
-            conf: 0,
-            expo: 0,
-            publishTime: 0,
-          },
-        };
-  
-        const underlyingPythAddress = await this.pythOracle.underlyingPythOracle();
-        const UnderlyingPythFactory = await ethers.getContractFactory("MockPyth");
-        const underlyingPyth = UnderlyingPythFactory.attach(underlyingPythAddress);
-        const underlyingPythOracle = <MockPyth>underlyingPyth;
-        await underlyingPythOracle.updatePriceFeedsHarness([feed]);
-  
-        // sanity check
-        await expect(this.boundValidator.validatePriceWithAnchorPrice(this.vBnb, 100, 0)).to.be.revertedWith(
-          "validation config not exist",
-        );
-  
-        await this.boundValidator.setValidateConfigs([validationConfig]);
-  
-        let validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
-          this.vBnb,
-          EXP_SCALE,
-          await this.pythOracle.getUnderlyingPrice(this.vBnb),
-        );
-        expect(validateResult).to.equal(true);
-        validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
-          this.vBnb,
-          EXP_SCALE.mul(100).div(79),
-          await this.pythOracle.getUnderlyingPrice(this.vBnb),
-        );
-        expect(validateResult).to.equal(false);
-        validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
-          this.vBnb,
-          EXP_SCALE.mul(100).div(121),
-          await this.pythOracle.getUnderlyingPrice(this.vBnb),
-        );
-        expect(validateResult).to.equal(false);
+      const bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
+      const validationConfig = {
+        asset: bnbAddr,
+        upperBoundRatio: EXP_SCALE.mul(12).div(10),
+        lowerBoundRatio: EXP_SCALE.mul(8).div(10),
+      };
+
+      // set price
+      await this.pythOracle.setTokenConfig({
+        asset: bnbAddr,
+        pythId: getBytes32String(3),
+        maxStalePeriod: 111,
       });
+      const feed = {
+        id: getBytes32String(3),
+        price: {
+          price: BigNumber.from(10).pow(6),
+          conf: 10,
+          expo: BigNumber.from(-6),
+          publishTime: await getTime(),
+        },
+        emaPrice: {
+          price: 0,
+          conf: 0,
+          expo: 0,
+          publishTime: 0,
+        },
+      };
+
+      const underlyingPythAddress = await this.pythOracle.underlyingPythOracle();
+      const UnderlyingPythFactory = await ethers.getContractFactory("MockPyth");
+      const underlyingPyth = UnderlyingPythFactory.attach(underlyingPythAddress);
+      const underlyingPythOracle = <MockPyth>underlyingPyth;
+      await underlyingPythOracle.updatePriceFeedsHarness([feed]);
+
+      // sanity check
+      await expect(this.boundValidator.validatePriceWithAnchorPrice(this.vBnb, 100, 0)).to.be.revertedWith(
+        "validation config not exist",
+      );
+
+      await this.boundValidator.setValidateConfigs([validationConfig]);
+
+      let validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
+        this.vBnb,
+        EXP_SCALE,
+        await this.pythOracle.getUnderlyingPrice(this.vBnb),
+      );
+      expect(validateResult).to.equal(true);
+      validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
+        this.vBnb,
+        EXP_SCALE.mul(100).div(79),
+        await this.pythOracle.getUnderlyingPrice(this.vBnb),
+      );
+      expect(validateResult).to.equal(false);
+      validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
+        this.vBnb,
+        EXP_SCALE.mul(100).div(121),
+        await this.pythOracle.getUnderlyingPrice(this.vBnb),
+      );
+      expect(validateResult).to.equal(false);
+    });
   });
 });

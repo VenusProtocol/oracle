@@ -12,11 +12,9 @@ const EXP_SCALE = BigNumber.from(10).pow(18);
 const getBoundValidator = async (account: SignerWithAddress, vBnb: string) => {
   const BoundValidator = await ethers.getContractFactory("BoundValidator", account);
 
-  return <BoundValidator>(
-    await upgrades.deployProxy(BoundValidator, [], {
-      constructorArgs: [vBnb],
-    })
-  );;
+  return <BoundValidator>await upgrades.deployProxy(BoundValidator, [], {
+    constructorArgs: [vBnb],
+  });
 };
 
 describe("bound validator", function () {
@@ -147,11 +145,7 @@ describe("bound validator", function () {
         "anchor price is not valid",
       );
 
-      let validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
-        vBnb,
-        EXP_SCALE,
-        anchorPrice,
-      );
+      let validateResult = await this.boundValidator.validatePriceWithAnchorPrice(vBnb, EXP_SCALE, anchorPrice);
       expect(validateResult).to.equal(true);
       validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
         vBnb,

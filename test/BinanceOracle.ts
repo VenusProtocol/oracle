@@ -21,11 +21,13 @@ describe("Binance Oracle unit tests", function () {
     this.mockBinanceFeedRegistry = <MockBinanceFeedRegistry>await upgrades.deployProxy(MockBinanceFeedRegistry, []);
 
     const BinanceOracle = await ethers.getContractFactory("BinanceOracle", admin);
-    console.log(this.vBnb)
-    this.binanceOracle = <BinanceOracle>(
-      await upgrades.deployProxy(BinanceOracle, [this.mockBinanceFeedRegistry.address], {
+    console.log(this.vBnb);
+    this.binanceOracle = <BinanceOracle>await upgrades.deployProxy(
+      BinanceOracle,
+      [this.mockBinanceFeedRegistry.address],
+      {
         constructorArgs: [this.vBnb],
-      })
+      },
     );
   });
 
@@ -41,10 +43,10 @@ describe("Binance Oracle unit tests", function () {
 
   it("fetch price", async function () {
     expect(await this.binanceOracle.getUnderlyingPrice(this.vEth.address)).to.be.equal("1333789241690000000000");
-    expect(await this.binanceOracle.getUnderlyingPrice(this.vBnb)).to.be.equal("245980000000000000000");  
+    expect(await this.binanceOracle.getUnderlyingPrice(this.vBnb)).to.be.equal("245980000000000000000");
   });
 
   it("fetch BNB price", async function () {
-    expect(await this.binanceOracle.getUnderlyingPrice(this.vBnb)).to.be.equal("245980000000000000000");  
+    expect(await this.binanceOracle.getUnderlyingPrice(this.vBnb)).to.be.equal("245980000000000000000");
   });
 });

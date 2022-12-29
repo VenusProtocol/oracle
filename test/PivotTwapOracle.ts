@@ -45,13 +45,13 @@ describe("Twap Oracle unit tests", function () {
 
     const TwapOracle = await ethers.getContractFactory("TwapOracle", admin);
     const twapInstance = <TwapOracle>await upgrades.deployProxy(TwapOracle, [], {
-        constructorArgs: [this.vBnb.address, this.wBnb.address],
+      constructorArgs: [this.vBnb.address, this.wBnb.address],
     });
     this.twapOracle = twapInstance;
 
     const BoundValidator = await ethers.getContractFactory("BoundValidator", admin);
     const boundValidatorInstance = <BoundValidator>await upgrades.deployProxy(BoundValidator, [], {
-        constructorArgs: [this.vBnb.address],
+      constructorArgs: [this.vBnb.address],
     });
     this.boundValidator = boundValidatorInstance;
 
