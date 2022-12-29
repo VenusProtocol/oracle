@@ -214,9 +214,9 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
             } catch {}
         }
 
-        // Compare main price and pivot price, return main price and if validation was succesfull
+        // Compare main price and pivot price, return main price and if validation was successfull
         // note: In case pivot oracle is not available and main price is available,
-        // validation is succesfull and main oracle price is returned.
+        // validation is successfull and main oracle price is returned.
         (uint256 mainPrice, bool validatedPivotMain) = _getMainOraclePrice(
             vToken,
             pivotPrice,
@@ -251,7 +251,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @param pivotEnabled if pivot oracle is not empty and enabled
      * @return price USD price in scaled decimals
      * @return pivotValidated Boolean representing if the validation of main oracle price
-     * and pivot oracle price was succesfull
+     * and pivot oracle price was successfull
      * e.g. vToken decimals is 8 then price is returned as 10**18 * 10**(18-8) = 10**28 decimals
      */
     function _getMainOraclePrice(
@@ -285,7 +285,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @param vToken vToken address
      * @return price USD price in 18 decimals
      * @return pivotValidated Boolean representing if the validation of fallback oracle price
-     * and pivot oracle price was succesfull
+     * and pivot oracle price was successfull
      */
     function _getFallbackOraclePrice(address vToken, uint256 pivotPrice) internal view returns (uint256, bool) {
         (address fallbackOracle, bool fallbackEnabled) = getOracle(vToken, OracleRole.FALLBACK);
