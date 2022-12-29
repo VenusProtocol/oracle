@@ -10,6 +10,13 @@ import "./interfaces/OracleInterface.sol";
 contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOracleInterface {
     uint256 public constant INVALID_PRICE = 0;
 
+    /// @notice vBNB address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable vBnb;
+
+    /// @notice Set this as asset address for BNB. This is the underlying for vBNB
+    address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
+
     BoundValidatorInterface public boundValidator;
 
     /**
@@ -62,6 +69,13 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
         _;
     }
 
+    /// @notice Constructor for the implementation contract. Sets immutable variables.
+    /// @param vBnbAddress The address of the VBNB
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor(address vBnbAddress) notNullAddress(vBnbAddress) {
+        vBnb = vBnbAddress;
+        _disableInitializers();
+    }
     /**
      * @notice Initializes the contract admin and sets the BoundValidator contract address
      * @param _boundValidator Address of the bound validator contract
@@ -93,7 +107,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @param vToken vtoken address
      */
     function getTokenConfig(address vToken) external view returns (TokenConfig memory) {
-        address asset = VBep20Interface(vToken).underlying();
+        address asset = address(vToken) == vBnb ? BNB_ADDR : VBep20Interface(vToken).underlying();
         return tokenConfigs[asset];
     }
 
@@ -103,7 +117,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @param role oracle role
      */
     function getOracle(address vToken, OracleRole role) public view returns (address oracle, bool enabled) {
-        address asset = VBep20Interface(vToken).underlying();
+        address asset = address(vToken) == vBnb ? BNB_ADDR : VBep20Interface(vToken).underlying();
         oracle = tokenConfigs[asset].oracles[uint256(role)];
         enabled = tokenConfigs[asset].enableFlagsForOracles[uint256(role)];
     }

@@ -24,8 +24,24 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
     /// @notice validation configs by asset
     mapping(address => ValidateConfig) public validateConfigs;
 
+    /// @notice vBNB address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable vBnb;
+
+    /// @notice Set this as asset address for BNB. This is the underlying for vBNB
+    address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
+
     /// @notice Emit this event when new validate configs are added
     event ValidateConfigAdded(address indexed asset, uint256 indexed upperBound, uint256 indexed lowerBound);
+
+    /// @notice Constructor for the implementation contract. Sets immutable variables.
+    /// @param vBnbAddress The address of the VBNB
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor(address vBnbAddress) {
+        require(vBnbAddress != address(0), "can't be zero address");
+        vBnb = vBnbAddress;
+        _disableInitializers();
+    }
 
     /**
      * @notice Initializes the owner of the contract
@@ -67,7 +83,7 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
         uint256 reporterPrice,
         uint256 anchorPrice
     ) public view virtual override returns (bool) {
-        address asset = VBep20Interface(vToken).underlying();
+        address asset = vToken == vBnb ? BNB_ADDR : VBep20Interface(vToken).underlying();
 
         require(validateConfigs[asset].upperBoundRatio != 0, "validation config not exist");
         require(anchorPrice != 0, "anchor price is not valid");

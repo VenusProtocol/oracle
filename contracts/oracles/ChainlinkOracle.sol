@@ -9,6 +9,7 @@ import "../interfaces/OracleInterface.sol";
 
 struct TokenConfig {
     /// @notice underlying token address, which can't be zero address and can be used for existance check
+    /// @notice 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB for BNB
     address asset;
     /// @notice chainlink feed address
     address feed;
@@ -19,6 +20,13 @@ struct TokenConfig {
 contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
     /// @notice VAI token is considered $1 constantly in oracle for now
     uint256 public constant VAI_VALUE = 1e18;
+
+    /// @notice vBNB address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable vBnb;
+
+    /// @notice Set this as asset address for BNB. This is the underlying for vBNB
+    address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
     /// @notice TODO: might be removed some day, it's for enabling us to force set the prices to
     /// certain values in some urgent conditions
@@ -43,6 +51,14 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
         _;
     }
 
+    /// @notice Constructor for the implementation contract. Sets immutable variables.
+    /// @param vBnbAddress The address of the VBNB
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor(address vBnbAddress) notNullAddress(vBnbAddress) {
+        vBnb = vBnbAddress;
+        _disableInitializers();
+    }
+
     /// @notice Initializes the owner of the contract
     function initialize() public initializer {
         __Ownable_init();
@@ -54,13 +70,9 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @return price in USD
      */
     function getUnderlyingPrice(address vToken) public view override returns (uint256) {
-        string memory symbol = VBep20Interface(vToken).symbol();
-        // VBNB token doesn't have `underlying` method, so it has to skip `_getUnderlyingPriceInternal
-        // method and directly goes into `_getChainlinkPrice`
-        if (_compareStrings(symbol, "vBNB")) {
-            return _getChainlinkPrice(vToken);
-            // VAI price is constantly 1 at the moment, but not guarantee in the future
-        } else if (_compareStrings(symbol, "VAI")) {
+        string memory symbol = address(vToken) != vBnb ? VBep20Interface(vToken).symbol() : "BNB";
+
+        if (_compareStrings(symbol, "VAI")) {
             return VAI_VALUE;
             // @TODO: This is some history code, keep it here in case of messing up
         } else {
@@ -75,29 +87,35 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @return price in USD
      */
     function _getUnderlyingPriceInternal(VBep20Interface vToken) internal view returns (uint256 price) {
-        VBep20Interface token = VBep20Interface(vToken.underlying());
+        address token;
+        uint256 decimals;
 
-        if (prices[address(token)] != 0) {
-            price = prices[address(token)];
+        // VBNB token doesn't have `underlying` method
+        if (address(vToken) == vBnb) {
+            token = BNB_ADDR;
+            decimals = 18;
         } else {
-            price = _getChainlinkPrice(address(vToken));
+            token = vToken.underlying();
+            decimals = VBep20Interface(token).decimals();
         }
 
-        uint256 decimalDelta = uint256(18) - uint256(token.decimals());
+        if (prices[token] != 0) {
+            price = prices[token];
+        } else {
+            price = _getChainlinkPrice(token);
+        }
+
+        uint256 decimalDelta = uint256(18) - uint256(decimals);
         return price * (10 ** decimalDelta);
     }
 
     /**
      * @notice Get the Chainlink price of underlying asset of input vToken, revert if token config doesn't exit
      * @dev The decimals of feeds are considered
-     * @param vToken vToken address
+     * @param asset underlying asset address
      * @return price in USD, with 18 decimals
      */
-    function _getChainlinkPrice(
-        address vToken
-    ) internal view notNullAddress(tokenConfigs[VBep20Interface(vToken).underlying()].asset) returns (uint256) {
-        address asset = VBep20Interface(vToken).underlying();
-
+    function _getChainlinkPrice(address asset) internal view notNullAddress(tokenConfigs[asset].asset) returns (uint256) {
         TokenConfig storage tokenConfig = tokenConfigs[asset];
         AggregatorV2V3Interface feed = AggregatorV2V3Interface(tokenConfig.feed);
 
@@ -123,7 +141,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @param underlyingPriceMantissa price in 18 decimals
      */
     function setUnderlyingPrice(VBep20Interface vToken, uint256 underlyingPriceMantissa) external onlyOwner {
-        address asset = address(vToken.underlying());
+        address asset = address(vToken) == vBnb ? BNB_ADDR : address(vToken.underlying());
         emit PricePosted(asset, prices[asset], underlyingPriceMantissa, underlyingPriceMantissa);
         prices[asset] = underlyingPriceMantissa;
     }

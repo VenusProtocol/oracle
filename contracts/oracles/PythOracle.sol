@@ -32,6 +32,13 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     /// @notice price decimals
     uint256 public constant EXP_SCALE = 1e18;
 
+    /// @notice vBNB address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable vBnb;
+
+    /// @notice Set this as asset address for BNB. This is the underlying for vBNB
+    address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
+
     /// @notice the actual pyth oracle address fetch & store the prices
     IPyth public underlyingPythOracle;
 
@@ -47,6 +54,14 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     modifier notNullAddress(address someone) {
         require(someone != address(0), "can't be zero address");
         _;
+    }
+
+    /// @notice Constructor for the implementation contract. Sets immutable variables.
+    /// @param vBnbAddress The address of the VBNB
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor(address vBnbAddress) notNullAddress(vBnbAddress) {
+        vBnb = vBnbAddress;
+        _disableInitializers();
     }
 
     /**
@@ -101,7 +116,18 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     function getUnderlyingPrice(address vToken) public view override returns (uint256) {
         require(address(underlyingPythOracle) != address(0), "Pyth oracle is zero address");
 
-        address asset = VBep20Interface(vToken).underlying();
+        address asset;
+        uint256 decimals;
+
+        // VBNB token doesn't have `underlying` method
+        if (address(vToken) == vBnb) {
+            asset = BNB_ADDR;
+            decimals = 18;
+        } else {
+            asset = VBep20Interface(vToken).underlying();
+            decimals = VBep20Interface(asset).decimals();
+        }
+
         TokenConfig storage tokenConfig = tokenConfigs[asset];
         require(tokenConfig.asset != address(0), "asset doesn't exist");
 
@@ -117,15 +143,14 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
 
         // the price returned from Pyth is price ** 10^expo, which is the real dollar price of the assets
         // we need to multiply it by 1e18 to make the price 18 decimals
-        BEP20Interface underlyingToken = BEP20Interface(asset);
         if (priceInfo.expo > 0) {
             return
                 price.mul(EXP_SCALE).mul(10 ** int256(priceInfo.expo).toUint256()) *
-                (10 ** (18 - underlyingToken.decimals()));
+                (10 ** (18 - decimals));
         } else {
             return
                 price.mul(EXP_SCALE).div(10 ** int256(-priceInfo.expo).toUint256()) *
-                (10 ** (18 - underlyingToken.decimals()));
+                (10 ** (18 - decimals));
         }
     }
 }
