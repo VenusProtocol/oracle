@@ -135,7 +135,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     }
 
     /**
-     * @notice Set single token configs, vToken MUST HAVE NOT be added before, and main oracle MUST NOT be zero address
+     * @notice Set/reset single token configs and main oracle MUST NOT be zero address
      * @param tokenConfig token config struct
      */
     function setTokenConfig(
