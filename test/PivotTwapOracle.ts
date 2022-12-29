@@ -40,7 +40,7 @@ describe("Twap Oracle unit tests", function () {
     this.signers = signers;
     this.admin = admin;
     this.vBnb = signers[5]; // Not your usual vToken
-    this.wBnb = await makeToken(admin, "Wrapped BNB", "WBNB");
+    this.wBnb = await makeToken(admin, "Wrapped BNB", "WBNB", 18);
     this.bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
 
     const TwapOracle = await ethers.getContractFactory("TwapOracle", admin);
@@ -91,7 +91,7 @@ describe("Twap Oracle unit tests", function () {
       // setTokenConfigs
       const config = {
         asset: this.wBnb.address,
-        baseUnit: 100,
+        baseUnit: EXP_SCALE,
         pancakePool: addr1111,
         isBnbBased: false,
         isReversedPool: false,
@@ -131,7 +131,7 @@ describe("Twap Oracle unit tests", function () {
       it("vToken can\"t be zero & pool address can't be zero & anchorPeriod can't be 0", async function () {
         const config = {
           asset: addr0000,
-          baseUnit: 0,
+          baseUnit: BigNumber.from(0),
           pancakePool: addr0000,
           isBnbBased: false,
           isReversedPool: false,
@@ -147,7 +147,7 @@ describe("Twap Oracle unit tests", function () {
 
         config.anchorPeriod = 100;
         await expect(this.twapOracle.setTokenConfig(config)).to.be.revertedWith("base unit must be positive");
-        config.baseUnit = 100;
+        config.baseUnit = EXP_SCALE;
 
         // nothing happen
         await this.twapOracle.setTokenConfig(config);
@@ -162,7 +162,7 @@ describe("Twap Oracle unit tests", function () {
 
         const config1 = {
           asset: this.wBnb.address,
-          baseUnit: 100,
+          baseUnit: EXP_SCALE,
           pancakePool: this.simplePair.address,
           isBnbBased: true,
           isReversedPool: false,
@@ -170,7 +170,7 @@ describe("Twap Oracle unit tests", function () {
         };
         const config2 = {
           asset: await vToken.underlying(),
-          baseUnit: 1000,
+          baseUnit: EXP_SCALE,
           pancakePool: this.simplePair.address,
           isBnbBased: false,
           isReversedPool: true,
@@ -185,7 +185,7 @@ describe("Twap Oracle unit tests", function () {
       it("token config added successfully & events check", async function () {
         const config = {
           asset: this.wBnb.address,
-          baseUnit: 100,
+          baseUnit: EXP_SCALE,
           pancakePool: this.simplePair.address,
           isBnbBased: false,
           isReversedPool: false,
@@ -211,7 +211,7 @@ describe("Twap Oracle unit tests", function () {
       it("token config added successfully & data check", async function () {
         const config = {
           asset: this.wBnb.address,
-          baseUnit: 100,
+          baseUnit: EXP_SCALE,
           pancakePool: this.simplePair.address,
           isBnbBased: false,
           isReversedPool: false,
@@ -222,7 +222,7 @@ describe("Twap Oracle unit tests", function () {
         expect(savedConfig.anchorPeriod).to.equal(888);
         expect(savedConfig.asset).to.equal(this.wBnb.address);
         expect(savedConfig.pancakePool).to.equal(this.simplePair.address);
-        expect(savedConfig.baseUnit).to.equal(100);
+        expect(savedConfig.baseUnit).to.equal(EXP_SCALE);
       });
     });
   });

@@ -142,7 +142,10 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @param vToken vToken address
      * @param underlyingPriceMantissa price in 18 decimals
      */
-    function setUnderlyingPrice(VBep20Interface vToken, uint256 underlyingPriceMantissa) external onlyOwner {
+    function setUnderlyingPrice(
+        VBep20Interface vToken,
+        uint256 underlyingPriceMantissa
+    ) external notNullAddress(address(vToken)) onlyOwner {
         address asset = address(vToken) == vBnb ? BNB_ADDR : address(vToken.underlying());
         emit PricePosted(asset, prices[asset], underlyingPriceMantissa, underlyingPriceMantissa);
         prices[asset] = underlyingPriceMantissa;

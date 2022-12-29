@@ -116,6 +116,11 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     ) public onlyOwner notNullAddress(config.asset) notNullAddress(config.pancakePool) {
         require(config.anchorPeriod > 0, "anchor period must be positive");
         require(config.baseUnit > 0, "base unit must be positive");
+        require(
+            config.baseUnit == 10 ** BEP20Interface(config.asset).decimals(),
+            "base unit decimals must be same as asset decimals"
+        );
+
         uint256 cumulativePrice = currentCumulativePrice(config);
 
         // Initialize observation data
