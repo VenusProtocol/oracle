@@ -99,8 +99,9 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
             decimals = VBep20Interface(token).decimals();
         }
 
-        if (prices[token] != 0) {
-            price = prices[token];
+        uint256 tokenPrice = prices[token];
+        if (tokenPrice != 0) {
+            price = tokenPrice;
         } else {
             price = _getChainlinkPrice(token);
         }
@@ -118,7 +119,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
     function _getChainlinkPrice(
         address asset
     ) internal view notNullAddress(tokenConfigs[asset].asset) returns (uint256) {
-        TokenConfig storage tokenConfig = tokenConfigs[asset];
+        TokenConfig memory tokenConfig = tokenConfigs[asset];
         AggregatorV2V3Interface feed = AggregatorV2V3Interface(tokenConfig.feed);
 
         // note: maxStalePeriod cannot be 0
