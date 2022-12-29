@@ -131,7 +131,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
         (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
         require(answer > 0, "chainlink price must be positive");
 
-        require(block.timestamp > updatedAt, "updatedAt exceeds block time");
+        require(block.timestamp >= updatedAt, "updatedAt exceeds block time");
         uint256 deltaTime = block.timestamp - updatedAt;
         require(deltaTime <= maxStalePeriod, "chainlink price expired");
 
