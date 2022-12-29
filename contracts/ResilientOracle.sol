@@ -82,7 +82,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @param _boundValidator Address of the bound validator contract
      */
     function initialize(BoundValidatorInterface _boundValidator) public initializer {
-        require(address(_boundValidator) != address(0), "invaliud bound validator address");
+        require(address(_boundValidator) != address(0), "invalid bound validator address");
         boundValidator = _boundValidator;
 
         __Ownable_init();
