@@ -14,7 +14,7 @@
     "clean": "shx rm -rf ./artifacts ./cache ./coverage ./src/types ./coverage.json",
     "commit": "git-cz",
     "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",
-    "coverage": "yarn typechain && hardhat coverage --solcoverjs ./.solcover.js --temp artifacts --testfiles \"test/**/*.ts\" && yarn typechain",
+    "hardhat:coverage": "hardhat coverage",
     "deploy": "hardhat deploy",
     "verify": "hardhat etherscan-verify",
     "lint": "yarn lint:sol && yarn lint:ts && yarn prettier:check",
@@ -25,13 +25,15 @@
     "test": "npm run compile && hardhat test",
     "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
     "build": "rm -rf dist && tsc --declaration && hardhat compile && cp -r ./{package.json,yarn.lock,artifacts,networks,contracts,deployments} dist/",
-    "publish": "yarn build && cd dist && yarn npm publish"
+    "publish": "yarn build && cd dist && yarn npm publish",
+    "docgen": "hardhat docgen"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.6.0",
     "@openzeppelin/contracts-upgradeable": "^4.7.3",
     "@venusprotocol/venus-protocol": "0.4.1",
-    "module-alias": "^2.2.2"
+    "module-alias": "^2.2.2",
+    "solidity-docgen": "^0.6.0-beta.29"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",

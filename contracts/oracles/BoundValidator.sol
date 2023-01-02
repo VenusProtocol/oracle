@@ -27,6 +27,9 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
     /// @notice Emit this event when new validate configs are added
     event ValidateConfigAdded(address indexed asset, uint256 indexed upperBound, uint256 indexed lowerBound);
 
+    /**
+     * @notice Initializes the owner of the contract
+     */
     function initialize() public initializer {
         __Ownable_init();
     }

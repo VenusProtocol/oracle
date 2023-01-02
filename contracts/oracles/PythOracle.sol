@@ -49,6 +49,10 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
         _;
     }
 
+    /**
+     * @notice Initializes the owner of the contract and sets required contracts
+     * @param underlyingPythOracle_ Address of the pyth oracle
+     */
     function initialize(address underlyingPythOracle_) public initializer {
         __Ownable_init();
         require(underlyingPythOracle_ != address(0), "pyth oracle cannot be zero address");
