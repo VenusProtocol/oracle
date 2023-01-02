@@ -217,7 +217,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * - check price from main oracle against pivot oracle
      * - check price from fallback oracle against pivot oracle or main oracle if fails
      * @param vToken vToken address
-     * @return price USD price in scaled decimal places, In case pivot oracle is not available 
+     * @return price USD price in scaled decimal places, In case pivot oracle is not available
      * but main price is available and validation is successful, main oracle price is returned.
      * @custom:error paused error thrown when resilent oracle is paused
      * @custom:error Invalid resilient oracle price error thrown if fetched prices from oracle is invalid
@@ -236,7 +236,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
 
         // Compare main price and pivot price, return main price and if validation was successful
         // note: In case pivot oracle is not available but main price is available and
-        // validation is successful, main oracle price is returned.
+        // validation is successful, the main oracle price is returned.
         (uint256 mainPrice, bool validatedPivotMain) = _getMainOraclePrice(
             vToken,
             pivotPrice,
@@ -273,7 +273,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @return pivotValidated Boolean representing if the validation of main oracle price
      * and pivot oracle price was successful
      * @custom:error Invalid price error thrown if main oracle fails to fetch price of underlying asset
-     * @custom:error Invalid price error thrown if main oracle is not enabled or main oracle 
+     * @custom:error Invalid price error thrown if main oracle is not enabled or main oracle
      * address is zero
      */
     function _getMainOraclePrice(
@@ -309,7 +309,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @return pivotValidated Boolean representing if the validation of fallback oracle price
      * and pivot oracle price was successfull
      * @custom:error Invalid price error thrown if fallback oracle fails to fetch price of underlying asset
-     * @custom:error Invalid price error thrown if fallback oracle is not enabled or fallback oracle 
+     * @custom:error Invalid price error thrown if fallback oracle is not enabled or fallback oracle
      * address is zero
      */
     function _getFallbackOraclePrice(address vToken, uint256 pivotPrice) internal view returns (uint256, bool) {

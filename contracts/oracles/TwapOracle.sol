@@ -25,7 +25,8 @@ struct TokenConfig {
     /// @notice A flag identifies whether the pancake pair is reversed
     /// e.g. XVS-WBNB is not reversed, while WBNB-XVS is.
     bool isReversedPool;
-    /// @notice **twap** update period in second, which is the minimum time in seconds required to update **twap** window
+    /// @notice **twap** update period in second, which is the minimum time in seconds
+    /// required to update **twap** window
     uint256 anchorPeriod;
 }
 
@@ -113,12 +114,12 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
      * @param config token config struct
      * @custom:access Only Governance
      * @custom:error Range error thrown if anchor period is not greater than zero
-     * @custom:error Range error thrown if base unit is not greater than zero 
+     * @custom:error Range error thrown if base unit is not greater than zero
      * @custom:error Value error thrown if base unit decimals not same as asset decimals
      * @custom:error NotNullAddress if address of asset is zero
      * @custom:error NotNullAddress if pancake swap pool address is zero
-     * @custom:event Emits TokenConfigAdded event if new token configs are added with asset address,
-     * pancakepool address, anchor period address
+     * @custom:event Emits TokenConfigAdded event if new token config are added with
+     * asset address, pancakepool address, anchor period address
      */
     function setTokenConfig(
         TokenConfig memory config

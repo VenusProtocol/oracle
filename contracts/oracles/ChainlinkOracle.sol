@@ -187,7 +187,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
 
     /**
      * @notice Add single token config, vToken & feed cannot be zero address, and maxStalePeriod must be positive
-     * @param tokenConfig token config struct\
+     * @param tokenConfig token config struct
      * @custom:access Only Governance
      * @custom:error NotNullAddress error thrown if asset address is zero
      * @custom:error NotNullAddress error thrown if token feed address is zero
