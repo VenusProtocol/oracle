@@ -78,6 +78,8 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     /**
      * @notice Batch set token configs
      * @param tokenConfigs_ token config array
+     * @custom:access Only Governance
+     * @custom:error Zero length error thrown, if length of the array in parameter is 0
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
         require(tokenConfigs_.length != 0, "length can't be 0");
@@ -89,6 +91,9 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     /**
      * @notice Set single token config, `maxStalePeriod` cannot be 0 and `vToken` can be zero address
      * @param tokenConfig token config struct
+     * @custom:access Only Governance
+     * @custom:error Range error thrown if max stale period is zero
+     * @custom:error NotNullAddress error thrown if asset address is zero
      */
     function setTokenConfig(TokenConfig memory tokenConfig) public onlyOwner notNullAddress(tokenConfig.asset) {
         require(tokenConfig.maxStalePeriod != 0, "max stale period cannot be 0");
@@ -99,6 +104,9 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     /**
      * @notice set the underlying pyth oracle contract address
      * @param underlyingPythOracle_ pyth oracle contract address
+     * @custom:access Only Governance
+     * @custom:error NotNullAddress error thrown if underlyingPythOracle_ address is zero
+     * @custom:event Emits PythOracleSet event with address of Pyth oracle.
      */
     function setUnderlyingPythOracle(
         IPyth underlyingPythOracle_
@@ -112,6 +120,9 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
      * get price from Pyth contract, the prices of which are updated externally
      * @param vToken vToken address
      * @return price in 10 decimals
+     * @custom:error Zero address error thrown if underlyingPythOracle address is zero
+     * @custom:error Zero address error thrown if asset address is zero
+     * @custom:error Range error thrown if price of pythoracle is not greater than zero
      */
     function getUnderlyingPrice(address vToken) public view override returns (uint256) {
         require(address(underlyingPythOracle) != address(0), "Pyth oracle is zero address");

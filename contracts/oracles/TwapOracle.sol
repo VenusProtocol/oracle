@@ -25,7 +25,7 @@ struct TokenConfig {
     /// @notice A flag identifies whether the pancake pair is reversed
     /// e.g. XVS-WBNB is not reversed, while WBNB-XVS is.
     bool isReversedPool;
-    /// @notice TWAP update period in second, which is the minimum time in seconds required to update TWAP window
+    /// @notice **twap** update period in second, which is the minimum time in seconds required to update **twap** window
     uint256 anchorPeriod;
 }
 
@@ -49,17 +49,17 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     /// @notice Configs by token
     mapping(address => TokenConfig) public tokenConfigs;
 
-    /// @notice The current price observation of TWAP. With old and current observations
-    /// we can calculate the TWAP between this range
+    /// @notice The current price observation of **twap**. With old and current observations
+    /// we can calculate the **twap** between this range
     mapping(address => Observation) public newObservations;
 
-    /// @notice The old price observation of TWAP
+    /// @notice The old price observation of **twap**
     mapping(address => Observation) public oldObservations;
 
     /// @notice Stored price by token
     mapping(address => uint256) public prices;
 
-    /// @notice Emit this event when TWAP window is updated
+    /// @notice Emit this event when **twap** window is updated
     event TwapWindowUpdated(
         address indexed asset,
         uint256 oldTimestamp,
@@ -68,7 +68,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
         uint256 newAcc
     );
 
-    /// @notice Emit this event when TWAP price is updated
+    /// @notice Emit this event when **twap** price is updated
     event AnchorPriceUpdated(address indexed asset, uint256 price, uint256 oldTimestamp, uint256 newTimestamp);
 
     /// @notice Emit this event when new token configs are added
@@ -99,6 +99,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     /**
      * @notice Add multiple token configs at the same time
      * @param configs config array
+     * @custom:error ZSero length error thrown, if length of the array in parameter is 0
      */
     function setTokenConfigs(TokenConfig[] memory configs) external onlyOwner {
         require(configs.length > 0, "length can't be 0");
@@ -110,6 +111,14 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     /**
      * @notice Add single token configs
      * @param config token config struct
+     * @custom:access Only Governance
+     * @custom:error Range error thrown if anchor period is not greater than zero
+     * @custom:error Range error thrown if base unit is not greater than zero 
+     * @custom:error Value error thrown if base unit decimals not same as asset decimals
+     * @custom:error NotNullAddress if address of asset is zero
+     * @custom:error NotNullAddress if pancake swap pool address is zero
+     * @custom:event Emits TokenConfigAdded event if new token configs are added with asset address,
+     * pancakepool address, anchor period address
      */
     function setTokenConfig(
         TokenConfig memory config
@@ -133,9 +142,11 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     }
 
     /**
-     * @notice Get the underlying TWAP price of input vToken
+     * @notice Get the underlying **twap** price of input vToken
      * @param vToken vToken address
      * @return price in USD
+     * @custom:error Missing error thrown if token config is not exist
+     * @custom:error Range error thrown if **twap** price is not greater than zero
      */
     function getUnderlyingPrice(address vToken) external view override returns (uint256) {
         // VBNB token doesn't have `underlying` method, vBNB's underlying token is wBNB
@@ -164,6 +175,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     /**
      * @notice Updates the current token/BUSD price from PancakeSwap, with 18 decimals of precision.
      * @return vToken Address of vToken
+     * @custom:error Missing error thrown if token config is not exist
      */
     function updateTwap(address vToken) public returns (uint256) {
         // VBNB token doesn't have `underlying` method, vBNB's underlying token is wBNB
@@ -180,21 +192,26 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     /**
      * @notice Fetches the current token/BUSD price from PancakeSwap, with 18 decimals of precision.
      * @return price in USD, with 18 decimals
+     * @custom:error Timing error thrown if current time is not greater than old observation timestamp
+     * @custom:error Zero price error thrown if token is BNB based and price is zero
+     * @custom:error Zero price error thrown if fetched anchorPriceMantissa is zero
+     * @custom:event Emits AnchorPriceUpdated event on sucussfully update of observation with assset address,
+     * AnchorPrice, old observation timestamp and current timestamp
      */
     function _updateTwapInternal(TokenConfig memory config) internal virtual returns (uint256) {
         // pokeWindowValues already handled reversed pool cases,
-        // priceAverage will always be Token/BNB or Token/BUSD TWAP price.
+        // priceAverage will always be Token/BNB or Token/BUSD *twap** price.
         (uint256 nowCumulativePrice, uint256 oldCumulativePrice, uint256 oldTimestamp) = pokeWindowValues(config);
 
         // This should be impossible, but better safe than sorry
         require(block.timestamp > oldTimestamp, "now must come after before");
         uint256 timeElapsed = block.timestamp - oldTimestamp;
 
-        // Calculate Pancakge TWAP
+        // Calculate Pancakge *twap**
         FixedPoint.uq112x112 memory priceAverage = FixedPoint.uq112x112(
             uint224((nowCumulativePrice - oldCumulativePrice) / timeElapsed)
         );
-        // TWAP price with 1e18 decimal mantissa
+        // *twap** price with 1e18 decimal mantissa
         uint256 priceAverageMantissa = priceAverage.decode112with18();
 
         // To cancel the decimals in cumulative price, we need to mulitply the average price with
@@ -222,6 +239,8 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     /**
      * @notice Update new and old observations of lagging window if period elapsed.
      * @return cumulative price & old observation
+     * @custom:event emits TwapWindowUpdated on succesful calculation of cumulative price with asset address,
+     * new observation timestamp, current timestamp, new observation price and cumulative price
      */
     function pokeWindowValues(TokenConfig memory config) internal returns (uint256, uint256, uint256) {
         uint256 cumulativePrice = currentCumulativePrice(config);

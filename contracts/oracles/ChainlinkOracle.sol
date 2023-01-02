@@ -115,6 +115,11 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @dev The decimals of feeds are considered
      * @param asset underlying asset address
      * @return price in USD, with 18 decimals
+     * @custom:error NotNullAddress error thrown if asset address is zero
+     * @custom:error Price error if chain link price of asset is not greater than zero
+     * @custom:error Timing error if current timestamp is less than last updated at timestamp
+     * @custom:error Timing error if time difference between current time and last update time
+     * is greater than maxStalePeriod
      */
     function _getChainlinkPrice(
         address asset
@@ -142,6 +147,9 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @notice Set the forced prices of the underlying token of input vToken
      * @param vToken vToken address
      * @param underlyingPriceMantissa price in 18 decimals
+     * @custom:access Only Governance
+     * @custom:error NotNullAddress thrown if address of vToken is zero
+     * @custom:event Emits PricePosted event on succesfully setup of underlying price
      */
     function setUnderlyingPrice(
         VBep20Interface vToken,
@@ -156,6 +164,8 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @notice Set the forced prices of the input token
      * @param asset asset address
      * @param price price in 18 decimals
+     * @custom:access Only GOvernance
+     * @custom:event Emits PricePosted event on succesfully setup of underlying price
      */
     function setDirectPrice(address asset, uint256 price) external onlyOwner {
         emit PricePosted(asset, prices[asset], price, price);
@@ -165,6 +175,8 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
     /**
      * @notice Add multiple token configs at the same time
      * @param tokenConfigs_ config array
+     * @custom:access Only Governance
+     * @custom:error Zero length error thrown, if length of the array in parameter is 0
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
         require(tokenConfigs_.length > 0, "length can't be 0");
@@ -175,7 +187,12 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
 
     /**
      * @notice Add single token config, vToken & feed cannot be zero address, and maxStalePeriod must be positive
-     * @param tokenConfig token config struct
+     * @param tokenConfig token config struct\
+     * @custom:access Only Governance
+     * @custom:error NotNullAddress error thrown if asset address is zero
+     * @custom:error NotNullAddress error thrown if token feed address is zero
+     * @custom:error Range error if maxStale period of token is not greater than zero
+     * @custom:event Emits TokenConfigAdded event on succesfully setting up token config
      */
     function setTokenConfig(
         TokenConfig memory tokenConfig

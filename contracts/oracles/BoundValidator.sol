@@ -53,6 +53,8 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
     /**
      * @notice Add multiple validation configs at the same time
      * @param configs config array
+     * @custom:access Only Governance
+     * @custom:error Zero length error thrown, if length of the array in parameter is 0
      */
     function setValidateConfigs(ValidateConfig[] memory configs) external virtual onlyOwner {
         require(configs.length > 0, "invalid validate config length");
@@ -64,6 +66,11 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
     /**
      * @notice Add single validation config
      * @param config config struct
+     * @custom:access Only Governance
+     * @custom:error Zero address error thrown if asset address is zero
+     * @custom:error Range error thrown if bound ratio is not positive
+     * @custom:error Range error thrown if lower bound is greater than upper bound
+     * @custom:event Emits ValidateConfigAdded if succesfully config are set
      */
     function setValidateConfig(ValidateConfig memory config) public virtual onlyOwner {
         require(config.asset != address(0), "asset can't be zero address");
@@ -77,6 +84,8 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
      * @notice Test reported asset price against anchor price
      * @param vToken vToken address
      * @param reporterPrice the price to be tested
+     * @custom:error Missing error thrown if asset config is not set
+     * @custom:error Price error thrwon if anchor price is not valid
      */
     function validatePriceWithAnchorPrice(
         address vToken,
