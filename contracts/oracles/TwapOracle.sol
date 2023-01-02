@@ -193,6 +193,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
 
     /**
      * @notice Append current Observation and pick equal or just greater than window start timestamp,
+     * If not available, then pick the last available Observation. Window start index is updated in both the cases.
      * Only the current observation is saved, prior observations are deleted during this operation.
      * @return cumulative price & old observation
      */
