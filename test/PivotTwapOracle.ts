@@ -19,18 +19,14 @@ const RATIO = Q112.div(EXP_SCALE);
 async function checkObservations(
   twapOracleContract: TwapOracle,
   token: string,
-  newTime: number,
-  oldTime: number,
-  newAcc: BigNumber,
-  oldAcc: BigNumber,
+  time: number,
+  acc: BigNumber,
+  index: number,
 ) {
   // check observations
-  const newObservation = await twapOracleContract.newObservations(token);
-  const oldObservation = await twapOracleContract.oldObservations(token);
-  expect(newObservation.timestamp).to.equal(newTime);
-  expect(oldObservation.timestamp).to.equal(oldTime);
-  expect(newObservation.acc).to.equal(newAcc);
-  expect(oldObservation.acc).to.equal(oldAcc);
+  const newObservation = await twapOracleContract.observations(token, index);
+  expect(newObservation.timestamp).to.equal(time);
+  expect(newObservation.acc).to.equal(acc);
 }
 
 describe("Twap Oracle unit tests", function () {
@@ -123,6 +119,10 @@ describe("Twap Oracle unit tests", function () {
     });
 
     describe("add single token config", function () {
+      it("should revert on calling updateTwap without setting token configs", async function () {
+        await expect(this.twapOracle.updateTwap(this.vBnb.address)).to.be.revertedWith("asset not exist");
+      });
+
       it("vToken can\"t be zero & pool address can't be zero & anchorPeriod can't be 0", async function () {
         const config = {
           asset: addr0000,
@@ -194,7 +194,7 @@ describe("Twap Oracle unit tests", function () {
         // starting accumulative price
         const ts = await getTime();
         const acc = Q112.mul(ts);
-        await checkObservations(this.twapOracle, await this.vBnb.underlying(), ts, ts, acc, acc);
+        await checkObservations(this.twapOracle, await this.vBnb.underlying(), ts, acc, 0);
       });
     });
 
@@ -255,11 +255,11 @@ describe("Twap Oracle unit tests", function () {
         "TWAP price must be positive",
       );
     });
-    it("twap window update", async function () {
+    it("twap update after multiple observations", async function () {
       const ts = await getTime();
       const acc = Q112.mul(ts);
       const price = 1;
-      await checkObservations(this.twapOracle, await this.token0.underlying(), ts, ts, acc, acc);
+      await checkObservations(this.twapOracle, await this.token0.underlying(), ts, acc, 0);
       await increaseTime(100);
       await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
       // window doesn't change
@@ -273,13 +273,89 @@ describe("Twap Oracle unit tests", function () {
         this.twapOracle,
         await this.token0.underlying(),
         ts + timeDelta,
-        ts,
         acc.add(Q112.mul(timeDelta).mul(price)),
-        acc,
+        2,
       );
       await expect(result)
         .to.emit(this.twapOracle, "TwapWindowUpdated")
-        .withArgs(await this.token0.underlying(), ts, ts + timeDelta, acc, acc.add(Q112.mul(timeDelta)));
+        .withArgs(
+          await this.token0.underlying(),
+          ts + 101,
+          acc.add(Q112.mul(101)),
+          ts + timeDelta,
+          acc.add(Q112.mul(timeDelta)),
+        );
+    });
+    it("should delete observation which does not fall in current window and add latest observation", async function () {
+      const ts = await getTime();
+      const acc = Q112.mul(ts);
+      await checkObservations(this.twapOracle, await this.token0.underlying(), ts, acc, 0);
+      await increaseTime(100);
+      await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
+      await increaseTime(801);
+      await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
+      // window changed
+      const firstObservation = await this.twapOracle.observations(this.token0.underlying(), 0);
+      expect(firstObservation.acc).to.be.equal(0);
+      const lastObservation = await this.twapOracle.observations(this.token0.underlying(), 2);
+      expect(lastObservation.timestamp).to.be.equal(ts + 903);
+    });
+    it("should pick last available observation if none observations are in window", async function () {
+      const ts = await getTime();
+      const acc = Q112.mul(ts);
+      await checkObservations(this.twapOracle, await this.token0.underlying(), ts, acc, 0);
+      await increaseTime(901);
+      const result = await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
+      // window changed
+      const firstObservation = await this.twapOracle.observations(this.token0.underlying(), 0);
+      expect(firstObservation.timestamp).to.be.equal(ts);
+
+      const secondObservation = await this.twapOracle.observations(this.token0.underlying(), 1);
+      expect(secondObservation.timestamp).to.be.equal(ts + 902);
+
+      const windowStartIndex = await this.twapOracle.windowStart(this.token0.underlying());
+      expect(windowStartIndex).to.be.equal(0);
+      await expect(result)
+        .to.emit(this.twapOracle, "TwapWindowUpdated")
+        .withArgs(await this.token0.underlying(), ts, acc, ts + 902, acc.add(Q112.mul(902)));
+    });
+    it("should add latest observation after delete observations which does not fall in current window", async function () {
+      const ts = await getTime();
+      const acc = Q112.mul(ts);
+      await checkObservations(this.twapOracle, await this.token0.underlying(), ts, acc, 0);
+      await increaseTime(100);
+      await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
+      await increaseTime(801);
+      await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
+      // window changed
+      const firstObservation = await this.twapOracle.observations(this.token0.underlying(), 0);
+      expect(firstObservation.acc).to.be.equal(0);
+      const lastObservation = await this.twapOracle.observations(this.token0.underlying(), 2);
+      expect(lastObservation.timestamp).to.be.equal(ts + 903);
+    });
+    it("should delete multiple observation and pick observation which falling under window", async function () {
+      const ts = await getTime();
+      const acc = Q112.mul(ts);
+      await checkObservations(this.twapOracle, await this.token0.underlying(), ts, acc, 0);
+      await increaseTime(100);
+      await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
+      await increaseTime(100);
+      await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
+      await increaseTime(100);
+      await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
+      await increaseTime(100);
+      await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
+      await increaseTime(600);
+      await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
+      // window changed
+      const firstObservation = await this.twapOracle.observations(this.token0.underlying(), 0);
+      expect(firstObservation.timestamp).to.be.equal(0);
+      const secondObservation = await this.twapOracle.observations(this.token0.underlying(), 1);
+      expect(secondObservation.timestamp).to.be.equal(0);
+      const thirdObservation = await this.twapOracle.observations(this.token0.underlying(), 2);
+      expect(thirdObservation.timestamp).to.be.equal(ts + 202);
+      const lastObservation = await this.twapOracle.observations(this.token0.underlying(), 5);
+      expect(lastObservation.timestamp).to.be.equal(ts + 1005);
     });
     it("cumulative value", async function () {
       const currentTimestamp = await getTime();
@@ -364,7 +440,7 @@ describe("Twap Oracle unit tests", function () {
 
       let result = await this.twapOracle.updateTwap(this.token0.address);
       let ts2 = await getTime();
-      let oldObservation = await this.twapOracle.oldObservations(await this.token0.underlying());
+      let oldObservation = await this.twapOracle.observations(await this.token0.underlying(), 0);
       let newAcc = Q112.mul(100)
         .div(200)
         .mul(ts2 - pairLastTime)
@@ -378,7 +454,7 @@ describe("Twap Oracle unit tests", function () {
 
       await expect(result)
         .to.emit(this.twapOracle, "TwapWindowUpdated")
-        .withArgs(await this.token0.underlying(), oldObservation.timestamp, ts2, oldObservation.acc, newAcc);
+        .withArgs(await this.token0.underlying(), oldObservation.timestamp, oldObservation.acc, ts2, newAcc);
       await expect(result)
         .to.emit(this.twapOracle, "AnchorPriceUpdated")
         .withArgs(await this.token0.underlying(), avgPrice0, ts1, ts2);
@@ -396,7 +472,7 @@ describe("Twap Oracle unit tests", function () {
 
       result = await this.twapOracle.updateTwap(this.token0.address);
       ts2 = await getTime();
-      oldObservation = await this.twapOracle.oldObservations(await this.token0.underlying());
+      oldObservation = await this.twapOracle.observations(await this.token0.underlying(), 1);
       newAcc = Q112.mul(100)
         .div(2000)
         .mul(ts2 - pairLastTime)
@@ -475,7 +551,7 @@ describe("Twap Oracle unit tests", function () {
         ];
 
         await this.twapOracle.updateTwap(this.token0.address);
-        let oldObservation = await this.twapOracle.oldObservations(await this.token0.underlying());
+        let oldObservation = await this.twapOracle.observations(await this.token0.underlying(), 0);
 
         // get bnb price here, after token0 twap updated, during which bnb price got updated again
         let bnbPrice = await this.twapOracle.getUnderlyingPrice(this.vBnb.address);
@@ -502,7 +578,7 @@ describe("Twap Oracle unit tests", function () {
 
         await this.twapOracle.updateTwap(this.token0.address);
 
-        oldObservation = await this.twapOracle.oldObservations(await this.token0.underlying());
+        oldObservation = await this.twapOracle.observations(await this.token0.underlying(), 1);
         bnbPrice = await this.twapOracle.getUnderlyingPrice(this.vBnb.address);
         ts2 = await getTime();
         newAcc = Q112.mul(100)
