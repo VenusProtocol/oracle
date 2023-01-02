@@ -56,10 +56,10 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
         uint256 newAcc
     );
 
-    ///@notice Keeps track of observation of token mapped by address , update on evry updateTwap invocation.
+    /// @notice Keeps a record of token observations mapped by address, updated on every updateTwap invocation.
     mapping(address => Observation[]) public observations;
 
-    ///@notice index of array which probably falls in current anchor period mapped with asset address
+    /// @notice index of array which probably falls in current anchor period mapped with asset address
     mapping(address => uint256) public windowStart;
 
     /// @notice Emit this event when TWAP price is updated
@@ -193,7 +193,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
 
     /**
      * @notice Append current Observation and pick equal or just greater than window start timestamp,
-     * The observation which we are using except that we will delete rest of the observationn which are prior to this.
+     * Only the current observation is saved, prior observations are deleted during this operation.
      * @return cumulative price & old observation
      */
     function pokeWindowValues(
@@ -207,7 +207,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
         uint256 storedObservationsLength = storedObservations.length;
         Observation memory lastObservation = storedObservations[storedObservationsLength - 1];
 
-        //Scenerio when we don't have any observation which falls between (currentTime - anchorPeriod) and currentTime.
+        // Scenario when we don't have an observation that falls between (currentTime - anchorPeriod) and currentTime.
         if (lastObservation.timestamp <= windowStartTimestamp) {
             startCumulativePrice = lastObservation.acc;
             startCumulativeTimestamp = lastObservation.timestamp;
