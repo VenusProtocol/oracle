@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers, upgrades } from "hardhat";
 
-import { BoundValidator } from "../src/types";
+import { BoundValidator } from "../typechain-types";
 import { addr0000, addr1111 } from "./utils/data";
 import { makeVToken } from "./utils/makeVToken";
 
