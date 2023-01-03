@@ -3,7 +3,7 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import chai from "chai";
 import { ethers, upgrades } from "hardhat";
 
-import { BoundValidator, ChainlinkOracle, ResilientOracle } from "../typechain-types";
+import { BoundValidator, ChainlinkOracle, ResilientOracle, TwapOracle } from "../typechain-types";
 import { addr0000, addr1111, getSimpleAddress } from "./utils/data";
 import { makeVToken } from "./utils/makeVToken";
 
@@ -340,6 +340,8 @@ describe("Oracle plugin frame unit tests", function () {
     it("revert when protocol paused", async function () {
       await this.oracleBasement.pause();
       await expect(this.oracleBasement.getUnderlyingPrice(token1)).to.be.revertedWith("resilient oracle is paused");
+      await this.oracleBasement.unpause();
+      await expect(this.oracleBasement.getUnderlyingPrice(token1)).to.be.revertedWith("invalid resilient oracle price");
     });
     it("revert price when main oracle is disabled and there is no fallback oracle", async function () {
       await this.oracleBasement.enableOracle(asset1, 0, false);
@@ -412,6 +414,52 @@ describe("Oracle plugin frame unit tests", function () {
       await this.fallbackOracle.getUnderlyingPrice.whenCalledWith(token2).returns(0);
       // notice: token2 is invalidated
       await expect(this.oracleBasement.getUnderlyingPrice(token2)).to.be.revertedWith("invalid resilient oracle price");
+    });
+    it("Return fallback price when fallback price is validated successfully with pivot oracle", async function () {
+      //main oracle price is invalid
+      await this.mainOracle.getUnderlyingPrice.whenCalledWith(token1).returns(0);
+      await this.pivotOracle.getUnderlyingPrice.whenCalledWith(token1).returns(1000);
+      await this.fallbackOracle.getUnderlyingPrice.whenCalledWith(token1).returns(2000);
+      //fallback oracle is enabled
+      await this.oracleBasement.enableOracle(asset1, 0, false);
+      await this.oracleBasement.enableOracle(asset1, 2, true);
+      await this.boundValidator.validatePriceWithAnchorPrice.returns(true);
+      expect(await this.oracleBasement.getUnderlyingPrice(token1)).to.be.equal(2000);
+    });
+    it("Return main price when fallback price validation failed with pivot oracle", async function () {
+      await this.mainOracle.getUnderlyingPrice.whenCalledWith(token1).returns(2000);
+      //pivot oracle price is invalid
+      await this.pivotOracle.getUnderlyingPrice.whenCalledWith(token1).returns(0);
+      await this.fallbackOracle.getUnderlyingPrice.whenCalledWith(token1).returns(1000);
+      //fallback oracle is enabled
+      await this.oracleBasement.enableOracle(asset1, 2, true);
+      await this.boundValidator.validatePriceWithAnchorPrice.returns(true);
+      expect(await this.oracleBasement.getUnderlyingPrice(token1)).to.be.equal(2000);
+    });
+  });
+
+  describe("update pivot price", function () {
+    let token1;
+    let asset1;
+
+    beforeEach(async function () {
+      this.fakePivotOracle = await smock.fake<TwapOracle>("TwapOracle");
+      token1 = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
+      asset1 = await token1.underlying();
+      token1 = token1.address;
+
+      await this.oracleBasement.setTokenConfigs([
+        {
+          asset: asset1,
+          oracles: [addr1111, this.fakePivotOracle.address, addr1111],
+          enableFlagsForOracles: [true, false, false],
+        },
+      ]);
+    });
+    it("Should not fail call if pivot oracle is twapOracle", async function () {
+      await this.oracleBasement.updatePrice(token1);
+      await this.oracleBasement.enableOracle(asset1, 1, true);
+      await this.oracleBasement.updatePrice(token1);
     });
   });
 });
