@@ -10,13 +10,20 @@ import "./interfaces/OracleInterface.sol";
 contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOracleInterface {
     uint256 public constant INVALID_PRICE = 0;
 
+    /// @notice vBNB address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable vBnb;
+
+    /// @notice Set this as asset address for BNB. This is the underlying for vBNB
+    address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
+
     BoundValidatorInterface public boundValidator;
 
     /**
      * @dev oracle role, we have 3 roles at the moment
-     * MAIN: The most trustworthy price source
-     * PIVOT: Not so trustworthy price source, used as a loose sanity checker
-     * FALLBACK: The backup source when main oracle price is invalidated
+     * **main**: The most trustworthy price source
+     * **pivot**: Not so trustworthy price source, used as a loose sanity checker
+     * **fallback**: The backup source when main oracle price is invalidated
      */
     enum OracleRole {
         MAIN,
@@ -62,12 +69,20 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
         _;
     }
 
+    /// @notice Constructor for the implementation contract. Sets immutable variables.
+    /// @param vBnbAddress The address of the VBNB
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor(address vBnbAddress) notNullAddress(vBnbAddress) {
+        vBnb = vBnbAddress;
+        _disableInitializers();
+    }
+
     /**
      * @notice Initializes the contract admin and sets the BoundValidator contract address
      * @param _boundValidator Address of the bound validator contract
      */
     function initialize(BoundValidatorInterface _boundValidator) public initializer {
-        require(address(_boundValidator) != address(0), "invaliud bound validator address");
+        require(address(_boundValidator) != address(0), "invalid bound validator address");
         boundValidator = _boundValidator;
 
         __Ownable_init();
@@ -91,9 +106,10 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     /**
      * @dev Get token config by vToken address
      * @param vToken vtoken address
+     * @return tokenConfig config of the vToken
      */
     function getTokenConfig(address vToken) external view returns (TokenConfig memory) {
-        address asset = VBep20Interface(vToken).underlying();
+        address asset = address(vToken) == vBnb ? BNB_ADDR : VBep20Interface(vToken).underlying();
         return tokenConfigs[asset];
     }
 
@@ -101,9 +117,11 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @notice Get oracle & enabling status by vToken address
      * @param vToken vtoken address
      * @param role oracle role
+     * @return oracle oracle address based on role
+     * @return enabled enabled flag of the oracle based on token config
      */
     function getOracle(address vToken, OracleRole role) public view returns (address oracle, bool enabled) {
-        address asset = VBep20Interface(vToken).underlying();
+        address asset = address(vToken) == vBnb ? BNB_ADDR : VBep20Interface(vToken).underlying();
         oracle = tokenConfigs[asset].oracles[uint256(role)];
         enabled = tokenConfigs[asset].enableFlagsForOracles[uint256(role)];
     }
@@ -111,6 +129,8 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     /**
      * @notice Batch set token configs
      * @param tokenConfigs_ token config array
+     * @custom:access Only Governance
+     * @custom:error Length error if the lenght of the array is 0, passed in parameter
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
         require(tokenConfigs_.length != 0, "length can't be 0");
@@ -120,8 +140,12 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     }
 
     /**
-     * @notice Set single token configs, vToken MUST HAVE NOT be added before, and main oracle MUST NOT be zero address
+     * @notice Set/reset single token configs and main oracle **must not** be zero address
      * @param tokenConfig token config struct
+     * @custom:access Only Governance
+     * @custom:error NotNullAddress thrown if asset address is zero
+     * @custom:error NotNullAddress thrown if main-role oracle address for asset is zero
+     * @custom:event Emits TokenConfigAdded event when vToken config are set by governnace
      */
     function setTokenConfig(
         TokenConfig memory tokenConfig
@@ -136,10 +160,15 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     }
 
     /**
-     * @notice Set oracle of any type for the input vToken, input vToken MUST exist
+     * @notice Set oracle of any type for the input vToken, input vToken **must** exist
      * @param asset asset address
      * @param oracle oracle address
      * @param role oracle role
+     * @custom:access Only Governance
+     * @custom:error Zero address error if main-role oracle password is set to zero
+     * @custom:error NotNullAddress error thrown if asset address is zero
+     * @custom:error TokenConfigExistance error thrown if token config is not set
+     * @custom:event Emits OracleSet event with asset address, oracle address and role of the oracle for the asset
      */
     function setOracle(
         address asset,
@@ -152,10 +181,13 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     }
 
     /**
-     * @notice Enable/disable oracle for the input vToken, input vToken MUST exist
+     * @notice Enable/disable oracle for the input vToken, input vToken **must** exist
      * @param asset asset address
      * @param role oracle role
      * @param enable expected status
+     * @custom:access Only Governance
+     * @custom:error NotNullAddress error thrown if asset address is zero
+     * @custom:error TokenConfigExistance error thrown if token config is not set
      */
     function enableOracle(
         address asset,
@@ -167,14 +199,14 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     }
 
     /**
-     * @notice Update the pivot oracle price. Currently using TWAP
+     * @notice Update the pivot oracle price. Currently using **twap**
      * @dev This function should be called every time before calling getUnderlyingPrice
      * @param vToken vToken address
      */
     function updatePrice(address vToken) external override {
         (address pivotOracle, bool pivotOracleEnabled) = getOracle(vToken, OracleRole.PIVOT);
         if (pivotOracle != address(0) && pivotOracleEnabled) {
-            //if PIVOT oracle is PythOrcle it will revert so we need to catch the revert
+            //if **pivot** oracle is PythOrcle it will revert so we need to catch the revert
             try TwapInterface(pivotOracle).updateTwap(vToken) returns (uint256 _price) {} catch {}
         }
     }
@@ -185,18 +217,48 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * - check price from main oracle against pivot oracle
      * - check price from fallback oracle against pivot oracle or main oracle if fails
      * @param vToken vToken address
-     * @return price USD price in scaled decimal places
+     * @return price USD price in scaled decimal places, In case pivot oracle is not available
+     * but main price is available and validation is successful, main oracle price is returned.
+     * @custom:error paused error thrown when resilent oracle is paused
+     * @custom:error Invalid resilient oracle price error thrown if fetched prices from oracle is invalid
      */
     function getUnderlyingPrice(address vToken) external view override returns (uint256) {
         require(!paused(), "resilient oracle is paused");
+        uint256 pivotPrice = INVALID_PRICE;
 
-        uint256 price = _getMainOraclePrice(vToken);
-        if (price == INVALID_PRICE) {
-            price = _getFallbackOraclePrice(vToken);
+        // Get pivot oracle price, Invalid price if not available or error
+        (address pivotOracle, bool pivotOracleEnabled) = getOracle(vToken, OracleRole.PIVOT);
+        if (pivotOracleEnabled && pivotOracle != address(0)) {
+            try OracleInterface(pivotOracle).getUnderlyingPrice(vToken) returns (uint256 pricePivot) {
+                pivotPrice = pricePivot;
+            } catch {}
         }
 
-        require(price != INVALID_PRICE, "invalid resilient oracle price");
-        return price;
+        // Compare main price and pivot price, return main price and if validation was successful
+        // note: In case pivot oracle is not available but main price is available and
+        // validation is successful, the main oracle price is returned.
+        (uint256 mainPrice, bool validatedPivotMain) = _getMainOraclePrice(
+            vToken,
+            pivotPrice,
+            pivotOracleEnabled && pivotOracle != address(0)
+        );
+        if (mainPrice != INVALID_PRICE && validatedPivotMain) return mainPrice;
+
+        // Compare fallback and pivot if main oracle comparision fails with pivot
+        // Return fallback price when fallback price is validated successfully with pivot oracle
+        (uint256 fallbackPrice, bool validatedPivotFallback) = _getFallbackOraclePrice(vToken, pivotPrice);
+        if (fallbackPrice != INVALID_PRICE && validatedPivotFallback) return fallbackPrice;
+
+        // Lastly compare main price and fallback price
+        if (
+            mainPrice != INVALID_PRICE &&
+            fallbackPrice != INVALID_PRICE &&
+            boundValidator.validatePriceWithAnchorPrice(vToken, fallbackPrice, mainPrice)
+        ) {
+            return mainPrice;
+        }
+
+        revert("invalid resilient oracle price");
     }
 
     /**
@@ -204,87 +266,68 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @dev This function won't revert when price is 0, because the fallback oracle may still be
      * able to fetch a correct price
      * @param vToken vToken address
+     * @param pivotPrice pivot oracle price
+     * @param pivotEnabled if pivot oracle is not empty and enabled
      * @return price USD price in scaled decimals
      * e.g. vToken decimals is 8 then price is returned as 10**18 * 10**(18-8) = 10**28 decimals
+     * @return pivotValidated Boolean representing if the validation of main oracle price
+     * and pivot oracle price was successful
+     * @custom:error Invalid price error thrown if main oracle fails to fetch price of underlying asset
+     * @custom:error Invalid price error thrown if main oracle is not enabled or main oracle
+     * address is zero
      */
-    function _getMainOraclePrice(address vToken) internal view returns (uint256) {
-        uint256 price = INVALID_PRICE;
-
+    function _getMainOraclePrice(
+        address vToken,
+        uint256 pivotPrice,
+        bool pivotEnabled
+    ) internal view returns (uint256, bool) {
         (address mainOracle, bool mainOracleEnabled) = getOracle(vToken, OracleRole.MAIN);
         if (mainOracleEnabled && mainOracle != address(0)) {
             try OracleInterface(mainOracle).getUnderlyingPrice(vToken) returns (uint256 mainOraclePrice) {
-                price = mainOraclePrice;
-
-                (address pivotOracle, bool pivotOracleEnabled) = getOracle(vToken, OracleRole.PIVOT);
-
-                if (pivotOracleEnabled && pivotOracle != address(0)) {
-                    try OracleInterface(pivotOracle).getUnderlyingPrice(vToken) returns (uint256 pivotPrice) {
-                        if (pivotPrice != INVALID_PRICE) {
-                            bool isPriceValid = boundValidator.validatePriceWithAnchorPrice(vToken, price, pivotPrice);
-                            if (!isPriceValid) {
-                                return INVALID_PRICE;
-                            }
-                        }
-                    } catch {}
+                if (!pivotEnabled) {
+                    return (mainOraclePrice, true);
                 }
-            } catch {}
+                if (pivotPrice == INVALID_PRICE) {
+                    return (mainOraclePrice, false);
+                }
+                return (
+                    mainOraclePrice,
+                    boundValidator.validatePriceWithAnchorPrice(vToken, mainOraclePrice, pivotPrice)
+                );
+            } catch {
+                return (INVALID_PRICE, false);
+            }
         }
 
-        return price;
+        return (INVALID_PRICE, false);
     }
 
     /**
      * @notice This function won't revert when price is 0, because the getUnderlyingPrice checks if pirce is > 0
      * @param vToken vToken address
      * @return price USD price in 18 decimals
+     * @return pivotValidated Boolean representing if the validation of fallback oracle price
+     * and pivot oracle price was successfull
+     * @custom:error Invalid price error thrown if fallback oracle fails to fetch price of underlying asset
+     * @custom:error Invalid price error thrown if fallback oracle is not enabled or fallback oracle
+     * address is zero
      */
-    function _getFallbackOraclePrice(address vToken) internal view returns (uint256) {
-        uint256 price = INVALID_PRICE;
-        bool compareWithMain = false;
-
+    function _getFallbackOraclePrice(address vToken, uint256 pivotPrice) internal view returns (uint256, bool) {
         (address fallbackOracle, bool fallbackEnabled) = getOracle(vToken, OracleRole.FALLBACK);
         if (fallbackEnabled && fallbackOracle != address(0)) {
             try OracleInterface(fallbackOracle).getUnderlyingPrice(vToken) returns (uint256 fallbackOraclePrice) {
-                price = fallbackOraclePrice;
-
-                (address pivotOracle, bool pivotOracleEnabled) = getOracle(vToken, OracleRole.PIVOT);
-                if (pivotOracleEnabled && pivotOracle != address(0)) {
-                    try OracleInterface(pivotOracle).getUnderlyingPrice(vToken) returns (uint256 pivotPrice) {
-                        if (pivotPrice != INVALID_PRICE) {
-                            bool isPriceValid = boundValidator.validatePriceWithAnchorPrice(vToken, price, pivotPrice);
-                            if (!isPriceValid) {
-                                compareWithMain = true;
-                            }
-                        } else {
-                            compareWithMain = true;
-                        }
-                    } catch {
-                        compareWithMain = true;
-                    }
-                } else {
-                    compareWithMain = true;
+                if (pivotPrice == INVALID_PRICE) {
+                    return (fallbackOraclePrice, false);
                 }
-            } catch {}
-        }
-
-        if (compareWithMain) {
-            (address mainOracle, bool mainOracleEnabled) = getOracle(vToken, OracleRole.MAIN);
-            if (mainOracleEnabled && mainOracle != address(0)) {
-                try OracleInterface(mainOracle).getUnderlyingPrice(vToken) returns (uint256 mainOraclePrice) {
-                    bool isPriceValid = boundValidator.validatePriceWithAnchorPrice(vToken, price, mainOraclePrice);
-                    if (!isPriceValid) {
-                        return INVALID_PRICE;
-                    } else {
-                        price = mainOraclePrice;
-                    }
-                } catch {
-                    price = INVALID_PRICE;
-                }
-            } else {
-                price = INVALID_PRICE;
+                return (
+                    fallbackOraclePrice,
+                    boundValidator.validatePriceWithAnchorPrice(vToken, fallbackOraclePrice, pivotPrice)
+                );
+            } catch {
+                return (INVALID_PRICE, false);
             }
         }
 
-        return price;
+        return (INVALID_PRICE, false);
     }
 }
