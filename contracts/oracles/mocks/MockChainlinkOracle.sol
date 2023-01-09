@@ -4,7 +4,6 @@ pragma solidity 0.8.13;
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../ChainlinkOracle.sol";
 import "../../interfaces/VBep20Interface.sol";
-import "../../interfaces/BEP20Interface.sol";
 
 contract MockChainlinkOracle is OwnableUpgradeable {
     mapping(address => uint256) public assetPrices;

@@ -3,8 +3,8 @@ pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/VBep20Interface.sol";
-import "../interfaces/AggregatorV2V3Interface.sol";
 import "../interfaces/OracleInterface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV2V3Interface.sol";
 
 struct TokenConfig {
     /// @notice underlying token address, which can't be zero address and can be used for existance check

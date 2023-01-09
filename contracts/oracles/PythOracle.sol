@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/utils/math/SignedMath.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/PythInterface.sol";
 import "../interfaces/OracleInterface.sol";
-import "../interfaces/BEP20Interface.sol";
 import "../interfaces/VBep20Interface.sol";
 
 struct TokenConfig {

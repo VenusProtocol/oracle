@@ -2,7 +2,6 @@
 pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "../interfaces/BEP20Interface.sol";
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
 
