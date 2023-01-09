@@ -132,7 +132,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
         require(tokenConfigs_.length != 0, "length can't be 0");
-        for (uint256 i = 0; i < tokenConfigs_.length; i++) {
+        for (uint256 i; i < tokenConfigs_.length; ++i) {
             setTokenConfig(tokenConfigs_[i]);
         }
     }

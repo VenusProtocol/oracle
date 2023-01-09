@@ -56,7 +56,7 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
      */
     function setValidateConfigs(ValidateConfig[] memory configs) external virtual onlyOwner {
         require(configs.length > 0, "invalid validate config length");
-        for (uint8 i = 0; i < configs.length; i++) {
+        for (uint256 i; i < configs.length; ++i) {
             setValidateConfig(configs[i]);
         }
     }

@@ -102,7 +102,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
      */
     function setTokenConfigs(TokenConfig[] memory configs) external onlyOwner {
         require(configs.length > 0, "length can't be 0");
-        for (uint8 i = 0; i < configs.length; i++) {
+        for (uint256 i; i < configs.length; ++i) {
             setTokenConfig(configs[i]);
         }
     }
