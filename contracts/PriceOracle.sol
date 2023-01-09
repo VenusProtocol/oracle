@@ -2,9 +2,6 @@
 pragma solidity 0.8.13;
 
 abstract contract PriceOracle {
-    /// @notice Indicator that this is a PriceOracle contract (for inspection)
-    bool public constant isPriceOracle = true;
-
     /**
      * @notice Get the underlying price of a vToken asset
      * @param vToken The vToken address to get the underlying price of
