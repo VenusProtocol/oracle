@@ -464,6 +464,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@commitlint/cli@npm:^17.0.2":
+  version: 17.3.0
+  resolution: "@commitlint/cli@npm:17.3.0"
+  dependencies:
+    "@commitlint/format": ^17.0.0
+    "@commitlint/lint": ^17.2.0
+    "@commitlint/load": ^17.2.0
+    "@commitlint/read": ^17.2.0
+    "@commitlint/types": ^17.0.0
+    execa: ^5.0.0
+    lodash.isfunction: ^3.0.9
+    resolve-from: 5.0.0
+    resolve-global: 1.0.0
+    yargs: ^17.0.0
+  bin:
+    commitlint: cli.js
+  checksum: e850a2bfac3df902b72150050811e89a7aa5202918aa47bea5b8f6e5cff2277e9b15786a087b146bd510d450efad7ce3216338c4d580d9342ef43616abc2744c
+  languageName: node
+  linkType: hard
+
 "@commitlint/cli@npm:^17.0.3":
   version: 17.2.0
   resolution: "@commitlint/cli@npm:17.2.0"
@@ -1107,15 +1127,15 @@ __metadata:
   linkType: hard
 
 "@eth-optimism/contracts@npm:^0.5.21":
-  version: 0.5.40
-  resolution: "@eth-optimism/contracts@npm:0.5.40"
+  version: 0.5.39
+  resolution: "@eth-optimism/contracts@npm:0.5.39"
   dependencies:
     "@eth-optimism/core-utils": 0.12.0
     "@ethersproject/abstract-provider": ^5.7.0
     "@ethersproject/abstract-signer": ^5.7.0
   peerDependencies:
     ethers: ^5
-  checksum: 11dde466c90b886efe8b5fd123fa5893187a4ff84839213d417f90ae4e45bf00b2f62d56e4ebe23ba5dd7ec33beed22c4c41e206add35fce0db073fe2dbae6ba
+  checksum: 69499cf8b9c5792b8cc6de73cc35b5b27865907cb0d4ef06cc0153380f4ed4832a03d26b0084c2d239aac520041f37a089c95188b670b4f00851cd19e4a65379
   languageName: node
   linkType: hard
 
@@ -1487,34 +1507,6 @@ __metadata:
   dependencies:
     "@ethersproject/logger": ^5.7.0
   checksum: 6ab0ccf0c3aadc9221e0cdc5306ce6cd0df7f89f77d77bccdd1277182c9ead0202cd7521329ba3acde130820bf8af299e17cf567d0d497c736ee918207bbf59f
-  languageName: node
-  linkType: hard
-
-"@ethersproject/providers@npm:5.7.2, @ethersproject/providers@npm:^5.6.8":
-  version: 5.7.2
-  resolution: "@ethersproject/providers@npm:5.7.2"
-  dependencies:
-    "@ethersproject/abstract-provider": ^5.7.0
-    "@ethersproject/abstract-signer": ^5.7.0
-    "@ethersproject/address": ^5.7.0
-    "@ethersproject/base64": ^5.7.0
-    "@ethersproject/basex": ^5.7.0
-    "@ethersproject/bignumber": ^5.7.0
-    "@ethersproject/bytes": ^5.7.0
-    "@ethersproject/constants": ^5.7.0
-    "@ethersproject/hash": ^5.7.0
-    "@ethersproject/logger": ^5.7.0
-    "@ethersproject/networks": ^5.7.0
-    "@ethersproject/properties": ^5.7.0
-    "@ethersproject/random": ^5.7.0
-    "@ethersproject/rlp": ^5.7.0
-    "@ethersproject/sha2": ^5.7.0
-    "@ethersproject/strings": ^5.7.0
-    "@ethersproject/transactions": ^5.7.0
-    "@ethersproject/web": ^5.7.0
-    bech32: 1.1.4
-    ws: 7.4.6
-  checksum: 1754c731a5ca6782ae9677f4a9cd8b6246c4ef21a966c9a01b133750f3c578431ec43ec254e699969c4a0f87e84463ded50f96b415600aabd37d2056aee58c19
   languageName: node
   linkType: hard
 
@@ -2779,9 +2771,9 @@ __metadata:
   linkType: hard
 
 "@openzeppelin/contracts@npm:^4.3.3, @openzeppelin/contracts@npm:^4.6.0":
-  version: 4.8.2
-  resolution: "@openzeppelin/contracts@npm:4.8.2"
-  checksum: 1d362f0b9c880549cb82544e23fb70270fbbbe24a69e10bd5aa07649fd82347686173998ae484defafdc473d04004d519f839e3cd3d3e7733d0895b950622243
+  version: 4.8.0
+  resolution: "@openzeppelin/contracts@npm:4.8.0"
+  checksum: dfab51a7f91735cfb1e94dd5074736b0dac0207e4ebf26eb46b32defd3b67adce5a36b248daa7b841c21be74863c1e37cf92ed194a9c36d3f8c5326d1a24242a
   languageName: node
   linkType: hard
 
@@ -3984,8 +3976,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@venusprotocol/oracle@workspace:."
   dependencies:
-    "@commitlint/cli": ^17.0.3
-    "@commitlint/config-conventional": ^17.0.3
+    "@chainlink/contracts": ^0.5.1
+    "@commitlint/cli": ^17.0.2
+    "@commitlint/config-conventional": ^17.0.2
     "@ethersproject/abstract-signer": ^5.6.2
     "@ethersproject/bignumber": ^5.6.2
     "@ethersproject/bytes": ^5.6.1
