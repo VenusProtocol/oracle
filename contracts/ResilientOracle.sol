@@ -44,7 +44,6 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
 
     mapping(address => TokenConfig) private tokenConfigs;
 
-    event GlobalEnable(bool indexed isEnable);
     event TokenConfigAdded(
         address indexed asset,
         address indexed mainOracle,
