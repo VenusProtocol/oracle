@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+pragma solidity 0.8.17;
 
 library FixedPoint {
     // range: [0, 2**112 - 1]

@@ -1,4 +1,4 @@
-pragma solidity >=0.5.16;
+pragma solidity 0.8.17;
 
 abstract contract PriceOracle {
     /// @notice Indicator that this is a PriceOracle contract (for inspection)
