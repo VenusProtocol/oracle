@@ -305,24 +305,29 @@ describe("Twap Oracle unit tests", function () {
       const lastObservation = await this.twapOracle.observations(this.token0.underlying(), 2);
       expect(lastObservation.timestamp).to.be.equal(ts + 903);
     });
-    it("should pick last available observation if none observations are in window", async function () {
+    it("should pick last available observation if none observations are in window and also delete privious one", async function () {
       const ts = await getTime();
       const acc = Q112.mul(ts);
       await checkObservations(this.twapOracle, await this.token0.underlying(), ts, acc, 0);
       await increaseTime(901);
-      const result = await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
       // window changed
       const firstObservation = await this.twapOracle.observations(this.token0.underlying(), 0);
       expect(firstObservation.timestamp).to.be.equal(ts);
 
-      const secondObservation = await this.twapOracle.observations(this.token0.underlying(), 1);
-      expect(secondObservation.timestamp).to.be.equal(ts + 902);
-
-      const windowStartIndex = await this.twapOracle.windowStart(this.token0.underlying());
-      expect(windowStartIndex).to.be.equal(0);
-      await expect(result)
+      const result1 = await this.twapOracle.updateTwap(this.token0.address);
+      await expect(result1)
         .to.emit(this.twapOracle, "TwapWindowUpdated")
         .withArgs(await this.token0.underlying(), ts, acc, ts + 902, acc.add(Q112.mul(902)));
+      const windowStartIndex = await this.twapOracle.windowStart(this.token0.underlying());
+      expect(windowStartIndex).to.be.equal(0);
+
+      const secondObservation = await this.twapOracle.observations(this.token0.underlying(), 1);
+      expect(secondObservation.timestamp).to.be.equal(ts + 902);
+      await increaseTime(901);
+      // window changed
+      await this.twapOracle.updateTwap(this.token0.address);
+      const firstObservationAfter = await this.twapOracle.observations(this.token0.underlying(), 0);
+      expect(firstObservationAfter.timestamp).to.be.equal(0);
     });
     it("should add latest observation after delete observations which does not fall in current window", async function () {
       const ts = await getTime();
