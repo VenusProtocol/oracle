@@ -250,23 +250,21 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
         Observation[] memory storedObservations = observations[config.asset];
 
         uint256 storedObservationsLength = storedObservations.length;
-        Observation memory lastObservation = storedObservations[storedObservationsLength - 1];
-
-        // Scenario when we don't have an observation that falls between (currentTime - anchorPeriod) and currentTime.
-        if (lastObservation.timestamp <= windowStartTimestamp) {
-            startCumulativePrice = lastObservation.acc;
-            startCumulativeTimestamp = lastObservation.timestamp;
-            windowStart[config.asset] = storedObservationsLength - 1;
-        } else {
-            for (uint256 i = windowStart[config.asset]; i < storedObservationsLength; ++i) {
-                if (storedObservations[i].timestamp >= windowStartTimestamp) {
-                    startCumulativePrice = storedObservations[i].acc;
-                    startCumulativeTimestamp = storedObservations[i].timestamp;
-                    windowStart[config.asset] = i;
-                    break;
-                } else {
-                    delete observations[config.asset][i];
-                }
+        for (
+            uint256 windowStartIndex = windowStart[config.asset];
+            windowStartIndex < storedObservationsLength;
+            ++windowStartIndex
+        ) {
+            if (
+                (storedObservations[windowStartIndex].timestamp >= windowStartTimestamp) ||
+                (windowStartIndex == storedObservationsLength - 1)
+            ) {
+                startCumulativePrice = storedObservations[windowStartIndex].acc;
+                startCumulativeTimestamp = storedObservations[windowStartIndex].timestamp;
+                windowStart[config.asset] = windowStartIndex;
+                break;
+            } else {
+                delete observations[config.asset][windowStartIndex];
             }
         }
 

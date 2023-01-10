@@ -4,7 +4,7 @@ import { BigNumber } from "ethers";
 import { artifacts, ethers, upgrades, waffle } from "hardhat";
 
 import { BoundValidator, PythOracle } from "../src/types";
-import { MockPyth } from "../src/types/contracts/test/MockPyth";
+import { MockPyth } from "../typechain-types/contracts/test/MockPyth";
 import { addr0000, addr1111, getBytes32String, getSimpleAddress } from "./utils/data";
 import { makeVToken } from "./utils/makeVToken";
 import { getTime, increaseTime } from "./utils/time";

@@ -164,7 +164,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @custom:access Only GOvernance
      * @custom:event Emits PricePosted event on succesfully setup of underlying price
      */
-    function setDirectPrice(address asset, uint256 price) external onlyOwner {
+    function setDirectPrice(address asset, uint256 price) external notNullAddress(asset) onlyOwner {
         emit PricePosted(asset, prices[asset], price, price);
         prices[asset] = price;
     }

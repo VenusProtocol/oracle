@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@chainlink/contracts": "^0.5.1",
+    "@defi-wonderland/smock": "^2.3.4",
     "@openzeppelin/contracts": "^4.6.0",
     "@openzeppelin/contracts-upgradeable": "^4.7.3",
     "@venusprotocol/venus-protocol": "0.4.1",
