@@ -3,8 +3,8 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers, upgrades } from "hardhat";
 
-import { BoundValidator } from "../src/types";
 import { TwapOracle } from "../src/types/contracts/oracles/TwapOracle";
+import { BoundValidator } from "../typechian-types";
 import { addr0000, addr1111 } from "./utils/data";
 import { makePairWithTokens } from "./utils/makePair";
 import { makeToken } from "./utils/makeToken";

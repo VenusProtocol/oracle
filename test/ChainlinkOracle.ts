@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers, upgrades } from "hardhat";
 
-import { ChainlinkOracle } from "../src/types/contracts/oracles/ChainlinkOracle";
+import { ChainlinkOracle } from "../typechain-types/contracts/oracles/ChainlinkOracle";
 import { addr0000 } from "./utils/data";
 import { makeChainlinkOracle } from "./utils/makeChainlinkOracle";
 import { makeVToken } from "./utils/makeVToken";

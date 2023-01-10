@@ -29,6 +29,7 @@
     "docgen": "hardhat docgen"
   },
   "dependencies": {
+    "@defi-wonderland/smock": "^2.3.4",
     "@openzeppelin/contracts": "^4.6.0",
     "@openzeppelin/contracts-upgradeable": "^4.7.3",
     "@venusprotocol/venus-protocol": "0.4.1",
