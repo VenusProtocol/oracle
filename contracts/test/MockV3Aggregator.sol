@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: BSD-3-Clause
+pragma solidity 0.8.13;
 
-import "../interfaces/AggregatorV2V3Interface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV2V3Interface.sol";
 
 /**
  * @title MockV3Aggregator

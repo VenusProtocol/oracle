@@ -1,6 +1,6 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
-pragma experimental ABIEncoderV2;
+// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-FileCopyrightText: 2022 Venus
+pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
@@ -44,7 +44,6 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
 
     mapping(address => TokenConfig) private tokenConfigs;
 
-    event GlobalEnable(bool indexed isEnable);
     event TokenConfigAdded(
         address indexed asset,
         address indexed mainOracle,
@@ -134,7 +133,8 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
         require(tokenConfigs_.length != 0, "length can't be 0");
-        for (uint256 i = 0; i < tokenConfigs_.length; i++) {
+        uint256 numTokenConfigs = tokenConfigs_.length;
+        for (uint256 i; i < numTokenConfigs; ++i) {
             setTokenConfig(tokenConfigs_[i]);
         }
     }
@@ -207,7 +207,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
         (address pivotOracle, bool pivotOracleEnabled) = getOracle(vToken, OracleRole.PIVOT);
         if (pivotOracle != address(0) && pivotOracleEnabled) {
             //if **pivot** oracle is PythOrcle it will revert so we need to catch the revert
-            try TwapInterface(pivotOracle).updateTwap(vToken) returns (uint256 _price) {} catch {}
+            try TwapInterface(pivotOracle).updateTwap(vToken) {} catch {}
         }
     }
 

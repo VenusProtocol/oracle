@@ -1,11 +1,10 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
-pragma experimental ABIEncoderV2;
+// SPDX-License-Identifier: BSD-3-Clause
+pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/VBep20Interface.sol";
-import "../interfaces/AggregatorV2V3Interface.sol";
 import "../interfaces/OracleInterface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV2V3Interface.sol";
 
 struct TokenConfig {
     /// @notice underlying token address, which can't be zero address and can be used for existance check
@@ -28,8 +27,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
     /// @notice Set this as asset address for BNB. This is the underlying for vBNB
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
-    /// @notice TODO: might be removed some day, it's for enabling us to force set the prices to
-    /// certain values in some urgent conditions
+    /// @notice Enables us to force set the prices to certain values in some urgent conditions
     mapping(address => uint256) public prices;
 
     /// @notice token config by assets
@@ -74,7 +72,6 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
 
         if (_compareStrings(symbol, "VAI")) {
             return VAI_VALUE;
-            // @TODO: This is some history code, keep it here in case of messing up
         } else {
             return _getUnderlyingPriceInternal(VBep20Interface(vToken));
         }
@@ -180,7 +177,8 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
         require(tokenConfigs_.length > 0, "length can't be 0");
-        for (uint256 i = 0; i < tokenConfigs_.length; i++) {
+        uint256 numTokenConfigs = tokenConfigs_.length;
+        for (uint256 i; i < numTokenConfigs; ++i) {
             setTokenConfig(tokenConfigs_[i]);
         }
     }

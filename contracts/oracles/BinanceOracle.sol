@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.10;
+// SPDX-License-Identifier: BSD-3-Clause
+pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../interfaces/FeedRegistryInterface.sol";
 import "../interfaces/VBep20Interface.sol";
-import "../interfaces/BEP20Interface.sol";
 
 contract BinanceOracle is Initializable {
     FeedRegistryInterface public feedRegistry;
@@ -44,7 +44,7 @@ contract BinanceOracle is Initializable {
             symbol = "BNB";
             decimals = 18;
         } else {
-            BEP20Interface underlyingToken = BEP20Interface(vToken.underlying());
+            IERC20Metadata underlyingToken = IERC20Metadata(vToken.underlying());
             symbol = underlyingToken.symbol();
             decimals = underlyingToken.decimals();
         }

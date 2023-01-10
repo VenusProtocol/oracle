@@ -1,11 +1,10 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
-pragma experimental ABIEncoderV2;
+// SPDX-License-Identifier: BSD-3-Clause
+pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../libraries/PancakeLibrary.sol";
 import "../interfaces/OracleInterface.sol";
-import "../interfaces/BEP20Interface.sol";
 import "../interfaces/VBep20Interface.sol";
 
 struct Observation {
@@ -103,7 +102,8 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
      */
     function setTokenConfigs(TokenConfig[] memory configs) external onlyOwner {
         require(configs.length > 0, "length can't be 0");
-        for (uint8 i = 0; i < configs.length; i++) {
+        uint256 numTokenConfigs = configs.length;
+        for (uint256 i; i < numTokenConfigs; ++i) {
             setTokenConfig(configs[i]);
         }
     }
@@ -126,7 +126,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
         require(config.anchorPeriod > 0, "anchor period must be positive");
         require(config.baseUnit > 0, "base unit must be positive");
         require(
-            config.baseUnit == 10 ** BEP20Interface(config.asset).decimals(),
+            config.baseUnit == 10 ** IERC20Metadata(config.asset).decimals(),
             "base unit decimals must be same as asset decimals"
         );
 
@@ -153,7 +153,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
 
         // if price is 0, it means the price hasn't been updated yet and it's meaningless, revert
         require(price > 0, "TWAP price must be positive");
-        return (price * (10 ** (18 - BEP20Interface(asset).decimals())));
+        return (price * (10 ** (18 - IERC20Metadata(asset).decimals())));
     }
 
     /**

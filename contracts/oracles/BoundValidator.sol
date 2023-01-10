@@ -1,9 +1,7 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
-pragma experimental ABIEncoderV2;
+// SPDX-License-Identifier: BSD-3-Clause
+pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "../interfaces/BEP20Interface.sol";
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
 
@@ -58,7 +56,7 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
      */
     function setValidateConfigs(ValidateConfig[] memory configs) external virtual onlyOwner {
         require(configs.length > 0, "invalid validate config length");
-        for (uint8 i = 0; i < configs.length; i++) {
+        for (uint256 i; i < configs.length; ++i) {
             setValidateConfig(configs[i]);
         }
     }
