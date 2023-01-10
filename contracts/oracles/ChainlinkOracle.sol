@@ -177,7 +177,8 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
         require(tokenConfigs_.length > 0, "length can't be 0");
-        for (uint256 i; i < tokenConfigs_.length; ++i) {
+        uint256 numTokenConfigs = tokenConfigs_.length;
+        for (uint256 i; i < numTokenConfigs; ++i) {
             setTokenConfig(tokenConfigs_[i]);
         }
     }
