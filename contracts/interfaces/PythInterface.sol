@@ -1,4 +1,5 @@
-// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: 2021 Pyth Data Foundation
 pragma solidity 0.8.13;
 
 contract PythStructs {
