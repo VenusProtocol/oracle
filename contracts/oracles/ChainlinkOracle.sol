@@ -59,9 +59,69 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
         _disableInitializers();
     }
 
+    /**
+     * @notice Set the forced prices of the underlying token of input vToken
+     * @param vToken vToken address
+     * @param underlyingPriceMantissa price in 18 decimals
+     * @custom:access Only Governance
+     * @custom:error NotNullAddress thrown if address of vToken is null
+     * @custom:event Emits PricePosted event on succesfully setup of underlying price
+     */
+    function setUnderlyingPrice(
+        VBep20Interface vToken,
+        uint256 underlyingPriceMantissa
+    ) external notNullAddress(address(vToken)) onlyOwner {
+        address asset = address(vToken) == vBnb ? BNB_ADDR : address(vToken.underlying());
+        emit PricePosted(asset, prices[asset], underlyingPriceMantissa, underlyingPriceMantissa);
+        prices[asset] = underlyingPriceMantissa;
+    }
+
+    /**
+     * @notice Manually set the price of a given asset
+     * @param asset Asset address
+     * @param price Underlying price in 18 decimals
+     * @custom:access Only Governance
+     * @custom:event Emits PricePosted event on succesfully setup of underlying price
+     */
+    function setDirectPrice(address asset, uint256 price) external notNullAddress(asset) onlyOwner {
+        emit PricePosted(asset, prices[asset], price, price);
+        prices[asset] = price;
+    }
+
+    /**
+     * @notice Add multiple token configs at the same time
+     * @param tokenConfigs_ config array
+     * @custom:access Only Governance
+     * @custom:error Zero length error thrown, if length of the array in parameter is 0
+     */
+    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
+        require(tokenConfigs_.length > 0, "length can't be 0");
+        uint256 numTokenConfigs = tokenConfigs_.length;
+        for (uint256 i; i < numTokenConfigs; ++i) {
+            setTokenConfig(tokenConfigs_[i]);
+        }
+    }
+
     /// @notice Initializes the owner of the contract
     function initialize() public initializer {
         __Ownable_init();
+    }
+
+    /**
+     * @notice Add single token config. vToken & feed cannot be null addresses and maxStalePeriod must be positive
+     * @param tokenConfig Token config struct
+     * @custom:access Only Governance
+     * @custom:error NotNullAddress error is thrown if asset address is null
+     * @custom:error NotNullAddress error is thrown if token feed address is null
+     * @custom:error Range error is thrown if maxStale period of token is not greater than zero
+     * @custom:event Emits TokenConfigAdded event on succesfully setting of the token config
+     */
+    function setTokenConfig(
+        TokenConfig memory tokenConfig
+    ) public onlyOwner notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.feed) {
+        require(tokenConfig.maxStalePeriod > 0, "stale period can't be zero");
+        tokenConfigs[tokenConfig.asset] = tokenConfig;
+        emit TokenConfigAdded(tokenConfig.asset, tokenConfig.feed, tokenConfig.maxStalePeriod);
     }
 
     /**
@@ -80,8 +140,10 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
     }
 
     /**
-     * @notice Gets the Chainlink price for the underlying asset of a given vToken or the manually set price if it's been set
-     * @dev The decimals of the underlying token are considered to ensure the returned price has 18 decimals of precision
+     * @notice Gets the Chainlink price for the underlying asset of a given vToken 
+     * or the manually set price if it's been set
+     * @dev The decimals of the underlying token are considered to ensure the returned price
+     * has 18 decimals of precision
      * @param vToken vToken address
      * @return price Underlying price in USD
      */
@@ -140,66 +202,6 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
         require(deltaTime <= maxStalePeriod, "chainlink price expired");
 
         return uint256(answer) * (10 ** decimalDelta);
-    }
-
-    /**
-     * @notice Set the forced prices of the underlying token of input vToken
-     * @param vToken vToken address
-     * @param underlyingPriceMantissa price in 18 decimals
-     * @custom:access Only Governance
-     * @custom:error NotNullAddress thrown if address of vToken is null
-     * @custom:event Emits PricePosted event on succesfully setup of underlying price
-     */
-    function setUnderlyingPrice(
-        VBep20Interface vToken,
-        uint256 underlyingPriceMantissa
-    ) external notNullAddress(address(vToken)) onlyOwner {
-        address asset = address(vToken) == vBnb ? BNB_ADDR : address(vToken.underlying());
-        emit PricePosted(asset, prices[asset], underlyingPriceMantissa, underlyingPriceMantissa);
-        prices[asset] = underlyingPriceMantissa;
-    }
-
-    /**
-     * @notice Manually set the price of a given asset
-     * @param asset Asset address
-     * @param price Underlying price in 18 decimals
-     * @custom:access Only Governance
-     * @custom:event Emits PricePosted event on succesfully setup of underlying price
-     */
-    function setDirectPrice(address asset, uint256 price) external notNullAddress(asset) onlyOwner {
-        emit PricePosted(asset, prices[asset], price, price);
-        prices[asset] = price;
-    }
-
-    /**
-     * @notice Add multiple token configs at the same time
-     * @param tokenConfigs_ config array
-     * @custom:access Only Governance
-     * @custom:error Zero length error thrown, if length of the array in parameter is 0
-     */
-    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
-        require(tokenConfigs_.length > 0, "length can't be 0");
-        uint256 numTokenConfigs = tokenConfigs_.length;
-        for (uint256 i; i < numTokenConfigs; ++i) {
-            setTokenConfig(tokenConfigs_[i]);
-        }
-    }
-
-    /**
-     * @notice Add single token config. vToken & feed cannot be null addresses and maxStalePeriod must be positive
-     * @param tokenConfig Token config struct
-     * @custom:access Only Governance
-     * @custom:error NotNullAddress error is thrown if asset address is null
-     * @custom:error NotNullAddress error is thrown if token feed address is null
-     * @custom:error Range error is thrown if maxStale period of token is not greater than zero
-     * @custom:event Emits TokenConfigAdded event on succesfully setting of the token config
-     */
-    function setTokenConfig(
-        TokenConfig memory tokenConfig
-    ) public onlyOwner notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.feed) {
-        require(tokenConfig.maxStalePeriod > 0, "stale period can't be zero");
-        tokenConfigs[tokenConfig.asset] = tokenConfig;
-        emit TokenConfigAdded(tokenConfig.asset, tokenConfig.feed, tokenConfig.maxStalePeriod);
     }
 
     function _compareStrings(string memory a, string memory b) internal pure returns (bool) {
