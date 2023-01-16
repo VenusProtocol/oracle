@@ -10,10 +10,8 @@ struct TokenConfig {
     /// @notice Underlying token address, which can't be a null address and can be used to check if a token is supported
     /// @notice 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB for BNB
     address asset;
-    
     /// @notice Chainlink feed address
     address feed;
-    
     /// @notice Price expiration period of this asset
     uint256 maxStalePeriod;
 }
@@ -140,7 +138,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
     }
 
     /**
-     * @notice Gets the Chainlink price for the underlying asset of a given vToken 
+     * @notice Gets the Chainlink price for the underlying asset of a given vToken
      * or the manually set price if it's been set
      * @dev The decimals of the underlying token are considered to ensure the returned price
      * has 18 decimals of precision

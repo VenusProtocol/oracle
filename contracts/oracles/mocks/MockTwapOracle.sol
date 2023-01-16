@@ -12,7 +12,7 @@ contract MockTwapOracle is OwnableUpgradeable {
 
     //set price in 6 decimal precision
     constructor() {}
-   
+
     function setPrice(address asset, uint256 price) external {
         assetPrices[asset] = price;
     }

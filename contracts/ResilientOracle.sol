@@ -249,12 +249,9 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @custom:error NotNullAddress is thrown if main-role oracle address for asset is null
      * @custom:event Emits TokenConfigAdded event when vToken config is set successfully by governnace
      */
-    function setTokenConfig(TokenConfig memory tokenConfig)
-        public
-        onlyOwner
-        notNullAddress(tokenConfig.asset)
-        notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)])
-    {
+    function setTokenConfig(
+        TokenConfig memory tokenConfig
+    ) public onlyOwner notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)]) {
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(
             tokenConfig.asset,

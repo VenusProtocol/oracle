@@ -8,11 +8,9 @@ import "../interfaces/OracleInterface.sol";
 struct ValidateConfig {
     /// @notice asset address
     address asset;
-    
     /// @notice Upper bound of deviation between reported price and anchor price,
     /// beyond which the reported price will be invalidated
     uint256 upperBoundRatio;
-    
     /// @notice Lower bound of deviation between reported price and anchor price,
     /// below which the reported price will be invalidated
     uint256 lowerBoundRatio;
