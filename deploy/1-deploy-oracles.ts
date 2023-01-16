@@ -7,11 +7,13 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 const ADDRESSES = {
   bsctestnet: {
     vBNBAddress: testnetDeployments.Contracts.vBNB,
+    WBNBAddress: "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
     pythOracleAddress: "0xd7308b14BF4008e7C7196eC35610B1427C5702EA",
     binanceFeedRegistryAddress: "0x999DD49FeFdC043fDAC4FE12Bb1e4bb31cB4c47B",
   },
   bscmainnet: {
     vBNBAddress: mainnetDeployments.Contracts.vBNB,
+    WBNBAddress: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
     pythOracleAddress: "",
     binanceFeedRegistryAddress: "",
   },
@@ -23,10 +25,14 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
   const networkName = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
 
+  const vBNBAddress = ADDRESSES[networkName].vBNBAddress;
+  const WBNBAddress = ADDRESSES[networkName].WBNBAddress;
+
   await deploy("BoundValidator", {
     from: deployer,
     log: true,
     deterministicDeployment: false,
+    args: [vBNBAddress],
     proxy: {
       proxyContract: "OptimizedTransparentProxy",
       execute: {
@@ -42,6 +48,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     from: deployer,
     log: true,
     deterministicDeployment: false,
+    args: [vBNBAddress],
     proxy: {
       proxyContract: "OptimizedTransparentProxy",
       execute: {
@@ -56,6 +63,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     from: deployer,
     log: true,
     deterministicDeployment: false,
+    args: network.live ? [vBNBAddress] : [],
     proxy: {
       proxyContract: "OptimizedTransparentProxy",
       execute: {
@@ -65,18 +73,17 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
-  const vBNBAddress = ADDRESSES[networkName].vBNBAddress;
-
   await deploy("TwapOracle", {
     contract: network.live ? "TwapOracle" : "MockTwapOracle",
     from: deployer,
     log: true,
     deterministicDeployment: false,
+    args: network.live ? [vBNBAddress, WBNBAddress] : [],
     proxy: {
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: [vBNBAddress],
+        args: network.live ? [] : [vBNBAddress],
       },
     },
   });
@@ -88,6 +95,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     from: deployer,
     log: true,
     deterministicDeployment: false,
+    args: network.live ? [vBNBAddress] : [],
     proxy: {
       proxyContract: "OptimizedTransparentProxy",
       execute: {
@@ -104,6 +112,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     from: deployer,
     log: true,
     deterministicDeployment: false,
+    args: network.live ? [vBNBAddress] : [],
     proxy: {
       proxyContract: "OptimizedTransparentProxy",
       execute: {
