@@ -85,18 +85,6 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     }
 
     /**
-     * @notice Initializes the contract admin and sets the BoundValidator contract address
-     * @param _boundValidator Address of the bound validator contract
-     */
-    function initialize(BoundValidatorInterface _boundValidator) public initializer {
-        require(address(_boundValidator) != address(0), "invalid bound validator address");
-        boundValidator = _boundValidator;
-
-        __Ownable_init();
-        __Pausable_init();
-    }
-
-    /**
      * @notice Pauses oracle
      * @custom:access Only Governance
      */
@@ -113,29 +101,6 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     }
 
     /**
-     * @dev Gets token config by vToken address
-     * @param vToken vToken address
-     * @return tokenConfig Config for the vToken
-     */
-    function getTokenConfig(address vToken) external view returns (TokenConfig memory) {
-        address asset = address(vToken) == vBnb ? BNB_ADDR : VBep20Interface(vToken).underlying();
-        return tokenConfigs[asset];
-    }
-
-    /**
-     * @notice Gets oracle and enabled status by vToken address
-     * @param vToken vToken address
-     * @param role Oracle role
-     * @return oracle Oracle address based on role
-     * @return enabled Enabled flag of the oracle based on token config
-     */
-    function getOracle(address vToken, OracleRole role) public view returns (address oracle, bool enabled) {
-        address asset = address(vToken) == vBnb ? BNB_ADDR : VBep20Interface(vToken).underlying();
-        oracle = tokenConfigs[asset].oracles[uint256(role)];
-        enabled = tokenConfigs[asset].enableFlagsForOracles[uint256(role)];
-    }
-
-    /**
      * @notice Batch sets token configs
      * @param tokenConfigs_ Token config array
      * @custom:access Only Governance
@@ -147,30 +112,6 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
         for (uint256 i; i < numTokenConfigs; ++i) {
             setTokenConfig(tokenConfigs_[i]);
         }
-    }
-
-    /**
-     * @notice Sets/resets single token configs.
-     * @dev main oracle **must not** be a null address
-     * @param tokenConfig Token config struct
-     * @custom:access Only Governance
-     * @custom:error NotNullAddress is thrown if asset address is null
-     * @custom:error NotNullAddress is thrown if main-role oracle address for asset is null
-     * @custom:event Emits TokenConfigAdded event when vToken config is set successfully by governnace
-     */
-    function setTokenConfig(TokenConfig memory tokenConfig)
-        public
-        onlyOwner
-        notNullAddress(tokenConfig.asset)
-        notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)])
-    {
-        tokenConfigs[tokenConfig.asset] = tokenConfig;
-        emit TokenConfigAdded(
-            tokenConfig.asset,
-            tokenConfig.oracles[uint256(OracleRole.MAIN)],
-            tokenConfig.oracles[uint256(OracleRole.PIVOT)],
-            tokenConfig.oracles[uint256(OracleRole.FALLBACK)]
-        );
     }
 
     /**
@@ -227,6 +168,16 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     }
 
     /**
+     * @dev Gets token config by vToken address
+     * @param vToken vToken address
+     * @return tokenConfig Config for the vToken
+     */
+    function getTokenConfig(address vToken) external view returns (TokenConfig memory) {
+        address asset = address(vToken) == vBnb ? BNB_ADDR : VBep20Interface(vToken).underlying();
+        return tokenConfigs[asset];
+    }
+
+    /**
      * @notice Gets price of the underlying asset for a given vToken. Validation flow:
      * - Check if the oracle is paused globally
      * - Validate price from main oracle against pivot oracle
@@ -275,6 +226,55 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
         }
 
         revert("invalid resilient oracle price");
+    }
+
+    /**
+     * @notice Initializes the contract admin and sets the BoundValidator contract address
+     * @param _boundValidator Address of the bound validator contract
+     */
+    function initialize(BoundValidatorInterface _boundValidator) public initializer {
+        require(address(_boundValidator) != address(0), "invalid bound validator address");
+        boundValidator = _boundValidator;
+
+        __Ownable_init();
+        __Pausable_init();
+    }
+
+    /**
+     * @notice Sets/resets single token configs.
+     * @dev main oracle **must not** be a null address
+     * @param tokenConfig Token config struct
+     * @custom:access Only Governance
+     * @custom:error NotNullAddress is thrown if asset address is null
+     * @custom:error NotNullAddress is thrown if main-role oracle address for asset is null
+     * @custom:event Emits TokenConfigAdded event when vToken config is set successfully by governnace
+     */
+    function setTokenConfig(TokenConfig memory tokenConfig)
+        public
+        onlyOwner
+        notNullAddress(tokenConfig.asset)
+        notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)])
+    {
+        tokenConfigs[tokenConfig.asset] = tokenConfig;
+        emit TokenConfigAdded(
+            tokenConfig.asset,
+            tokenConfig.oracles[uint256(OracleRole.MAIN)],
+            tokenConfig.oracles[uint256(OracleRole.PIVOT)],
+            tokenConfig.oracles[uint256(OracleRole.FALLBACK)]
+        );
+    }
+
+    /**
+     * @notice Gets oracle and enabled status by vToken address
+     * @param vToken vToken address
+     * @param role Oracle role
+     * @return oracle Oracle address based on role
+     * @return enabled Enabled flag of the oracle based on token config
+     */
+    function getOracle(address vToken, OracleRole role) public view returns (address oracle, bool enabled) {
+        address asset = address(vToken) == vBnb ? BNB_ADDR : VBep20Interface(vToken).underlying();
+        oracle = tokenConfigs[asset].oracles[uint256(role)];
+        enabled = tokenConfigs[asset].enableFlagsForOracles[uint256(role)];
     }
 
     /**
