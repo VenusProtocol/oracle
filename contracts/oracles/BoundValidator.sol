@@ -44,13 +44,6 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
     }
 
     /**
-     * @notice Initializes the owner of the contract
-     */
-    function initialize() public initializer {
-        __Ownable_init();
-    }
-
-    /**
      * @notice Add multiple validation configs at the same time
      * @param configs Array of validation configs
      * @custom:access Only Governance
@@ -62,6 +55,13 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
         for (uint256 i; i < configs.length; ++i) {
             setValidateConfig(configs[i]);
         }
+    }
+
+    /**
+     * @notice Initializes the owner of the contract
+     */
+    function initialize() public initializer {
+        __Ownable_init();
     }
 
     /**
@@ -118,5 +118,6 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
 
     // BoundValidator is to get inherited, so it's a good practice to add some storage gaps like
     // OpenZepplin proposed in their contracts: https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+    // solhint-disable-next-line
     uint256[49] private __gap;
 }
