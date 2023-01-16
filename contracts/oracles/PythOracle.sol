@@ -41,14 +41,14 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     /// @notice The actual pyth oracle address fetch & store the prices
     IPyth public underlyingPythOracle;
 
+    /// @notice Token configs by asset address
+    mapping(address => TokenConfig) public tokenConfigs;
+
     /// @notice Emit when setting a new pyth oracle address
     event PythOracleSet(address indexed newPythOracle);
 
     /// @notice Emit when a token config is added
     event TokenConfigAdded(address indexed vToken, bytes32 indexed pythId, uint64 indexed maxStalePeriod);
-
-    /// @notice Token configs by asset address
-    mapping(address => TokenConfig) public tokenConfigs;
 
     modifier notNullAddress(address someone) {
         require(someone != address(0), "can't be zero address");
@@ -61,17 +61,6 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     constructor(address vBnbAddress) notNullAddress(vBnbAddress) {
         vBnb = vBnbAddress;
         _disableInitializers();
-    }
-
-    /**
-     * @notice Initializes the owner of the contract and sets required contracts
-     * @param underlyingPythOracle_ Address of the Pyth oracle
-     */
-    function initialize(address underlyingPythOracle_) public initializer {
-        __Ownable_init();
-        require(underlyingPythOracle_ != address(0), "pyth oracle cannot be zero address");
-        underlyingPythOracle = IPyth(underlyingPythOracle_);
-        emit PythOracleSet(underlyingPythOracle_);
     }
 
     /**
@@ -89,19 +78,6 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     }
 
     /**
-     * @notice Set single token config. `maxStalePeriod` cannot be 0 and `vToken` can be a null address
-     * @param tokenConfig Token config struct
-     * @custom:access Only Governance
-     * @custom:error Range error is thrown if max stale period is zero
-     * @custom:error NotNullAddress error is thrown if asset address is null
-     */
-    function setTokenConfig(TokenConfig memory tokenConfig) public onlyOwner notNullAddress(tokenConfig.asset) {
-        require(tokenConfig.maxStalePeriod != 0, "max stale period cannot be 0");
-        tokenConfigs[tokenConfig.asset] = tokenConfig;
-        emit TokenConfigAdded(tokenConfig.asset, tokenConfig.pythId, tokenConfig.maxStalePeriod);
-    }
-
-    /**
      * @notice Set the underlying Pyth oracle contract address
      * @param underlyingPythOracle_ Pyth oracle contract address
      * @custom:access Only Governance
@@ -113,6 +89,30 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     ) external onlyOwner notNullAddress(address(underlyingPythOracle_)) {
         underlyingPythOracle = underlyingPythOracle_;
         emit PythOracleSet(address(underlyingPythOracle_));
+    }
+
+    /**
+     * @notice Initializes the owner of the contract and sets required contracts
+     * @param underlyingPythOracle_ Address of the Pyth oracle
+     */
+    function initialize(address underlyingPythOracle_) public initializer {
+        __Ownable_init();
+        require(underlyingPythOracle_ != address(0), "pyth oracle cannot be zero address");
+        underlyingPythOracle = IPyth(underlyingPythOracle_);
+        emit PythOracleSet(underlyingPythOracle_);
+    }
+
+    /**
+     * @notice Set single token config. `maxStalePeriod` cannot be 0 and `vToken` can be a null address
+     * @param tokenConfig Token config struct
+     * @custom:access Only Governance
+     * @custom:error Range error is thrown if max stale period is zero
+     * @custom:error NotNullAddress error is thrown if asset address is null
+     */
+    function setTokenConfig(TokenConfig memory tokenConfig) public onlyOwner notNullAddress(tokenConfig.asset) {
+        require(tokenConfig.maxStalePeriod != 0, "max stale period cannot be 0");
+        tokenConfigs[tokenConfig.asset] = tokenConfig;
+        emit TokenConfigAdded(tokenConfig.asset, tokenConfig.pythId, tokenConfig.maxStalePeriod);
     }
 
     /**
