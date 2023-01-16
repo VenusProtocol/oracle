@@ -16,7 +16,7 @@ struct TokenConfig {
 }
 
 /**
- * PythOracle contract reads prices from actual Pyth oracle contract which accepts/verifies and stores the
+ * PythOracle contract reads prices from actual Pyth oracle contract which accepts, verifies and stores the
  * updated prices from external sources
  */
 contract PythOracle is OwnableUpgradeable, OracleInterface {
@@ -28,7 +28,7 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     // To cast int64/int8 types from Pyth to unsigned types
     using SafeCast for int256;
 
-    /// @notice price decimals
+    /// @notice Exponent scale (decimal precision) of prices
     uint256 public constant EXP_SCALE = 1e18;
 
     /// @notice vBNB address
@@ -38,16 +38,16 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     /// @notice Set this as asset address for BNB. This is the underlying for vBNB
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
-    /// @notice the actual pyth oracle address fetch & store the prices
+    /// @notice The actual pyth oracle address fetch & store the prices
     IPyth public underlyingPythOracle;
 
-    /// @notice emit when setting a new pyth oracle address
+    /// @notice Emit when setting a new pyth oracle address
     event PythOracleSet(address indexed newPythOracle);
 
-    /// @notice emit when token config added
+    /// @notice Emit when a token config is added
     event TokenConfigAdded(address indexed vToken, bytes32 indexed pythId, uint64 indexed maxStalePeriod);
 
-    /// @notice token configs by asset address
+    /// @notice Token configs by asset address
     mapping(address => TokenConfig) public tokenConfigs;
 
     modifier notNullAddress(address someone) {
@@ -56,7 +56,7 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     }
 
     /// @notice Constructor for the implementation contract. Sets immutable variables.
-    /// @param vBnbAddress The address of the VBNB
+    /// @param vBnbAddress The address of the vBNB
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address vBnbAddress) notNullAddress(vBnbAddress) {
         vBnb = vBnbAddress;
@@ -65,7 +65,7 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
 
     /**
      * @notice Initializes the owner of the contract and sets required contracts
-     * @param underlyingPythOracle_ Address of the pyth oracle
+     * @param underlyingPythOracle_ Address of the Pyth oracle
      */
     function initialize(address underlyingPythOracle_) public initializer {
         __Ownable_init();
@@ -76,9 +76,9 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
 
     /**
      * @notice Batch set token configs
-     * @param tokenConfigs_ token config array
+     * @param tokenConfigs_ Token config array
      * @custom:access Only Governance
-     * @custom:error Zero length error thrown, if length of the array in parameter is 0
+     * @custom:error Zero length error is thrown if length of the array in parameter is 0
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
         require(tokenConfigs_.length != 0, "length can't be 0");
@@ -89,11 +89,11 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     }
 
     /**
-     * @notice Set single token config, `maxStalePeriod` cannot be 0 and `vToken` can be zero address
-     * @param tokenConfig token config struct
+     * @notice Set single token config. `maxStalePeriod` cannot be 0 and `vToken` can be a null address
+     * @param tokenConfig Token config struct
      * @custom:access Only Governance
-     * @custom:error Range error thrown if max stale period is zero
-     * @custom:error NotNullAddress error thrown if asset address is zero
+     * @custom:error Range error is thrown if max stale period is zero
+     * @custom:error NotNullAddress error is thrown if asset address is null
      */
     function setTokenConfig(TokenConfig memory tokenConfig) public onlyOwner notNullAddress(tokenConfig.asset) {
         require(tokenConfig.maxStalePeriod != 0, "max stale period cannot be 0");
@@ -102,8 +102,8 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     }
 
     /**
-     * @notice set the underlying pyth oracle contract address
-     * @param underlyingPythOracle_ pyth oracle contract address
+     * @notice Set the underlying Pyth oracle contract address
+     * @param underlyingPythOracle_ Pyth oracle contract address
      * @custom:access Only Governance
      * @custom:error NotNullAddress error thrown if underlyingPythOracle_ address is zero
      * @custom:event Emits PythOracleSet event with address of Pyth oracle.
@@ -119,10 +119,10 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
      * @notice Get price of underlying asset of the input vToken, under the hood this function
      * get price from Pyth contract, the prices of which are updated externally
      * @param vToken vToken address
-     * @return price in 10 decimals
-     * @custom:error Zero address error thrown if underlyingPythOracle address is zero
-     * @custom:error Zero address error thrown if asset address is zero
-     * @custom:error Range error thrown if price of pythoracle is not greater than zero
+     * @return price Underlying price with a precision of 10 decimals
+     * @custom:error Zero address error thrown if underlyingPythOracle address is null
+     * @custom:error Zero address error thrown if asset address is null
+     * @custom:error Range error thrown if price of Pyth oracle is not greater than zero
      */
     function getUnderlyingPrice(address vToken) public view override returns (uint256) {
         require(address(underlyingPythOracle) != address(0), "Pyth oracle is zero address");
