@@ -14,7 +14,7 @@ contract BinanceOracle is Initializable {
     address public immutable vBnb;
 
     /// @notice Constructor for the implementation contract. Sets immutable variables.
-    /// @param vBnbAddress The address of the VBNB
+    /// @param vBnbAddress The address of the vBNB
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address vBnbAddress) {
         require(vBnbAddress != address(0), "can't be zero address");
@@ -23,7 +23,7 @@ contract BinanceOracle is Initializable {
     }
 
     /**
-     * @notice Sets the contracts required to fetch price
+     * @notice Sets the contracts required to fetch prices
      * @param feed Address of binance oracle feed registry.
      */
     function initialize(FeedRegistryInterface feed) public initializer {
@@ -31,9 +31,9 @@ contract BinanceOracle is Initializable {
     }
 
     /**
-     * @notice Gets the price of vToken from binance oracle
+     * @notice Gets the price of a vToken from the binance oracle
      * @param vToken Address of the vToken
-     * @return price in USD
+     * @return Price in USD
      */
     function getUnderlyingPrice(VBep20Interface vToken) public view returns (uint256) {
         string memory symbol;
