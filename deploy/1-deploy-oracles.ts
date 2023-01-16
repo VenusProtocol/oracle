@@ -122,6 +122,5 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 };
-func.tags = ["Test"];
 
 export default func;
