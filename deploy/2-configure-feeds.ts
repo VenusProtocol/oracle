@@ -3,8 +3,8 @@ import hre from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { ResilientOracle } from "../src/types/contracts/ResilientOracle";
-import { BoundValidator } from "../src/types/contracts/oracles/BoundValidator";
+import { ResilientOracle } from "../typechain-types/contracts/ResilientOracle";
+import { BoundValidator } from "../typechain-types/contracts/oracles/BoundValidator";
 
 interface Feed {
   [key: string]: string;
