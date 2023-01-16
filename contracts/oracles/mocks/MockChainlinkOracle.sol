@@ -11,12 +11,12 @@ contract MockChainlinkOracle is OwnableUpgradeable {
     //set price in 6 decimal precision
     constructor() {}
 
-    function initialize() public initializer {
-        __Ownable_init();
-    }
-
     function setPrice(address asset, uint256 price) external {
         assetPrices[asset] = price;
+    }
+
+    function initialize() public initializer {
+        __Ownable_init();
     }
 
     //https://compound.finance/docs/prices

@@ -12,15 +12,15 @@ contract MockTwapOracle is OwnableUpgradeable {
 
     //set price in 6 decimal precision
     constructor() {}
+   
+    function setPrice(address asset, uint256 price) external {
+        assetPrices[asset] = price;
+    }
 
     function initialize(address vBNB_) public initializer {
         __Ownable_init();
         require(vBNB_ != address(0), "vBNB can't be zero address");
         vBNB = vBNB_;
-    }
-
-    function setPrice(address asset, uint256 price) external {
-        assetPrices[asset] = price;
     }
 
     //https://compound.finance/docs/prices
