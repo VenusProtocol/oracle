@@ -8,17 +8,6 @@ import "./interfaces/VBep20Interface.sol";
 import "./interfaces/OracleInterface.sol";
 
 contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOracleInterface {
-    uint256 public constant INVALID_PRICE = 0;
-
-    /// @notice vBNB address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vBnb;
-
-    /// @notice Set this as asset address for BNB. This is the underlying for vBNB
-    address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
-
-    BoundValidatorInterface public boundValidator;
-
     /**
      * @dev Oracle roles:
      * **main**: The most trustworthy price source
@@ -43,6 +32,17 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
         bool[3] enableFlagsForOracles;
     }
 
+    uint256 public constant INVALID_PRICE = 0;
+
+    /// @notice vBNB address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable vBnb;
+
+    /// @notice Set this as asset address for BNB. This is the underlying for vBNB
+    address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
+
+    BoundValidatorInterface public boundValidator;
+
     mapping(address => TokenConfig) private tokenConfigs;
 
     event TokenConfigAdded(
@@ -54,7 +54,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
 
     /// Event emitted when an oracle is set
     event OracleSet(address indexed asset, address indexed oracle, uint256 indexed role);
-    
+
     /// Event emitted when an oracle is enabled or disabled
     event OracleEnabled(address indexed asset, uint256 indexed role, bool indexed enable);
 
@@ -158,9 +158,12 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @custom:error NotNullAddress is thrown if main-role oracle address for asset is null
      * @custom:event Emits TokenConfigAdded event when vToken config is set successfully by governnace
      */
-    function setTokenConfig(
-        TokenConfig memory tokenConfig
-    ) public onlyOwner notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)]) {
+    function setTokenConfig(TokenConfig memory tokenConfig)
+        public
+        onlyOwner
+        notNullAddress(tokenConfig.asset)
+        notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)])
+    {
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(
             tokenConfig.asset,

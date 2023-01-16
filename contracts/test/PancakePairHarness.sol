@@ -55,16 +55,6 @@ contract PancakePairHarness {
     uint256 public price1CumulativeLast;
     uint256 public kLast; // reserve0 * reserve1, as of immediately after the most recent liquidity event
 
-    function currentBlockTimestamp() external view returns (uint32) {
-        return uint32(block.timestamp % 2 ** 32);
-    }
-
-    function getReserves() public view returns (uint112 _reserve0, uint112 _reserve1, uint32 _blockTimestampLast) {
-        _reserve0 = reserve0;
-        _reserve1 = reserve1;
-        _blockTimestampLast = blockTimestampLast;
-    }
-
     // called once by the factory at time of deployment
     function initialize(address _token0, address _token1) external {
         token0 = _token0;
@@ -86,5 +76,15 @@ contract PancakePairHarness {
         reserve0 = uint112(balance0);
         reserve1 = uint112(balance1);
         blockTimestampLast = blockTimestamp;
+    }
+
+    function currentBlockTimestamp() external view returns (uint32) {
+        return uint32(block.timestamp % 2 ** 32);
+    }
+
+    function getReserves() public view returns (uint112 _reserve0, uint112 _reserve1, uint32 _blockTimestampLast) {
+        _reserve0 = reserve0;
+        _reserve1 = reserve1;
+        _blockTimestampLast = blockTimestampLast;
     }
 }
