@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.13;
 
+interface IPancakePair {
+    function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast);
+
+    function price0CumulativeLast() external view returns (uint256);
+
+    function price1CumulativeLast() external view returns (uint256);
+}
+
 library FixedPoint {
     // range: [0, 2**112 - 1]
     // resolution: 1 / 2**112
@@ -57,12 +65,4 @@ library PancakeOracleLibrary {
             }
         }
     }
-}
-
-interface IPancakePair {
-    function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast);
-
-    function price0CumulativeLast() external view returns (uint256);
-
-    function price1CumulativeLast() external view returns (uint256);
 }

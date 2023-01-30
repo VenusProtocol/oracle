@@ -14,14 +14,14 @@ contract MockPythOracle is OwnableUpgradeable {
     //set price in 6 decimal precision
     constructor() {}
 
+    function setPrice(address asset, uint256 price) external {
+        assetPrices[asset] = price;
+    }
+
     function initialize(address underlyingPythOracle_) public initializer {
         __Ownable_init();
         require(underlyingPythOracle_ != address(0), "pyth oracle cannot be zero address");
         underlyingPythOracle = IPyth(underlyingPythOracle_);
-    }
-
-    function setPrice(address asset, uint256 price) external {
-        assetPrices[asset] = price;
     }
 
     //https://compound.finance/docs/prices

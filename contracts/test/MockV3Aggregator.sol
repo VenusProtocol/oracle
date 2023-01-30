@@ -28,24 +28,6 @@ contract MockV3Aggregator is AggregatorV2V3Interface {
         updateAnswer(_initialAnswer);
     }
 
-    function updateAnswer(int256 _answer) public {
-        latestAnswer = _answer;
-        latestTimestamp = block.timestamp;
-        latestRound++;
-        getAnswer[latestRound] = _answer;
-        getTimestamp[latestRound] = block.timestamp;
-        getStartedAt[latestRound] = block.timestamp;
-    }
-
-    function updateRoundData(uint80 _roundId, int256 _answer, uint256 _timestamp, uint256 _startedAt) public {
-        latestRound = _roundId;
-        latestAnswer = _answer;
-        latestTimestamp = _timestamp;
-        getAnswer[latestRound] = _answer;
-        getTimestamp[latestRound] = _timestamp;
-        getStartedAt[latestRound] = _startedAt;
-    }
-
     function getRoundData(
         uint80 _roundId
     )
@@ -72,5 +54,23 @@ contract MockV3Aggregator is AggregatorV2V3Interface {
 
     function description() external pure returns (string memory) {
         return "v0.6/tests/MockV3Aggregator.sol";
+    }
+
+    function updateAnswer(int256 _answer) public {
+        latestAnswer = _answer;
+        latestTimestamp = block.timestamp;
+        latestRound++;
+        getAnswer[latestRound] = _answer;
+        getTimestamp[latestRound] = block.timestamp;
+        getStartedAt[latestRound] = block.timestamp;
+    }
+
+    function updateRoundData(uint80 _roundId, int256 _answer, uint256 _timestamp, uint256 _startedAt) public {
+        latestRound = _roundId;
+        latestAnswer = _answer;
+        latestTimestamp = _timestamp;
+        getAnswer[latestRound] = _answer;
+        getTimestamp[latestRound] = _timestamp;
+        getStartedAt[latestRound] = _startedAt;
     }
 }

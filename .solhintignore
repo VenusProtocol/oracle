@@ -1,3 +1,6 @@
 # directories
 **/artifacts
 **/node_modules
+
+# Ignoring Pyth Interface because it was copied and linting would make the diff more complicated when updating
+contracts/interfaces/PythInterface.sol

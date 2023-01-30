@@ -12,13 +12,13 @@ contract MockBinanceOracle is OwnableUpgradeable {
 
     constructor() {}
 
+    function setPrice(address asset, uint256 price) external {
+        assetPrices[asset] = price;
+    }
+
     function initialize(FeedRegistryInterface feed) public initializer {
         __Ownable_init();
         feedRegistry = feed;
-    }
-
-    function setPrice(address asset, uint256 price) external {
-        assetPrices[asset] = price;
     }
 
     function getUnderlyingPrice(address vToken) public view returns (uint256) {

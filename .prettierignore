@@ -9,7 +9,7 @@
 **/coverage
 **/dist
 **/node_modules
-**/types
+**/typechain-types
 
 # files
 *.env

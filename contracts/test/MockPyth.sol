@@ -15,25 +15,12 @@ contract MockPyth is AbstractPyth {
         validTimePeriod = _validTimePeriod;
     }
 
-    function queryPriceFeed(bytes32 id) public view override returns (PythStructs.PriceFeed memory priceFeed) {
-        require(priceFeeds[id].id != 0, "no price feed found for the given price id");
-        return priceFeeds[id];
-    }
-
     // simply update price feeds
     function updatePriceFeedsHarness(PythStructs.PriceFeed[] calldata feeds) external {
         require(feeds.length > 0, "feeds length must > 0");
         for (uint256 i = 0; i < feeds.length; ++i) {
             priceFeeds[feeds[i].id] = feeds[i];
         }
-    }
-
-    function priceFeedExists(bytes32 id) public view override returns (bool) {
-        return (priceFeeds[id].id != 0);
-    }
-
-    function getValidTimePeriod() public view override returns (uint256) {
-        return validTimePeriod;
     }
 
     // Takes an array of encoded price feeds and stores them.
@@ -89,6 +76,19 @@ contract MockPyth is AbstractPyth {
 
         // There is only 1 batch of prices
         emit UpdatePriceFeeds(msg.sender, 1, requiredFee);
+    }
+
+    function queryPriceFeed(bytes32 id) public view override returns (PythStructs.PriceFeed memory priceFeed) {
+        require(priceFeeds[id].id != 0, "no price feed found for the given price id");
+        return priceFeeds[id];
+    }
+
+    function priceFeedExists(bytes32 id) public view override returns (bool) {
+        return (priceFeeds[id].id != 0);
+    }
+
+    function getValidTimePeriod() public view override returns (uint256) {
+        return validTimePeriod;
     }
 
     function getUpdateFee(uint256 updateDataSize) public view override returns (uint256 feeAmount) {

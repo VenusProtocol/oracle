@@ -13,19 +13,18 @@ struct Observation {
 }
 
 struct TokenConfig {
-    /// @notice asset address, which can't be zero address and can be used for existance check
+    /// @notice Asset address, which can't be zero address and can be used for existance check
     address asset;
     /// @notice Decimals of underlying asset
     uint256 baseUnit;
-    /// @notice The address of pancake pair
+    /// @notice The address of Pancake pair
     address pancakePool;
     /// @notice Whether the token is paired with WBNB
     bool isBnbBased;
-    /// @notice A flag identifies whether the pancake pair is reversed
+    /// @notice A flag identifies whether the Pancake pair is reversed
     /// e.g. XVS-WBNB is not reversed, while WBNB-XVS is.
     bool isReversedPool;
-    /// @notice **twap** update period in second, which is the minimum time in seconds
-    /// required to update **twap** window
+    /// @notice The minimum window in seconds required between TWAP updates
     uint256 anchorPeriod;
 }
 
@@ -52,7 +51,13 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     /// @notice Stored price by token
     mapping(address => uint256) public prices;
 
-    /// @notice Emit this event when **twap** window is updated
+    /// @notice Keeps a record of token observations mapped by address, updated on every updateTwap invocation.
+    mapping(address => Observation[]) public observations;
+
+    /// @notice Observation array index which probably falls in current anchor period mapped by asset address
+    mapping(address => uint256) public windowStart;
+
+    /// @notice Emit this event when TWAP window is updated
     event TwapWindowUpdated(
         address indexed asset,
         uint256 oldTimestamp,
@@ -60,12 +65,6 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
         uint256 newTimestamp,
         uint256 newAcc
     );
-
-    /// @notice Keeps a record of token observations mapped by address, updated on every updateTwap invocation.
-    mapping(address => Observation[]) public observations;
-
-    /// @notice index of array which probably falls in current anchor period mapped with asset address
-    mapping(address => uint256) public windowStart;
 
     /// @notice Emit this event when TWAP price is updated
     event AnchorPriceUpdated(address indexed asset, uint256 price, uint256 oldTimestamp, uint256 newTimestamp);
@@ -89,16 +88,9 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     }
 
     /**
-     * @notice Initializes the owner of the contract and sets the contracts required
-     */
-    function initialize() public initializer {
-        __Ownable_init();
-    }
-
-    /**
-     * @notice Add multiple token configs at the same time
-     * @param configs config array
-     * @custom:error ZSero length error thrown, if length of the array in parameter is 0
+     * @notice Adds multiple token configs at the same time
+     * @param configs Config array
+     * @custom:error Zero length error thrown, if length of the config array is 0
      */
     function setTokenConfigs(TokenConfig[] memory configs) external onlyOwner {
         require(configs.length > 0, "length can't be 0");
@@ -109,16 +101,41 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     }
 
     /**
-     * @notice Add single token configs
+     * @notice Get the underlying TWAP price for the given vToken
+     * @param vToken vToken address
+     * @return price Underlying price in USD
+     * @custom:error Missing error is thrown if the token config does not exist
+     * @custom:error Range error is thrown if TWAP price is not greater than zero
+     */
+    function getUnderlyingPrice(address vToken) external view override returns (uint256) {
+        // VBNB token doesn't have `underlying` method, vBNB's underlying token is wBNB
+        address asset = address(vToken) == vBnb ? WBNB : VBep20Interface(vToken).underlying();
+        require(tokenConfigs[asset].asset != address(0), "asset not exist");
+        uint256 price = prices[asset];
+
+        // if price is 0, it means the price hasn't been updated yet and it's meaningless, revert
+        require(price > 0, "TWAP price must be positive");
+        return (price * (10 ** (18 - IERC20Metadata(asset).decimals())));
+    }
+
+    /**
+     * @notice Initializes the owner of the contract and sets the contracts required
+     */
+    function initialize() public initializer {
+        __Ownable_init();
+    }
+
+    /**
+     * @notice Adds a single token config
      * @param config token config struct
      * @custom:access Only Governance
-     * @custom:error Range error thrown if anchor period is not greater than zero
-     * @custom:error Range error thrown if base unit is not greater than zero
-     * @custom:error Value error thrown if base unit decimals not same as asset decimals
-     * @custom:error NotNullAddress if address of asset is zero
-     * @custom:error NotNullAddress if pancake swap pool address is zero
+     * @custom:error Range error is thrown if anchor period is not greater than zero
+     * @custom:error Range error is thrown if base unit is not greater than zero
+     * @custom:error Value error is thrown if base unit decimals is not the same as asset decimals
+     * @custom:error NotNullAddress error is thrown if address of asset is null
+     * @custom:error NotNullAddress error is thrown if PancakeSwap pool address is null
      * @custom:event Emits TokenConfigAdded event if new token config are added with
-     * asset address, pancakepool address, anchor period address
+     * asset address, PancakePool address, anchor period address
      */
     function setTokenConfig(
         TokenConfig memory config
@@ -139,40 +156,9 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     }
 
     /**
-     * @notice Get the underlying **twap** price of input vToken
-     * @param vToken vToken address
-     * @return price in USD
-     * @custom:error Missing error thrown if token config is not exist
-     * @custom:error Range error thrown if **twap** price is not greater than zero
-     */
-    function getUnderlyingPrice(address vToken) external view override returns (uint256) {
-        // VBNB token doesn't have `underlying` method, vBNB's underlying token is wBNB
-        address asset = address(vToken) == vBnb ? WBNB : VBep20Interface(vToken).underlying();
-        require(tokenConfigs[asset].asset != address(0), "asset not exist");
-        uint256 price = prices[asset];
-
-        // if price is 0, it means the price hasn't been updated yet and it's meaningless, revert
-        require(price > 0, "TWAP price must be positive");
-        return (price * (10 ** (18 - IERC20Metadata(asset).decimals())));
-    }
-
-    /**
-     * @notice Fetches the current token/WBNB and token/BUSD price accumulator from pancakeswap.
-     * @return cumulative price of target token regardless of pair order
-     */
-    function currentCumulativePrice(TokenConfig memory config) public view returns (uint256) {
-        (uint256 price0, uint256 price1, ) = PancakeOracleLibrary.currentCumulativePrices(config.pancakePool);
-        if (config.isReversedPool) {
-            return price1;
-        } else {
-            return price0;
-        }
-    }
-
-    /**
      * @notice Updates the current token/BUSD price from PancakeSwap, with 18 decimals of precision.
      * @return vToken Address of vToken
-     * @custom:error Missing error thrown if token config is not exist
+     * @custom:error Missing error is thrown if token config does not exist
      */
     function updateTwap(address vToken) public returns (uint256) {
         // VBNB token doesn't have `underlying` method, vBNB's underlying token is wBNB
@@ -187,12 +173,25 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     }
 
     /**
+     * @notice Fetches the current token/WBNB and token/BUSD price accumulator from PancakeSwap.
+     * @return cumulative price of target token regardless of pair order
+     */
+    function currentCumulativePrice(TokenConfig memory config) public view returns (uint256) {
+        (uint256 price0, uint256 price1, ) = PancakeOracleLibrary.currentCumulativePrices(config.pancakePool);
+        if (config.isReversedPool) {
+            return price1;
+        } else {
+            return price0;
+        }
+    }
+
+    /**
      * @notice Fetches the current token/BUSD price from PancakeSwap, with 18 decimals of precision.
-     * @return price in USD, with 18 decimals
-     * @custom:error Timing error thrown if current time is not greater than old observation timestamp
-     * @custom:error Zero price error thrown if token is BNB based and price is zero
-     * @custom:error Zero price error thrown if fetched anchorPriceMantissa is zero
-     * @custom:event Emits AnchorPriceUpdated event on sucussfully update of observation with assset address,
+     * @return price Underlying price in USD, with 18 decimals
+     * @custom:error Timing error is thrown if current time is not greater than old observation timestamp
+     * @custom:error Zero price error is thrown if token is BNB based and price is zero
+     * @custom:error Zero price error is thrown if fetched anchorPriceMantissa is zero
+     * @custom:event Emits AnchorPriceUpdated event on successful update of observation with assset address,
      * AnchorPrice, old observation timestamp and current timestamp
      */
     function _updateTwapInternal(TokenConfig memory config) internal virtual returns (uint256) {
@@ -234,11 +233,12 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     }
 
     /**
-     * @notice Append current Observation and pick equal or just greater than window start timestamp,
-     * If not available, then pick the last available Observation. Window start index is updated in both the cases.
+     * @notice Appends current observation and pick an observation with a timestamp equal
+     * or just greater than the window start timestamp. If one is not available,
+     * then pick the last availableobservation. The window start index is updated in both the cases.
      * Only the current observation is saved, prior observations are deleted during this operation.
-     * @return cumulative price & old observation
-     * @custom:event emits TwapWindowUpdated on succesful calculation of cumulative price with asset address,
+     * @return Tuple of cumulative price, old observation and timestamp
+     * @custom:event Emits TwapWindowUpdated on successful calculation of cumulative price with asset address,
      * new observation timestamp, current timestamp, new observation price and cumulative price
      */
     function pokeWindowValues(
