@@ -1,7 +1,6 @@
 import mainnetDeployments from "@venusprotocol/venus-protocol/networks/mainnet.json";
 import testnetDeployments from "@venusprotocol/venus-protocol/networks/testnet.json";
 import hre from "hardhat";
-import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 const ADDRESSES = {
@@ -18,7 +17,6 @@ const ADDRESSES = {
     binanceFeedRegistryAddress: "",
   },
 };
-
 
 module.exports = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
@@ -124,4 +122,4 @@ module.exports = async function ({ getNamedAccounts, deployments, network }: Har
   });
 };
 
-module.exports.tags = ['deploy'];
+module.exports.tags = ["deploy"];

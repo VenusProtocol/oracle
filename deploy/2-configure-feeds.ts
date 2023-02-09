@@ -1,10 +1,7 @@
-import { BigNumber } from "ethers";
 import hre from "hardhat";
-import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ResilientOracle } from "../typechain-types/contracts/ResilientOracle";
-import { BoundValidator } from "../typechain-types/contracts/oracles/BoundValidator";
 
 interface Feed {
   [key: string]: string;
@@ -19,8 +16,8 @@ const pythID: Config = {
     BNX: "0x843b251236e67259c6c82145bd68fb198c23e7cba5e26c995e39d8257fbf8eb8",
     WBTC: "0xf9c0172ba10dfa4d19088d94f5bf61d3b54d5bd7483a322a982e1373ee8ea31b",
     WBNB: "0xecf553770d9b10965f8fb64771e93f5690a182edc32be4a3236e0caaa6e0581a",
-    AUTO:"0xd954e9a88c7f97b4645b535869aba8a1e50697270a0afb09891accc031f03880",
-    CAKE:"0x3ea98c0336f6a8506dc34567da82178f6f7a664b206ae8eaf8ab8d96721ecccc"
+    AUTO: "0xd954e9a88c7f97b4645b535869aba8a1e50697270a0afb09891accc031f03880",
+    CAKE: "0x3ea98c0336f6a8506dc34567da82178f6f7a664b206ae8eaf8ab8d96721ecccc",
   },
 };
 
@@ -29,14 +26,14 @@ const chainlinkFeed: Config = {
     BNX: "0xf51492DeD1308Da8195C3bfcCF4a7c70fDbF9daE",
     WBTC: "0x5741306c21795FdCBb9b265Ea0255F499DFe515C",
     BNB: "0x5741306c21795FdCBb9b265Ea0255F499DFe515C",
-    CAKE:"0x81faeDDfeBc2F8Ac524327d70Cf913001732224C",
-    BUSD:"0x9331b55D9830EF609A2aBCfAc0FBCE050A52fdEa",
-    WBNB: "0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526"
+    CAKE: "0x81faeDDfeBc2F8Ac524327d70Cf913001732224C",
+    BUSD: "0x9331b55D9830EF609A2aBCfAc0FBCE050A52fdEa",
+    WBNB: "0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526",
   },
 };
 
 const assets = {
-  "bsctestnet": [
+  bsctestnet: [
     {
       token: "BNX",
       address: "0xa14C236372228B6e8182748F3eBbFb4BFEEA3574",
@@ -85,37 +82,36 @@ module.exports = async function ({ network }: HardhatRuntimeEnvironment) {
   const resilientOracle: ResilientOracle = await hre.ethers.getContract("ResilientOracle");
   const pythOracle = await hre.ethers.getContract("PythOracle");
   const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
-  const boundValidator: BoundValidator = await hre.ethers.getContract("BoundValidator");
 
   for (let i = 0; i < assets[networkName].length; i++) {
     const asset = assets[networkName][i];
-    console.log(`Configuring ${asset.token}`)
+    console.log(`Configuring ${asset.token}`);
 
-    let oracles = []
-    let enableFlagsForOracles = []
+    let oracles = [];
+    let enableFlagsForOracles = [];
 
     if (asset.oracle == "chainlink") {
-      oracles = [chainlinkOracle.address, addr0000, addr0000]
-      enableFlagsForOracles = [true, false, false]
+      oracles = [chainlinkOracle.address, addr0000, addr0000];
+      enableFlagsForOracles = [true, false, false];
     } else {
-      oracles = [pythOracle.address, addr0000, addr0000]
-      enableFlagsForOracles = [true, false, false]
+      oracles = [pythOracle.address, addr0000, addr0000];
+      enableFlagsForOracles = [true, false, false];
     }
-  
+
     if (network.live) {
       let tx;
 
       if (asset.oracle == "chainlink") {
-        console.log(`Configuring chainlink oracle for ${asset.token}`)
+        console.log(`Configuring chainlink oracle for ${asset.token}`);
         tx = await chainlinkOracle.setTokenConfig({
           asset: asset.address,
           feed: chainlinkFeed[networkName][asset.token],
           maxStalePeriod: DEFAULT_STALE_PERIOD,
         });
-  
+
         await tx.wait(1);
       } else {
-        console.log(`Configuring pyth oracle for ${asset.token}`)
+        console.log(`Configuring pyth oracle for ${asset.token}`);
         tx = await pythOracle.setTokenConfig({
           pythId: pythID[networkName][asset.token],
           asset: asset.address,
@@ -125,7 +121,7 @@ module.exports = async function ({ network }: HardhatRuntimeEnvironment) {
         await tx.wait(1);
       }
 
-      console.log(`Configuring resillient oracle for ${asset.token}`)
+      console.log(`Configuring resillient oracle for ${asset.token}`);
       tx = await resilientOracle.setTokenConfig({
         asset: asset.address,
         oracles: oracles,
@@ -136,21 +132,21 @@ module.exports = async function ({ network }: HardhatRuntimeEnvironment) {
     } else {
       const mock = await hre.ethers.getContract(`Mock${asset.token}`);
 
-      console.log(`Configuring resillient oracle for ${asset.token}`)
+      console.log(`Configuring resillient oracle for ${asset.token}`);
       let tx = await resilientOracle.setTokenConfig({
         asset: mock.address,
         oracles: oracles,
         enableFlagsForOracles: enableFlagsForOracles,
       });
 
-      tx.wait(1)
+      await tx.wait(1);
 
       if (asset.oracle == "chainlink") {
-        console.log(`Configuring chainlink oracle for ${asset.token}`)
+        console.log(`Configuring chainlink oracle for ${asset.token}`);
         tx = await chainlinkOracle.setPrice(mock.address, asset.price);
         await tx.wait(1);
       } else {
-        console.log(`Configuring pyth oracle for ${asset.token}`)
+        console.log(`Configuring pyth oracle for ${asset.token}`);
         tx = await pythOracle.setPrice(mock.address, asset.price);
         await tx.wait(1);
       }
@@ -158,4 +154,4 @@ module.exports = async function ({ network }: HardhatRuntimeEnvironment) {
   }
 };
 
-module.exports.tags = ['configure'];
+module.exports.tags = ["configure"];
