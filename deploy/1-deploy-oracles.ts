@@ -19,7 +19,8 @@ const ADDRESSES = {
   },
 };
 
-const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
+
+module.exports = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
@@ -123,4 +124,4 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   });
 };
 
-export default func;
+module.exports.tags = ['deploy'];
