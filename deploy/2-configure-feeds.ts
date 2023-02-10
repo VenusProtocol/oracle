@@ -84,49 +84,46 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
   const pythOracle = await hre.ethers.getContract("PythOracle");
   const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
 
+  const oraclesData = {
+    chainlink: {
+      oracles: [chainlinkOracle.address, addr0000, addr0000],
+      enableFlagsForOracles: [true, false, false],
+      underlyingOracle: chainlinkOracle,
+      getTokenConfig: (asset, networkName) => ({
+        asset: asset.address,
+        feed: chainlinkFeed[networkName][asset.token],
+        maxStalePeriod: DEFAULT_STALE_PERIOD,
+      }),
+    },
+    pyth: {
+      oracles: [pythOracle.address, addr0000, addr0000],
+      enableFlagsForOracles: [true, false, false],
+      underlyingOracle: pythOracle,
+      getTokenConfig: (asset, networkName) => ({
+        pythId: pythID[networkName][asset.token],
+        asset: asset.address,
+        maxStalePeriod: DEFAULT_STALE_PERIOD,
+      }),
+    },
+  };
+
   for (let i = 0; i < assets[networkName].length; i++) {
     const asset = assets[networkName][i];
+    const oracle = asset.oracle;
     console.log(`Configuring ${asset.token}`);
 
-    let oracles = [];
-    let enableFlagsForOracles = [];
-
-    if (asset.oracle == "chainlink") {
-      oracles = [chainlinkOracle.address, addr0000, addr0000];
-      enableFlagsForOracles = [true, false, false];
-    } else {
-      oracles = [pythOracle.address, addr0000, addr0000];
-      enableFlagsForOracles = [true, false, false];
-    }
-
     if (network.live) {
-      let tx;
-
-      if (asset.oracle == "chainlink") {
-        console.log(`Configuring chainlink oracle for ${asset.token}`);
-        tx = await chainlinkOracle.setTokenConfig({
-          asset: asset.address,
-          feed: chainlinkFeed[networkName][asset.token],
-          maxStalePeriod: DEFAULT_STALE_PERIOD,
-        });
-
-        await tx.wait(1);
-      } else {
-        console.log(`Configuring pyth oracle for ${asset.token}`);
-        tx = await pythOracle.setTokenConfig({
-          pythId: pythID[networkName][asset.token],
-          asset: asset.address,
-          maxStalePeriod: DEFAULT_STALE_PERIOD,
-        });
-
-        await tx.wait(1);
-      }
+      console.log(`Configuring ${oracle} oracle for ${asset.token}`);
+      let tx = await oraclesData[oracle].underlyingOracle.setTokenConfig(
+        oraclesData[oracle].getTokenConfig(asset, networkName),
+      );
+      tx.wait(1);
 
       console.log(`Configuring resillient oracle for ${asset.token}`);
       tx = await resilientOracle.setTokenConfig({
         asset: asset.address,
-        oracles: oracles,
-        enableFlagsForOracles: enableFlagsForOracles,
+        oracles: oraclesData[oracle].oracles,
+        enableFlagsForOracles: oraclesData[oracle].enableFlagsForOracles,
       });
 
       await tx.wait(1);
@@ -136,21 +133,15 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
       console.log(`Configuring resillient oracle for ${asset.token}`);
       let tx = await resilientOracle.setTokenConfig({
         asset: mock.address,
-        oracles: oracles,
-        enableFlagsForOracles: enableFlagsForOracles,
+        oracles: oraclesData[oracle].oracles,
+        enableFlagsForOracles: oraclesData[oracle].enableFlagsForOracles,
       });
 
       await tx.wait(1);
 
-      if (asset.oracle == "chainlink") {
-        console.log(`Configuring chainlink oracle for ${asset.token}`);
-        tx = await chainlinkOracle.setPrice(mock.address, asset.price);
-        await tx.wait(1);
-      } else {
-        console.log(`Configuring pyth oracle for ${asset.token}`);
-        tx = await pythOracle.setPrice(mock.address, asset.price);
-        await tx.wait(1);
-      }
+      console.log(`Configuring ${oracle} oracle for ${asset.token}`);
+      tx = await oraclesData[oracle].underlyingOracle.setPrice(mock.address, asset.price);
+      await tx.wait(1);
     }
   }
 };
