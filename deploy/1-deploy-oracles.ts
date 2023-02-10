@@ -1,8 +1,8 @@
 import mainnetDeployments from "@venusprotocol/venus-protocol/networks/mainnet.json";
 import testnetDeployments from "@venusprotocol/venus-protocol/networks/testnet.json";
 import hre from "hardhat";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/dist/types";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 const ADDRESSES = {
   bsctestnet: {
@@ -123,5 +123,5 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   });
 };
 
-module.exports = func
+module.exports = func;
 module.exports.tags = ["deploy"];
