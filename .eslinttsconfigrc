@@ -1,4 +1,4 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["deploy", "test", "tasks"]
+  "include": ["deploy", "test", "tasks", "docgen-templates"]
 }
