@@ -1,6 +1,6 @@
 import hre from "hardhat";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-
+import { DeployFunction } from "hardhat-deploy/dist/types";
 import { ResilientOracle } from "../typechain-types/contracts/ResilientOracle";
 
 interface Feed {
@@ -76,7 +76,7 @@ const assets = {
 const addr0000 = "0x0000000000000000000000000000000000000000";
 const DEFAULT_STALE_PERIOD = 3600; //60 min
 
-module.exports = async function ({ network }: HardhatRuntimeEnvironment) {
+const func: DeployFunction  = async function ({ network }: HardhatRuntimeEnvironment) {
   const networkName: string = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
 
   const resilientOracle: ResilientOracle = await hre.ethers.getContract("ResilientOracle");
@@ -154,4 +154,5 @@ module.exports = async function ({ network }: HardhatRuntimeEnvironment) {
   }
 };
 
+module.exports = func
 module.exports.tags = ["configure"];

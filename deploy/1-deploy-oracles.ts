@@ -2,6 +2,7 @@ import mainnetDeployments from "@venusprotocol/venus-protocol/networks/mainnet.j
 import testnetDeployments from "@venusprotocol/venus-protocol/networks/testnet.json";
 import hre from "hardhat";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { DeployFunction } from "hardhat-deploy/dist/types";
 
 const ADDRESSES = {
   bsctestnet: {
@@ -18,7 +19,7 @@ const ADDRESSES = {
   },
 };
 
-module.exports = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
+const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
@@ -122,4 +123,5 @@ module.exports = async function ({ getNamedAccounts, deployments, network }: Har
   });
 };
 
+module.exports = func
 module.exports.tags = ["deploy"];
