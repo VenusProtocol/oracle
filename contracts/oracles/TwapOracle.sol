@@ -157,7 +157,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
 
     /**
      * @notice Updates the current token/BUSD price from PancakeSwap, with 18 decimals of precision.
-     * @return vToken Address of vToken
+     * @return anchorPrice anchor price of the underlying asset of the vToken
      * @custom:error Missing error is thrown if token config does not exist
      */
     function updateTwap(address vToken) public returns (uint256) {
