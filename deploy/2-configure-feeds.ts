@@ -1,6 +1,8 @@
+import { Contract } from "ethers";
 import hre from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { PromiseOrValue } from "typechain-types/common";
 
 import { ResilientOracle } from "../typechain-types/contracts/ResilientOracle";
 
@@ -10,6 +12,28 @@ interface Feed {
 
 interface Config {
   [key: string]: Feed;
+}
+
+interface Asset {
+  token: string;
+  address: string;
+  oracle: string;
+  price: string;
+}
+
+interface Assets {
+  [key: string]: Asset[];
+}
+
+interface Oracle {
+  oracles: [PromiseOrValue<string>, PromiseOrValue<string>, PromiseOrValue<string>];
+  enableFlagsForOracles: [PromiseOrValue<boolean>, PromiseOrValue<boolean>, PromiseOrValue<boolean>];
+  underlyingOracle: Contract;
+  getTokenConfig: (asset: Asset, networkName: string) => void;
+}
+
+interface Oracles {
+  [key: string]: Oracle;
 }
 
 const pythID: Config = {
@@ -33,7 +57,7 @@ const chainlinkFeed: Config = {
   },
 };
 
-const assets = {
+const assets: Assets = {
   bsctestnet: [
     {
       token: "BNX",
@@ -84,12 +108,12 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
   const pythOracle = await hre.ethers.getContract("PythOracle");
   const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
 
-  const oraclesData = {
+  const oraclesData: Oracles = {
     chainlink: {
       oracles: [chainlinkOracle.address, addr0000, addr0000],
       enableFlagsForOracles: [true, false, false],
       underlyingOracle: chainlinkOracle,
-      getTokenConfig: (asset, networkName) => ({
+      getTokenConfig: (asset: Asset, networkName: string) => ({
         asset: asset.address,
         feed: chainlinkFeed[networkName][asset.token],
         maxStalePeriod: DEFAULT_STALE_PERIOD,
@@ -99,7 +123,7 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
       oracles: [pythOracle.address, addr0000, addr0000],
       enableFlagsForOracles: [true, false, false],
       underlyingOracle: pythOracle,
-      getTokenConfig: (asset, networkName) => ({
+      getTokenConfig: (asset: Asset, networkName: string) => ({
         pythId: pythID[networkName][asset.token],
         asset: asset.address,
         maxStalePeriod: DEFAULT_STALE_PERIOD,
