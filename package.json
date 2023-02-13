@@ -31,7 +31,8 @@
     "build": "rm -rf dist && tsc --declaration && hardhat compile && cp -r ./{package.json,yarn.lock,artifacts,networks,contracts,deployments} dist/",
     "postinstall": "yarn build",
     "publish": "yarn build && cd dist && yarn npm publish",
-    "docgen": "hardhat docgen"
+    "docgen": "hardhat docgen",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@chainlink/contracts": "^0.5.1",
