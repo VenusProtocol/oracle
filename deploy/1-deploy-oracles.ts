@@ -123,4 +123,5 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   });
 };
 
-export default func;
+module.exports = func;
+module.exports.tags = ["deploy"];
