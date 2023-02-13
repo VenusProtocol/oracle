@@ -2,9 +2,6 @@ import { Contract } from "ethers";
 import hre from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { PromiseOrValue } from "typechain-types/common";
-
-import { ResilientOracle } from "../typechain-types/contracts/ResilientOracle";
 
 interface Feed {
   [key: string]: string;
@@ -26,8 +23,8 @@ interface Assets {
 }
 
 interface Oracle {
-  oracles: [PromiseOrValue<string>, PromiseOrValue<string>, PromiseOrValue<string>];
-  enableFlagsForOracles: [PromiseOrValue<boolean>, PromiseOrValue<boolean>, PromiseOrValue<boolean>];
+  oracles: [string, string, string];
+  enableFlagsForOracles: [boolean, boolean, boolean];
   underlyingOracle: Contract;
   getTokenConfig: (asset: Asset, networkName: string) => void;
 }
@@ -104,7 +101,7 @@ const DEFAULT_STALE_PERIOD = 3600; //60 min
 const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironment) {
   const networkName: string = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
 
-  const resilientOracle: ResilientOracle = await hre.ethers.getContract("ResilientOracle");
+  const resilientOracle = await hre.ethers.getContract("ResilientOracle");
   const pythOracle = await hre.ethers.getContract("PythOracle");
   const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
 
