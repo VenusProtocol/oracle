@@ -72,7 +72,7 @@ const assets: Assets = {
       token: "WBNB",
       address: "0xd25F4aF4b718bab3794902Bcd3A40E497B0aF7c7",
       oracle: "chainlink",
-      price: "159990000000000000000",
+      price: "208000000000000000",
     },
     {
       token: "WBTC",
