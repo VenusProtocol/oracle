@@ -1,6 +1,7 @@
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
+import { smock } from "@defi-wonderland/smock";
 
 import { BinanceOracle, MockBinanceFeedRegistry } from "../typechain-types";
 import { makeVToken } from "./utils/makeVToken";
@@ -17,14 +18,19 @@ describe("Binance Oracle unit tests", function () {
     this.ethPrice = "133378924169"; //$1333.78924169
     this.bnbPrice = "24598000000"; //$245.98
 
+
     const MockBinanceFeedRegistry = await ethers.getContractFactory("MockBinanceFeedRegistry", admin);
     this.mockBinanceFeedRegistry = <MockBinanceFeedRegistry>await upgrades.deployProxy(MockBinanceFeedRegistry, []);
 
+    const publicResolver = await smock.fake('PublicResolverInterface');
+    const sidRegistry = await smock.fake('SIDRegistryInterface');
+    sidRegistry.resolver.returns(publicResolver.address);
+    publicResolver.addr.returns(this.mockBinanceFeedRegistry.address);
+
     const BinanceOracle = await ethers.getContractFactory("BinanceOracle", admin);
-    console.log(this.vBnb);
     this.binanceOracle = <BinanceOracle>await upgrades.deployProxy(
       BinanceOracle,
-      [this.mockBinanceFeedRegistry.address],
+      [sidRegistry.address],
       {
         constructorArgs: [this.vBnb],
       },

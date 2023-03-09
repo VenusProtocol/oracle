@@ -3,11 +3,13 @@ pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import "../interfaces/FeedRegistryInterface.sol";
 import "../interfaces/VBep20Interface.sol";
+import "../interfaces/SIDRegistryInterface.sol";
+import "../interfaces/FeedRegistryInterface.sol";
+import "../interfaces/PublicResolverInterface.sol";
 
 contract BinanceOracle is Initializable {
-    FeedRegistryInterface public feedRegistry;
+    address public sidRegistryAddress;
 
     /// @notice vBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
@@ -24,10 +26,24 @@ contract BinanceOracle is Initializable {
 
     /**
      * @notice Sets the contracts required to fetch prices
-     * @param feed Address of binance oracle feed registry.
+     * @param _sidRegistryAddress Address of SID registry
      */
-    function initialize(FeedRegistryInterface feed) public initializer {
-        feedRegistry = feed;
+    function initialize(address _sidRegistryAddress) public initializer {
+        sidRegistryAddress = _sidRegistryAddress;
+    }
+
+    /**
+     * @notice Uses Space ID to fetch the feed registry address
+     * @return feedRegistryAddress Address of binance oracle feed registry.
+     */
+    function getFeedRegistryAddress() public view returns (address) {
+        bytes32 nodeHash = 0x94fe3821e0768eb35012484db4df61890f9a6ca5bfa984ef8ff717e73139faff;
+        
+        SIDRegistryInterface sidRegistry = SIDRegistryInterface(sidRegistryAddress);
+        address publicResolverAddress = sidRegistry.resolver(nodeHash);
+        PublicResolverInterface publicResolver = PublicResolverInterface(publicResolverAddress);
+        
+        return publicResolver.addr(nodeHash);
     }
 
     /**
@@ -52,6 +68,8 @@ contract BinanceOracle is Initializable {
         if (keccak256(bytes(symbol)) == keccak256(bytes("WBNB"))) {
             symbol = "BNB";
         }
+
+        FeedRegistryInterface feedRegistry = FeedRegistryInterface(getFeedRegistryAddress());
 
         (, int256 answer, , , ) = feedRegistry.latestRoundDataByName(symbol, "USD");
 
