@@ -9,13 +9,13 @@ const ADDRESSES = {
     vBNBAddress: testnetDeployments.Contracts.vBNB,
     WBNBAddress: "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
     pythOracleAddress: "0xd7308b14BF4008e7C7196eC35610B1427C5702EA",
-    binanceFeedRegistryAddress: "0x999DD49FeFdC043fDAC4FE12Bb1e4bb31cB4c47B",
+    sidRegistryAddress: "0xfFB52185b56603e0fd71De9de4F6f902f05EEA23",
   },
   bscmainnet: {
     vBNBAddress: mainnetDeployments.Contracts.vBNB,
     WBNBAddress: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
-    pythOracleAddress: "",
-    binanceFeedRegistryAddress: "",
+    pythOracleAddress: "0x4D7E825f80bDf85e913E0DD2A2D54927e9dE1594",
+    sidRegistryAddress: "0x08CEd32a7f3eeC915Ba84415e9C07a7286977956",
   },
 };
 
@@ -105,7 +105,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
-  const binanceFeedRegistryAddress = ADDRESSES[networkName].binanceFeedRegistryAddress;
+  const sidRegistryAddress = ADDRESSES[networkName].sidRegistryAddress;
 
   await deploy("BinanceOracle", {
     contract: network.live ? "BinanceOracle" : "MockBinanceOracle",
@@ -117,7 +117,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: [binanceFeedRegistryAddress],
+        args: [sidRegistryAddress],
       },
     },
   });
