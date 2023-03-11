@@ -44,7 +44,7 @@ describe("Oracle unit tests", function () {
 
     const ChainlinkOracle = await ethers.getContractFactory("ChainlinkOracle", admin);
     const instance = <ChainlinkOracle>await upgrades.deployProxy(ChainlinkOracle, [], {
-      constructorArgs: [this.vBnb.address],
+      constructorArgs: [this.vBnb.address, this.vai.address],
     });
     this.chainlinkOracle = instance;
     return instance;
@@ -196,11 +196,6 @@ describe("Oracle unit tests", function () {
 
     it("gets the price from Chainlink for DAI", async function () {
       const price = await this.chainlinkOracle.getUnderlyingPrice(this.vDai.address);
-      expect(price).to.equal("1000000000000000000");
-    });
-
-    it("gets the direct price of VAI", async function () {
-      const price = await this.chainlinkOracle.getUnderlyingPrice(this.vai.address);
       expect(price).to.equal("1000000000000000000");
     });
 

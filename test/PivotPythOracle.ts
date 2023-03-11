@@ -11,22 +11,22 @@ import { getTime, increaseTime } from "./utils/time";
 
 const EXP_SCALE = BigNumber.from(10).pow(18);
 
-const getPythOracle = async (account: SignerWithAddress, vBnb: string) => {
+const getPythOracle = async (account: SignerWithAddress, vBnb: string, vai: string) => {
   const actualOracleArtifact = await artifacts.readArtifact("MockPyth");
   const actualOracle = await waffle.deployContract(account, actualOracleArtifact, [0, 0]);
   await actualOracle.deployed();
 
   const PythOracle = await ethers.getContractFactory("PythOracle", account);
   const instance = <PythOracle>await upgrades.deployProxy(PythOracle, [actualOracle.address], {
-    constructorArgs: [vBnb],
+    constructorArgs: [vBnb, vai],
   });
   return instance;
 };
 
-const getBoundValidator = async (account: SignerWithAddress, vBnb: string) => {
+const getBoundValidator = async (account: SignerWithAddress, vBnb: string, vai: string) => {
   const BoundValidator = await ethers.getContractFactory("BoundValidator", account);
   const instance = <BoundValidator>await upgrades.deployProxy(BoundValidator, [], {
-    constructorArgs: [vBnb],
+    constructorArgs: [vBnb, vai],
   });
   return instance;
 };
@@ -36,10 +36,11 @@ describe("Oracle plugin frame unit tests", function () {
     const signers: SignerWithAddress[] = await ethers.getSigners();
     const admin = signers[0];
     this.vBnb = signers[5].address;
+    this.vai = signers[6].address;
     this.signers = signers;
     this.admin = admin;
-    this.pythOracle = await getPythOracle(admin, this.vBnb);
-    this.boundValidator = await getBoundValidator(admin, this.vBnb);
+    this.pythOracle = await getPythOracle(admin, this.vBnb, this.vai);
+    this.boundValidator = await getBoundValidator(admin, this.vBnb, this.vai);
   });
 
   describe("constructor", function () {

@@ -26,6 +26,10 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vBnb;
 
+    /// @notice VAI address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable vai;
+
     /// @notice Set this as asset address for BNB. This is the underlying for vBNB
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
@@ -34,10 +38,13 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
 
     /// @notice Constructor for the implementation contract. Sets immutable variables.
     /// @param vBnbAddress The address of the vBNB
+    /// @param vaiAddress The address of the VAI
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress) {
+    constructor(address vBnbAddress, address vaiAddress) {
         require(vBnbAddress != address(0), "can't be a zero address");
+        require(vaiAddress != address(0), "can't be a zero address");
         vBnb = vBnbAddress;
+        vai = vaiAddress;
         _disableInitializers();
     }
 

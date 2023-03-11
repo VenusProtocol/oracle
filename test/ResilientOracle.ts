@@ -38,13 +38,14 @@ describe("Oracle plugin frame unit tests", function () {
     this.boundValidator = await getBoundValidator();
     this.simpleOracle = await getMockSimpleOracleOracle();
     this.vBnb = signers[5].address;
+    this.vai = signers[6].address;
     this.bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
   });
 
   beforeEach(async function () {
     const ResilientOracle = await ethers.getContractFactory("ResilientOracle", this.admin);
     const instance = <ResilientOracle>await upgrades.deployProxy(ResilientOracle, [this.boundValidator.address], {
-      constructorArgs: [this.vBnb],
+      constructorArgs: [this.vBnb, this.vai],
     });
     this.oracleBasement = instance;
   });

@@ -1,7 +1,7 @@
+import { smock } from "@defi-wonderland/smock";
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
-import { smock } from "@defi-wonderland/smock";
 
 import { BinanceOracle, MockBinanceFeedRegistry } from "../typechain-types";
 import { makeVToken } from "./utils/makeVToken";
@@ -13,28 +13,24 @@ describe("Binance Oracle unit tests", function () {
     this.signers = signers;
     this.admin = admin;
     this.vBnb = signers[5].address;
+    this.vai = signers[5].address;
 
     this.vEth = await makeVToken(admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
     this.ethPrice = "133378924169"; //$1333.78924169
     this.bnbPrice = "24598000000"; //$245.98
 
-
     const MockBinanceFeedRegistry = await ethers.getContractFactory("MockBinanceFeedRegistry", admin);
     this.mockBinanceFeedRegistry = <MockBinanceFeedRegistry>await upgrades.deployProxy(MockBinanceFeedRegistry, []);
 
-    const publicResolver = await smock.fake('PublicResolverInterface');
-    const sidRegistry = await smock.fake('SIDRegistryInterface');
+    const publicResolver = await smock.fake("PublicResolverInterface");
+    const sidRegistry = await smock.fake("SIDRegistryInterface");
     sidRegistry.resolver.returns(publicResolver.address);
     publicResolver.addr.returns(this.mockBinanceFeedRegistry.address);
 
     const BinanceOracle = await ethers.getContractFactory("BinanceOracle", admin);
-    this.binanceOracle = <BinanceOracle>await upgrades.deployProxy(
-      BinanceOracle,
-      [sidRegistry.address],
-      {
-        constructorArgs: [this.vBnb],
-      },
-    );
+    this.binanceOracle = <BinanceOracle>await upgrades.deployProxy(BinanceOracle, [sidRegistry.address], {
+      constructorArgs: [this.vBnb, this.vai],
+    });
   });
 
   it("set price", async function () {

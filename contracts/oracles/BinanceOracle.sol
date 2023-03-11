@@ -15,12 +15,19 @@ contract BinanceOracle is Initializable {
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vBnb;
 
+    /// @notice VAI address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable vai;
+
     /// @notice Constructor for the implementation contract. Sets immutable variables.
     /// @param vBnbAddress The address of the vBNB
+    /// @param vaiAddress The address of the VAI
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress) {
-        require(vBnbAddress != address(0), "can't be zero address");
+    constructor(address vBnbAddress, address vaiAddress) {
+        require(vBnbAddress != address(0), "vBNB can't be zero address");
+        require(vaiAddress != address(0), "VAI can't be zero address");
         vBnb = vBnbAddress;
+        vai = vaiAddress;
         _disableInitializers();
     }
 
@@ -38,11 +45,11 @@ contract BinanceOracle is Initializable {
      */
     function getFeedRegistryAddress() public view returns (address) {
         bytes32 nodeHash = 0x94fe3821e0768eb35012484db4df61890f9a6ca5bfa984ef8ff717e73139faff;
-        
+
         SIDRegistryInterface sidRegistry = SIDRegistryInterface(sidRegistryAddress);
         address publicResolverAddress = sidRegistry.resolver(nodeHash);
         PublicResolverInterface publicResolver = PublicResolverInterface(publicResolverAddress);
-        
+
         return publicResolver.addr(nodeHash);
     }
 
@@ -58,6 +65,9 @@ contract BinanceOracle is Initializable {
         // VBNB token doesn't have `underlying` method
         if (address(vToken) == vBnb) {
             symbol = "BNB";
+            decimals = 18;
+        } else if (address(vToken) == vai) {
+            symbol = "VAI";
             decimals = 18;
         } else {
             IERC20Metadata underlyingToken = IERC20Metadata(vToken.underlying());

@@ -9,11 +9,11 @@ import { makeVToken } from "./utils/makeVToken";
 
 const EXP_SCALE = BigNumber.from(10).pow(18);
 
-const getBoundValidator = async (account: SignerWithAddress, vBnb: string) => {
+const getBoundValidator = async (account: SignerWithAddress, vBnb: string, vai: string) => {
   const BoundValidator = await ethers.getContractFactory("BoundValidator", account);
 
   return <BoundValidator>await upgrades.deployProxy(BoundValidator, [], {
-    constructorArgs: [vBnb],
+    constructorArgs: [vBnb, vai],
   });
 };
 
@@ -22,9 +22,10 @@ describe("bound validator", function () {
     const signers: SignerWithAddress[] = await ethers.getSigners();
     const admin = signers[0];
     this.vBnb = signers[5].address;
+    this.vai = signers[5].address;
     this.signers = signers;
     this.admin = admin;
-    this.boundValidator = <BoundValidator>(<unknown>await getBoundValidator(admin, this.vBnb));
+    this.boundValidator = <BoundValidator>(<unknown>await getBoundValidator(admin, this.vBnb, this.vai));
     this.vToken = await makeVToken(admin, { name: "vToken", symbol: "vToken" }, { name: "Token", symbol: "Token" });
     this.bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
   });

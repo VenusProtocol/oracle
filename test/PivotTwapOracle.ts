@@ -36,18 +36,19 @@ describe("Twap Oracle unit tests", function () {
     this.signers = signers;
     this.admin = admin;
     this.vBnb = signers[5]; // Not your usual vToken
+    this.vai = signers[5]; // Not your usual vToken
     this.wBnb = await makeToken(admin, "Wrapped BNB", "WBNB", 18);
     this.bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
 
     const TwapOracle = await ethers.getContractFactory("TwapOracle", admin);
     const twapInstance = <TwapOracle>await upgrades.deployProxy(TwapOracle, [], {
-      constructorArgs: [this.vBnb.address, this.wBnb.address],
+      constructorArgs: [this.vBnb.address, this.wBnb.address, this.vai.address],
     });
     this.twapOracle = twapInstance;
 
     const BoundValidator = await ethers.getContractFactory("BoundValidator", admin);
     const boundValidatorInstance = <BoundValidator>await upgrades.deployProxy(BoundValidator, [], {
-      constructorArgs: [this.vBnb.address],
+      constructorArgs: [this.vBnb.address, this.vai.address],
     });
     this.boundValidator = boundValidatorInstance;
 

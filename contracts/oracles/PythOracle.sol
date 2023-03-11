@@ -35,6 +35,10 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vBnb;
 
+    /// @notice VAI address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable vai;
+
     /// @notice Set this as asset address for BNB. This is the underlying for vBNB
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
@@ -57,9 +61,11 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
 
     /// @notice Constructor for the implementation contract. Sets immutable variables.
     /// @param vBnbAddress The address of the vBNB
+    /// @param vaiAddress The address of the VAI
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress) notNullAddress(vBnbAddress) {
+    constructor(address vBnbAddress, address vaiAddress) notNullAddress(vBnbAddress) notNullAddress(vaiAddress) {
         vBnb = vBnbAddress;
+        vai = vaiAddress;
         _disableInitializers();
     }
 
@@ -133,6 +139,9 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
         // VBNB token doesn't have `underlying` method
         if (address(vToken) == vBnb) {
             asset = BNB_ADDR;
+            decimals = 18;
+        } else if (address(vToken) == vai) {
+            asset = vai;
             decimals = 18;
         } else {
             asset = VBep20Interface(vToken).underlying();

@@ -39,6 +39,10 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vBnb;
 
+    /// @notice VAI address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable vai;
+
     /// @notice the base unit of WBNB and BUSD, which are the paired tokens for all assets
     uint256 public constant bnbBaseUnit = 1e18;
     uint256 public constant busdBaseUnit = 1e18;
@@ -80,10 +84,16 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     /// @notice Constructor for the implementation contract. Sets immutable variables.
     /// @param vBnbAddress The address of the VBNB
     /// @param wBnbAddress The address of the WBNB
+    /// @param vaiAddress The address of the WBNB
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress, address wBnbAddress) notNullAddress(vBnbAddress) notNullAddress(wBnbAddress) {
+    constructor(
+        address vBnbAddress,
+        address wBnbAddress,
+        address vaiAddress
+    ) notNullAddress(vBnbAddress) notNullAddress(wBnbAddress) notNullAddress(vaiAddress) {
         vBnb = vBnbAddress;
         WBNB = wBnbAddress;
+        vai = vaiAddress;
         _disableInitializers();
     }
 
@@ -108,8 +118,14 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
      * @custom:error Range error is thrown if TWAP price is not greater than zero
      */
     function getUnderlyingPrice(address vToken) external view override returns (uint256) {
-        // VBNB token doesn't have `underlying` method, vBNB's underlying token is wBNB
-        address asset = address(vToken) == vBnb ? WBNB : VBep20Interface(vToken).underlying();
+        address asset;
+        if (address(vToken) == vBnb) {
+            asset = WBNB;
+        } else if (address(vToken) == vai) {
+            asset = vai;
+        } else {
+            asset = VBep20Interface(vToken).underlying();
+        }
         require(tokenConfigs[asset].asset != address(0), "asset not exist");
         uint256 price = prices[asset];
 
@@ -161,8 +177,16 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
      * @custom:error Missing error is thrown if token config does not exist
      */
     function updateTwap(address vToken) public returns (uint256) {
-        // VBNB token doesn't have `underlying` method, vBNB's underlying token is wBNB
-        address asset = address(vToken) == vBnb ? WBNB : VBep20Interface(vToken).underlying();
+        address asset;
+
+        if (address(vToken) == vBnb) {
+            asset = WBNB;
+        } else if (address(vToken) == vai) {
+            asset = vai;
+        } else {
+            asset = VBep20Interface(vToken).underlying();
+        }
+
         require(tokenConfigs[asset].asset != address(0), "asset not exist");
         // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
         if (asset != WBNB && tokenConfigs[asset].isBnbBased) {

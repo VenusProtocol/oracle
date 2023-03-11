@@ -17,12 +17,13 @@ struct TokenConfig {
 }
 
 contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
-    /// @notice VAI token is considered $1 constantly in oracle for now
-    uint256 public constant VAI_VALUE = 1e18;
-
     /// @notice vBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vBnb;
+
+    /// @notice VAI address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable vai;
 
     /// @notice Set this as asset address for BNB. This is the underlying address for vBNB
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
@@ -51,9 +52,11 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
 
     /// @notice Constructor for the implementation contract. Sets immutable variables.
     /// @param vBnbAddress The address of the vBNB
+    /// @param vaiAddress The address of the VAI
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress) notNullAddress(vBnbAddress) {
+    constructor(address vBnbAddress, address vaiAddress) notNullAddress(vBnbAddress) notNullAddress(vaiAddress) {
         vBnb = vBnbAddress;
+        vai = vaiAddress;
         _disableInitializers();
     }
 
@@ -128,13 +131,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @return price Underlying price in USD
      */
     function getUnderlyingPrice(address vToken) public view override returns (uint256) {
-        string memory symbol = address(vToken) != vBnb ? VBep20Interface(vToken).symbol() : "BNB";
-
-        if (_compareStrings(symbol, "VAI")) {
-            return VAI_VALUE;
-        } else {
-            return _getUnderlyingPriceInternal(VBep20Interface(vToken));
-        }
+        return _getUnderlyingPriceInternal(VBep20Interface(vToken));
     }
 
     /**
@@ -152,6 +149,9 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
         // vBNB token doesn't have `underlying` method
         if (address(vToken) == vBnb) {
             token = BNB_ADDR;
+            decimals = 18;
+        } else if (address(vToken) == vai) {
+            token = vai;
             decimals = 18;
         } else {
             token = vToken.underlying();
