@@ -90,7 +90,9 @@ describe("XVSVault", async () => {
   
     beforeEach("deploy and configure XVSVault contracts", async () => {
       ({ resillientOracle, chainlinkOracle } = await loadFixture(deployOracleFixture));     
-
+    });
+  
+    it("validate vBNB price", async () => {
       //Configure price feed for vBNB
       await chainlinkOracle.setTokenConfig({
         asset: BNBAddress,
@@ -107,11 +109,59 @@ describe("XVSVault", async () => {
         ],
         enableFlagsForOracles: [true, false, false]
       })
-    });
-  
-    it("check vBNB price", async () => {
+
       const price = await resillientOracle.getUnderlyingPrice(vBNB)
       expect(price).to.be.equal("274310000000000000000")
+    });
+
+    it("validate vLTC price", async () => {
+      const LTCAddress = "0x4338665CBB7B2485A8855A139b75D5e34AB0DB94"
+      const vLTCAddress = "0x57A5297F2cB2c0AaC9D554660acd6D385Ab50c6B";
+
+      //Configure price feed for vLTC
+      await chainlinkOracle.setTokenConfig({
+        asset: LTCAddress,
+        feed: "0x74e72f37a8c415c8f1a98ed42e78ff997435791d",
+        maxStalePeriod: 86400
+      })
+
+      await resillientOracle.setTokenConfig({
+        asset: LTCAddress,
+        oracles: [
+          chainlinkOracle.address, 
+          ethers.constants.AddressZero,
+          ethers.constants.AddressZero,
+        ],
+        enableFlagsForOracles: [true, false, false]
+      })
+
+      const price = await resillientOracle.getUnderlyingPrice(vLTCAddress)
+      expect(price).to.be.equal("70780000000000000000")
+    });
+
+    it("validate vXVS price", async () => {
+      const XVSAddress = "0xcF6BB5389c92Bdda8a3747Ddb454cB7a64626C63"
+      const vXVSAddress = "0x151B1e2635A717bcDc836ECd6FbB62B674FE3E1D";
+      
+      //Configure price feed for vXVS
+      await chainlinkOracle.setTokenConfig({
+        asset: XVSAddress,
+        feed: "0xbf63f430a79d4036a5900c19818aff1fa710f206",
+        maxStalePeriod: 86400
+      })
+
+      await resillientOracle.setTokenConfig({
+        asset: XVSAddress,
+        oracles: [
+          chainlinkOracle.address, 
+          ethers.constants.AddressZero,
+          ethers.constants.AddressZero,
+        ],
+        enableFlagsForOracles: [true, false, false]
+      })
+
+      const price = await resillientOracle.getUnderlyingPrice(vXVSAddress)
+      expect(price).to.be.equal("4412797480000000000")
     });
   }
 })
