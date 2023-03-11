@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
+import "../Governance/AccessControlled.sol";
 
 struct ValidateConfig {
     /// @notice asset address
@@ -18,7 +19,7 @@ struct ValidateConfig {
 
 // BoundValidator provides some common functions and can be used
 // to wrap up other contracts to form pivot oracles
-contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
+contract BoundValidator is Ownable2StepUpgradeable, AccessControlled, BoundValidatorInterface {
     /// @notice validation configs by asset
     mapping(address => ValidateConfig) public validateConfigs;
 
@@ -64,9 +65,11 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
 
     /**
      * @notice Initializes the owner of the contract
+     * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize() public initializer {
-        __Ownable_init();
+    function initialize(address accessControlManager_) public initializer {
+        __Ownable2Step_init();
+        __AccessControlled_init_unchained(accessControlManager_);
     }
 
     /**

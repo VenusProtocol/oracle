@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV2V3Interface.sol";
+import "../Governance/AccessControlled.sol";
 
 struct TokenConfig {
     /// @notice Underlying token address, which can't be a null address and can be used to check if a token is supported
@@ -16,7 +17,7 @@ struct TokenConfig {
     uint256 maxStalePeriod;
 }
 
-contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
+contract ChainlinkOracle is Ownable2StepUpgradeable, AccessControlled, OracleInterface {
     /// @notice vBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vBnb;
@@ -103,9 +104,13 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
         }
     }
 
-    /// @notice Initializes the owner of the contract
-    function initialize() public initializer {
-        __Ownable_init();
+    /**
+     * @notice Initializes the owner of the contract
+     * @param accessControlManager_ Address of the access control manager contract
+     */
+    function initialize(address accessControlManager_) public initializer {
+        __Ownable2Step_init();
+        __AccessControlled_init_unchained(accessControlManager_);
     }
 
     /**

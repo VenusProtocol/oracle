@@ -2,12 +2,14 @@
 // SPDX-FileCopyrightText: 2022 Venus
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./interfaces/VBep20Interface.sol";
 import "./interfaces/OracleInterface.sol";
+import "./Governance/AccessControlled.sol";
 
-contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOracleInterface {
+contract ResilientOracle is Ownable2StepUpgradeable, PausableUpgradeable, AccessControlled, ResilientOracleInterface {
     /**
      * @dev Oracle roles:
      * **main**: The most trustworthy price source
@@ -246,13 +248,14 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     /**
      * @notice Initializes the contract admin and sets the BoundValidator contract address
      * @param _boundValidator Address of the bound validator contract
+     * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize(BoundValidatorInterface _boundValidator) public initializer {
+    function initialize(BoundValidatorInterface _boundValidator, address accessControlManager_) public initializer {
         require(address(_boundValidator) != address(0), "invalid bound validator address");
         boundValidator = _boundValidator;
 
-        __Ownable_init();
-        __Pausable_init();
+        __Ownable2Step_init();
+        __AccessControlled_init_unchained(accessControlManager_);
     }
 
     /**

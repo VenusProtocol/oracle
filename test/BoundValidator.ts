@@ -1,9 +1,10 @@
+import { smock } from "@defi-wonderland/smock";
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers, upgrades } from "hardhat";
 
-import { BoundValidator } from "../typechain-types";
+import { AccessControlManager, BoundValidator } from "../typechain-types";
 import { addr0000, addr1111 } from "./utils/data";
 import { makeVToken } from "./utils/makeVToken";
 
@@ -12,7 +13,10 @@ const EXP_SCALE = BigNumber.from(10).pow(18);
 const getBoundValidator = async (account: SignerWithAddress, vBnb: string, vai: string) => {
   const BoundValidator = await ethers.getContractFactory("BoundValidator", account);
 
-  return <BoundValidator>await upgrades.deployProxy(BoundValidator, [], {
+  const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+  return <BoundValidator>await upgrades.deployProxy(BoundValidator, [fakeAccessControlManager.address], {
     constructorArgs: [vBnb, vai],
   });
 };

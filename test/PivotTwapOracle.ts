@@ -1,9 +1,11 @@
+import { smock } from "@defi-wonderland/smock";
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers, upgrades } from "hardhat";
 
 import { TwapOracle } from "../src/types/contracts/oracles/TwapOracle";
+import { AccessControlManager } from "../typechain-types";
 import { BoundValidator } from "../typechian-types";
 import { addr0000, addr1111 } from "./utils/data";
 import { makePairWithTokens } from "./utils/makePair";
@@ -41,13 +43,18 @@ describe("Twap Oracle unit tests", function () {
     this.bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
 
     const TwapOracle = await ethers.getContractFactory("TwapOracle", admin);
-    const twapInstance = <TwapOracle>await upgrades.deployProxy(TwapOracle, [], {
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+    const twapInstance = <TwapOracle>await upgrades.deployProxy(TwapOracle, [fakeAccessControlManager.address], {
       constructorArgs: [this.vBnb.address, this.wBnb.address, this.vai.address],
     });
     this.twapOracle = twapInstance;
 
     const BoundValidator = await ethers.getContractFactory("BoundValidator", admin);
-    const boundValidatorInstance = <BoundValidator>await upgrades.deployProxy(BoundValidator, [], {
+    const boundValidatorInstance = <BoundValidator>await upgrades.deployProxy(BoundValidator, [
+      fakeAccessControlManager.address
+    ], {
       constructorArgs: [this.vBnb.address, this.vai.address],
     });
     this.boundValidator = boundValidatorInstance;

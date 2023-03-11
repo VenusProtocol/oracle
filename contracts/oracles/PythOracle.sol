@@ -4,10 +4,11 @@ pragma solidity 0.8.13;
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/utils/math/SignedMath.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 import "../interfaces/PythInterface.sol";
 import "../interfaces/OracleInterface.sol";
 import "../interfaces/VBep20Interface.sol";
+import "../Governance/AccessControlled.sol";
 
 struct TokenConfig {
     bytes32 pythId;
@@ -19,7 +20,7 @@ struct TokenConfig {
  * PythOracle contract reads prices from actual Pyth oracle contract which accepts, verifies and stores the
  * updated prices from external sources
  */
-contract PythOracle is OwnableUpgradeable, OracleInterface {
+contract PythOracle is Ownable2StepUpgradeable, AccessControlled, OracleInterface {
     using SafeMath for uint256;
 
     // To calculate 10 ** n(which is a signed type)
@@ -100,9 +101,12 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     /**
      * @notice Initializes the owner of the contract and sets required contracts
      * @param underlyingPythOracle_ Address of the Pyth oracle
+     * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize(address underlyingPythOracle_) public initializer {
-        __Ownable_init();
+    function initialize(address underlyingPythOracle_, address accessControlManager_) public initializer {
+        __Ownable2Step_init();
+        __AccessControlled_init_unchained(accessControlManager_);
+     
         require(underlyingPythOracle_ != address(0), "pyth oracle cannot be zero address");
         underlyingPythOracle = IPyth(underlyingPythOracle_);
         emit PythOracleSet(underlyingPythOracle_);

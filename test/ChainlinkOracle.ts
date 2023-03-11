@@ -1,7 +1,9 @@
+import { smock } from "@defi-wonderland/smock";
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers, upgrades } from "hardhat";
+import { AccessControlManager } from "../typechain-types";
 
 import { ChainlinkOracle } from "../typechain-types/contracts/oracles/ChainlinkOracle";
 import { addr0000 } from "./utils/data";
@@ -43,7 +45,10 @@ describe("Oracle unit tests", function () {
     this.daiFeed = await makeChainlinkOracle(admin, 8, 100000000);
 
     const ChainlinkOracle = await ethers.getContractFactory("ChainlinkOracle", admin);
-    const instance = <ChainlinkOracle>await upgrades.deployProxy(ChainlinkOracle, [], {
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+    const instance = <ChainlinkOracle>await upgrades.deployProxy(ChainlinkOracle, [fakeAccessControlManager.address], {
       constructorArgs: [this.vBnb.address, this.vai.address],
     });
     this.chainlinkOracle = instance;

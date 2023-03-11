@@ -31,6 +31,15 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const VAIAddress = ADDRESSES[networkName].VAIAddress;
   const WBNBAddress = ADDRESSES[networkName].WBNBAddress;
 
+  await deploy("AccessControlManager", {
+    from: deployer,
+    args: [],
+    log: true,
+    autoMine: true,
+  });
+
+  const accessControlManager = await hre.ethers.getContract("AccessControlManager");
+
   await deploy("BoundValidator", {
     from: deployer,
     log: true,
@@ -40,7 +49,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: [],
+        args: [accessControlManager.address],
       },
     },
   });
@@ -56,7 +65,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: [boundValidator.address],
+        args: [boundValidator.address, accessControlManager.address],
       },
     },
   });
@@ -71,7 +80,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: [],
+        args: network.live ? [accessControlManager.address] : [],
       },
     },
   });
@@ -86,7 +95,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: network.live ? [] : [vBNBAddress],
+        args: network.live ? [accessControlManager.address] : [vBNBAddress],
       },
     },
   });
@@ -103,7 +112,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: [pythOracleAddress],
+        args: network.live ?  [pythOracleAddress, accessControlManager.address] : [pythOracleAddress],
       },
     },
   });

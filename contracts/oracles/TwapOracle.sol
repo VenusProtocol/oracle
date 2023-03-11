@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../libraries/PancakeLibrary.sol";
 import "../interfaces/OracleInterface.sol";
 import "../interfaces/VBep20Interface.sol";
+import "../Governance/AccessControlled.sol";
 
 struct Observation {
     uint256 timestamp;
@@ -28,7 +29,7 @@ struct TokenConfig {
     uint256 anchorPeriod;
 }
 
-contract TwapOracle is OwnableUpgradeable, TwapInterface {
+contract TwapOracle is Ownable2StepUpgradeable, AccessControlled, TwapInterface {
     using FixedPoint for *;
 
     /// @notice WBNB address
@@ -135,10 +136,12 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     }
 
     /**
-     * @notice Initializes the owner of the contract and sets the contracts required
+     * @notice Initializes the owner of the contract
+     * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize() public initializer {
-        __Ownable_init();
+    function initialize(address accessControlManager_) public initializer {
+        __Ownable2Step_init();
+        __AccessControlled_init_unchained(accessControlManager_);
     }
 
     /**

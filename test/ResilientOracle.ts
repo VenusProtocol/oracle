@@ -3,7 +3,7 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import chai from "chai";
 import { ethers, upgrades } from "hardhat";
 
-import { BoundValidator, ChainlinkOracle, ResilientOracle, TwapOracle } from "../typechain-types";
+import { AccessControlManager, BoundValidator, ChainlinkOracle, ResilientOracle, TwapOracle } from "../typechain-types";
 import { addr0000, addr1111, getSimpleAddress } from "./utils/data";
 import { makeVToken } from "./utils/makeVToken";
 
@@ -43,8 +43,11 @@ describe("Oracle plugin frame unit tests", function () {
   });
 
   beforeEach(async function () {
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
     const ResilientOracle = await ethers.getContractFactory("ResilientOracle", this.admin);
-    const instance = <ResilientOracle>await upgrades.deployProxy(ResilientOracle, [this.boundValidator.address], {
+    const instance = <ResilientOracle>await upgrades.deployProxy(ResilientOracle, [this.boundValidator.address, fakeAccessControlManager.address], {
       constructorArgs: [this.vBnb, this.vai],
     });
     this.oracleBasement = instance;
@@ -114,6 +117,7 @@ describe("Oracle plugin frame unit tests", function () {
       const asset = await vToken.underlying();
 
       await this.oracleBasement.transferOwnership(this.signers[2].address);
+      await this.oracleBasement.connect(this.signers[2]).acceptOwnership();
       const newOwner = await this.oracleBasement.owner();
       expect(newOwner).to.equal(this.signers[2].address);
       await this.oracleBasement.connect(this.signers[2]).setTokenConfig({
