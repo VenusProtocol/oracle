@@ -55,24 +55,7 @@ describe("Oracle unit tests", function () {
     return instance;
   });
 
-  describe("constructor", () => {
-    it("sets address of admin", async function () {
-      const admin = await this.chainlinkOracle.owner();
-      expect(admin).to.equal(this.admin.address);
-    });
-  });
-
   describe("set token config", () => {
-    it("only admin may set token config", async function () {
-      await expect(
-        this.chainlinkOracle.connect(this.signers[2]).setTokenConfig({
-          asset: this.bnbAddr,
-          feed: this.bnbFeed.address,
-          maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
-        }),
-      ).to.be.revertedWith("Ownable: caller is not the owner");
-    });
-
     it("cannot set feed to zero address", async function () {
       await expect(
         this.chainlinkOracle.setTokenConfig({
@@ -95,18 +78,6 @@ describe("Oracle unit tests", function () {
   });
 
   describe("batch set token configs", () => {
-    it("only admin may set token configs", async function () {
-      await expect(
-        this.chainlinkOracle.connect(this.signers[2]).setTokenConfigs([
-          {
-            asset: this.bnbAddr,
-            feed: this.bnbFeed.address,
-            maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
-          },
-        ]),
-      ).to.be.revertedWith("Ownable: caller is not the owner");
-    });
-
     it("cannot set feed or vtoken to zero address", async function () {
       await expect(
         this.chainlinkOracle.setTokenConfigs([
@@ -217,12 +188,6 @@ describe("Oracle unit tests", function () {
   });
 
   describe("setUnderlyingPrice", () => {
-    it("only admin may set an underlying price", async function () {
-      await expect(
-        this.chainlinkOracle.connect(this.signers[2]).setUnderlyingPrice(this.vExampleSet.address, 1),
-      ).to.be.revertedWith("Ownable: caller is not the owner");
-    });
-
     it("sets the underlying price", async function () {
       await this.chainlinkOracle.setUnderlyingPrice(this.vExampleSet.address, 1);
       const underlying = await this.vExampleSet.underlying();
@@ -232,12 +197,6 @@ describe("Oracle unit tests", function () {
   });
 
   describe("setDirectPrice", () => {
-    it("only admin may set an underlying price", async function () {
-      await expect(
-        this.chainlinkOracle.connect(this.signers[2]).setUnderlyingPrice(this.xvs.address, 7),
-      ).to.be.revertedWith("Ownable: caller is not the owner");
-    });
-
     it("sets the direct price", async function () {
       await this.chainlinkOracle.setDirectPrice(this.xvs.address, 7);
       const price = await this.chainlinkOracle.prices(this.xvs.address);

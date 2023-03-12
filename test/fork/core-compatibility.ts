@@ -36,6 +36,9 @@ interface OracleFixture {
 }
 
 async function deployOracleFixture(): Promise<OracleFixture> {
+  const signers = await (ethers as any).getSigners();
+  const deployer = signers[0]
+
   const AccessControlManagerFactory: AccessControlManager__factory = await ethers.getContractFactory("AccessControlManager");
   const accessControlManager = await AccessControlManagerFactory.deploy()
 
@@ -72,6 +75,18 @@ async function deployOracleFixture(): Promise<OracleFixture> {
   const binanceOracle = <BinanceOracle>await upgrades.deployProxy(BinanceOracleFactory, [SIDRegistryAddress], {
     constructorArgs: [vBNB, VAI],
   });
+
+  await accessControlManager.giveCallPermission(
+    chainlinkOracle.address,
+    "setTokenConfig(TokenConfig)",
+    deployer.address,
+  );
+
+  await accessControlManager.giveCallPermission(
+    resillientOracle.address,
+    "setTokenConfig(TokenConfig)",
+    deployer.address,
+  );
 
   return { resillientOracle, boundValidator, chainlinkOracle, twapOracle, pythOracle, binanceOracle };
 }

@@ -2,14 +2,13 @@
 // SPDX-FileCopyrightText: 2022 Venus
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./interfaces/VBep20Interface.sol";
 import "./interfaces/OracleInterface.sol";
 import "./Governance/AccessControlled.sol";
 
-contract ResilientOracle is Ownable2StepUpgradeable, PausableUpgradeable, AccessControlled, ResilientOracleInterface {
+contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOracleInterface {
     /**
      * @dev Oracle roles:
      * **main**: The most trustworthy price source
@@ -96,7 +95,8 @@ contract ResilientOracle is Ownable2StepUpgradeable, PausableUpgradeable, Access
      * @notice Pauses oracle
      * @custom:access Only Governance
      */
-    function pause() external onlyOwner {
+    function pause() external {
+        _checkAccessAllowed("pause()");
         _pause();
     }
 
@@ -104,7 +104,8 @@ contract ResilientOracle is Ownable2StepUpgradeable, PausableUpgradeable, Access
      * @notice Unpauses oracle
      * @custom:access Only Governance
      */
-    function unpause() external onlyOwner {
+    function unpause() external {
+        _checkAccessAllowed("unpause()");
         _unpause();
     }
 
@@ -114,7 +115,8 @@ contract ResilientOracle is Ownable2StepUpgradeable, PausableUpgradeable, Access
      * @custom:access Only Governance
      * @custom:error Throws a length error if the lenght of the token configs array is 0
      */
-    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
+    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
+        _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         require(tokenConfigs_.length != 0, "length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
         for (uint256 i; i < numTokenConfigs; ++i) {
@@ -138,7 +140,8 @@ contract ResilientOracle is Ownable2StepUpgradeable, PausableUpgradeable, Access
         address asset,
         address oracle,
         OracleRole role
-    ) external onlyOwner notNullAddress(asset) checkTokenConfigExistance(asset) {
+    ) external notNullAddress(asset) checkTokenConfigExistance(asset) {
+        _checkAccessAllowed("setOracle(address,address,OracleRole)");
         require(!(oracle == address(0) && role == OracleRole.MAIN), "can't set zero address to main oracle");
         tokenConfigs[asset].oracles[uint256(role)] = oracle;
         emit OracleSet(asset, oracle, uint256(role));
@@ -157,7 +160,8 @@ contract ResilientOracle is Ownable2StepUpgradeable, PausableUpgradeable, Access
         address asset,
         OracleRole role,
         bool enable
-    ) external onlyOwner notNullAddress(asset) checkTokenConfigExistance(asset) {
+    ) external notNullAddress(asset) checkTokenConfigExistance(asset) {
+        _checkAccessAllowed("enableOracle(address,OracleRole,address)");
         tokenConfigs[asset].enableFlagsForOracles[uint256(role)] = enable;
         emit OracleEnabled(asset, uint256(role), enable);
     }
@@ -254,7 +258,6 @@ contract ResilientOracle is Ownable2StepUpgradeable, PausableUpgradeable, Access
         require(address(_boundValidator) != address(0), "invalid bound validator address");
         boundValidator = _boundValidator;
 
-        __Ownable2Step_init();
         __AccessControlled_init_unchained(accessControlManager_);
     }
 
@@ -269,7 +272,9 @@ contract ResilientOracle is Ownable2StepUpgradeable, PausableUpgradeable, Access
      */
     function setTokenConfig(
         TokenConfig memory tokenConfig
-    ) public onlyOwner notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)]) {
+    ) public notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)]) {
+        _checkAccessAllowed("setTokenConfig(TokenConfig)");
+
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(
             tokenConfig.asset,

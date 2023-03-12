@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
 import "../Governance/AccessControlled.sol";
@@ -19,7 +18,7 @@ struct ValidateConfig {
 
 // BoundValidator provides some common functions and can be used
 // to wrap up other contracts to form pivot oracles
-contract BoundValidator is Ownable2StepUpgradeable, AccessControlled, BoundValidatorInterface {
+contract BoundValidator is AccessControlled, BoundValidatorInterface {
     /// @notice validation configs by asset
     mapping(address => ValidateConfig) public validateConfigs;
 
@@ -56,7 +55,9 @@ contract BoundValidator is Ownable2StepUpgradeable, AccessControlled, BoundValid
      * @custom:error Zero length error is thrown if length of the config array is 0
      * @custom:event Emits ValidateConfigAdded for each validation config that is successfully set
      */
-    function setValidateConfigs(ValidateConfig[] memory configs) external virtual onlyOwner {
+    function setValidateConfigs(ValidateConfig[] memory configs) external virtual {
+        _checkAccessAllowed("setValidateConfigs(ValidateConfig[])");
+
         require(configs.length > 0, "invalid validate config length");
         for (uint256 i; i < configs.length; ++i) {
             setValidateConfig(configs[i]);
@@ -81,7 +82,9 @@ contract BoundValidator is Ownable2StepUpgradeable, AccessControlled, BoundValid
      * @custom:error Range error thrown if lower bound is greater than upper bound
      * @custom:event Emits ValidateConfigAdded when a validation config is successfully set
      */
-    function setValidateConfig(ValidateConfig memory config) public virtual onlyOwner {
+    function setValidateConfig(ValidateConfig memory config) public virtual {
+        _checkAccessAllowed("setValidateConfig(ValidateConfig)");
+
         require(config.asset != address(0), "asset can't be zero address");
         require(config.upperBoundRatio > 0 && config.lowerBoundRatio > 0, "bound must be positive");
         require(config.upperBoundRatio > config.lowerBoundRatio, "upper bound must be higher than lowner bound");

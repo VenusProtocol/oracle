@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../libraries/PancakeLibrary.sol";
 import "../interfaces/OracleInterface.sol";
@@ -29,7 +28,7 @@ struct TokenConfig {
     uint256 anchorPeriod;
 }
 
-contract TwapOracle is Ownable2StepUpgradeable, AccessControlled, TwapInterface {
+contract TwapOracle is AccessControlled, TwapInterface {
     using FixedPoint for *;
 
     /// @notice WBNB address
@@ -104,6 +103,7 @@ contract TwapOracle is Ownable2StepUpgradeable, AccessControlled, TwapInterface 
      * @custom:error Zero length error thrown, if length of the config array is 0
      */
     function setTokenConfigs(TokenConfig[] memory configs) external onlyOwner {
+        _checkAccessAllowed("setTokenConfigsTokenConfig[])");
         require(configs.length > 0, "length can't be 0");
         uint256 numTokenConfigs = configs.length;
         for (uint256 i; i < numTokenConfigs; ++i) {
@@ -158,7 +158,9 @@ contract TwapOracle is Ownable2StepUpgradeable, AccessControlled, TwapInterface 
      */
     function setTokenConfig(
         TokenConfig memory config
-    ) public onlyOwner notNullAddress(config.asset) notNullAddress(config.pancakePool) {
+    ) public notNullAddress(config.asset) notNullAddress(config.pancakePool) {
+        _checkAccessAllowed("setTokenConfig(TokenConfig)");
+
         require(config.anchorPeriod > 0, "anchor period must be positive");
         require(config.baseUnit > 0, "base unit must be positive");
         require(

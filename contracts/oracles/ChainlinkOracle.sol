@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV2V3Interface.sol";
@@ -17,7 +16,7 @@ struct TokenConfig {
     uint256 maxStalePeriod;
 }
 
-contract ChainlinkOracle is Ownable2StepUpgradeable, AccessControlled, OracleInterface {
+contract ChainlinkOracle is AccessControlled, OracleInterface {
     /// @notice vBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vBnb;
@@ -72,7 +71,9 @@ contract ChainlinkOracle is Ownable2StepUpgradeable, AccessControlled, OracleInt
     function setUnderlyingPrice(
         VBep20Interface vToken,
         uint256 underlyingPriceMantissa
-    ) external notNullAddress(address(vToken)) onlyOwner {
+    ) external notNullAddress(address(vToken)) {
+        _checkAccessAllowed("setUnderlyingPrice(VBep20Interface,uint256)");
+
         address asset = address(vToken) == vBnb ? BNB_ADDR : address(vToken.underlying());
         emit PricePosted(asset, prices[asset], underlyingPriceMantissa, underlyingPriceMantissa);
         prices[asset] = underlyingPriceMantissa;
@@ -85,9 +86,11 @@ contract ChainlinkOracle is Ownable2StepUpgradeable, AccessControlled, OracleInt
      * @custom:access Only Governance
      * @custom:event Emits PricePosted event on succesfully setup of underlying price
      */
-    function setDirectPrice(address asset, uint256 price) external notNullAddress(asset) onlyOwner {
-        emit PricePosted(asset, prices[asset], price, price);
+    function setDirectPrice(address asset, uint256 price) external notNullAddress(asset) {
+        _checkAccessAllowed("setDirectPrice(asset,price)");
+
         prices[asset] = price;
+        emit PricePosted(asset, prices[asset], price, price);
     }
 
     /**
@@ -96,7 +99,8 @@ contract ChainlinkOracle is Ownable2StepUpgradeable, AccessControlled, OracleInt
      * @custom:access Only Governance
      * @custom:error Zero length error thrown, if length of the array in parameter is 0
      */
-    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
+    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
+         _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         require(tokenConfigs_.length > 0, "length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
         for (uint256 i; i < numTokenConfigs; ++i) {
@@ -109,7 +113,6 @@ contract ChainlinkOracle is Ownable2StepUpgradeable, AccessControlled, OracleInt
      * @param accessControlManager_ Address of the access control manager contract
      */
     function initialize(address accessControlManager_) public initializer {
-        __Ownable2Step_init();
         __AccessControlled_init_unchained(accessControlManager_);
     }
 
@@ -124,7 +127,9 @@ contract ChainlinkOracle is Ownable2StepUpgradeable, AccessControlled, OracleInt
      */
     function setTokenConfig(
         TokenConfig memory tokenConfig
-    ) public onlyOwner notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.feed) {
+    ) public notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.feed) {
+        _checkAccessAllowed("setTokenConfig(TokenConfig)");
+        
         require(tokenConfig.maxStalePeriod > 0, "stale period can't be zero");
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(tokenConfig.asset, tokenConfig.feed, tokenConfig.maxStalePeriod);

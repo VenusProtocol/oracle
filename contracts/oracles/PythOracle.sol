@@ -4,7 +4,6 @@ pragma solidity 0.8.13;
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/utils/math/SignedMath.sol";
-import "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 import "../interfaces/PythInterface.sol";
 import "../interfaces/OracleInterface.sol";
 import "../interfaces/VBep20Interface.sol";
@@ -20,7 +19,7 @@ struct TokenConfig {
  * PythOracle contract reads prices from actual Pyth oracle contract which accepts, verifies and stores the
  * updated prices from external sources
  */
-contract PythOracle is Ownable2StepUpgradeable, AccessControlled, OracleInterface {
+contract PythOracle is AccessControlled, OracleInterface {
     using SafeMath for uint256;
 
     // To calculate 10 ** n(which is a signed type)
@@ -76,7 +75,8 @@ contract PythOracle is Ownable2StepUpgradeable, AccessControlled, OracleInterfac
      * @custom:access Only Governance
      * @custom:error Zero length error is thrown if length of the array in parameter is 0
      */
-    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
+    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
+        _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         require(tokenConfigs_.length != 0, "length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
         for (uint256 i; i < numTokenConfigs; ++i) {
@@ -93,7 +93,8 @@ contract PythOracle is Ownable2StepUpgradeable, AccessControlled, OracleInterfac
      */
     function setUnderlyingPythOracle(
         IPyth underlyingPythOracle_
-    ) external onlyOwner notNullAddress(address(underlyingPythOracle_)) {
+    ) external notNullAddress(address(underlyingPythOracle_)) {
+        _checkAccessAllowed("setUnderlyingPythOracle(IPyth)");
         underlyingPythOracle = underlyingPythOracle_;
         emit PythOracleSet(address(underlyingPythOracle_));
     }
@@ -119,7 +120,8 @@ contract PythOracle is Ownable2StepUpgradeable, AccessControlled, OracleInterfac
      * @custom:error Range error is thrown if max stale period is zero
      * @custom:error NotNullAddress error is thrown if asset address is null
      */
-    function setTokenConfig(TokenConfig memory tokenConfig) public onlyOwner notNullAddress(tokenConfig.asset) {
+    function setTokenConfig(TokenConfig memory tokenConfig) public notNullAddress(tokenConfig.asset) {
+        _checkAccessAllowed("setTokenConfig(TokenConfig)");
         require(tokenConfig.maxStalePeriod != 0, "max stale period cannot be 0");
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(tokenConfig.asset, tokenConfig.pythId, tokenConfig.maxStalePeriod);

@@ -14,7 +14,7 @@ const getBoundValidator = async (account: SignerWithAddress, vBnb: string, vai: 
   const BoundValidator = await ethers.getContractFactory("BoundValidator", account);
 
   const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
-    fakeAccessControlManager.isAllowedToCall.returns(true);
+  fakeAccessControlManager.isAllowedToCall.returns(true);
 
   return <BoundValidator>await upgrades.deployProxy(BoundValidator, [fakeAccessControlManager.address], {
     constructorArgs: [vBnb, vai],
@@ -32,22 +32,6 @@ describe("bound validator", function () {
     this.boundValidator = <BoundValidator>(<unknown>await getBoundValidator(admin, this.vBnb, this.vai));
     this.vToken = await makeVToken(admin, { name: "vToken", symbol: "vToken" }, { name: "Token", symbol: "Token" });
     this.bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
-  });
-  describe("admin check", function () {
-    it("only admin can call add validation configs", async function () {
-      const config = {
-        asset: await this.vToken.underlying(),
-        upperBoundRatio: EXP_SCALE.mul(12).div(10),
-        lowerBoundRatio: EXP_SCALE.mul(8).div(10),
-      };
-      await expect(this.boundValidator.connect(this.signers[2]).setValidateConfigs([config])).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-
-      await expect(this.boundValidator.connect(this.signers[1]).setValidateConfig(config)).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-    });
   });
   describe("add validation config", function () {
     it("length check", async function () {

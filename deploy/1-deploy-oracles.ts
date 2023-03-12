@@ -133,6 +133,29 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       },
     },
   });
+
+  const resilientOracle = await hre.ethers.getContract("ResilientOracle");
+  const pythOracle = await hre.ethers.getContract("PythOracle");
+  const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
+
+
+  await accessControlManager.giveCallPermission(
+    chainlinkOracle.address,
+    "setTokenConfig(TokenConfig)",
+    deployer,
+  );
+
+  await accessControlManager.giveCallPermission(
+    pythOracle.address,
+    "setTokenConfig(TokenConfig)",
+    deployer,
+  );
+
+  await accessControlManager.giveCallPermission(
+    resilientOracle.address,
+    "setTokenConfig(TokenConfig)",
+    deployer,
+  );
 };
 
 module.exports = func;

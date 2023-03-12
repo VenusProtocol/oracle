@@ -80,52 +80,6 @@ describe("Twap Oracle unit tests", function () {
     this.vToken1 = vToken1;
   });
 
-  describe("constructor", function () {
-    it("sets address of owner", async function () {
-      const owner = await this.twapOracle.owner();
-      expect(owner).to.equal(this.admin.address);
-    });
-  });
-
-  describe("admin check", function () {
-    // beforeEach(async function () {
-    //   this.vBnb = await makeVToken(this.admin, { name: "vBNB", symbol: "vBNB" }, { name: "BNB", symbol: "BNB" });
-    // });
-    it("only admin can call add token configs", async function () {
-      // setTokenConfigs
-      const config = {
-        asset: this.wBnb.address,
-        baseUnit: EXP_SCALE,
-        pancakePool: addr1111,
-        isBnbBased: false,
-        isReversedPool: false,
-        anchorPeriod: 30,
-      };
-      await expect(this.twapOracle.connect(this.signers[2]).setTokenConfigs([config])).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-
-      // setTokenConfig
-      await expect(this.twapOracle.connect(this.signers[1]).setTokenConfig(config)).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-    });
-    it("only admin can call add validation configs", async function () {
-      const config = {
-        asset: this.bnbAddr,
-        upperBoundRatio: EXP_SCALE.mul(12).div(10),
-        lowerBoundRatio: EXP_SCALE.mul(8).div(10),
-      };
-      await expect(this.boundValidator.connect(this.signers[2]).setValidateConfigs([config])).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-
-      await expect(this.boundValidator.connect(this.signers[1]).setValidateConfig(config)).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-    });
-  });
-
   describe("token config", function () {
     beforeEach(async function () {
       this.vBnb = await makeVToken(this.admin, { name: "vBNB", symbol: "vBNB" }, { name: "BNB", symbol: "BNB" });

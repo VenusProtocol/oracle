@@ -51,36 +51,7 @@ describe("Oracle plugin frame unit tests", function () {
     this.boundValidator = await getBoundValidator(admin, this.vBnb, this.vai);
   });
 
-  describe("constructor", function () {
-    it("sets address of owner", async function () {
-      const owner = await this.pythOracle.owner();
-      expect(owner).to.equal(this.admin.address);
-    });
-  });
-
   describe("admin check", function () {
-    it("only admin can call the setters", async function () {
-      const config = {
-        pythId: getBytes32String(2),
-        asset: addr1111,
-        maxStalePeriod: 10,
-      };
-      // setTokenConfigs
-      await expect(this.pythOracle.connect(this.signers[2]).setTokenConfigs([config])).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-
-      // setTokenConfig
-      await expect(this.pythOracle.connect(this.signers[1]).setTokenConfig(config)).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-
-      // setOracle
-      await expect(this.pythOracle.connect(this.signers[2]).setUnderlyingPythOracle(addr1111)).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-    });
-
     it("transfer owner", async function () {
       const config = {
         pythId: getBytes32String(2),
