@@ -65,7 +65,8 @@ contract AccessControlManager is AccessControl, IAccessControlManager {
 
     /**
      * @notice Verifies if the given account can call a contract's guarded function
-     * @dev Since restricted contracts using this function as a permission hook, we can get contracts address with msg.sender
+     * @dev Since restricted contracts using this function as a permission hook, 
+     * we can get contracts address with msg.sender
      * @param account for which call permissions will be checked
      * @param functionSig restricted function signature e.g. "functionName(uint256,bool)"
      * @return false if the user account cannot call the particular contract function
@@ -84,7 +85,8 @@ contract AccessControlManager is AccessControl, IAccessControlManager {
 
     /**
      * @notice Verifies if the given account can call a contract's guarded function
-     * @dev This function is used as a view function to check permissions rather than contract hook for access restriction check.
+     * @dev This function is used as a view function to check permissions
+     * rather than contract hook for access restriction check.
      * @param account for which call permissions will be checked against
      * @param contractAddress address of the restricted contract
      * @param functionSig signature of the restricted function e.g. "functionName(uint256,bool)"

@@ -3,7 +3,7 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import chai from "chai";
 import { ethers, upgrades } from "hardhat";
 
-import { AccessControlManager, BoundValidator, ChainlinkOracle, ResilientOracle, TwapOracle } from "../typechain-types";
+import { AccessControlManager, BoundValidator, ChainlinkOracle, ResilientOracle } from "../typechain-types";
 import { addr0000, addr1111, getSimpleAddress } from "./utils/data";
 import { makeVToken } from "./utils/makeVToken";
 

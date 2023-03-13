@@ -7,7 +7,7 @@ import { ethers, upgrades } from "hardhat";
 import { TwapOracle } from "../src/types/contracts/oracles/TwapOracle";
 import { AccessControlManager } from "../typechain-types";
 import { BoundValidator } from "../typechian-types";
-import { addr0000, addr1111 } from "./utils/data";
+import { addr0000 } from "./utils/data";
 import { makePairWithTokens } from "./utils/makePair";
 import { makeToken } from "./utils/makeToken";
 import { makeVToken } from "./utils/makeVToken";
