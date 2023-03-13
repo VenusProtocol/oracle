@@ -107,7 +107,7 @@ contract PythOracle is AccessControlled, OracleInterface {
     function initialize(address underlyingPythOracle_, address accessControlManager_) public initializer {
         __Ownable2Step_init();
         __AccessControlled_init_unchained(accessControlManager_);
-     
+
         require(underlyingPythOracle_ != address(0), "pyth oracle cannot be zero address");
         underlyingPythOracle = IPyth(underlyingPythOracle_);
         emit PythOracleSet(underlyingPythOracle_);

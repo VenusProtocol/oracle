@@ -112,7 +112,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: network.live ?  [pythOracleAddress, accessControlManager.address] : [pythOracleAddress],
+        args: network.live ? [pythOracleAddress, accessControlManager.address] : [pythOracleAddress],
       },
     },
   });
@@ -138,24 +138,11 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const pythOracle = await hre.ethers.getContract("PythOracle");
   const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
 
+  await accessControlManager.giveCallPermission(chainlinkOracle.address, "setTokenConfig(TokenConfig)", deployer);
 
-  await accessControlManager.giveCallPermission(
-    chainlinkOracle.address,
-    "setTokenConfig(TokenConfig)",
-    deployer,
-  );
+  await accessControlManager.giveCallPermission(pythOracle.address, "setTokenConfig(TokenConfig)", deployer);
 
-  await accessControlManager.giveCallPermission(
-    pythOracle.address,
-    "setTokenConfig(TokenConfig)",
-    deployer,
-  );
-
-  await accessControlManager.giveCallPermission(
-    resilientOracle.address,
-    "setTokenConfig(TokenConfig)",
-    deployer,
-  );
+  await accessControlManager.giveCallPermission(resilientOracle.address, "setTokenConfig(TokenConfig)", deployer);
 };
 
 module.exports = func;

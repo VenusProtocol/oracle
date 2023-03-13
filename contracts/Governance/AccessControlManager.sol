@@ -35,11 +35,7 @@ contract AccessControlManager is AccessControl, IAccessControlManager {
      * @param accountToPermit account that will be given access to the contract function
      * @custom:event Emits a {RoleGranted} and {PermissionGranted} events.
      */
-    function giveCallPermission(
-        address contractAddress,
-        string calldata functionSig,
-        address accountToPermit
-    ) public {
+    function giveCallPermission(address contractAddress, string calldata functionSig, address accountToPermit) public {
         bytes32 role = keccak256(abi.encodePacked(contractAddress, functionSig));
         grantRole(role, accountToPermit);
         emit PermissionGranted(accountToPermit, contractAddress, functionSig);
@@ -65,7 +61,7 @@ contract AccessControlManager is AccessControl, IAccessControlManager {
 
     /**
      * @notice Verifies if the given account can call a contract's guarded function
-     * @dev Since restricted contracts using this function as a permission hook, 
+     * @dev Since restricted contracts using this function as a permission hook,
      * we can get contracts address with msg.sender
      * @param account for which call permissions will be checked
      * @param functionSig restricted function signature e.g. "functionName(uint256,bool)"

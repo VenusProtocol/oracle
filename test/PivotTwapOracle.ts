@@ -52,11 +52,13 @@ describe("Twap Oracle unit tests", function () {
     this.twapOracle = twapInstance;
 
     const BoundValidator = await ethers.getContractFactory("BoundValidator", admin);
-    const boundValidatorInstance = <BoundValidator>await upgrades.deployProxy(BoundValidator, [
-      fakeAccessControlManager.address
-    ], {
-      constructorArgs: [this.vBnb.address, this.vai.address],
-    });
+    const boundValidatorInstance = <BoundValidator>await upgrades.deployProxy(
+      BoundValidator,
+      [fakeAccessControlManager.address],
+      {
+        constructorArgs: [this.vBnb.address, this.vai.address],
+      },
+    );
     this.boundValidator = boundValidatorInstance;
 
     const vToken1 = await makeVToken(

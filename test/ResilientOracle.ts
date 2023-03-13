@@ -47,9 +47,13 @@ describe("Oracle plugin frame unit tests", function () {
     fakeAccessControlManager.isAllowedToCall.returns(true);
 
     const ResilientOracle = await ethers.getContractFactory("ResilientOracle", this.admin);
-    const instance = <ResilientOracle>await upgrades.deployProxy(ResilientOracle, [this.boundValidator.address, fakeAccessControlManager.address], {
-      constructorArgs: [this.vBnb, this.vai],
-    });
+    const instance = <ResilientOracle>await upgrades.deployProxy(
+      ResilientOracle,
+      [this.boundValidator.address, fakeAccessControlManager.address],
+      {
+        constructorArgs: [this.vBnb, this.vai],
+      },
+    );
     this.oracleBasement = instance;
   });
 

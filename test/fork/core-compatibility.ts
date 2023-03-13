@@ -1,8 +1,8 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
-import { AccessControlManager__factory } from "../../../isolated-pools/typechain";
 
+import { AccessControlManager__factory } from "../../../isolated-pools/typechain";
 import {
   BinanceOracle,
   BinanceOracle__factory,
@@ -37,15 +37,21 @@ interface OracleFixture {
 
 async function deployOracleFixture(): Promise<OracleFixture> {
   const signers = await (ethers as any).getSigners();
-  const deployer = signers[0]
+  const deployer = signers[0];
 
-  const AccessControlManagerFactory: AccessControlManager__factory = await ethers.getContractFactory("AccessControlManager");
-  const accessControlManager = await AccessControlManagerFactory.deploy()
+  const AccessControlManagerFactory: AccessControlManager__factory = await ethers.getContractFactory(
+    "AccessControlManager",
+  );
+  const accessControlManager = await AccessControlManagerFactory.deploy();
 
   const BoundValidatorFactory: BoundValidator__factory = await ethers.getContractFactory("BoundValidator");
-  const boundValidator = <BoundValidator>await upgrades.deployProxy(BoundValidatorFactory, [accessControlManager.address], {
-    constructorArgs: [vBNB, VAI],
-  });
+  const boundValidator = <BoundValidator>await upgrades.deployProxy(
+    BoundValidatorFactory,
+    [accessControlManager.address],
+    {
+      constructorArgs: [vBNB, VAI],
+    },
+  );
 
   const ResilientOracleFactory: ResilientOracle__factory = await ethers.getContractFactory("ResilientOracle");
   const resillientOracle = <ResilientOracle>await upgrades.deployProxy(
@@ -57,9 +63,13 @@ async function deployOracleFixture(): Promise<OracleFixture> {
   );
 
   const ChainlinkOracleFactory: ChainlinkOracle__factory = await ethers.getContractFactory("ChainlinkOracle");
-  const chainlinkOracle = <ChainlinkOracle>await upgrades.deployProxy(ChainlinkOracleFactory, [accessControlManager.address], {
-    constructorArgs: [vBNB, VAI],
-  });
+  const chainlinkOracle = <ChainlinkOracle>await upgrades.deployProxy(
+    ChainlinkOracleFactory,
+    [accessControlManager.address],
+    {
+      constructorArgs: [vBNB, VAI],
+    },
+  );
 
   const TwapOracleFactory: TwapOracle__factory = await ethers.getContractFactory("TwapOracle");
   const twapOracle = <TwapOracle>await upgrades.deployProxy(TwapOracleFactory, [accessControlManager.address], {
@@ -67,9 +77,13 @@ async function deployOracleFixture(): Promise<OracleFixture> {
   });
 
   const PythOracleFactory: PythOracle__factory = await ethers.getContractFactory("PythOracle");
-  const pythOracle = <PythOracle>await upgrades.deployProxy(PythOracleFactory, [PythOracleAddress, accessControlManager.address], {
-    constructorArgs: [vBNB, VAI],
-  });
+  const pythOracle = <PythOracle>await upgrades.deployProxy(
+    PythOracleFactory,
+    [PythOracleAddress, accessControlManager.address],
+    {
+      constructorArgs: [vBNB, VAI],
+    },
+  );
 
   const BinanceOracleFactory: BinanceOracle__factory = await ethers.getContractFactory("BinanceOracle");
   const binanceOracle = <BinanceOracle>await upgrades.deployProxy(BinanceOracleFactory, [SIDRegistryAddress], {

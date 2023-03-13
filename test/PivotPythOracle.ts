@@ -22,9 +22,13 @@ const getPythOracle = async (account: SignerWithAddress, vBnb: string, vai: stri
   const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
   fakeAccessControlManager.isAllowedToCall.returns(true);
 
-  const instance = <PythOracle>await upgrades.deployProxy(PythOracle, [actualOracle.address, fakeAccessControlManager.address], {
-    constructorArgs: [vBnb, vai],
-  });
+  const instance = <PythOracle>await upgrades.deployProxy(
+    PythOracle,
+    [actualOracle.address, fakeAccessControlManager.address],
+    {
+      constructorArgs: [vBnb, vai],
+    },
+  );
   return instance;
 };
 

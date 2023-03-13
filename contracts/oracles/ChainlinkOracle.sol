@@ -100,7 +100,7 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
      * @custom:error Zero length error thrown, if length of the array in parameter is 0
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
-         _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
+        _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         require(tokenConfigs_.length > 0, "length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
         for (uint256 i; i < numTokenConfigs; ++i) {
@@ -129,7 +129,7 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
         TokenConfig memory tokenConfig
     ) public notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.feed) {
         _checkAccessAllowed("setTokenConfig(TokenConfig)");
-        
+
         require(tokenConfig.maxStalePeriod > 0, "stale period can't be zero");
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(tokenConfig.asset, tokenConfig.feed, tokenConfig.maxStalePeriod);

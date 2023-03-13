@@ -41,7 +41,6 @@ abstract contract AccessControlled is Initializable, Ownable2StepUpgradeable {
         return _accessControlManager;
     }
 
-
     function __AccessControlled_init(address accessControlManager_) internal onlyInitializing {
         __Ownable2Step_init();
         __AccessControlled_init_unchained(accessControlManager_);

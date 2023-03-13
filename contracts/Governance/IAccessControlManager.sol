@@ -4,11 +4,7 @@ pragma solidity 0.8.13;
 import "@openzeppelin/contracts/access/IAccessControl.sol";
 
 interface IAccessControlManager is IAccessControl {
-    function giveCallPermission(
-        address contractAddress,
-        string calldata functionSig,
-        address accountToPermit
-    ) external;
+    function giveCallPermission(address contractAddress, string calldata functionSig, address accountToPermit) external;
 
     function revokeCallPermission(
         address contractAddress,
