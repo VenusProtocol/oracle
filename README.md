@@ -2,11 +2,6 @@
 
 ## Usage
 
-### Pre Requisites
-
-Before running any command, you need to create a `.env` file and set a BIP-38 compatible private key as an environment
-variable. Follow the example in `.env.example`.
-
 ### Prerequisites
 
 - NodeJS - 12.x
