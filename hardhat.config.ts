@@ -1,106 +1,47 @@
-// this needs to come first
 import "module-alias/register";
 
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
 import "@openzeppelin/hardhat-upgrades";
 import "@typechain/hardhat";
-import { config as dotenvConfig } from "dotenv";
+import * as dotenv from "dotenv";
 import "hardhat-deploy";
 import "hardhat-gas-reporter";
 import { HardhatUserConfig } from "hardhat/config";
-import { NetworkUserConfig } from "hardhat/types";
-import { resolve } from "path";
 import "solidity-coverage";
 import "solidity-docgen";
 
 import "./tasks";
 
-dotenvConfig({ path: resolve(__dirname, "./.env") });
-
-// Ensure that we have all the environment variables we need.
-const privateKey: string | undefined = process.env.PRIVATE_KEY;
-if (!privateKey) {
-  throw new Error("Please set your PRIVATE_KEY in a .env file");
-}
-
-const infuraApiKey: string | undefined = process.env.INFURA_API_KEY;
-if (!infuraApiKey) {
-  throw new Error("Please set your INFURA_API_KEY in a .env file");
-}
-
-const chainIds = {
-  bsc: 56,
-  bsctestnet: 97,
-  hardhat: 31337,
-  goerli: 5,
-  rinkeby: 4,
-};
-
-function getChainConfig(chain: keyof typeof chainIds): NetworkUserConfig {
-  let jsonRpcUrl: string;
-  switch (chain) {
-    case "bsc":
-      jsonRpcUrl = process.env.BSC_RPC || "https://bsc-dataseed1.binance.org";
-      break;
-    case "bsctestnet":
-      jsonRpcUrl = process.env.BSC_TESTNET_NODE || "https://data-seed-prebsc-1-s1.binance.org:8545";
-      break;
-    default:
-      jsonRpcUrl = "https://" + chain + ".infura.io/v3/" + infuraApiKey;
-  }
-  return {
-    accounts: [`0x${privateKey}`],
-    chainId: chainIds[chain],
-    url: jsonRpcUrl,
-  };
-}
+dotenv.config();
 
 const config: HardhatUserConfig = {
-  defaultNetwork: "hardhat",
-  namedAccounts: {
-    deployer: {
-      default: 0, // here this will by default take the first account as deployer
-    },
-  },
-  etherscan: {
-    apiKey: {
-      bsc: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
-      bsctestnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
-      rinkeby: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
-      goerli: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
-    },
-  },
-  gasReporter: {
-    currency: "USD",
-    enabled: process.env.REPORT_GAS ? true : false,
-    excludeContracts: [],
-    src: "./contracts",
-  },
-  networks: {
-    hardhat: {
-      chainId: chainIds.hardhat,
-    },
-    goerli: getChainConfig("goerli"),
-    rinkeby: getChainConfig("rinkeby"),
-    bsc: getChainConfig("bsc"),
-    bsctestnet: getChainConfig("bsctestnet"),
-  },
-  paths: {
-    artifacts: "./artifacts",
-    cache: "./cache",
-    sources: "./contracts",
-    tests: "./test",
-  },
   solidity: {
     compilers: [
       {
         version: "0.8.13",
         settings: {
-          // Disable the optimizer when debugging
-          // https://hardhat.org/hardhat-network/#solidity-optimizer-support
           optimizer: {
             enabled: true,
+            details: {
+              yul: !process.env.CI,
+            },
+          },
+          outputSelection: {
+            "*": {
+              "*": ["storageLayout"],
+            },
+          },
+        },
+      },
+      {
+        version: "0.6.6",
+        settings: {
+          optimizer: {
+            enabled: true,
+            details: {
+              yul: !process.env.CI,
+            },
           },
           outputSelection: {
             "*": {
@@ -111,11 +52,89 @@ const config: HardhatUserConfig = {
       },
     ],
   },
+  networks: {
+    hardhat: isFork(),
+    development: {
+      url: "http://127.0.0.1:8545/",
+      chainId: 31337,
+      live: false,
+    },
+    bsctestnet: {
+      url: "https://bsc-testnet.public.blastapi.io",
+      chainId: 97,
+      live: true,
+      gasPrice: 20000000000,
+      accounts: {
+        mnemonic: process.env.MNEMONIC || "",
+      },
+    },
+  },
+  gasReporter: {
+    enabled: process.env.REPORT_GAS !== undefined,
+    currency: "USD",
+  },
+  etherscan: {
+    customChains: [
+      {
+        network: "testnet",
+        chainId: 97,
+        urls: {
+          apiURL: "https://api-testnet.bscscan.com/api",
+          browserURL: "https://testnet.bscscan.com",
+        },
+      },
+    ],
+  },
+  paths: {
+    tests: "./test",
+  },
+  // Hardhat deploy
+  namedAccounts: {
+    deployer: 0,
+    acc1: 1,
+    acc2: 2,
+    proxyAdmin: 3,
+    acc3: 4,
+  },
   docgen: {
     outputDir: "./docs",
     pages: "files",
     templates: "./docgen-templates",
   },
+  external: {
+    contracts: [
+      {
+        artifacts: "node_modules/@venusprotocol/oracle/artifacts",
+      },
+      {
+        artifacts: "node_modules/@venusprotocol/venus-protocol/artifacts",
+      },
+    ],
+    deployments: {
+      bsctestnet: ["node_modules/@venusprotocol/oracle/deployments/bsctestnet"],
+    },
+  },
 };
+
+function isFork() {
+  return process.env.FORK_MAINNET === "true"
+    ? {
+        allowUnlimitedContractSize: false,
+        loggingEnabled: false,
+        forking: {
+          url: `https://white-ultra-silence.bsc.discover.quiknode.pro/${process.env.QUICK_NODE_KEY}/`,
+          blockNumber: 21068448,
+        },
+        accounts: {
+          accountsBalance: "1000000000000000000",
+        },
+        live: false,
+      }
+    : {
+        allowUnlimitedContractSize: true,
+        loggingEnabled: false,
+        live: false,
+      };
+}
 
 export default config;
