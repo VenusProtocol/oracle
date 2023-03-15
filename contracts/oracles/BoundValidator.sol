@@ -104,7 +104,7 @@ contract BoundValidator is AccessControlled, BoundValidatorInterface {
         uint256 reportedPrice,
         uint256 anchorPrice
     ) public view virtual override returns (bool) {
-        address asset = vToken == vBnb ? BNB_ADDR : VBep20Interface(vToken).underlying();
+        address asset = _getUnderlyingAsset(vToken);
 
         require(validateConfigs[asset].upperBoundRatio != 0, "validation config not exist");
         require(anchorPrice != 0, "anchor price is not valid");
@@ -125,6 +125,21 @@ contract BoundValidator is AccessControlled, BoundValidatorInterface {
             return anchorRatio <= upperBoundAnchorRatio && anchorRatio >= lowerBoundAnchorRatio;
         }
         return false;
+    }
+
+    /**
+     * @dev This function returns the underlying asset of a vToken
+     * @param vToken vToken address
+     * @return asset underlying asset address
+     */
+    function _getUnderlyingAsset(address vToken) internal view returns (address asset) {
+        if (address(vToken) == vBnb) {
+            asset = BNB_ADDR;
+        } else if (address(vToken) == vai) {
+            asset = vai;
+        } else {
+            asset = VBep20Interface(vToken).underlying();
+        }
     }
 
     // BoundValidator is to get inherited, so it's a good practice to add some storage gaps like

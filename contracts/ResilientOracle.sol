@@ -185,16 +185,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOrac
      * @return tokenConfig Config for the vToken
      */
     function getTokenConfig(address vToken) external view returns (TokenConfig memory) {
-        address asset;
-
-        if (address(vToken) == vBnb) {
-            asset = BNB_ADDR;
-        } else if (address(vToken) == vai) {
-            asset = vai;
-        } else {
-            asset = VBep20Interface(vToken).underlying();
-        }
-
+        address asset = _getUnderlyingAsset(vToken);
         return tokenConfigs[asset];
     }
 
@@ -292,15 +283,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOrac
      * @return enabled Enabled flag of the oracle based on token config
      */
     function getOracle(address vToken, OracleRole role) public view returns (address oracle, bool enabled) {
-        address asset;
-
-        if (address(vToken) == vBnb) {
-            asset = BNB_ADDR;
-        } else if (address(vToken) == vai) {
-            asset = vai;
-        } else {
-            asset = VBep20Interface(vToken).underlying();
-        }
+        address asset = _getUnderlyingAsset(vToken);
 
         oracle = tokenConfigs[asset].oracles[uint256(role)];
         enabled = tokenConfigs[asset].enableFlagsForOracles[uint256(role)];
@@ -374,5 +357,20 @@ contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOrac
         }
 
         return (INVALID_PRICE, false);
+    }
+
+    /**
+     * @dev This function returns the underlying asset of a vToken
+     * @param vToken vToken address
+     * @return asset underlying asset address
+     */
+    function _getUnderlyingAsset(address vToken) internal view returns (address asset) {
+        if (address(vToken) == vBnb) {
+            asset = BNB_ADDR;
+        } else if (address(vToken) == vai) {
+            asset = vai;
+        } else {
+            asset = VBep20Interface(vToken).underlying();
+        }
     }
 }

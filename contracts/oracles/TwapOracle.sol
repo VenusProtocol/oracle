@@ -119,14 +119,8 @@ contract TwapOracle is AccessControlled, TwapInterface {
      * @custom:error Range error is thrown if TWAP price is not greater than zero
      */
     function getUnderlyingPrice(address vToken) external view override returns (uint256) {
-        address asset;
-        if (address(vToken) == vBnb) {
-            asset = WBNB;
-        } else if (address(vToken) == vai) {
-            asset = vai;
-        } else {
-            asset = VBep20Interface(vToken).underlying();
-        }
+        address asset = _getUnderlyingAsset(vToken);
+
         require(tokenConfigs[asset].asset != address(0), "asset not exist");
         uint256 price = prices[asset];
 
@@ -182,15 +176,7 @@ contract TwapOracle is AccessControlled, TwapInterface {
      * @custom:error Missing error is thrown if token config does not exist
      */
     function updateTwap(address vToken) public returns (uint256) {
-        address asset;
-
-        if (address(vToken) == vBnb) {
-            asset = WBNB;
-        } else if (address(vToken) == vai) {
-            asset = vai;
-        } else {
-            asset = VBep20Interface(vToken).underlying();
-        }
+        address asset = _getUnderlyingAsset(vToken);
 
         require(tokenConfigs[asset].asset != address(0), "asset not exist");
         // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
@@ -306,5 +292,20 @@ contract TwapOracle is AccessControlled, TwapInterface {
             cumulativePrice
         );
         return (cumulativePrice, startCumulativePrice, startCumulativeTimestamp);
+    }
+
+    /**
+     * @dev This function returns the underlying asset of a vToken
+     * @param vToken vToken address
+     * @return asset underlying asset address
+     */
+    function _getUnderlyingAsset(address vToken) internal view returns (address asset) {
+        if (address(vToken) == vBnb) {
+            asset = WBNB;
+        } else if (address(vToken) == vai) {
+            asset = vai;
+        } else {
+            asset = VBep20Interface(vToken).underlying();
+        }
     }
 }

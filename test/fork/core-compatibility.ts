@@ -27,7 +27,7 @@ const BNBAddress = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
 const VAI = "0x4BD17003473389A42DAF6a0a729f6Fdb328BbBd7";
 
 interface OracleFixture {
-  resillientOracle: ResilientOracle;
+  resilientOracle: ResilientOracle;
   boundValidator: BoundValidator;
   chainlinkOracle: ChainlinkOracle;
   twapOracle: TwapOracle;
@@ -54,7 +54,7 @@ async function deployOracleFixture(): Promise<OracleFixture> {
   );
 
   const ResilientOracleFactory: ResilientOracle__factory = await ethers.getContractFactory("ResilientOracle");
-  const resillientOracle = <ResilientOracle>await upgrades.deployProxy(
+  const resilientOracle = <ResilientOracle>await upgrades.deployProxy(
     ResilientOracleFactory,
     [boundValidator.address, accessControlManager.address],
     {
@@ -97,21 +97,21 @@ async function deployOracleFixture(): Promise<OracleFixture> {
   );
 
   await accessControlManager.giveCallPermission(
-    resillientOracle.address,
+    resilientOracle.address,
     "setTokenConfig(TokenConfig)",
     deployer.address,
   );
 
-  return { resillientOracle, boundValidator, chainlinkOracle, twapOracle, pythOracle, binanceOracle };
+  return { resilientOracle, boundValidator, chainlinkOracle, twapOracle, pythOracle, binanceOracle };
 }
 
 describe("Core protocol", async () => {
-  let resillientOracle: ResilientOracle;
+  let resilientOracle: ResilientOracle;
   let chainlinkOracle: ChainlinkOracle;
 
   if (FORK_MAINNET) {
     beforeEach("deploy and configure XVSVault contracts", async () => {
-      ({ resillientOracle, chainlinkOracle } = await loadFixture(deployOracleFixture));
+      ({ resilientOracle, chainlinkOracle } = await loadFixture(deployOracleFixture));
     });
 
     it("validate vBNB price", async () => {
@@ -122,13 +122,13 @@ describe("Core protocol", async () => {
         maxStalePeriod: 86400,
       });
 
-      await resillientOracle.setTokenConfig({
+      await resilientOracle.setTokenConfig({
         asset: BNBAddress,
         oracles: [chainlinkOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
         enableFlagsForOracles: [true, false, false],
       });
 
-      const price = await resillientOracle.getUnderlyingPrice(vBNB);
+      const price = await resilientOracle.getUnderlyingPrice(vBNB);
       expect(price).to.be.equal("274310000000000000000");
     });
 
@@ -143,13 +143,13 @@ describe("Core protocol", async () => {
         maxStalePeriod: 86400,
       });
 
-      await resillientOracle.setTokenConfig({
+      await resilientOracle.setTokenConfig({
         asset: LTCAddress,
         oracles: [chainlinkOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
         enableFlagsForOracles: [true, false, false],
       });
 
-      const price = await resillientOracle.getUnderlyingPrice(vLTCAddress);
+      const price = await resilientOracle.getUnderlyingPrice(vLTCAddress);
       expect(price).to.be.equal("70780000000000000000");
     });
 
@@ -164,13 +164,13 @@ describe("Core protocol", async () => {
         maxStalePeriod: 86400,
       });
 
-      await resillientOracle.setTokenConfig({
+      await resilientOracle.setTokenConfig({
         asset: XVSAddress,
         oracles: [chainlinkOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
         enableFlagsForOracles: [true, false, false],
       });
 
-      const price = await resillientOracle.getUnderlyingPrice(vXVSAddress);
+      const price = await resilientOracle.getUnderlyingPrice(vXVSAddress);
       expect(price).to.be.equal("4412797480000000000");
     });
 
@@ -182,13 +182,13 @@ describe("Core protocol", async () => {
         maxStalePeriod: 86400,
       });
 
-      await resillientOracle.setTokenConfig({
+      await resilientOracle.setTokenConfig({
         asset: VAI,
         oracles: [chainlinkOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
         enableFlagsForOracles: [true, false, false],
       });
 
-      const price = await resillientOracle.getUnderlyingPrice(VAI);
+      const price = await resilientOracle.getUnderlyingPrice(VAI);
       expect(price).to.be.equal("967991030000000000");
     });
   }
