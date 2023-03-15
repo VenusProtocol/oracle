@@ -74,16 +74,10 @@ const config: HardhatUserConfig = {
     currency: "USD",
   },
   etherscan: {
-    customChains: [
-      {
-        network: "testnet",
-        chainId: 97,
-        urls: {
-          apiURL: "https://api-testnet.bscscan.com/api",
-          browserURL: "https://testnet.bscscan.com",
-        },
-      },
-    ],
+    apiKey: {
+      bsc: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
+      bsctestnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
+    },
   },
   paths: {
     tests: "./test",
