@@ -1,4 +1,5 @@
 import { smock } from "@defi-wonderland/smock";
+import { increaseTo } from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time/increaseTo";
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
@@ -308,28 +309,39 @@ describe("Twap Oracle unit tests", function () {
       expect(lastObservation.timestamp).to.be.equal(ts + 903);
     });
     it("should delete multiple observation and pick observation which falling under window", async function () {
-      const ts = await getTime();
-      const acc = Q112.mul(ts);
-      await checkObservations(this.twapOracle, await this.token0.underlying(), ts, acc, 0);
-      await increaseTime(100);
+      const initialTs = await getTime();
+      const acc = Q112.mul(initialTs);
+      await checkObservations(this.twapOracle, await this.token0.underlying(), initialTs, acc, 0);
+
+      const secondTs = initialTs + 100;
+      await increaseTo(secondTs);
       await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
-      await increaseTime(100);
+
+      const thirdTs = secondTs + 100;
+      await increaseTo(thirdTs);
       await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
-      await increaseTime(100);
+
+      const fourthTs = thirdTs + 100;
+      await increaseTo(fourthTs);
       await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
-      await increaseTime(100);
+
+      const fifthTs = fourthTs + 100;
+      await increaseTo(fifthTs);
       await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
-      await increaseTime(600);
+
+      const sixthTs = fifthTs + 600;
+      await increaseTo(sixthTs);
       await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
+
       // window changed
       const firstObservation = await this.twapOracle.observations(this.token0.underlying(), 0);
       expect(firstObservation.timestamp).to.be.equal(0);
       const secondObservation = await this.twapOracle.observations(this.token0.underlying(), 1);
-      expect(secondObservation.timestamp).to.be.equal(0);
+      expect(secondObservation.timestamp).to.be.equal(secondTs + 1);
       const thirdObservation = await this.twapOracle.observations(this.token0.underlying(), 2);
-      expect(thirdObservation.timestamp).to.be.equal(ts + 202);
+      expect(thirdObservation.timestamp).to.be.equal(thirdTs + 1);
       const lastObservation = await this.twapOracle.observations(this.token0.underlying(), 5);
-      expect(lastObservation.timestamp).to.be.equal(ts + 1005);
+      expect(lastObservation.timestamp).to.be.equal(sixthTs + 1);
     });
     it("cumulative value", async function () {
       const currentTimestamp = await getTime();
