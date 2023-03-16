@@ -85,28 +85,11 @@ const config: HardhatUserConfig = {
   // Hardhat deploy
   namedAccounts: {
     deployer: 0,
-    acc1: 1,
-    acc2: 2,
-    proxyAdmin: 3,
-    acc3: 4,
   },
   docgen: {
     outputDir: "./docs",
     pages: "files",
     templates: "./docgen-templates",
-  },
-  external: {
-    contracts: [
-      {
-        artifacts: "node_modules/@venusprotocol/oracle/artifacts",
-      },
-      {
-        artifacts: "node_modules/@venusprotocol/venus-protocol/artifacts",
-      },
-    ],
-    deployments: {
-      bsctestnet: ["node_modules/@venusprotocol/oracle/deployments/bsctestnet"],
-    },
   },
 };
 
