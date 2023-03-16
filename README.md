@@ -16,6 +16,29 @@ yarn install
 
 ```
 
+### Linting and code formatting
+
+Linting is done using eslint for typescript and solhint for solidity. Prettier is used to format solidity and typescript files.
+
+To check linting and formatting on all files run:
+
+```sh
+$ yarn lint
+```
+
+Linting command can be run with the fix flag to fix eligible errors automatically
+
+```sh
+$ yarn lint:sol --fix
+$ yarn lint:ts --fix
+```
+
+To pretty all files run:
+
+```sh
+$ yarn prettier
+```
+
 ### Run Tests
 
 ```

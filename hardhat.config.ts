@@ -99,8 +99,8 @@ function isFork() {
         allowUnlimitedContractSize: false,
         loggingEnabled: false,
         forking: {
-          url: `https://white-ultra-silence.bsc.discover.quiknode.pro/${process.env.QUICK_NODE_KEY}/`,
-          blockNumber: 21068448,
+          url: process.env.QUICK_NODE_URL,
+          blockNumber: 26349263,
         },
         accounts: {
           accountsBalance: "1000000000000000000",
