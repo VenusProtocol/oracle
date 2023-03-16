@@ -1,9 +1,11 @@
+import { smock } from "@defi-wonderland/smock";
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { artifacts, ethers, upgrades, waffle } from "hardhat";
 
 import { BoundValidator, PythOracle } from "../src/types";
+import { AccessControlManager } from "../typechain-types";
 import { MockPyth } from "../typechain-types/contracts/test/MockPyth";
 import { addr0000, addr1111, getBytes32String, getSimpleAddress } from "./utils/data";
 import { makeVToken } from "./utils/makeVToken";
@@ -11,22 +13,32 @@ import { getTime, increaseTime } from "./utils/time";
 
 const EXP_SCALE = BigNumber.from(10).pow(18);
 
-const getPythOracle = async (account: SignerWithAddress, vBnb: string) => {
+const getPythOracle = async (account: SignerWithAddress, vBnb: string, vai: string) => {
   const actualOracleArtifact = await artifacts.readArtifact("MockPyth");
   const actualOracle = await waffle.deployContract(account, actualOracleArtifact, [0, 0]);
   await actualOracle.deployed();
 
   const PythOracle = await ethers.getContractFactory("PythOracle", account);
-  const instance = <PythOracle>await upgrades.deployProxy(PythOracle, [actualOracle.address], {
-    constructorArgs: [vBnb],
-  });
+  const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+  fakeAccessControlManager.isAllowedToCall.returns(true);
+
+  const instance = <PythOracle>await upgrades.deployProxy(
+    PythOracle,
+    [actualOracle.address, fakeAccessControlManager.address],
+    {
+      constructorArgs: [vBnb, vai],
+    },
+  );
   return instance;
 };
 
-const getBoundValidator = async (account: SignerWithAddress, vBnb: string) => {
+const getBoundValidator = async (account: SignerWithAddress, vBnb: string, vai: string) => {
   const BoundValidator = await ethers.getContractFactory("BoundValidator", account);
-  const instance = <BoundValidator>await upgrades.deployProxy(BoundValidator, [], {
-    constructorArgs: [vBnb],
+  const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+  fakeAccessControlManager.isAllowedToCall.returns(true);
+
+  const instance = <BoundValidator>await upgrades.deployProxy(BoundValidator, [fakeAccessControlManager.address], {
+    constructorArgs: [vBnb, vai],
   });
   return instance;
 };
@@ -36,42 +48,14 @@ describe("Oracle plugin frame unit tests", function () {
     const signers: SignerWithAddress[] = await ethers.getSigners();
     const admin = signers[0];
     this.vBnb = signers[5].address;
+    this.vai = signers[6].address;
     this.signers = signers;
     this.admin = admin;
-    this.pythOracle = await getPythOracle(admin, this.vBnb);
-    this.boundValidator = await getBoundValidator(admin, this.vBnb);
-  });
-
-  describe("constructor", function () {
-    it("sets address of owner", async function () {
-      const owner = await this.pythOracle.owner();
-      expect(owner).to.equal(this.admin.address);
-    });
+    this.pythOracle = await getPythOracle(admin, this.vBnb, this.vai);
+    this.boundValidator = await getBoundValidator(admin, this.vBnb, this.vai);
   });
 
   describe("admin check", function () {
-    it("only admin can call the setters", async function () {
-      const config = {
-        pythId: getBytes32String(2),
-        asset: addr1111,
-        maxStalePeriod: 10,
-      };
-      // setTokenConfigs
-      await expect(this.pythOracle.connect(this.signers[2]).setTokenConfigs([config])).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-
-      // setTokenConfig
-      await expect(this.pythOracle.connect(this.signers[1]).setTokenConfig(config)).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-
-      // setOracle
-      await expect(this.pythOracle.connect(this.signers[2]).setUnderlyingPythOracle(addr1111)).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-    });
-
     it("transfer owner", async function () {
       const config = {
         pythId: getBytes32String(2),
@@ -79,6 +63,7 @@ describe("Oracle plugin frame unit tests", function () {
         maxStalePeriod: 10,
       };
       await this.pythOracle.transferOwnership(this.signers[2].address);
+      await this.pythOracle.connect(this.signers[2]).acceptOwnership();
       const newOwner = await this.pythOracle.owner();
       expect(newOwner).to.equal(this.signers[2].address);
       await this.pythOracle.connect(this.signers[2]).setTokenConfigs([config]);

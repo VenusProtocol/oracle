@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../libraries/PancakeLibrary.sol";
 import "../interfaces/OracleInterface.sol";
 import "../interfaces/VBep20Interface.sol";
+import "../Governance/AccessControlled.sol";
 
 struct Observation {
     uint256 timestamp;
@@ -28,7 +28,7 @@ struct TokenConfig {
     uint256 anchorPeriod;
 }
 
-contract TwapOracle is OwnableUpgradeable, TwapInterface {
+contract TwapOracle is AccessControlled, TwapInterface {
     using FixedPoint for *;
 
     /// @notice WBNB address
@@ -38,6 +38,10 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     /// @notice vBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vBnb;
+
+    /// @notice VAI address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable vai;
 
     /// @notice the base unit of WBNB and BUSD, which are the paired tokens for all assets
     uint256 public constant bnbBaseUnit = 1e18;
@@ -80,10 +84,16 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     /// @notice Constructor for the implementation contract. Sets immutable variables.
     /// @param vBnbAddress The address of the VBNB
     /// @param wBnbAddress The address of the WBNB
+    /// @param vaiAddress The address of the WBNB
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress, address wBnbAddress) notNullAddress(vBnbAddress) notNullAddress(wBnbAddress) {
+    constructor(
+        address vBnbAddress,
+        address wBnbAddress,
+        address vaiAddress
+    ) notNullAddress(vBnbAddress) notNullAddress(wBnbAddress) notNullAddress(vaiAddress) {
         vBnb = vBnbAddress;
         WBNB = wBnbAddress;
+        vai = vaiAddress;
         _disableInitializers();
     }
 
@@ -93,6 +103,7 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
      * @custom:error Zero length error thrown, if length of the config array is 0
      */
     function setTokenConfigs(TokenConfig[] memory configs) external onlyOwner {
+        _checkAccessAllowed("setTokenConfigsTokenConfig[])");
         require(configs.length > 0, "length can't be 0");
         uint256 numTokenConfigs = configs.length;
         for (uint256 i; i < numTokenConfigs; ++i) {
@@ -108,8 +119,8 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
      * @custom:error Range error is thrown if TWAP price is not greater than zero
      */
     function getUnderlyingPrice(address vToken) external view override returns (uint256) {
-        // VBNB token doesn't have `underlying` method, vBNB's underlying token is wBNB
-        address asset = address(vToken) == vBnb ? WBNB : VBep20Interface(vToken).underlying();
+        address asset = _getUnderlyingAsset(vToken);
+
         require(tokenConfigs[asset].asset != address(0), "asset not exist");
         uint256 price = prices[asset];
 
@@ -119,10 +130,12 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
     }
 
     /**
-     * @notice Initializes the owner of the contract and sets the contracts required
+     * @notice Initializes the owner of the contract
+     * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize() public initializer {
-        __Ownable_init();
+    function initialize(address accessControlManager_) public initializer {
+        __Ownable2Step_init();
+        __AccessControlled_init_unchained(accessControlManager_);
     }
 
     /**
@@ -139,7 +152,9 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
      */
     function setTokenConfig(
         TokenConfig memory config
-    ) public onlyOwner notNullAddress(config.asset) notNullAddress(config.pancakePool) {
+    ) public notNullAddress(config.asset) notNullAddress(config.pancakePool) {
+        _checkAccessAllowed("setTokenConfig(TokenConfig)");
+
         require(config.anchorPeriod > 0, "anchor period must be positive");
         require(config.baseUnit > 0, "base unit must be positive");
         require(
@@ -161,8 +176,8 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
      * @custom:error Missing error is thrown if token config does not exist
      */
     function updateTwap(address vToken) public returns (uint256) {
-        // VBNB token doesn't have `underlying` method, vBNB's underlying token is wBNB
-        address asset = address(vToken) == vBnb ? WBNB : VBep20Interface(vToken).underlying();
+        address asset = _getUnderlyingAsset(vToken);
+
         require(tokenConfigs[asset].asset != address(0), "asset not exist");
         // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
         if (asset != WBNB && tokenConfigs[asset].isBnbBased) {
@@ -277,5 +292,20 @@ contract TwapOracle is OwnableUpgradeable, TwapInterface {
             cumulativePrice
         );
         return (cumulativePrice, startCumulativePrice, startCumulativeTimestamp);
+    }
+
+    /**
+     * @dev This function returns the underlying asset of a vToken
+     * @param vToken vToken address
+     * @return asset underlying asset address
+     */
+    function _getUnderlyingAsset(address vToken) internal view returns (address asset) {
+        if (address(vToken) == vBnb) {
+            asset = WBNB;
+        } else if (address(vToken) == vai) {
+            asset = vai;
+        } else {
+            asset = VBep20Interface(vToken).underlying();
+        }
     }
 }

@@ -4,10 +4,10 @@ pragma solidity 0.8.13;
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/utils/math/SignedMath.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/PythInterface.sol";
 import "../interfaces/OracleInterface.sol";
 import "../interfaces/VBep20Interface.sol";
+import "../Governance/AccessControlled.sol";
 
 struct TokenConfig {
     bytes32 pythId;
@@ -19,7 +19,7 @@ struct TokenConfig {
  * PythOracle contract reads prices from actual Pyth oracle contract which accepts, verifies and stores the
  * updated prices from external sources
  */
-contract PythOracle is OwnableUpgradeable, OracleInterface {
+contract PythOracle is AccessControlled, OracleInterface {
     using SafeMath for uint256;
 
     // To calculate 10 ** n(which is a signed type)
@@ -34,6 +34,10 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     /// @notice vBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vBnb;
+
+    /// @notice VAI address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable vai;
 
     /// @notice Set this as asset address for BNB. This is the underlying for vBNB
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
@@ -57,9 +61,11 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
 
     /// @notice Constructor for the implementation contract. Sets immutable variables.
     /// @param vBnbAddress The address of the vBNB
+    /// @param vaiAddress The address of the VAI
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress) notNullAddress(vBnbAddress) {
+    constructor(address vBnbAddress, address vaiAddress) notNullAddress(vBnbAddress) notNullAddress(vaiAddress) {
         vBnb = vBnbAddress;
+        vai = vaiAddress;
         _disableInitializers();
     }
 
@@ -69,7 +75,8 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
      * @custom:access Only Governance
      * @custom:error Zero length error is thrown if length of the array in parameter is 0
      */
-    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
+    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
+        _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         require(tokenConfigs_.length != 0, "length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
         for (uint256 i; i < numTokenConfigs; ++i) {
@@ -86,7 +93,8 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
      */
     function setUnderlyingPythOracle(
         IPyth underlyingPythOracle_
-    ) external onlyOwner notNullAddress(address(underlyingPythOracle_)) {
+    ) external notNullAddress(address(underlyingPythOracle_)) {
+        _checkAccessAllowed("setUnderlyingPythOracle(IPyth)");
         underlyingPythOracle = underlyingPythOracle_;
         emit PythOracleSet(address(underlyingPythOracle_));
     }
@@ -94,9 +102,12 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
     /**
      * @notice Initializes the owner of the contract and sets required contracts
      * @param underlyingPythOracle_ Address of the Pyth oracle
+     * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize(address underlyingPythOracle_) public initializer {
-        __Ownable_init();
+    function initialize(address underlyingPythOracle_, address accessControlManager_) public initializer {
+        __Ownable2Step_init();
+        __AccessControlled_init_unchained(accessControlManager_);
+
         require(underlyingPythOracle_ != address(0), "pyth oracle cannot be zero address");
         underlyingPythOracle = IPyth(underlyingPythOracle_);
         emit PythOracleSet(underlyingPythOracle_);
@@ -109,7 +120,8 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
      * @custom:error Range error is thrown if max stale period is zero
      * @custom:error NotNullAddress error is thrown if asset address is null
      */
-    function setTokenConfig(TokenConfig memory tokenConfig) public onlyOwner notNullAddress(tokenConfig.asset) {
+    function setTokenConfig(TokenConfig memory tokenConfig) public notNullAddress(tokenConfig.asset) {
+        _checkAccessAllowed("setTokenConfig(TokenConfig)");
         require(tokenConfig.maxStalePeriod != 0, "max stale period cannot be 0");
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(tokenConfig.asset, tokenConfig.pythId, tokenConfig.maxStalePeriod);
@@ -133,6 +145,9 @@ contract PythOracle is OwnableUpgradeable, OracleInterface {
         // VBNB token doesn't have `underlying` method
         if (address(vToken) == vBnb) {
             asset = BNB_ADDR;
+            decimals = 18;
+        } else if (address(vToken) == vai) {
+            asset = vai;
             decimals = 18;
         } else {
             asset = VBep20Interface(vToken).underlying();

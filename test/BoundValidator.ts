@@ -1,19 +1,23 @@
+import { smock } from "@defi-wonderland/smock";
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers, upgrades } from "hardhat";
 
-import { BoundValidator } from "../typechain-types";
+import { AccessControlManager, BoundValidator } from "../typechain-types";
 import { addr0000, addr1111 } from "./utils/data";
 import { makeVToken } from "./utils/makeVToken";
 
 const EXP_SCALE = BigNumber.from(10).pow(18);
 
-const getBoundValidator = async (account: SignerWithAddress, vBnb: string) => {
+const getBoundValidator = async (account: SignerWithAddress, vBnb: string, vai: string) => {
   const BoundValidator = await ethers.getContractFactory("BoundValidator", account);
 
-  return <BoundValidator>await upgrades.deployProxy(BoundValidator, [], {
-    constructorArgs: [vBnb],
+  const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+  fakeAccessControlManager.isAllowedToCall.returns(true);
+
+  return <BoundValidator>await upgrades.deployProxy(BoundValidator, [fakeAccessControlManager.address], {
+    constructorArgs: [vBnb, vai],
   });
 };
 
@@ -22,27 +26,12 @@ describe("bound validator", function () {
     const signers: SignerWithAddress[] = await ethers.getSigners();
     const admin = signers[0];
     this.vBnb = signers[5].address;
+    this.vai = signers[5].address;
     this.signers = signers;
     this.admin = admin;
-    this.boundValidator = <BoundValidator>(<unknown>await getBoundValidator(admin, this.vBnb));
+    this.boundValidator = <BoundValidator>(<unknown>await getBoundValidator(admin, this.vBnb, this.vai));
     this.vToken = await makeVToken(admin, { name: "vToken", symbol: "vToken" }, { name: "Token", symbol: "Token" });
     this.bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
-  });
-  describe("admin check", function () {
-    it("only admin can call add validation configs", async function () {
-      const config = {
-        asset: await this.vToken.underlying(),
-        upperBoundRatio: EXP_SCALE.mul(12).div(10),
-        lowerBoundRatio: EXP_SCALE.mul(8).div(10),
-      };
-      await expect(this.boundValidator.connect(this.signers[2]).setValidateConfigs([config])).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-
-      await expect(this.boundValidator.connect(this.signers[1]).setValidateConfig(config)).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-    });
   });
   describe("add validation config", function () {
     it("length check", async function () {

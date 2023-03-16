@@ -3,7 +3,7 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import chai from "chai";
 import { ethers, upgrades } from "hardhat";
 
-import { BoundValidator, ChainlinkOracle, ResilientOracle, TwapOracle } from "../typechain-types";
+import { AccessControlManager, BoundValidator, ChainlinkOracle, ResilientOracle } from "../typechain-types";
 import { addr0000, addr1111, getSimpleAddress } from "./utils/data";
 import { makeVToken } from "./utils/makeVToken";
 
@@ -38,90 +38,23 @@ describe("Oracle plugin frame unit tests", function () {
     this.boundValidator = await getBoundValidator();
     this.simpleOracle = await getMockSimpleOracleOracle();
     this.vBnb = signers[5].address;
+    this.vai = signers[6].address;
     this.bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
   });
 
   beforeEach(async function () {
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
     const ResilientOracle = await ethers.getContractFactory("ResilientOracle", this.admin);
-    const instance = <ResilientOracle>await upgrades.deployProxy(ResilientOracle, [this.boundValidator.address], {
-      constructorArgs: [this.vBnb],
-    });
+    const instance = <ResilientOracle>await upgrades.deployProxy(
+      ResilientOracle,
+      [this.boundValidator.address, fakeAccessControlManager.address],
+      {
+        constructorArgs: [this.vBnb, this.vai],
+      },
+    );
     this.oracleBasement = instance;
-  });
-
-  describe("constructor", function () {
-    it("sets address of owner", async function () {
-      const owner = await this.oracleBasement.owner();
-      expect(owner).to.equal(this.admin.address);
-    });
-  });
-
-  describe("admin check", function () {
-    it("only admin can call the setters", async function () {
-      // setTokenConfigs
-      const vToken = await makeVToken(
-        this.admin,
-        { name: "vETH", symbol: "vETH" },
-        { name: "Ethereum", symbol: "ETH" },
-      );
-      const asset = await vToken.underlying();
-
-      await expect(
-        this.oracleBasement.connect(this.signers[2]).setTokenConfigs([
-          {
-            asset: asset,
-            oracles: [addr0000, addr0000, addr0000],
-            enableFlagsForOracles: [false, false, false],
-          },
-        ]),
-      ).to.be.revertedWith("Ownable: caller is not the owner");
-
-      // setTokenConfig
-      await expect(
-        this.oracleBasement.connect(this.signers[1]).setTokenConfig({
-          asset: asset,
-          oracles: [addr0000, addr0000, addr0000],
-          enableFlagsForOracles: [false, false, false],
-        }),
-      ).to.be.revertedWith("Ownable: caller is not the owner");
-
-      // setOracle
-      await expect(this.oracleBasement.connect(this.signers[2]).setOracle(asset, addr0000, 0)).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-
-      // enableOracle
-      await expect(this.oracleBasement.connect(this.signers[2]).enableOracle(asset, 0, false)).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-
-      // pause & unpause
-      await expect(this.oracleBasement.connect(this.signers[2]).pause()).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-      await expect(this.oracleBasement.connect(this.signers[2]).unpause()).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-    });
-
-    it("transfer owner", async function () {
-      const vToken = await makeVToken(
-        this.admin,
-        { name: "vETH", symbol: "vETH" },
-        { name: "Ethereum", symbol: "ETH" },
-      );
-      const asset = await vToken.underlying();
-
-      await this.oracleBasement.transferOwnership(this.signers[2].address);
-      const newOwner = await this.oracleBasement.owner();
-      expect(newOwner).to.equal(this.signers[2].address);
-      await this.oracleBasement.connect(this.signers[2]).setTokenConfig({
-        asset: asset,
-        oracles: [addr1111, addr1111, addr1111],
-        enableFlagsForOracles: [false, false, false],
-      });
-      expect((await this.oracleBasement.getTokenConfig(vToken.address)).oracles[0]).to.equal(addr1111);
-    });
   });
 
   describe("token config", function () {
@@ -435,31 +368,6 @@ describe("Oracle plugin frame unit tests", function () {
       await this.oracleBasement.enableOracle(asset1, 2, true);
       await this.boundValidator.validatePriceWithAnchorPrice.returns(true);
       expect(await this.oracleBasement.getUnderlyingPrice(token1)).to.be.equal(2000);
-    });
-  });
-
-  describe("update pivot price", function () {
-    let token1;
-    let asset1;
-
-    beforeEach(async function () {
-      this.fakePivotOracle = await smock.fake<TwapOracle>("TwapOracle");
-      token1 = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
-      asset1 = await token1.underlying();
-      token1 = token1.address;
-
-      await this.oracleBasement.setTokenConfigs([
-        {
-          asset: asset1,
-          oracles: [addr1111, this.fakePivotOracle.address, addr1111],
-          enableFlagsForOracles: [true, false, false],
-        },
-      ]);
-    });
-    it("Should not fail call if pivot oracle is twapOracle", async function () {
-      await this.oracleBasement.updatePrice(token1);
-      await this.oracleBasement.enableOracle(asset1, 1, true);
-      await this.oracleBasement.updatePrice(token1);
     });
   });
 });

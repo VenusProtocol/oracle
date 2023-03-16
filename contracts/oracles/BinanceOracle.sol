@@ -3,31 +3,54 @@ pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import "../interfaces/FeedRegistryInterface.sol";
 import "../interfaces/VBep20Interface.sol";
+import "../interfaces/SIDRegistryInterface.sol";
+import "../interfaces/FeedRegistryInterface.sol";
+import "../interfaces/PublicResolverInterface.sol";
 
 contract BinanceOracle is Initializable {
-    FeedRegistryInterface public feedRegistry;
+    address public sidRegistryAddress;
 
     /// @notice vBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vBnb;
 
+    /// @notice VAI address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable vai;
+
     /// @notice Constructor for the implementation contract. Sets immutable variables.
     /// @param vBnbAddress The address of the vBNB
+    /// @param vaiAddress The address of the VAI
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress) {
-        require(vBnbAddress != address(0), "can't be zero address");
+    constructor(address vBnbAddress, address vaiAddress) {
+        require(vBnbAddress != address(0), "vBNB can't be zero address");
+        require(vaiAddress != address(0), "VAI can't be zero address");
         vBnb = vBnbAddress;
+        vai = vaiAddress;
         _disableInitializers();
     }
 
     /**
      * @notice Sets the contracts required to fetch prices
-     * @param feed Address of binance oracle feed registry.
+     * @param _sidRegistryAddress Address of SID registry
      */
-    function initialize(FeedRegistryInterface feed) public initializer {
-        feedRegistry = feed;
+    function initialize(address _sidRegistryAddress) public initializer {
+        sidRegistryAddress = _sidRegistryAddress;
+    }
+
+    /**
+     * @notice Uses Space ID to fetch the feed registry address
+     * @return feedRegistryAddress Address of binance oracle feed registry.
+     */
+    function getFeedRegistryAddress() public view returns (address) {
+        bytes32 nodeHash = 0x94fe3821e0768eb35012484db4df61890f9a6ca5bfa984ef8ff717e73139faff;
+
+        SIDRegistryInterface sidRegistry = SIDRegistryInterface(sidRegistryAddress);
+        address publicResolverAddress = sidRegistry.resolver(nodeHash);
+        PublicResolverInterface publicResolver = PublicResolverInterface(publicResolverAddress);
+
+        return publicResolver.addr(nodeHash);
     }
 
     /**
@@ -43,6 +66,9 @@ contract BinanceOracle is Initializable {
         if (address(vToken) == vBnb) {
             symbol = "BNB";
             decimals = 18;
+        } else if (address(vToken) == vai) {
+            symbol = "VAI";
+            decimals = 18;
         } else {
             IERC20Metadata underlyingToken = IERC20Metadata(vToken.underlying());
             symbol = underlyingToken.symbol();
@@ -52,6 +78,8 @@ contract BinanceOracle is Initializable {
         if (keccak256(bytes(symbol)) == keccak256(bytes("WBNB"))) {
             symbol = "BNB";
         }
+
+        FeedRegistryInterface feedRegistry = FeedRegistryInterface(getFeedRegistryAddress());
 
         (, int256 answer, , , ) = feedRegistry.latestRoundDataByName(symbol, "USD");
 

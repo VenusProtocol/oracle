@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV2V3Interface.sol";
+import "../Governance/AccessControlled.sol";
 
 struct TokenConfig {
     /// @notice Underlying token address, which can't be a null address and can be used to check if a token is supported
@@ -16,13 +16,14 @@ struct TokenConfig {
     uint256 maxStalePeriod;
 }
 
-contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
-    /// @notice VAI token is considered $1 constantly in oracle for now
-    uint256 public constant VAI_VALUE = 1e18;
-
+contract ChainlinkOracle is AccessControlled, OracleInterface {
     /// @notice vBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vBnb;
+
+    /// @notice VAI address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable vai;
 
     /// @notice Set this as asset address for BNB. This is the underlying address for vBNB
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
@@ -51,9 +52,11 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
 
     /// @notice Constructor for the implementation contract. Sets immutable variables.
     /// @param vBnbAddress The address of the vBNB
+    /// @param vaiAddress The address of the VAI
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress) notNullAddress(vBnbAddress) {
+    constructor(address vBnbAddress, address vaiAddress) notNullAddress(vBnbAddress) notNullAddress(vaiAddress) {
         vBnb = vBnbAddress;
+        vai = vaiAddress;
         _disableInitializers();
     }
 
@@ -68,7 +71,9 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
     function setUnderlyingPrice(
         VBep20Interface vToken,
         uint256 underlyingPriceMantissa
-    ) external notNullAddress(address(vToken)) onlyOwner {
+    ) external notNullAddress(address(vToken)) {
+        _checkAccessAllowed("setUnderlyingPrice(VBep20Interface,uint256)");
+
         address asset = address(vToken) == vBnb ? BNB_ADDR : address(vToken.underlying());
         emit PricePosted(asset, prices[asset], underlyingPriceMantissa, underlyingPriceMantissa);
         prices[asset] = underlyingPriceMantissa;
@@ -81,9 +86,11 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @custom:access Only Governance
      * @custom:event Emits PricePosted event on succesfully setup of underlying price
      */
-    function setDirectPrice(address asset, uint256 price) external notNullAddress(asset) onlyOwner {
-        emit PricePosted(asset, prices[asset], price, price);
+    function setDirectPrice(address asset, uint256 price) external notNullAddress(asset) {
+        _checkAccessAllowed("setDirectPrice(asset,price)");
+
         prices[asset] = price;
+        emit PricePosted(asset, prices[asset], price, price);
     }
 
     /**
@@ -92,7 +99,8 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @custom:access Only Governance
      * @custom:error Zero length error thrown, if length of the array in parameter is 0
      */
-    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
+    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
+        _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         require(tokenConfigs_.length > 0, "length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
         for (uint256 i; i < numTokenConfigs; ++i) {
@@ -100,9 +108,12 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
         }
     }
 
-    /// @notice Initializes the owner of the contract
-    function initialize() public initializer {
-        __Ownable_init();
+    /**
+     * @notice Initializes the owner of the contract
+     * @param accessControlManager_ Address of the access control manager contract
+     */
+    function initialize(address accessControlManager_) public initializer {
+        __AccessControlled_init_unchained(accessControlManager_);
     }
 
     /**
@@ -116,7 +127,9 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      */
     function setTokenConfig(
         TokenConfig memory tokenConfig
-    ) public onlyOwner notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.feed) {
+    ) public notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.feed) {
+        _checkAccessAllowed("setTokenConfig(TokenConfig)");
+
         require(tokenConfig.maxStalePeriod > 0, "stale period can't be zero");
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(tokenConfig.asset, tokenConfig.feed, tokenConfig.maxStalePeriod);
@@ -128,13 +141,7 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
      * @return price Underlying price in USD
      */
     function getUnderlyingPrice(address vToken) public view override returns (uint256) {
-        string memory symbol = address(vToken) != vBnb ? VBep20Interface(vToken).symbol() : "BNB";
-
-        if (_compareStrings(symbol, "VAI")) {
-            return VAI_VALUE;
-        } else {
-            return _getUnderlyingPriceInternal(VBep20Interface(vToken));
-        }
+        return _getUnderlyingPriceInternal(VBep20Interface(vToken));
     }
 
     /**
@@ -152,6 +159,9 @@ contract ChainlinkOracle is OwnableUpgradeable, OracleInterface {
         // vBNB token doesn't have `underlying` method
         if (address(vToken) == vBnb) {
             token = BNB_ADDR;
+            decimals = 18;
+        } else if (address(vToken) == vai) {
+            token = vai;
             decimals = 18;
         } else {
             token = vToken.underlying();

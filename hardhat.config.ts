@@ -78,9 +78,7 @@ const config: HardhatUserConfig = {
     src: "./contracts",
   },
   networks: {
-    hardhat: {
-      chainId: chainIds.hardhat,
-    },
+    hardhat: isFork(),
     goerli: getChainConfig("goerli"),
     rinkeby: getChainConfig("rinkeby"),
     bsc: getChainConfig("bsc"),
@@ -117,5 +115,26 @@ const config: HardhatUserConfig = {
     templates: "./docgen-templates",
   },
 };
+
+function isFork() {
+  return process.env.FORK_MAINNET === "true"
+    ? {
+        allowUnlimitedContractSize: false,
+        loggingEnabled: false,
+        forking: {
+          url: process.env.QUICK_NODE_URL,
+          blockNumber: 26349263,
+        },
+        accounts: {
+          accountsBalance: "1000000000000000000",
+        },
+        live: false,
+      }
+    : {
+        allowUnlimitedContractSize: true,
+        loggingEnabled: false,
+        live: false,
+      };
+}
 
 export default config;

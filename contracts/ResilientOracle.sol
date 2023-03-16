@@ -2,12 +2,13 @@
 // SPDX-FileCopyrightText: 2022 Venus
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./interfaces/VBep20Interface.sol";
 import "./interfaces/OracleInterface.sol";
+import "./Governance/AccessControlled.sol";
 
-contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOracleInterface {
+contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOracleInterface {
     /**
      * @dev Oracle roles:
      * **main**: The most trustworthy price source
@@ -37,6 +38,10 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     /// @notice vBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vBnb;
+
+    /// @notice VAI address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable vai;
 
     /// @notice Set this as asset address for BNB. This is the underlying for vBNB
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
@@ -78,9 +83,11 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
 
     /// @notice Constructor for the implementation contract. Sets immutable variables.
     /// @param vBnbAddress The address of the vBNB
+    /// @param vaiAddress The address of the VAI
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress) notNullAddress(vBnbAddress) {
+    constructor(address vBnbAddress, address vaiAddress) notNullAddress(vBnbAddress) {
         vBnb = vBnbAddress;
+        vai = vaiAddress;
         _disableInitializers();
     }
 
@@ -88,7 +95,8 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @notice Pauses oracle
      * @custom:access Only Governance
      */
-    function pause() external onlyOwner {
+    function pause() external {
+        _checkAccessAllowed("pause()");
         _pause();
     }
 
@@ -96,7 +104,8 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @notice Unpauses oracle
      * @custom:access Only Governance
      */
-    function unpause() external onlyOwner {
+    function unpause() external {
+        _checkAccessAllowed("unpause()");
         _unpause();
     }
 
@@ -106,7 +115,8 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @custom:access Only Governance
      * @custom:error Throws a length error if the lenght of the token configs array is 0
      */
-    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external onlyOwner {
+    function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
+        _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         require(tokenConfigs_.length != 0, "length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
         for (uint256 i; i < numTokenConfigs; ++i) {
@@ -130,7 +140,8 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
         address asset,
         address oracle,
         OracleRole role
-    ) external onlyOwner notNullAddress(asset) checkTokenConfigExistance(asset) {
+    ) external notNullAddress(asset) checkTokenConfigExistance(asset) {
+        _checkAccessAllowed("setOracle(address,address,OracleRole)");
         require(!(oracle == address(0) && role == OracleRole.MAIN), "can't set zero address to main oracle");
         tokenConfigs[asset].oracles[uint256(role)] = oracle;
         emit OracleSet(asset, oracle, uint256(role));
@@ -149,7 +160,8 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
         address asset,
         OracleRole role,
         bool enable
-    ) external onlyOwner notNullAddress(asset) checkTokenConfigExistance(asset) {
+    ) external notNullAddress(asset) checkTokenConfigExistance(asset) {
+        _checkAccessAllowed("enableOracle(address,OracleRole,address)");
         tokenConfigs[asset].enableFlagsForOracles[uint256(role)] = enable;
         emit OracleEnabled(asset, uint256(role), enable);
     }
@@ -173,7 +185,7 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @return tokenConfig Config for the vToken
      */
     function getTokenConfig(address vToken) external view returns (TokenConfig memory) {
-        address asset = address(vToken) == vBnb ? BNB_ADDR : VBep20Interface(vToken).underlying();
+        address asset = _getUnderlyingAsset(vToken);
         return tokenConfigs[asset];
     }
 
@@ -231,13 +243,13 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
     /**
      * @notice Initializes the contract admin and sets the BoundValidator contract address
      * @param _boundValidator Address of the bound validator contract
+     * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize(BoundValidatorInterface _boundValidator) public initializer {
+    function initialize(BoundValidatorInterface _boundValidator, address accessControlManager_) public initializer {
         require(address(_boundValidator) != address(0), "invalid bound validator address");
         boundValidator = _boundValidator;
 
-        __Ownable_init();
-        __Pausable_init();
+        __AccessControlled_init_unchained(accessControlManager_);
     }
 
     /**
@@ -251,7 +263,9 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      */
     function setTokenConfig(
         TokenConfig memory tokenConfig
-    ) public onlyOwner notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)]) {
+    ) public notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)]) {
+        _checkAccessAllowed("setTokenConfig(TokenConfig)");
+
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(
             tokenConfig.asset,
@@ -269,7 +283,8 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
      * @return enabled Enabled flag of the oracle based on token config
      */
     function getOracle(address vToken, OracleRole role) public view returns (address oracle, bool enabled) {
-        address asset = address(vToken) == vBnb ? BNB_ADDR : VBep20Interface(vToken).underlying();
+        address asset = _getUnderlyingAsset(vToken);
+
         oracle = tokenConfigs[asset].oracles[uint256(role)];
         enabled = tokenConfigs[asset].enableFlagsForOracles[uint256(role)];
     }
@@ -342,5 +357,20 @@ contract ResilientOracle is OwnableUpgradeable, PausableUpgradeable, ResilientOr
         }
 
         return (INVALID_PRICE, false);
+    }
+
+    /**
+     * @dev This function returns the underlying asset of a vToken
+     * @param vToken vToken address
+     * @return asset underlying asset address
+     */
+    function _getUnderlyingAsset(address vToken) internal view returns (address asset) {
+        if (address(vToken) == vBnb) {
+            asset = BNB_ADDR;
+        } else if (address(vToken) == vai) {
+            asset = vai;
+        } else {
+            asset = VBep20Interface(vToken).underlying();
+        }
     }
 }

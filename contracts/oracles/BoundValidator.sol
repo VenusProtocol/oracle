@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
+import "../Governance/AccessControlled.sol";
 
 struct ValidateConfig {
     /// @notice asset address
@@ -18,13 +18,17 @@ struct ValidateConfig {
 
 // BoundValidator provides some common functions and can be used
 // to wrap up other contracts to form pivot oracles
-contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
+contract BoundValidator is AccessControlled, BoundValidatorInterface {
     /// @notice validation configs by asset
     mapping(address => ValidateConfig) public validateConfigs;
 
     /// @notice vBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vBnb;
+
+    /// @notice VAI address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable vai;
 
     /// @notice Set this as asset address for BNB. This is the underlying for vBNB
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
@@ -34,10 +38,13 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
 
     /// @notice Constructor for the implementation contract. Sets immutable variables.
     /// @param vBnbAddress The address of the vBNB
+    /// @param vaiAddress The address of the VAI
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress) {
+    constructor(address vBnbAddress, address vaiAddress) {
         require(vBnbAddress != address(0), "can't be a zero address");
+        require(vaiAddress != address(0), "can't be a zero address");
         vBnb = vBnbAddress;
+        vai = vaiAddress;
         _disableInitializers();
     }
 
@@ -48,7 +55,9 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
      * @custom:error Zero length error is thrown if length of the config array is 0
      * @custom:event Emits ValidateConfigAdded for each validation config that is successfully set
      */
-    function setValidateConfigs(ValidateConfig[] memory configs) external virtual onlyOwner {
+    function setValidateConfigs(ValidateConfig[] memory configs) external virtual {
+        _checkAccessAllowed("setValidateConfigs(ValidateConfig[])");
+
         require(configs.length > 0, "invalid validate config length");
         for (uint256 i; i < configs.length; ++i) {
             setValidateConfig(configs[i]);
@@ -57,9 +66,11 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
 
     /**
      * @notice Initializes the owner of the contract
+     * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize() public initializer {
-        __Ownable_init();
+    function initialize(address accessControlManager_) public initializer {
+        __Ownable2Step_init();
+        __AccessControlled_init_unchained(accessControlManager_);
     }
 
     /**
@@ -71,7 +82,9 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
      * @custom:error Range error thrown if lower bound is greater than upper bound
      * @custom:event Emits ValidateConfigAdded when a validation config is successfully set
      */
-    function setValidateConfig(ValidateConfig memory config) public virtual onlyOwner {
+    function setValidateConfig(ValidateConfig memory config) public virtual {
+        _checkAccessAllowed("setValidateConfig(ValidateConfig)");
+
         require(config.asset != address(0), "asset can't be zero address");
         require(config.upperBoundRatio > 0 && config.lowerBoundRatio > 0, "bound must be positive");
         require(config.upperBoundRatio > config.lowerBoundRatio, "upper bound must be higher than lowner bound");
@@ -91,7 +104,7 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
         uint256 reportedPrice,
         uint256 anchorPrice
     ) public view virtual override returns (bool) {
-        address asset = vToken == vBnb ? BNB_ADDR : VBep20Interface(vToken).underlying();
+        address asset = _getUnderlyingAsset(vToken);
 
         require(validateConfigs[asset].upperBoundRatio != 0, "validation config not exist");
         require(anchorPrice != 0, "anchor price is not valid");
@@ -112,6 +125,21 @@ contract BoundValidator is OwnableUpgradeable, BoundValidatorInterface {
             return anchorRatio <= upperBoundAnchorRatio && anchorRatio >= lowerBoundAnchorRatio;
         }
         return false;
+    }
+
+    /**
+     * @dev This function returns the underlying asset of a vToken
+     * @param vToken vToken address
+     * @return asset underlying asset address
+     */
+    function _getUnderlyingAsset(address vToken) internal view returns (address asset) {
+        if (address(vToken) == vBnb) {
+            asset = BNB_ADDR;
+        } else if (address(vToken) == vai) {
+            asset = vai;
+        } else {
+            asset = VBep20Interface(vToken).underlying();
+        }
     }
 
     // BoundValidator is to get inherited, so it's a good practice to add some storage gaps like

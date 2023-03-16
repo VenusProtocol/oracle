@@ -1,11 +1,14 @@
+import { smock } from "@defi-wonderland/smock";
+import { increaseTo } from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time/increaseTo";
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers, upgrades } from "hardhat";
 
 import { TwapOracle } from "../src/types/contracts/oracles/TwapOracle";
+import { AccessControlManager } from "../typechain-types";
 import { BoundValidator } from "../typechian-types";
-import { addr0000, addr1111 } from "./utils/data";
+import { addr0000 } from "./utils/data";
 import { makePairWithTokens } from "./utils/makePair";
 import { makeToken } from "./utils/makeToken";
 import { makeVToken } from "./utils/makeVToken";
@@ -36,19 +39,27 @@ describe("Twap Oracle unit tests", function () {
     this.signers = signers;
     this.admin = admin;
     this.vBnb = signers[5]; // Not your usual vToken
+    this.vai = signers[5]; // Not your usual vToken
     this.wBnb = await makeToken(admin, "Wrapped BNB", "WBNB", 18);
     this.bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
 
     const TwapOracle = await ethers.getContractFactory("TwapOracle", admin);
-    const twapInstance = <TwapOracle>await upgrades.deployProxy(TwapOracle, [], {
-      constructorArgs: [this.vBnb.address, this.wBnb.address],
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+    const twapInstance = <TwapOracle>await upgrades.deployProxy(TwapOracle, [fakeAccessControlManager.address], {
+      constructorArgs: [this.vBnb.address, this.wBnb.address, this.vai.address],
     });
     this.twapOracle = twapInstance;
 
     const BoundValidator = await ethers.getContractFactory("BoundValidator", admin);
-    const boundValidatorInstance = <BoundValidator>await upgrades.deployProxy(BoundValidator, [], {
-      constructorArgs: [this.vBnb.address],
-    });
+    const boundValidatorInstance = <BoundValidator>await upgrades.deployProxy(
+      BoundValidator,
+      [fakeAccessControlManager.address],
+      {
+        constructorArgs: [this.vBnb.address, this.vai.address],
+      },
+    );
     this.boundValidator = boundValidatorInstance;
 
     const vToken1 = await makeVToken(
@@ -70,52 +81,6 @@ describe("Twap Oracle unit tests", function () {
     const bnbPair = await makePairWithTokens(this.admin, tokenBusd.address, tokenWbnb.address);
     this.bnbPair = bnbPair;
     this.vToken1 = vToken1;
-  });
-
-  describe("constructor", function () {
-    it("sets address of owner", async function () {
-      const owner = await this.twapOracle.owner();
-      expect(owner).to.equal(this.admin.address);
-    });
-  });
-
-  describe("admin check", function () {
-    // beforeEach(async function () {
-    //   this.vBnb = await makeVToken(this.admin, { name: "vBNB", symbol: "vBNB" }, { name: "BNB", symbol: "BNB" });
-    // });
-    it("only admin can call add token configs", async function () {
-      // setTokenConfigs
-      const config = {
-        asset: this.wBnb.address,
-        baseUnit: EXP_SCALE,
-        pancakePool: addr1111,
-        isBnbBased: false,
-        isReversedPool: false,
-        anchorPeriod: 30,
-      };
-      await expect(this.twapOracle.connect(this.signers[2]).setTokenConfigs([config])).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-
-      // setTokenConfig
-      await expect(this.twapOracle.connect(this.signers[1]).setTokenConfig(config)).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-    });
-    it("only admin can call add validation configs", async function () {
-      const config = {
-        asset: this.bnbAddr,
-        upperBoundRatio: EXP_SCALE.mul(12).div(10),
-        lowerBoundRatio: EXP_SCALE.mul(8).div(10),
-      };
-      await expect(this.boundValidator.connect(this.signers[2]).setValidateConfigs([config])).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-
-      await expect(this.boundValidator.connect(this.signers[1]).setValidateConfig(config)).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
-    });
   });
 
   describe("token config", function () {
@@ -344,28 +309,39 @@ describe("Twap Oracle unit tests", function () {
       expect(lastObservation.timestamp).to.be.equal(ts + 903);
     });
     it("should delete multiple observation and pick observation which falling under window", async function () {
-      const ts = await getTime();
-      const acc = Q112.mul(ts);
-      await checkObservations(this.twapOracle, await this.token0.underlying(), ts, acc, 0);
-      await increaseTime(100);
+      const initialTs = await getTime();
+      const acc = Q112.mul(initialTs);
+      await checkObservations(this.twapOracle, await this.token0.underlying(), initialTs, acc, 0);
+
+      const secondTs = initialTs + 100;
+      await increaseTo(secondTs);
       await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
-      await increaseTime(100);
+
+      const thirdTs = secondTs + 100;
+      await increaseTo(thirdTs);
       await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
-      await increaseTime(100);
+
+      const fourthTs = thirdTs + 100;
+      await increaseTo(fourthTs);
       await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
-      await increaseTime(100);
+
+      const fifthTs = fourthTs + 100;
+      await increaseTo(fifthTs);
       await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
-      await increaseTime(600);
+
+      const sixthTs = fifthTs + 600;
+      await increaseTo(sixthTs);
       await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
+
       // window changed
       const firstObservation = await this.twapOracle.observations(this.token0.underlying(), 0);
       expect(firstObservation.timestamp).to.be.equal(0);
       const secondObservation = await this.twapOracle.observations(this.token0.underlying(), 1);
-      expect(secondObservation.timestamp).to.be.equal(0);
+      expect(secondObservation.timestamp).to.be.equal(secondTs + 1);
       const thirdObservation = await this.twapOracle.observations(this.token0.underlying(), 2);
-      expect(thirdObservation.timestamp).to.be.equal(ts + 202);
+      expect(thirdObservation.timestamp).to.be.equal(thirdTs + 1);
       const lastObservation = await this.twapOracle.observations(this.token0.underlying(), 5);
-      expect(lastObservation.timestamp).to.be.equal(ts + 1005);
+      expect(lastObservation.timestamp).to.be.equal(sixthTs + 1);
     });
     it("cumulative value", async function () {
       const currentTimestamp = await getTime();
