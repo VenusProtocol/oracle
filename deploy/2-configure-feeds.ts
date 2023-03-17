@@ -170,10 +170,9 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
     if (network.live) {
       console.log(`Configuring ${oracle} oracle for ${asset.token}`);
 
-      if (oraclesData[oracle].underlyingOracle.address != binanceOracle.address) {
-        const tx = await oraclesData[oracle].underlyingOracle?.setTokenConfig(
-          oraclesData[oracle].getTokenConfig(asset, networkName),
-        );
+      const getTokenConfig = oraclesData[oracle].getTokenConfig;
+      if (oraclesData[oracle].underlyingOracle.address != binanceOracle.address && getTokenConfig != undefined) {
+        const tx = await oraclesData[oracle].underlyingOracle?.setTokenConfig(getTokenConfig(asset, networkName));
         tx.wait(1);
       }
 

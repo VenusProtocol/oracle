@@ -99,7 +99,7 @@ function isFork() {
         allowUnlimitedContractSize: false,
         loggingEnabled: false,
         forking: {
-          url: process.env.QUICK_NODE_URL,
+          url: process.env.QUICK_NODE_URL || "",
           blockNumber: 26349263,
         },
         accounts: {
