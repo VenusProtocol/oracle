@@ -40,6 +40,12 @@ const chainlinkFeed: Config = {
   },
 };
 
+const pythID: Config = {
+  bsctestnet: {
+    AUTO: "0xd954e9a88c7f97b4645b535869aba8a1e50697270a0afb09891accc031f03880",
+  },
+};
+
 const assets: Assets = {
   bsctestnet: [
     {
@@ -108,6 +114,12 @@ const assets: Assets = {
       oracle: "binance",
       price: "159990000000000000000",
     },
+    {
+      token: "AUTO",
+      address: "0xD9FAc4092e795c26f5F23803FA855A975bfC9973",
+      oracle: "pyth",
+      price: "159990000000000000000",
+    },
   ],
 };
 
@@ -120,6 +132,7 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
   const binanceOracle = await hre.ethers.getContract("BinanceOracle");
   const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
+  const pythOracle = await hre.ethers.getContract("PythOracle");
 
   const oraclesData: Oracles = {
     chainlink: {
@@ -136,6 +149,16 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
       oracles: [binanceOracle.address, addr0000, addr0000],
       enableFlagsForOracles: [true, false, false],
       underlyingOracle: binanceOracle,
+    },
+    pyth: {
+      oracles: [pythOracle.address, addr0000, addr0000],
+      enableFlagsForOracles: [true, false, false],
+      underlyingOracle: pythOracle,
+      getTokenConfig: (asset: Asset, networkName: string) => ({
+        pythId: pythID[networkName][asset.token],
+        asset: asset.address,
+        maxStalePeriod: DEFAULT_STALE_PERIOD,
+      }),
     },
   };
 
