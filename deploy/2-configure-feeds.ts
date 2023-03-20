@@ -58,7 +58,7 @@ const assets: Assets = {
       token: "BTCB",
       address: "0xA808e341e8e723DC6BA0Bb5204Bafc2330d7B8e4",
       oracle: "chainlink",
-      price: "159990000000000000000",
+      price: "208000000000000000",
     },
     {
       token: "XVS",
