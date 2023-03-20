@@ -22,6 +22,7 @@ contract MockBinanceOracle is OwnableUpgradeable {
     }
 
     function getUnderlyingPrice(address vToken) public view returns (uint256) {
-        return assetPrices[vToken];
+        address token = VBep20Interface(vToken).underlying();
+        return assetPrices[token];
     }
 }

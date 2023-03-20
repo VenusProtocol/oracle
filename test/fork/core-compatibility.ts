@@ -119,7 +119,7 @@ describe("Core protocol", async () => {
       await chainlinkOracle.setTokenConfig({
         asset: BNBAddress,
         feed: "0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE",
-        maxStalePeriod: 86400,
+        maxStalePeriod: 864000,
       });
 
       await resilientOracle.setTokenConfig({
@@ -140,7 +140,7 @@ describe("Core protocol", async () => {
       await chainlinkOracle.setTokenConfig({
         asset: LTCAddress,
         feed: "0x74e72f37a8c415c8f1a98ed42e78ff997435791d",
-        maxStalePeriod: 86400,
+        maxStalePeriod: 864000,
       });
 
       await resilientOracle.setTokenConfig({
@@ -161,7 +161,7 @@ describe("Core protocol", async () => {
       await chainlinkOracle.setTokenConfig({
         asset: XVSAddress,
         feed: "0xbf63f430a79d4036a5900c19818aff1fa710f206",
-        maxStalePeriod: 86400,
+        maxStalePeriod: 864000,
       });
 
       await resilientOracle.setTokenConfig({
@@ -179,7 +179,7 @@ describe("Core protocol", async () => {
       await chainlinkOracle.setTokenConfig({
         asset: VAI,
         feed: "0x058316f8bb13acd442ee7a216c7b60cfb4ea1b53",
-        maxStalePeriod: 86400,
+        maxStalePeriod: 864000,
       });
 
       await resilientOracle.setTokenConfig({
