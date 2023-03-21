@@ -142,7 +142,7 @@ const assets: Assets = {
       price: "159990000000000000000",
     },
     {
-      token: "TRX",
+      token: "TRX", // OLD TRX
       address: "0x19E7215abF8B2716EE807c9f4b83Af0e7f92653F",
       oracle: "chainlink",
       price: "159990000000000000000",
