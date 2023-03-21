@@ -190,7 +190,7 @@ const assets: Assets = {
       price: "159990000000000000000",
     },
     {
-      token: "XRP",
+      token: "LTC",
       address: "0x969F147B6b8D81f86175de33206A4FD43dF17913",
       oracle: "chainlink",
       price: "159990000000000000000",
