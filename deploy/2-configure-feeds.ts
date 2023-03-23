@@ -230,7 +230,7 @@ const assets: Assets = {
 };
 
 const addr0000 = "0x0000000000000000000000000000000000000000";
-const DEFAULT_STALE_PERIOD = 3600; //60 min
+const DEFAULT_STALE_PERIOD = 3600 * 24; //24 hrs - stablecoins price are updated every 1 day in testnet
 
 const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironment) {
   const networkName: string = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";

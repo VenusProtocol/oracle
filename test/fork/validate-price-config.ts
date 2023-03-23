@@ -25,7 +25,7 @@ type PriceResult = {
 };
 
 // NOTE: in order to test the configuration, the blockNumber should be after the configuration transaction took place
-const blockNumer = 28298315;
+const blockNumer = 28299664;
 forking(blockNumer, () => {
   let oracle: Contract;
   let admin: SignerWithAddress;
