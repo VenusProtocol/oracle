@@ -38,6 +38,7 @@ forking(blockNumer, () => {
       oracle = await ethers.getContractAt("ResilientOracle", oracleAddress[networkName]);
       VBep20HarnessFactory = await ethers.getContractFactory("VBEP20Harness", admin);
       for (const asset of assets[networkName]) {
+        console.log(`Deploying mock vToken for asset ${asset.token}`);
         const vBep20 = await VBep20HarnessFactory.deploy(asset.token, asset.token, 18, asset.address);
         const tokenInfo: FakeVtokenInfo = {
           address: vBep20.address,
@@ -52,12 +53,14 @@ forking(blockNumer, () => {
       let priceResult: PriceResult;
       for (const fakeVToken of fakeVTokens) {
         try {
+          console.log(`Checking price for ${fakeVToken.name}...`);
           await oracle.getUnderlyingPrice(fakeVToken.address);
           priceResult = {
             asset: fakeVToken.name,
             validPrice: VALID,
             errorReason: "N/A",
           };
+          console.log(`Valid`);
           results.push(priceResult);
         } catch (err) {
           priceResult = {
@@ -65,10 +68,11 @@ forking(blockNumer, () => {
             validPrice: INVALID,
             errorReason: err.reason,
           };
+          console.log(`Invalid`);
           results.push(priceResult);
         }
       }
       console.table(results, ["asset", "validPrice", "errorReason"]);
-    });
+    }).timeout(1000000);
   });
 });
