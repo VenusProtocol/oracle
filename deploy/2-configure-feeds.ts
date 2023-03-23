@@ -179,12 +179,6 @@ const assets: Assets = {
       price: "159990000000000000000",
     },
     {
-      token: "BTCB",
-      address: "0xA808e341e8e723DC6BA0Bb5204Bafc2330d7B8e4",
-      oracle: "chainlink",
-      price: "159990000000000000000",
-    },
-    {
       token: "XRP",
       address: "0x3022A32fdAdB4f02281E8Fab33e0A6811237aab0",
       oracle: "chainlink",
@@ -211,12 +205,6 @@ const assets: Assets = {
     {
       token: "SXP",
       address: "0x75107940Cf1121232C0559c747A986DEfbc69DA9",
-      oracle: "chainlink",
-      price: "159990000000000000000",
-    },
-    {
-      token: "BUSD",
-      address: "0x8301F2213c0eeD49a7E28Ae4c3e91722919B8B47",
       oracle: "chainlink",
       price: "159990000000000000000",
     },
