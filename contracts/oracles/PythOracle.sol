@@ -4,10 +4,10 @@ pragma solidity 0.8.13;
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/utils/math/SignedMath.sol";
+import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlled.sol";
 import "../interfaces/PythInterface.sol";
 import "../interfaces/OracleInterface.sol";
 import "../interfaces/VBep20Interface.sol";
-import "../Governance/AccessControlled.sol";
 
 struct TokenConfig {
     bytes32 pythId;

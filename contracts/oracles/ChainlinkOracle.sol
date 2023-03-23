@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.13;
 
+import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlled.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV2V3Interface.sol";
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV2V3Interface.sol";
-import "../Governance/AccessControlled.sol";
 
 struct TokenConfig {
     /// @notice Underlying token address, which can't be a null address and can be used to check if a token is supported

@@ -2,10 +2,10 @@
 pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlled.sol";
 import "../libraries/PancakeLibrary.sol";
 import "../interfaces/OracleInterface.sol";
 import "../interfaces/VBep20Interface.sol";
-import "../Governance/AccessControlled.sol";
 
 struct Observation {
     uint256 timestamp;

@@ -2,6 +2,7 @@
 pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlManager.sol";
 
 contract BEP20Harness is ERC20 {
     uint8 public decimalsInternal = 18;

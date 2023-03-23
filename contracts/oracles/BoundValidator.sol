@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.13;
 
+import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlled.sol";
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
-import "../Governance/AccessControlled.sol";
 
 struct ValidateConfig {
     /// @notice asset address
