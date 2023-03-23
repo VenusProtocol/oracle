@@ -52,7 +52,7 @@ const chainlinkFeed: Config = {
     USDT: "0xEca2605f0BCF2BA5966372C99837b1F182d3D620",
     USDC: "0x90c069C4538adAc136E051052E14c1cD799C41B7",
     BNB: "0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526",
-    LTC: "0x9Dcf949BCA2F4A8a62350E0065d18902eE87Dca3"
+    LTC: "0x9Dcf949BCA2F4A8a62350E0065d18902eE87Dca3",
   },
 };
 
@@ -309,5 +309,5 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
   }
 };
 
-module.exports = {func, assets};
+module.exports = { func, assets };
 module.exports.tags = ["configure"];
