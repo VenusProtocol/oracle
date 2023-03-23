@@ -320,5 +320,5 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
   }
 };
 
-module.exports = func;
+module.exports = { func, assets };
 module.exports.tags = ["configure"];
