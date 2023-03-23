@@ -21,16 +21,17 @@ type FakeVtokenInfo = {
 type PriceResult = {
   asset: string;
   validPrice: string;
+  errorReason: string;
 };
 
-//NOTE: in order to test the
+// NOTE: in order to test the configuration, the blockNumber should be after the configuration transaction took place
 const blockNumer = 28099700;
 forking(blockNumer, () => {
   let oracle: Contract;
   let admin: SignerWithAddress;
   let VBep20HarnessFactory;
   let fakeVTokens: Array<FakeVtokenInfo>;
-  describe(`Price configuration validation for network ${network}`, () => {
+  describe(`Price configuration validation for network ${networkName}`, () => {
     before(async () => {
       fakeVTokens = [];
       [admin] = await ethers.getSigners();
@@ -55,17 +56,19 @@ forking(blockNumer, () => {
           priceResult = {
             asset: fakeVToken.name,
             validPrice: VALID,
+            errorReason: "N/A",
           };
           results.push(priceResult);
         } catch (err) {
           priceResult = {
             asset: fakeVToken.name,
             validPrice: INVALID,
+            errorReason: err.reason,
           };
           results.push(priceResult);
         }
       }
-      console.table(results, ["asset", "validPrice"]);
+      console.table(results, ["asset", "validPrice", "errorReason"]);
     });
   });
 });
