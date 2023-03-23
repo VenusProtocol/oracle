@@ -5,9 +5,9 @@ import { ethers, network } from "hardhat";
 import { assets } from "../../deploy/2-configure-feeds";
 import { forking } from "./utils";
 
+const VALID = "\u2705"; // Unicode character for checkmark
+const INVALID = "\u274c"; // Unicode character for X mark
 const networkName: string = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
-const VALID = "\u2705";
-const INVALID = "\u274c";
 const oracleAddress = {
   bsctestnet: "0xb0de3Fce006d3434342383f941bD22720Ff9Fc0C",
   bscmainnet: "",
@@ -23,7 +23,9 @@ type PriceResult = {
   validPrice: string;
 };
 
-forking(28099700, () => {
+//NOTE: in order to test the
+const blockNumer = 28099700;
+forking(blockNumer, () => {
   let oracle: Contract;
   let admin: SignerWithAddress;
   let VBep20HarnessFactory;
