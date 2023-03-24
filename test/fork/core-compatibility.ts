@@ -209,7 +209,6 @@ describe("Core protocol", async () => {
         enableFlagsForOracles: [true, false, false],
       });
 
-
       const price = await resilientOracle.getUnderlyingPrice(vUSDCAddress);
       expect(price).to.be.equal("1000054860000000000");
     });
