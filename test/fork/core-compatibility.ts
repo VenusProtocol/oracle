@@ -191,5 +191,26 @@ describe("Core protocol", async () => {
       const price = await resilientOracle.getUnderlyingPrice(VAI);
       expect(price).to.be.equal("967991030000000000");
     });
+
+    it("validate USDC price", async () => {
+      const vUSDCAddress = "0xecA88125a5ADbe82614ffC12D0DB554E2e2867C8";
+      const USDCAddress = "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d";
+
+      //Configure price feed for USDC
+      await chainlinkOracle.setTokenConfig({
+        asset: USDCAddress,
+        feed: "0x51597f405303C4377E36123cBc172b13269EA163",
+        maxStalePeriod: 864000,
+      });
+
+      await resilientOracle.setTokenConfig({
+        asset: USDCAddress,
+        oracles: [chainlinkOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
+        enableFlagsForOracles: [true, false, false],
+      });
+
+      const price = await resilientOracle.getUnderlyingPrice(vUSDCAddress);
+      expect(price).to.be.equal("1000054860000000000");
+    });
   }
 });

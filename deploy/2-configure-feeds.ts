@@ -52,6 +52,7 @@ const chainlinkFeed: Config = {
     USDT: "0xEca2605f0BCF2BA5966372C99837b1F182d3D620",
     USDC: "0x90c069C4538adAc136E051052E14c1cD799C41B7",
     BNB: "0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526",
+    LTC: "0x9Dcf949BCA2F4A8a62350E0065d18902eE87Dca3",
   },
 };
 
@@ -178,12 +179,6 @@ const assets: Assets = {
       price: "159990000000000000000",
     },
     {
-      token: "BTCB",
-      address: "0xA808e341e8e723DC6BA0Bb5204Bafc2330d7B8e4",
-      oracle: "chainlink",
-      price: "159990000000000000000",
-    },
-    {
       token: "XRP",
       address: "0x3022A32fdAdB4f02281E8Fab33e0A6811237aab0",
       oracle: "chainlink",
@@ -214,12 +209,6 @@ const assets: Assets = {
       price: "159990000000000000000",
     },
     {
-      token: "BUSD",
-      address: "0x8301F2213c0eeD49a7E28Ae4c3e91722919B8B47",
-      oracle: "chainlink",
-      price: "159990000000000000000",
-    },
-    {
       token: "USDT",
       address: "0xA11c8D9DC9b66E209Ef60F0C8D969D3CD988782c",
       oracle: "chainlink",
@@ -241,7 +230,7 @@ const assets: Assets = {
 };
 
 const addr0000 = "0x0000000000000000000000000000000000000000";
-const DEFAULT_STALE_PERIOD = 3600; //60 min
+const DEFAULT_STALE_PERIOD = 24 * 60 * 60; //24 hrs
 
 const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironment) {
   const networkName: string = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
@@ -320,5 +309,5 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
   }
 };
 
-module.exports = func;
+module.exports = { func, assets };
 module.exports.tags = ["configure"];
