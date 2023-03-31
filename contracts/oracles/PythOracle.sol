@@ -4,7 +4,7 @@ pragma solidity 0.8.13;
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/utils/math/SignedMath.sol";
-import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlled.sol";
+import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 import "../interfaces/PythInterface.sol";
 import "../interfaces/OracleInterface.sol";
 import "../interfaces/VBep20Interface.sol";
@@ -19,7 +19,7 @@ struct TokenConfig {
  * PythOracle contract reads prices from actual Pyth oracle contract which accepts, verifies and stores the
  * updated prices from external sources
  */
-contract PythOracle is AccessControlled, OracleInterface {
+contract PythOracle is AccessControlledV8, OracleInterface {
     using SafeMath for uint256;
 
     // To calculate 10 ** n(which is a signed type)
