@@ -86,9 +86,9 @@ contract BoundValidator is AccessControlled, BoundValidatorInterface {
     function setValidateConfig(ValidateConfig memory config) public virtual {
         _checkAccessAllowed("setValidateConfig(ValidateConfig)");
 
-        if(config.asset == address(0)) revert( "asset can't be zero address");
-        if(config.upperBoundRatio == 0 || config.lowerBoundRatio <= 0) revert("bound must be positive");
-        if(config.upperBoundRatio <= config.lowerBoundRatio) revert("upper bound must be higher than lowner bound");
+        if (config.asset == address(0)) revert("asset can't be zero address");
+        if (config.upperBoundRatio == 0 || config.lowerBoundRatio <= 0) revert("bound must be positive");
+        if (config.upperBoundRatio <= config.lowerBoundRatio) revert("upper bound must be higher than lowner bound");
         validateConfigs[config.asset] = config;
         emit ValidateConfigAdded(config.asset, config.upperBoundRatio, config.lowerBoundRatio);
     }
@@ -107,8 +107,8 @@ contract BoundValidator is AccessControlled, BoundValidatorInterface {
     ) public view virtual override returns (bool) {
         address asset = _getUnderlyingAsset(vToken);
 
-        if(validateConfigs[asset].upperBoundRatio == 0) revert("validation config not exist");
-        if(anchorPrice == 0) revert("anchor price is not valid");
+        if (validateConfigs[asset].upperBoundRatio == 0) revert("validation config not exist");
+        if (anchorPrice == 0) revert("anchor price is not valid");
         return _isWithinAnchor(asset, reportedPrice, anchorPrice);
     }
 

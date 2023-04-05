@@ -108,7 +108,7 @@ contract PythOracle is AccessControlled, OracleInterface {
         __Ownable2Step_init();
         __AccessControlled_init_unchained(accessControlManager_);
 
-        if(underlyingPythOracle_ == address(0)) revert("pyth oracle cannot be zero address");
+        if (underlyingPythOracle_ == address(0)) revert("pyth oracle cannot be zero address");
         underlyingPythOracle = IPyth(underlyingPythOracle_);
         emit PythOracleSet(underlyingPythOracle_);
     }
@@ -122,7 +122,7 @@ contract PythOracle is AccessControlled, OracleInterface {
      */
     function setTokenConfig(TokenConfig memory tokenConfig) public notNullAddress(tokenConfig.asset) {
         _checkAccessAllowed("setTokenConfig(TokenConfig)");
-        if(tokenConfig.maxStalePeriod == 0) revert("max stale period cannot be 0");
+        if (tokenConfig.maxStalePeriod == 0) revert("max stale period cannot be 0");
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(tokenConfig.asset, tokenConfig.pythId, tokenConfig.maxStalePeriod);
     }
@@ -155,7 +155,7 @@ contract PythOracle is AccessControlled, OracleInterface {
         }
 
         TokenConfig storage tokenConfig = tokenConfigs[asset];
-        if(tokenConfig.asset == address(0)) revert("asset doesn't exist");
+        if (tokenConfig.asset == address(0)) revert("asset doesn't exist");
 
         // if the price is expired after it's compared against `maxStalePeriod`, the following call will revert
         PythStructs.Price memory priceInfo = underlyingPythOracle.getPriceNoOlderThan(
@@ -165,7 +165,7 @@ contract PythOracle is AccessControlled, OracleInterface {
 
         uint256 price = int256(priceInfo.price).toUint256();
 
-        if(price == 0) revert("invalid pyth oracle price");
+        if (price == 0) revert("invalid pyth oracle price");
 
         // the price returned from Pyth is price ** 10^expo, which is the real dollar price of the assets
         // we need to multiply it by 1e18 to make the price 18 decimals

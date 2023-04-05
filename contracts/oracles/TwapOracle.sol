@@ -125,7 +125,7 @@ contract TwapOracle is AccessControlled, TwapInterface {
         uint256 price = prices[asset];
 
         // if price is 0, it means the price hasn't been updated yet and it's meaningless, revert
-        if(price == 0) revert("TWAP price must be positive");
+        if (price == 0) revert("TWAP price must be positive");
         return (price * (10 ** (18 - IERC20Metadata(asset).decimals())));
     }
 
@@ -157,7 +157,8 @@ contract TwapOracle is AccessControlled, TwapInterface {
 
         if (config.anchorPeriod == 0) revert("anchor period must be positive");
         if (config.baseUnit == 0) revert("base unit must be positive");
-        if (config.baseUnit != 10 ** IERC20Metadata(config.asset).decimals()) revert("base unit decimals must be same as asset decimals");
+        if (config.baseUnit != 10 ** IERC20Metadata(config.asset).decimals())
+            revert("base unit decimals must be same as asset decimals");
 
         uint256 cumulativePrice = currentCumulativePrice(config);
 
@@ -175,7 +176,7 @@ contract TwapOracle is AccessControlled, TwapInterface {
     function updateTwap(address vToken) public returns (uint256) {
         address asset = _getUnderlyingAsset(vToken);
 
-        if(tokenConfigs[asset].asset == address(0)) revert("asset not exist");
+        if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
         // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
         if (asset != WBNB && tokenConfigs[asset].isBnbBased) {
             if (tokenConfigs[WBNB].asset == address(0)) revert("WBNB not exist");

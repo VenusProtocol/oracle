@@ -46,7 +46,7 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
     event TokenConfigAdded(address indexed asset, address feed, uint256 maxStalePeriod);
 
     modifier notNullAddress(address someone) {
-        if(someone == address(0)) revert("can't be zero address");
+        if (someone == address(0)) revert("can't be zero address");
         _;
     }
 
@@ -101,7 +101,7 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
         _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
-        if(tokenConfigs_.length == 0) revert("length can't be 0");
+        if (tokenConfigs_.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
         for (uint256 i; i < numTokenConfigs; ++i) {
             setTokenConfig(tokenConfigs_[i]);
@@ -130,7 +130,7 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
     ) public notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.feed) {
         _checkAccessAllowed("setTokenConfig(TokenConfig)");
 
-        if(tokenConfig.maxStalePeriod == 0) revert("stale period can't be zero");
+        if (tokenConfig.maxStalePeriod == 0) revert("stale period can't be zero");
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(tokenConfig.asset, tokenConfig.feed, tokenConfig.maxStalePeriod);
     }

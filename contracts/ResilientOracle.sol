@@ -76,7 +76,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOrac
      * @param asset asset address
      */
     modifier checkTokenConfigExistance(address asset) {
-        if(tokenConfigs[asset].asset == address(0)) revert("token config must exist");
+        if (tokenConfigs[asset].asset == address(0)) revert("token config must exist");
         _;
     }
 
@@ -245,7 +245,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOrac
      * @param accessControlManager_ Address of the access control manager contract
      */
     function initialize(BoundValidatorInterface _boundValidator, address accessControlManager_) public initializer {
-        if (address(_boundValidator) == address(0)) revert( "invalid bound validator address");
+        if (address(_boundValidator) == address(0)) revert("invalid bound validator address");
         boundValidator = _boundValidator;
 
         __AccessControlled_init_unchained(accessControlManager_);
