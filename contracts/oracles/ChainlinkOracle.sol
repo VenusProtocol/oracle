@@ -211,8 +211,4 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
 
         return uint256(answer) * (10 ** decimalDelta);
     }
-
-    function _compareStrings(string memory a, string memory b) internal pure returns (bool) {
-        return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
-    }
 }
