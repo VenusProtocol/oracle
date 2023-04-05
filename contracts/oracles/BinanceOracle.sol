@@ -82,6 +82,7 @@ contract BinanceOracle is Initializable {
         FeedRegistryInterface feedRegistry = FeedRegistryInterface(getFeedRegistryAddress());
 
         (, int256 answer, , , ) = feedRegistry.latestRoundDataByName(symbol, "USD");
+        require(answer > 0, "invalid binance oracle price");
 
         uint256 decimalDelta = feedRegistry.decimalsByName(symbol, "USD");
         return (uint256(answer) * (10 ** (18 - decimalDelta))) * (10 ** (18 - decimals));
