@@ -75,7 +75,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOrac
      * @dev vToken can't be null, so it's suitable to be used to check the validity of the config
      * @param asset asset address
      */
-    modifier checkTokenConfigExistance(address asset) {
+    modifier checkTokenConfigExistence(address asset) {
         if (tokenConfigs[asset].asset == address(0)) revert("token config must exist");
         _;
     }
@@ -139,7 +139,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOrac
         address asset,
         address oracle,
         OracleRole role
-    ) external notNullAddress(asset) checkTokenConfigExistance(asset) {
+    ) external notNullAddress(asset) checkTokenConfigExistence(asset) {
         _checkAccessAllowed("setOracle(address,address,OracleRole)");
         if (oracle == address(0) && role == OracleRole.MAIN) revert("can't set zero address to main oracle");
         tokenConfigs[asset].oracles[uint256(role)] = oracle;
@@ -159,7 +159,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOrac
         address asset,
         OracleRole role,
         bool enable
-    ) external notNullAddress(asset) checkTokenConfigExistance(asset) {
+    ) external notNullAddress(asset) checkTokenConfigExistence(asset) {
         _checkAccessAllowed("enableOracle(address,OracleRole,bool)");
         tokenConfigs[asset].enableFlagsForOracles[uint256(role)] = enable;
         emit OracleEnabled(asset, uint256(role), enable);
