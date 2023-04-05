@@ -87,7 +87,7 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
      * @custom:event Emits PricePosted event on succesfully setup of underlying price
      */
     function setDirectPrice(address asset, uint256 price) external notNullAddress(asset) {
-        _checkAccessAllowed("setDirectPrice(asset,price)");
+        _checkAccessAllowed("setDirectPrice(address,uint256)");
 
         prices[asset] = price;
         emit PricePosted(asset, prices[asset], price, price);
