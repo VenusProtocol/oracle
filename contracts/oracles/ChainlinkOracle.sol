@@ -46,7 +46,7 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
     event TokenConfigAdded(address indexed asset, address feed, uint256 maxStalePeriod);
 
     modifier notNullAddress(address someone) {
-        require(someone != address(0), "can't be zero address");
+        if(someone == address(0)) revert("can't be zero address");
         _;
     }
 
@@ -101,7 +101,7 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
         _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
-        require(tokenConfigs_.length != 0, "length can't be 0");
+        if(tokenConfigs_.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
         for (uint256 i; i < numTokenConfigs; ++i) {
             setTokenConfig(tokenConfigs_[i]);
@@ -130,7 +130,7 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
     ) public notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.feed) {
         _checkAccessAllowed("setTokenConfig(TokenConfig)");
 
-        require(tokenConfig.maxStalePeriod != 0, "stale period can't be zero");
+        if(tokenConfig.maxStalePeriod == 0) revert("stale period can't be zero");
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(tokenConfig.asset, tokenConfig.feed, tokenConfig.maxStalePeriod);
     }
@@ -203,11 +203,11 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
         uint256 decimalDelta = uint256(18) - feed.decimals();
 
         (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
-        require(answer != 0, "chainlink price must be positive");
+        if (answer == 0) revert("chainlink price must be positive");
+        if (block.timestamp < updatedAt) revert("updatedAt exceeds block time");
 
-        require(block.timestamp >= updatedAt, "updatedAt exceeds block time");
         uint256 deltaTime = block.timestamp - updatedAt;
-        require(deltaTime <= maxStalePeriod, "chainlink price expired");
+        if (deltaTime > maxStalePeriod) revert("chainlink price expired");
 
         return uint256(answer) * (10 ** decimalDelta);
     }

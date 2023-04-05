@@ -24,8 +24,8 @@ contract BinanceOracle is Initializable {
     /// @param vaiAddress The address of the VAI
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address vBnbAddress, address vaiAddress) {
-        require(vBnbAddress != address(0), "vBNB can't be zero address");
-        require(vaiAddress != address(0), "VAI can't be zero address");
+        if (vBnbAddress == address(0)) revert("vBNB can't be zero address");
+        if (vaiAddress == address(0)) revert("VAI can't be zero address");
         vBnb = vBnbAddress;
         vai = vaiAddress;
         _disableInitializers();
@@ -82,7 +82,7 @@ contract BinanceOracle is Initializable {
         FeedRegistryInterface feedRegistry = FeedRegistryInterface(getFeedRegistryAddress());
 
         (, int256 answer, , , ) = feedRegistry.latestRoundDataByName(symbol, "USD");
-        require(answer > 0, "invalid binance oracle price");
+        if (answer <= 0) revert("invalid binance oracle price");
 
         uint256 decimalDelta = feedRegistry.decimalsByName(symbol, "USD");
         return (uint256(answer) * (10 ** (18 - decimalDelta))) * (10 ** (18 - decimals));

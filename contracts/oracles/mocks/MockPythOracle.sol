@@ -20,7 +20,7 @@ contract MockPythOracle is OwnableUpgradeable {
 
     function initialize(address underlyingPythOracle_) public initializer {
         __Ownable_init();
-        require(underlyingPythOracle_ != address(0), "pyth oracle cannot be zero address");
+        if (underlyingPythOracle_ == address(0)) revert("pyth oracle cannot be zero address");
         underlyingPythOracle = IPyth(underlyingPythOracle_);
     }
 

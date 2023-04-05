@@ -66,7 +66,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOrac
      * @notice Checks whether an address is null or not
      */
     modifier notNullAddress(address someone) {
-        require(someone != address(0), "can't be zero address");
+        if (someone == address(0)) revert("can't be zero address");
         _;
     }
 
@@ -76,7 +76,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOrac
      * @param asset asset address
      */
     modifier checkTokenConfigExistance(address asset) {
-        require(tokenConfigs[asset].asset != address(0), "token config must exist");
+        if(tokenConfigs[asset].asset == address(0)) revert("token config must exist");
         _;
     }
 
@@ -116,7 +116,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOrac
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
         _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
-        require(tokenConfigs_.length != 0, "length can't be 0");
+        if (tokenConfigs_.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
         for (uint256 i; i < numTokenConfigs; ++i) {
             setTokenConfig(tokenConfigs_[i]);
@@ -141,7 +141,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOrac
         OracleRole role
     ) external notNullAddress(asset) checkTokenConfigExistance(asset) {
         _checkAccessAllowed("setOracle(address,address,OracleRole)");
-        require(!(oracle == address(0) && role == OracleRole.MAIN), "can't set zero address to main oracle");
+        if (oracle == address(0) && role == OracleRole.MAIN) revert("can't set zero address to main oracle");
         tokenConfigs[asset].oracles[uint256(role)] = oracle;
         emit OracleSet(asset, oracle, uint256(role));
     }
@@ -201,7 +201,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOrac
      * @custom:error Invalid resilient oracle price error is thrown if fetched prices from oracle is invalid
      */
     function getUnderlyingPrice(address vToken) external view override returns (uint256) {
-        require(!paused(), "resilient oracle is paused");
+        if (paused()) revert("resilient oracle is paused");
         uint256 pivotPrice = INVALID_PRICE;
 
         // Get pivot oracle price, Invalid price if not available or error
@@ -245,7 +245,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOrac
      * @param accessControlManager_ Address of the access control manager contract
      */
     function initialize(BoundValidatorInterface _boundValidator, address accessControlManager_) public initializer {
-        require(address(_boundValidator) != address(0), "invalid bound validator address");
+        if (address(_boundValidator) == address(0)) revert( "invalid bound validator address");
         boundValidator = _boundValidator;
 
         __AccessControlled_init_unchained(accessControlManager_);
