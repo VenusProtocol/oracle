@@ -165,7 +165,7 @@ contract PythOracle is AccessControlled, OracleInterface {
 
         uint256 price = int256(priceInfo.price).toUint256();
 
-        require(price > 0, "Pyth oracle price must be positive");
+        require(price > 0, "invalid pyth oracle price");
 
         // the price returned from Pyth is price ** 10^expo, which is the real dollar price of the assets
         // we need to multiply it by 1e18 to make the price 18 decimals
