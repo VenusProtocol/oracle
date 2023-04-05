@@ -217,7 +217,7 @@ describe("Oracle plugin frame unit tests", function () {
       feed.price.price = BigNumber.from(0);
       await this.underlyingPythOracle.updatePriceFeedsHarness([feed]);
       await expect(this.pythOracle.getUnderlyingPrice(this.vETH.address)).to.be.revertedWith(
-        "Pyth oracle price must be positive",
+        "invalid pyth oracle price",
       );
     });
 

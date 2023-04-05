@@ -3,7 +3,6 @@
 pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./interfaces/VBep20Interface.sol";
 import "./interfaces/OracleInterface.sol";
 import "./Governance/AccessControlled.sol";
@@ -250,6 +249,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOrac
         boundValidator = _boundValidator;
 
         __AccessControlled_init_unchained(accessControlManager_);
+        __Pausable_init();
     }
 
     /**
