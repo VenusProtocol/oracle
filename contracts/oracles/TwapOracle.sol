@@ -104,7 +104,7 @@ contract TwapOracle is AccessControlled, TwapInterface {
      */
     function setTokenConfigs(TokenConfig[] memory configs) external onlyOwner {
         _checkAccessAllowed("setTokenConfigsTokenConfig[])");
-        require(configs.length > 0, "length can't be 0");
+        require(configs.length != 0, "length can't be 0");
         uint256 numTokenConfigs = configs.length;
         for (uint256 i; i < numTokenConfigs; ++i) {
             setTokenConfig(configs[i]);
@@ -125,7 +125,7 @@ contract TwapOracle is AccessControlled, TwapInterface {
         uint256 price = prices[asset];
 
         // if price is 0, it means the price hasn't been updated yet and it's meaningless, revert
-        require(price > 0, "TWAP price must be positive");
+        require(price != 0, "TWAP price must be positive");
         return (price * (10 ** (18 - IERC20Metadata(asset).decimals())));
     }
 
@@ -155,8 +155,8 @@ contract TwapOracle is AccessControlled, TwapInterface {
     ) public notNullAddress(config.asset) notNullAddress(config.pancakePool) {
         _checkAccessAllowed("setTokenConfig(TokenConfig)");
 
-        require(config.anchorPeriod > 0, "anchor period must be positive");
-        require(config.baseUnit > 0, "base unit must be positive");
+        require(config.anchorPeriod != 0, "anchor period must be positive");
+        require(config.baseUnit != 0, "base unit must be positive");
         require(
             config.baseUnit == 10 ** IERC20Metadata(config.asset).decimals(),
             "base unit decimals must be same as asset decimals"

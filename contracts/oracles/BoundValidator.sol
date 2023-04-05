@@ -58,8 +58,9 @@ contract BoundValidator is AccessControlled, BoundValidatorInterface {
     function setValidateConfigs(ValidateConfig[] memory configs) external virtual {
         _checkAccessAllowed("setValidateConfigs(ValidateConfig[])");
 
-        require(configs.length > 0, "invalid validate config length");
-        for (uint256 i; i < configs.length; ++i) {
+        uint256 length = configs.length;
+        require(length != 0, "invalid validate config length");
+        for (uint256 i; i < length; ++i) {
             setValidateConfig(configs[i]);
         }
     }
@@ -86,7 +87,7 @@ contract BoundValidator is AccessControlled, BoundValidatorInterface {
         _checkAccessAllowed("setValidateConfig(ValidateConfig)");
 
         require(config.asset != address(0), "asset can't be zero address");
-        require(config.upperBoundRatio > 0 && config.lowerBoundRatio > 0, "bound must be positive");
+        require(config.upperBoundRatio != 0 && config.lowerBoundRatio > 0, "bound must be positive");
         require(config.upperBoundRatio > config.lowerBoundRatio, "upper bound must be higher than lowner bound");
         validateConfigs[config.asset] = config;
         emit ValidateConfigAdded(config.asset, config.upperBoundRatio, config.lowerBoundRatio);
@@ -118,7 +119,7 @@ contract BoundValidator is AccessControlled, BoundValidatorInterface {
      * @param anchorPrice The reported price must be within the the valid bounds of this price
      */
     function _isWithinAnchor(address asset, uint256 reportedPrice, uint256 anchorPrice) internal view returns (bool) {
-        if (reportedPrice > 0) {
+        if (reportedPrice != 0) {
             uint256 anchorRatio = (anchorPrice * 100e16) / reportedPrice;
             uint256 upperBoundAnchorRatio = validateConfigs[asset].upperBoundRatio;
             uint256 lowerBoundAnchorRatio = validateConfigs[asset].lowerBoundRatio;
