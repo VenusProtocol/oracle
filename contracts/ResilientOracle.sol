@@ -160,7 +160,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOrac
         OracleRole role,
         bool enable
     ) external notNullAddress(asset) checkTokenConfigExistance(asset) {
-        _checkAccessAllowed("enableOracle(address,OracleRole,address)");
+        _checkAccessAllowed("enableOracle(address,OracleRole,bool)");
         tokenConfigs[asset].enableFlagsForOracles[uint256(role)] = enable;
         emit OracleEnabled(asset, uint256(role), enable);
     }
