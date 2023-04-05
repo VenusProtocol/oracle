@@ -36,14 +36,14 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
 
     /// @notice Emit when a price is manually set
     event PricePosted(
-        address asset,
+        address indexed asset,
         uint256 previousPriceMantissa,
         uint256 requestedPriceMantissa,
         uint256 newPriceMantissa
     );
 
     /// @notice Emit when a token config is added
-    event TokenConfigAdded(address asset, address feed, uint256 maxStalePeriod);
+    event TokenConfigAdded(address indexed asset, address feed, uint256 maxStalePeriod);
 
     modifier notNullAddress(address someone) {
         require(someone != address(0), "can't be zero address");
