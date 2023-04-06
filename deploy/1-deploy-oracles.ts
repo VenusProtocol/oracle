@@ -11,6 +11,8 @@ const ADDRESSES = {
     VAIAddress: testnetDeployments.Contracts.VAI,
     pythOracleAddress: "0xd7308b14BF4008e7C7196eC35610B1427C5702EA",
     sidRegistryAddress: "0xfFB52185b56603e0fd71De9de4F6f902f05EEA23",
+    acm: undefined,
+    timelock: testnetDeployments.Contracts.Timelock
   },
   bscmainnet: {
     vBNBAddress: mainnetDeployments.Contracts.vBNB,
@@ -18,6 +20,8 @@ const ADDRESSES = {
     VAIAddress: mainnetDeployments.Contracts.VAI,
     pythOracleAddress: "0x4D7E825f80bDf85e913E0DD2A2D54927e9dE1594",
     sidRegistryAddress: "0x08CEd32a7f3eeC915Ba84415e9C07a7286977956",
+    acm: "0x4788629ABc6cFCA10F9f969efdEAa1cF70c23555",
+    timelock: mainnetDeployments.Contracts.Timelock
   },
 };
 
@@ -31,14 +35,19 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const VAIAddress = ADDRESSES[networkName].VAIAddress;
   const WBNBAddress = ADDRESSES[networkName].WBNBAddress;
 
-  await deploy("AccessControlManager", {
-    from: deployer,
-    args: [],
-    log: true,
-    autoMine: true,
-  });
+  let accessControlManager;
+  if (!ADDRESSES[networkName].acm) {
+    await deploy("AccessControlManager", {
+      from: deployer,
+      args: [],
+      log: true,
+      autoMine: true,
+    });
 
-  const accessControlManager = await hre.ethers.getContract("AccessControlManager");
+    accessControlManager = await hre.ethers.getContract("AccessControlManager");
+  }
+  const accessControlManagerAddress = ADDRESSES[networkName].acm ? ADDRESSES[networkName].acm : accessControlManager?.address
+  const proxyOwnerAddress = ADDRESSES[networkName].acm ? ADDRESSES[networkName].timelock : deployer
 
   await deploy("BoundValidator", {
     from: deployer,
@@ -46,10 +55,11 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     deterministicDeployment: false,
     args: [vBNBAddress, VAIAddress],
     proxy: {
+      owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: [accessControlManager.address],
+        args: [accessControlManagerAddress],
       },
     },
   });
@@ -62,10 +72,11 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     deterministicDeployment: false,
     args: [vBNBAddress, VAIAddress],
     proxy: {
+      owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: [boundValidator.address, accessControlManager.address],
+        args: [boundValidator.address, accessControlManagerAddress],
       },
     },
   });
@@ -77,10 +88,11 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     deterministicDeployment: false,
     args: network.live ? [vBNBAddress, VAIAddress] : [],
     proxy: {
+      owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: network.live ? [accessControlManager.address] : [],
+        args: network.live ? [accessControlManagerAddress] : [],
       },
     },
   });
@@ -92,10 +104,11 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     deterministicDeployment: false,
     args: network.live ? [vBNBAddress, WBNBAddress, VAIAddress] : [],
     proxy: {
+      owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: network.live ? [accessControlManager.address] : [vBNBAddress],
+        args: network.live ? [accessControlManagerAddress] : [vBNBAddress],
       },
     },
   });
@@ -109,10 +122,11 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     deterministicDeployment: false,
     args: network.live ? [vBNBAddress, VAIAddress] : [],
     proxy: {
+      owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: network.live ? [pythOracleAddress, accessControlManager.address] : [pythOracleAddress],
+        args: network.live ? [pythOracleAddress, accessControlManagerAddress] : [pythOracleAddress],
       },
     },
   });
@@ -126,6 +140,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     deterministicDeployment: false,
     args: network.live ? [vBNBAddress, VAIAddress] : [],
     proxy: {
+      owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
@@ -134,15 +149,17 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
-  const resilientOracle = await hre.ethers.getContract("ResilientOracle");
-  const pythOracle = await hre.ethers.getContract("PythOracle");
-  const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
+  if (!ADDRESSES[networkName].acm) {
+    const resilientOracle = await hre.ethers.getContract("ResilientOracle");
+    const pythOracle = await hre.ethers.getContract("PythOracle");
+    const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
 
-  await accessControlManager.giveCallPermission(chainlinkOracle.address, "setTokenConfig(TokenConfig)", deployer);
+    await accessControlManager?.giveCallPermission(chainlinkOracle.address, "setTokenConfig(TokenConfig)", deployer);
 
-  await accessControlManager.giveCallPermission(pythOracle.address, "setTokenConfig(TokenConfig)", deployer);
+    await accessControlManager?.giveCallPermission(pythOracle.address, "setTokenConfig(TokenConfig)", deployer);
 
-  await accessControlManager.giveCallPermission(resilientOracle.address, "setTokenConfig(TokenConfig)", deployer);
+    await accessControlManager?.giveCallPermission(resilientOracle.address, "setTokenConfig(TokenConfig)", deployer);
+  }
 };
 
 module.exports = func;
