@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/utils/math/SignedMath.sol";
 import "../interfaces/PythInterface.sol";
@@ -20,8 +19,6 @@ struct TokenConfig {
  * updated prices from external sources
  */
 contract PythOracle is AccessControlled, OracleInterface {
-    using SafeMath for uint256;
-
     // To calculate 10 ** n(which is a signed type)
     using SignedMath for int256;
 
@@ -170,9 +167,9 @@ contract PythOracle is AccessControlled, OracleInterface {
         // the price returned from Pyth is price ** 10^expo, which is the real dollar price of the assets
         // we need to multiply it by 1e18 to make the price 18 decimals
         if (priceInfo.expo > 0) {
-            return price.mul(EXP_SCALE).mul(10 ** int256(priceInfo.expo).toUint256()) * (10 ** (18 - decimals));
+            return price * EXP_SCALE * (10 ** int256(priceInfo.expo).toUint256()) * (10 ** (18 - decimals));
         } else {
-            return price.mul(EXP_SCALE).div(10 ** int256(-priceInfo.expo).toUint256()) * (10 ** (18 - decimals));
+            return ((price * EXP_SCALE) / (10 ** int256(-priceInfo.expo).toUint256())) * (10 ** (18 - decimals));
         }
     }
 }
