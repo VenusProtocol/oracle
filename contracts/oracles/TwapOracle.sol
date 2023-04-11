@@ -101,7 +101,7 @@ contract TwapOracle is AccessControlled, TwapInterface {
      * @custom:error Zero length error thrown, if length of the config array is 0
      */
     function setTokenConfigs(TokenConfig[] memory configs) external {
-        _checkAccessAllowed("setTokenConfigsTokenConfig[])");
+        _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         if (configs.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = configs.length;
         for (uint256 i; i < numTokenConfigs; ++i) {
