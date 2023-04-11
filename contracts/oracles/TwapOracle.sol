@@ -47,8 +47,6 @@ contract TwapOracle is AccessControlled, TwapInterface {
     uint256 public constant bnbBaseUnit = 1e18;
     uint256 public constant busdBaseUnit = 1e18;
 
-    uint256 public constant expScale = 1e18;
-
     /// @notice Configs by token
     mapping(address => TokenConfig) public tokenConfigs;
 
