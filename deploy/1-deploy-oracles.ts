@@ -12,7 +12,7 @@ const ADDRESSES = {
     pythOracleAddress: "0xd7308b14BF4008e7C7196eC35610B1427C5702EA",
     sidRegistryAddress: "0xfFB52185b56603e0fd71De9de4F6f902f05EEA23",
     acm: undefined,
-    timelock: testnetDeployments.Contracts.Timelock
+    timelock: testnetDeployments.Contracts.Timelock,
   },
   bscmainnet: {
     vBNBAddress: mainnetDeployments.Contracts.vBNB,
@@ -21,7 +21,7 @@ const ADDRESSES = {
     pythOracleAddress: "0x4D7E825f80bDf85e913E0DD2A2D54927e9dE1594",
     sidRegistryAddress: "0x08CEd32a7f3eeC915Ba84415e9C07a7286977956",
     acm: "0x4788629ABc6cFCA10F9f969efdEAa1cF70c23555",
-    timelock: mainnetDeployments.Contracts.Timelock
+    timelock: mainnetDeployments.Contracts.Timelock,
   },
 };
 
@@ -46,8 +46,10 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
     accessControlManager = await hre.ethers.getContract("AccessControlManager");
   }
-  const accessControlManagerAddress = ADDRESSES[networkName].acm ? ADDRESSES[networkName].acm : accessControlManager?.address
-  const proxyOwnerAddress = ADDRESSES[networkName].acm ? ADDRESSES[networkName].timelock : deployer
+  const accessControlManagerAddress = ADDRESSES[networkName].acm
+    ? ADDRESSES[networkName].acm
+    : accessControlManager?.address;
+  const proxyOwnerAddress = ADDRESSES[networkName].acm ? ADDRESSES[networkName].timelock : deployer;
 
   await deploy("BoundValidator", {
     from: deployer,
