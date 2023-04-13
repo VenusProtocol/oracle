@@ -146,7 +146,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: [sidRegistryAddress],
+        args: network.live ? [sidRegistryAddress, accessControlManagerAddress] : [],
       },
     },
   });

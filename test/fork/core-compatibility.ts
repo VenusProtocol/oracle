@@ -86,7 +86,7 @@ async function deployOracleFixture(): Promise<OracleFixture> {
   );
 
   const BinanceOracleFactory: BinanceOracle__factory = await ethers.getContractFactory("BinanceOracle");
-  const binanceOracle = <BinanceOracle>await upgrades.deployProxy(BinanceOracleFactory, [SIDRegistryAddress], {
+  const binanceOracle = <BinanceOracle>await upgrades.deployProxy(BinanceOracleFactory, [SIDRegistryAddress, accessControlManager.address], {
     constructorArgs: [vBNB, VAI],
   });
 
@@ -99,6 +99,12 @@ async function deployOracleFixture(): Promise<OracleFixture> {
   await accessControlManager.giveCallPermission(
     resilientOracle.address,
     "setTokenConfig(TokenConfig)",
+    deployer.address,
+  );
+
+  await accessControlManager.giveCallPermission(
+    binanceOracle.address,
+    "setMaxStalePeriod(string,uint256)",
     deployer.address,
   );
 
