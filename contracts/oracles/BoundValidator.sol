@@ -87,7 +87,7 @@ contract BoundValidator is AccessControlled, BoundValidatorInterface {
         _checkAccessAllowed("setValidateConfig(ValidateConfig)");
 
         if (config.asset == address(0)) revert("asset can't be zero address");
-        if (config.upperBoundRatio == 0 || config.lowerBoundRatio <= 0) revert("bound must be positive");
+        if (config.upperBoundRatio == 0 || config.lowerBoundRatio == 0) revert("bound must be positive");
         if (config.upperBoundRatio <= config.lowerBoundRatio) revert("upper bound must be higher than lowner bound");
         validateConfigs[config.asset] = config;
         emit ValidateConfigAdded(config.asset, config.upperBoundRatio, config.lowerBoundRatio);
