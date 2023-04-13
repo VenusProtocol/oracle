@@ -291,7 +291,8 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
 
       await tx.wait(1);
     } else {
-      const mock = await hre.ethers.getContract(`Mock${asset.token}`);
+      const MockToken = await hre.ethers.getContractFactory("BEP20Harness");
+      const mock = await MockToken.deploy(`Mock${asset.token}`, `Mock${asset.token}`, 18);
 
       console.log(`Configuring resillient oracle for ${asset.token}`);
       let tx = await resilientOracle.setTokenConfig({
@@ -309,5 +310,6 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
   }
 };
 
-module.exports = { func, assets };
+module.exports = func;
+module.exports.assets = assets;
 module.exports.tags = ["configure"];
