@@ -11,7 +11,7 @@ const ADDRESSES = {
     VAIAddress: testnetDeployments.Contracts.VAI,
     pythOracleAddress: "0xd7308b14BF4008e7C7196eC35610B1427C5702EA",
     sidRegistryAddress: "0xfFB52185b56603e0fd71De9de4F6f902f05EEA23",
-    acm: undefined,
+    acm: "0x45f8a08F534f34A97187626E05d4b6648Eeaa9AA",
     timelock: testnetDeployments.Contracts.Timelock,
   },
   bscmainnet: {
