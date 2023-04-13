@@ -44,7 +44,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       autoMine: true,
     });
 
-    accessControlManager = await hre.ethers.getContract("AccessControlManager");
+    accessControlManager = await hre.ethers.getContract("AccessControlManagerScenario");
   }
   const accessControlManagerAddress = ADDRESSES[networkName].acm
     ? ADDRESSES[networkName].acm

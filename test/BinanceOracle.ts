@@ -27,7 +27,7 @@ describe("Binance Oracle unit tests", function () {
     sidRegistry.resolver.returns(publicResolver.address);
     publicResolver.addr.returns(this.mockBinanceFeedRegistry.address);
 
-    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
     fakeAccessControlManager.isAllowedToCall.returns(true);
 
     const BinanceOracle = await ethers.getContractFactory("BinanceOracle", admin);

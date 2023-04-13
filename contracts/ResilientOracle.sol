@@ -5,9 +5,9 @@ pragma solidity 0.8.13;
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./interfaces/VBep20Interface.sol";
 import "./interfaces/OracleInterface.sol";
-import "./Governance/AccessControlled.sol";
+import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
-contract ResilientOracle is PausableUpgradeable, AccessControlled, ResilientOracleInterface {
+contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOracleInterface {
     /**
      * @dev Oracle roles:
      * **main**: The most trustworthy price source

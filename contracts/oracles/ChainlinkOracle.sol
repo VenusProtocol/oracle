@@ -4,7 +4,7 @@ pragma solidity 0.8.13;
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV2V3Interface.sol";
-import "../Governance/AccessControlled.sol";
+import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
 struct TokenConfig {
     /// @notice Underlying token address, which can't be a null address and can be used to check if a token is supported
@@ -16,7 +16,7 @@ struct TokenConfig {
     uint256 maxStalePeriod;
 }
 
-contract ChainlinkOracle is AccessControlled, OracleInterface {
+contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     /// @notice vBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vBnb;

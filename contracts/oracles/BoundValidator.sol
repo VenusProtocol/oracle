@@ -3,7 +3,7 @@ pragma solidity 0.8.13;
 
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
-import "../Governance/AccessControlled.sol";
+import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
 struct ValidateConfig {
     /// @notice asset address
@@ -18,7 +18,7 @@ struct ValidateConfig {
 
 // BoundValidator provides some common functions and can be used
 // to wrap up other contracts to form pivot oracles
-contract BoundValidator is AccessControlled, BoundValidatorInterface {
+contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
     /// @notice validation configs by asset
     mapping(address => ValidateConfig) public validateConfigs;
 

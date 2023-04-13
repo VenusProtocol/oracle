@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../libraries/PancakeLibrary.sol";
 import "../interfaces/OracleInterface.sol";
 import "../interfaces/VBep20Interface.sol";
-import "../Governance/AccessControlled.sol";
+import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
 struct Observation {
     uint256 timestamp;
@@ -28,7 +28,7 @@ struct TokenConfig {
     uint256 anchorPeriod;
 }
 
-contract TwapOracle is AccessControlled, TwapInterface {
+contract TwapOracle is AccessControlledV8, TwapInterface {
     using FixedPoint for *;
 
     /// @notice WBNB address
