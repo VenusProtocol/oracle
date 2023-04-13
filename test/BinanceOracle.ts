@@ -31,9 +31,13 @@ describe("Binance Oracle unit tests", function () {
     fakeAccessControlManager.isAllowedToCall.returns(true);
 
     const BinanceOracle = await ethers.getContractFactory("BinanceOracle", admin);
-    this.binanceOracle = <BinanceOracle>await upgrades.deployProxy(BinanceOracle, [sidRegistry.address, fakeAccessControlManager.address], {
-      constructorArgs: [this.vBnb.address, this.vai],
-    });
+    this.binanceOracle = <BinanceOracle>await upgrades.deployProxy(
+      BinanceOracle,
+      [sidRegistry.address, fakeAccessControlManager.address],
+      {
+        constructorArgs: [this.vBnb.address, this.vai],
+      },
+    );
 
     await this.binanceOracle.setMaxStalePeriod("ETH", 24 * 60 * 60);
     await this.binanceOracle.setMaxStalePeriod("BNB", 24 * 60 * 60);
@@ -62,7 +66,11 @@ describe("Binance Oracle unit tests", function () {
     await this.binanceOracle.setMaxStalePeriod("ETH", 5);
     await this.binanceOracle.setMaxStalePeriod("BNB", 5);
 
-    await expect(this.binanceOracle.getUnderlyingPrice(this.vEth.address)).to.be.revertedWith("binance oracle price expired");
-    await expect(this.binanceOracle.getUnderlyingPrice(this.vBnb.address)).to.be.revertedWith("binance oracle price expired");
+    await expect(this.binanceOracle.getUnderlyingPrice(this.vEth.address)).to.be.revertedWith(
+      "binance oracle price expired",
+    );
+    await expect(this.binanceOracle.getUnderlyingPrice(this.vBnb.address)).to.be.revertedWith(
+      "binance oracle price expired",
+    );
   });
 });

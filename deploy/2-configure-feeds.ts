@@ -256,9 +256,7 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
       oracles: [binanceOracle.address, addr0000, addr0000],
       enableFlagsForOracles: [true, false, false],
       underlyingOracle: binanceOracle,
-      getStalePeriodConfig: (asset: Asset) => ([
-        asset.token, DEFAULT_STALE_PERIOD.toString()
-      ]),
+      getStalePeriodConfig: (asset: Asset) => [asset.token, DEFAULT_STALE_PERIOD.toString()],
     },
     pyth: {
       oracles: [pythOracle.address, addr0000, addr0000],
