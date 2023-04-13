@@ -83,8 +83,8 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      bsc: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
-      bscTestnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
+      bscmainnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
+      bsctestnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
     },
   },
   paths: {
