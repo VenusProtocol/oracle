@@ -38,16 +38,6 @@ contract BinanceOracle is Initializable, AccessControlled {
     }
 
     /**
-     * @notice Sets the contracts required to fetch prices
-     * @param _sidRegistryAddress Address of SID registry
-     * @param _accessControlManager Address of the access control manager contract
-     */
-    function initialize(address _sidRegistryAddress, address _accessControlManager) public initializer {
-        sidRegistryAddress = _sidRegistryAddress;
-        __AccessControlled_init_unchained(_accessControlManager);
-    }
-
-    /**
      * @notice Used to set the max stale period of an asset
      * @param symbol The symbol of the asset
      * @param _maxStalePeriod The max stake period
@@ -59,6 +49,16 @@ contract BinanceOracle is Initializable, AccessControlled {
 
         maxStalePeriod[symbol] = _maxStalePeriod;
         emit MaxStalePeriodAdded(symbol, _maxStalePeriod);
+    }
+
+    /**
+     * @notice Sets the contracts required to fetch prices
+     * @param _sidRegistryAddress Address of SID registry
+     * @param _accessControlManager Address of the access control manager contract
+     */
+    function initialize(address _sidRegistryAddress, address _accessControlManager) public initializer {
+        sidRegistryAddress = _sidRegistryAddress;
+        __AccessControlled_init_unchained(_accessControlManager);
     }
 
     /**

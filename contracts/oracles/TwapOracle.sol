@@ -210,8 +210,6 @@ contract TwapOracle is AccessControlled, TwapInterface {
         // priceAverage will always be Token/BNB or Token/BUSD *twap** price.
         (uint256 nowCumulativePrice, uint256 oldCumulativePrice, uint256 oldTimestamp) = pokeWindowValues(config);
 
-        // This should be impossible, but better safe than sorry
-        if (block.timestamp <= oldTimestamp) revert("now must come after before");
         uint256 timeElapsed = block.timestamp - oldTimestamp;
 
         // Calculate Pancake *twap**
