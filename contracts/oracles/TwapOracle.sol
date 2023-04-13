@@ -214,7 +214,7 @@ contract TwapOracle is AccessControlled, TwapInterface {
         if (block.timestamp <= oldTimestamp) revert("now must come after before");
         uint256 timeElapsed = block.timestamp - oldTimestamp;
 
-        // Calculate Pancakge *twap**
+        // Calculate Pancake *twap**
         FixedPoint.uq112x112 memory priceAverage = FixedPoint.uq112x112(
             uint224((nowCumulativePrice - oldCumulativePrice) / timeElapsed)
         );
