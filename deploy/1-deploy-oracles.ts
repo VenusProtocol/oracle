@@ -179,7 +179,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   }
 
   if (binanceOracleOwner == deployer) {
-    await binanceOracleOwner.transferOwnership(ADDRESSES[networkName].timelock);
+    await binanceOracle.transferOwnership(ADDRESSES[networkName].timelock);
   }
 
   if (chainlinkOracleOwner == deployer) {
