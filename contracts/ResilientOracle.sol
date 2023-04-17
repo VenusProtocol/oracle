@@ -248,7 +248,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         if (address(_boundValidator) == address(0)) revert("invalid bound validator address");
         boundValidator = _boundValidator;
 
-        __AccessControlled_init_unchained(accessControlManager_);
+        __AccessControlled_init(accessControlManager_);
         __Pausable_init();
     }
 

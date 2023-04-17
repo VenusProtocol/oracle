@@ -58,7 +58,7 @@ contract BinanceOracle is Initializable, AccessControlledV8 {
      */
     function initialize(address _sidRegistryAddress, address _accessControlManager) public initializer {
         sidRegistryAddress = _sidRegistryAddress;
-        __AccessControlled_init_unchained(_accessControlManager);
+        __AccessControlled_init(_accessControlManager);
     }
 
     /**

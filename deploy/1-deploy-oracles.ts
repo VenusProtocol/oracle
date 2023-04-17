@@ -151,16 +151,47 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
+  const resilientOracle = await hre.ethers.getContract("ResilientOracle");
+  const pythOracle = await hre.ethers.getContract("PythOracle");
+  const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
+  const binanceOracle = await hre.ethers.getContract("BinanceOracle");
+  const twapOracle = await hre.ethers.getContract("TwapOracle");
+
   if (!ADDRESSES[networkName].acm) {
-    const resilientOracle = await hre.ethers.getContract("ResilientOracle");
-    const pythOracle = await hre.ethers.getContract("PythOracle");
-    const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
-
     await accessControlManager?.giveCallPermission(chainlinkOracle.address, "setTokenConfig(TokenConfig)", deployer);
-
     await accessControlManager?.giveCallPermission(pythOracle.address, "setTokenConfig(TokenConfig)", deployer);
-
     await accessControlManager?.giveCallPermission(resilientOracle.address, "setTokenConfig(TokenConfig)", deployer);
+  }
+
+  const resilientOracleOwner = await resilientOracle.owner();
+  const pythOracleOwner = await pythOracle.owner();
+  const binanceOracleOwner = await binanceOracle.owner();
+  const chainlinkOracleOwner = await chainlinkOracle.owner();
+  const twapOracleOwner = await twapOracle.owner();
+  const boundValidatorOwner = await boundValidator.owner();
+
+  if (resilientOracleOwner == deployer) {
+    await resilientOracle.transferOwnership(ADDRESSES[networkName].timelock)
+  }
+
+  if (pythOracleOwner == deployer) {
+    await pythOracle.transferOwnership(ADDRESSES[networkName].timelock)
+  }
+
+  if (binanceOracleOwner == deployer) {
+    await binanceOracleOwner.transferOwnership(ADDRESSES[networkName].timelock)
+  }
+
+  if (chainlinkOracleOwner == deployer) {
+    await chainlinkOracle.transferOwnership(ADDRESSES[networkName].timelock)
+  }
+
+  if (twapOracleOwner == deployer) {
+    await twapOracle.transferOwnership(ADDRESSES[networkName].timelock)
+  }
+
+  if (boundValidatorOwner == deployer) {
+    await boundValidator.transferOwnership(ADDRESSES[networkName].timelock)
   }
 };
 

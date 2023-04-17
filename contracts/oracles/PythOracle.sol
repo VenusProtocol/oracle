@@ -102,8 +102,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
      * @param accessControlManager_ Address of the access control manager contract
      */
     function initialize(address underlyingPythOracle_, address accessControlManager_) public initializer {
-        __Ownable2Step_init();
-        __AccessControlled_init_unchained(accessControlManager_);
+        __AccessControlled_init(accessControlManager_);
 
         if (underlyingPythOracle_ == address(0)) revert("pyth oracle cannot be zero address");
         underlyingPythOracle = IPyth(underlyingPythOracle_);

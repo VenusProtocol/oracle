@@ -70,8 +70,7 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
      * @param accessControlManager_ Address of the access control manager contract
      */
     function initialize(address accessControlManager_) public initializer {
-        __Ownable2Step_init();
-        __AccessControlled_init_unchained(accessControlManager_);
+        __AccessControlled_init(accessControlManager_);
     }
 
     /**

@@ -113,7 +113,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
      * @param accessControlManager_ Address of the access control manager contract
      */
     function initialize(address accessControlManager_) public initializer {
-        __AccessControlled_init_unchained(accessControlManager_);
+        __AccessControlled_init(accessControlManager_);
     }
 
     /**
