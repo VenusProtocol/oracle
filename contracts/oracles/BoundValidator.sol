@@ -3,7 +3,7 @@ pragma solidity 0.8.13;
 
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
-import "../Governance/AccessControlled.sol";
+import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
 struct ValidateConfig {
     /// @notice asset address
@@ -18,7 +18,7 @@ struct ValidateConfig {
 
 // BoundValidator provides some common functions and can be used
 // to wrap up other contracts to form pivot oracles
-contract BoundValidator is AccessControlled, BoundValidatorInterface {
+contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
     /// @notice validation configs by asset
     mapping(address => ValidateConfig) public validateConfigs;
 
@@ -41,8 +41,8 @@ contract BoundValidator is AccessControlled, BoundValidatorInterface {
     /// @param vaiAddress The address of the VAI
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address vBnbAddress, address vaiAddress) {
-        require(vBnbAddress != address(0), "can't be a zero address");
-        require(vaiAddress != address(0), "can't be a zero address");
+        if (vBnbAddress == address(0)) revert("vBNB can't be zero address");
+        if (vaiAddress == address(0)) revert("VAI can't be zero address");
         vBnb = vBnbAddress;
         vai = vaiAddress;
         _disableInitializers();
@@ -58,8 +58,9 @@ contract BoundValidator is AccessControlled, BoundValidatorInterface {
     function setValidateConfigs(ValidateConfig[] memory configs) external virtual {
         _checkAccessAllowed("setValidateConfigs(ValidateConfig[])");
 
-        require(configs.length > 0, "invalid validate config length");
-        for (uint256 i; i < configs.length; ++i) {
+        uint256 length = configs.length;
+        if (length == 0) revert("invalid validate config length");
+        for (uint256 i; i < length; ++i) {
             setValidateConfig(configs[i]);
         }
     }
@@ -69,8 +70,7 @@ contract BoundValidator is AccessControlled, BoundValidatorInterface {
      * @param accessControlManager_ Address of the access control manager contract
      */
     function initialize(address accessControlManager_) public initializer {
-        __Ownable2Step_init();
-        __AccessControlled_init_unchained(accessControlManager_);
+        __AccessControlled_init(accessControlManager_);
     }
 
     /**
@@ -85,9 +85,9 @@ contract BoundValidator is AccessControlled, BoundValidatorInterface {
     function setValidateConfig(ValidateConfig memory config) public virtual {
         _checkAccessAllowed("setValidateConfig(ValidateConfig)");
 
-        require(config.asset != address(0), "asset can't be zero address");
-        require(config.upperBoundRatio > 0 && config.lowerBoundRatio > 0, "bound must be positive");
-        require(config.upperBoundRatio > config.lowerBoundRatio, "upper bound must be higher than lowner bound");
+        if (config.asset == address(0)) revert("asset can't be zero address");
+        if (config.upperBoundRatio == 0 || config.lowerBoundRatio == 0) revert("bound must be positive");
+        if (config.upperBoundRatio <= config.lowerBoundRatio) revert("upper bound must be higher than lowner bound");
         validateConfigs[config.asset] = config;
         emit ValidateConfigAdded(config.asset, config.upperBoundRatio, config.lowerBoundRatio);
     }
@@ -106,8 +106,8 @@ contract BoundValidator is AccessControlled, BoundValidatorInterface {
     ) public view virtual override returns (bool) {
         address asset = _getUnderlyingAsset(vToken);
 
-        require(validateConfigs[asset].upperBoundRatio != 0, "validation config not exist");
-        require(anchorPrice != 0, "anchor price is not valid");
+        if (validateConfigs[asset].upperBoundRatio == 0) revert("validation config not exist");
+        if (anchorPrice == 0) revert("anchor price is not valid");
         return _isWithinAnchor(asset, reportedPrice, anchorPrice);
     }
 
@@ -118,7 +118,7 @@ contract BoundValidator is AccessControlled, BoundValidatorInterface {
      * @param anchorPrice The reported price must be within the the valid bounds of this price
      */
     function _isWithinAnchor(address asset, uint256 reportedPrice, uint256 anchorPrice) internal view returns (bool) {
-        if (reportedPrice > 0) {
+        if (reportedPrice != 0) {
             uint256 anchorRatio = (anchorPrice * 100e16) / reportedPrice;
             uint256 upperBoundAnchorRatio = validateConfigs[asset].upperBoundRatio;
             uint256 lowerBoundAnchorRatio = validateConfigs[asset].lowerBoundRatio;

@@ -4,7 +4,7 @@ pragma solidity 0.8.13;
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV2V3Interface.sol";
-import "../Governance/AccessControlled.sol";
+import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
 struct TokenConfig {
     /// @notice Underlying token address, which can't be a null address and can be used to check if a token is supported
@@ -16,7 +16,7 @@ struct TokenConfig {
     uint256 maxStalePeriod;
 }
 
-contract ChainlinkOracle is AccessControlled, OracleInterface {
+contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     /// @notice vBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vBnb;
@@ -36,17 +36,17 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
 
     /// @notice Emit when a price is manually set
     event PricePosted(
-        address asset,
+        address indexed asset,
         uint256 previousPriceMantissa,
         uint256 requestedPriceMantissa,
         uint256 newPriceMantissa
     );
 
     /// @notice Emit when a token config is added
-    event TokenConfigAdded(address asset, address feed, uint256 maxStalePeriod);
+    event TokenConfigAdded(address indexed asset, address feed, uint256 maxStalePeriod);
 
     modifier notNullAddress(address someone) {
-        require(someone != address(0), "can't be zero address");
+        if (someone == address(0)) revert("can't be zero address");
         _;
     }
 
@@ -87,7 +87,7 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
      * @custom:event Emits PricePosted event on succesfully setup of underlying price
      */
     function setDirectPrice(address asset, uint256 price) external notNullAddress(asset) {
-        _checkAccessAllowed("setDirectPrice(asset,price)");
+        _checkAccessAllowed("setDirectPrice(address,uint256)");
 
         prices[asset] = price;
         emit PricePosted(asset, prices[asset], price, price);
@@ -101,7 +101,7 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
         _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
-        require(tokenConfigs_.length > 0, "length can't be 0");
+        if (tokenConfigs_.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
         for (uint256 i; i < numTokenConfigs; ++i) {
             setTokenConfig(tokenConfigs_[i]);
@@ -113,7 +113,7 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
      * @param accessControlManager_ Address of the access control manager contract
      */
     function initialize(address accessControlManager_) public initializer {
-        __AccessControlled_init_unchained(accessControlManager_);
+        __AccessControlled_init(accessControlManager_);
     }
 
     /**
@@ -130,7 +130,7 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
     ) public notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.feed) {
         _checkAccessAllowed("setTokenConfig(TokenConfig)");
 
-        require(tokenConfig.maxStalePeriod > 0, "stale period can't be zero");
+        if (tokenConfig.maxStalePeriod == 0) revert("stale period can't be zero");
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(tokenConfig.asset, tokenConfig.feed, tokenConfig.maxStalePeriod);
     }
@@ -203,16 +203,12 @@ contract ChainlinkOracle is AccessControlled, OracleInterface {
         uint256 decimalDelta = uint256(18) - feed.decimals();
 
         (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
-        require(answer > 0, "chainlink price must be positive");
+        if (answer == 0) revert("chainlink price must be positive");
+        if (block.timestamp < updatedAt) revert("updatedAt exceeds block time");
 
-        require(block.timestamp >= updatedAt, "updatedAt exceeds block time");
         uint256 deltaTime = block.timestamp - updatedAt;
-        require(deltaTime <= maxStalePeriod, "chainlink price expired");
+        if (deltaTime > maxStalePeriod) revert("chainlink price expired");
 
         return uint256(answer) * (10 ** decimalDelta);
-    }
-
-    function _compareStrings(string memory a, string memory b) internal pure returns (bool) {
-        return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
     }
 }

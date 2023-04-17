@@ -27,6 +27,7 @@ interface Oracle {
   enableFlagsForOracles: [boolean, boolean, boolean];
   underlyingOracle: Contract;
   getTokenConfig?: (asset: Asset, networkName: string) => void;
+  getStalePeriodConfig?: (asset: Asset) => string[];
 }
 
 interface Oracles {
@@ -255,6 +256,7 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
       oracles: [binanceOracle.address, addr0000, addr0000],
       enableFlagsForOracles: [true, false, false],
       underlyingOracle: binanceOracle,
+      getStalePeriodConfig: (asset: Asset) => [asset.token, DEFAULT_STALE_PERIOD.toString()],
     },
     pyth: {
       oracles: [pythOracle.address, addr0000, addr0000],
@@ -277,8 +279,14 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
       console.log(`Configuring ${oracle} oracle for ${asset.token}`);
 
       const getTokenConfig = oraclesData[oracle].getTokenConfig;
-      if (oraclesData[oracle].underlyingOracle.address != binanceOracle.address && getTokenConfig != undefined) {
+      if (oraclesData[oracle].underlyingOracle.address != binanceOracle.address && getTokenConfig !== undefined) {
         const tx = await oraclesData[oracle].underlyingOracle?.setTokenConfig(getTokenConfig(asset, networkName));
+        tx.wait(1);
+      }
+
+      const getStalePeriodConfig = oraclesData[oracle].getStalePeriodConfig;
+      if (oraclesData[oracle].underlyingOracle.address == binanceOracle.address && getStalePeriodConfig !== undefined) {
+        const tx = await oraclesData[oracle].underlyingOracle?.setTokenConfig(...getStalePeriodConfig(asset));
         tx.wait(1);
       }
 

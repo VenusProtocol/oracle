@@ -19,7 +19,7 @@ contract MockTwapOracle is OwnableUpgradeable {
 
     function initialize(address vBNB_) public initializer {
         __Ownable_init();
-        require(vBNB_ != address(0), "vBNB can't be zero address");
+        if (vBNB_ == address(0)) revert("vBNB can't be zero address");
         vBNB = vBNB_;
     }
 

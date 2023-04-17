@@ -2661,6 +2661,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@venusprotocol/governance-contracts@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "@venusprotocol/governance-contracts@npm:0.0.2"
+  checksum: 101ade6013fe3963968d37ff839a4c62aeaedd9f26d8c5ae47bdc413e6c61732b4048a1b026e4281ade5676fb1545a49ecac299f6b669a9f0c7e73723666d7e1
+  languageName: node
+  linkType: hard
+
 "@venusprotocol/oracle@workspace:.":
   version: 0.0.0-use.local
   resolution: "@venusprotocol/oracle@workspace:."
@@ -2689,6 +2696,7 @@ __metadata:
     "@types/sinon-chai": ^3.2.9
     "@typescript-eslint/eslint-plugin": ^5.27.1
     "@typescript-eslint/parser": ^5.27.1
+    "@venusprotocol/governance-contracts": ^0.0.2
     "@venusprotocol/venus-protocol": 0.4.1
     chai: ^4.3.6
     commitizen: ^4.2.4

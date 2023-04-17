@@ -64,6 +64,12 @@ npx hardhat deploy
   - In the deployment scripts you have added `tags` for example: - `func.tags = ["MockTokens"];`
   - Once this is done, adding `--tags "<tag_name>,<tag_name>..."` to the deployment command will execute only the scripts containing the tags.
 
+### Verify Contracts
+
+```
+npx hardhat etherscan-verify --network <network-name>
+```
+
 ### Hardhat Commands
 
 ```

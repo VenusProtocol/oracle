@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../libraries/PancakeLibrary.sol";
 import "../interfaces/OracleInterface.sol";
 import "../interfaces/VBep20Interface.sol";
-import "../Governance/AccessControlled.sol";
+import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
 struct Observation {
     uint256 timestamp;
@@ -28,7 +28,7 @@ struct TokenConfig {
     uint256 anchorPeriod;
 }
 
-contract TwapOracle is AccessControlled, TwapInterface {
+contract TwapOracle is AccessControlledV8, TwapInterface {
     using FixedPoint for *;
 
     /// @notice WBNB address
@@ -46,8 +46,6 @@ contract TwapOracle is AccessControlled, TwapInterface {
     /// @notice the base unit of WBNB and BUSD, which are the paired tokens for all assets
     uint256 public constant bnbBaseUnit = 1e18;
     uint256 public constant busdBaseUnit = 1e18;
-
-    uint256 public constant expScale = 1e18;
 
     /// @notice Configs by token
     mapping(address => TokenConfig) public tokenConfigs;
@@ -77,7 +75,7 @@ contract TwapOracle is AccessControlled, TwapInterface {
     event TokenConfigAdded(address indexed asset, address indexed pancakePool, uint256 indexed anchorPeriod);
 
     modifier notNullAddress(address someone) {
-        require(someone != address(0), "can't be zero address");
+        if (someone == address(0)) revert("can't be zero address");
         _;
     }
 
@@ -102,9 +100,9 @@ contract TwapOracle is AccessControlled, TwapInterface {
      * @param configs Config array
      * @custom:error Zero length error thrown, if length of the config array is 0
      */
-    function setTokenConfigs(TokenConfig[] memory configs) external onlyOwner {
-        _checkAccessAllowed("setTokenConfigsTokenConfig[])");
-        require(configs.length > 0, "length can't be 0");
+    function setTokenConfigs(TokenConfig[] memory configs) external {
+        _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
+        if (configs.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = configs.length;
         for (uint256 i; i < numTokenConfigs; ++i) {
             setTokenConfig(configs[i]);
@@ -121,11 +119,11 @@ contract TwapOracle is AccessControlled, TwapInterface {
     function getUnderlyingPrice(address vToken) external view override returns (uint256) {
         address asset = _getUnderlyingAsset(vToken);
 
-        require(tokenConfigs[asset].asset != address(0), "asset not exist");
+        if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
         uint256 price = prices[asset];
 
         // if price is 0, it means the price hasn't been updated yet and it's meaningless, revert
-        require(price > 0, "TWAP price must be positive");
+        if (price == 0) revert("TWAP price must be positive");
         return (price * (10 ** (18 - IERC20Metadata(asset).decimals())));
     }
 
@@ -134,8 +132,7 @@ contract TwapOracle is AccessControlled, TwapInterface {
      * @param accessControlManager_ Address of the access control manager contract
      */
     function initialize(address accessControlManager_) public initializer {
-        __Ownable2Step_init();
-        __AccessControlled_init_unchained(accessControlManager_);
+        __AccessControlled_init(accessControlManager_);
     }
 
     /**
@@ -155,12 +152,10 @@ contract TwapOracle is AccessControlled, TwapInterface {
     ) public notNullAddress(config.asset) notNullAddress(config.pancakePool) {
         _checkAccessAllowed("setTokenConfig(TokenConfig)");
 
-        require(config.anchorPeriod > 0, "anchor period must be positive");
-        require(config.baseUnit > 0, "base unit must be positive");
-        require(
-            config.baseUnit == 10 ** IERC20Metadata(config.asset).decimals(),
-            "base unit decimals must be same as asset decimals"
-        );
+        if (config.anchorPeriod == 0) revert("anchor period must be positive");
+        if (config.baseUnit == 0) revert("base unit must be positive");
+        if (config.baseUnit != 10 ** IERC20Metadata(config.asset).decimals())
+            revert("base unit decimals must be same as asset decimals");
 
         uint256 cumulativePrice = currentCumulativePrice(config);
 
@@ -178,10 +173,10 @@ contract TwapOracle is AccessControlled, TwapInterface {
     function updateTwap(address vToken) public returns (uint256) {
         address asset = _getUnderlyingAsset(vToken);
 
-        require(tokenConfigs[asset].asset != address(0), "asset not exist");
+        if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
         // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
         if (asset != WBNB && tokenConfigs[asset].isBnbBased) {
-            require(tokenConfigs[WBNB].asset != address(0), "WBNB not exist");
+            if (tokenConfigs[WBNB].asset == address(0)) revert("WBNB not exist");
             _updateTwapInternal(tokenConfigs[WBNB]);
         }
         return _updateTwapInternal(tokenConfigs[asset]);
@@ -214,11 +209,14 @@ contract TwapOracle is AccessControlled, TwapInterface {
         // priceAverage will always be Token/BNB or Token/BUSD *twap** price.
         (uint256 nowCumulativePrice, uint256 oldCumulativePrice, uint256 oldTimestamp) = pokeWindowValues(config);
 
+        if (block.timestamp == oldTimestamp) return prices[config.asset];
+
         // This should be impossible, but better safe than sorry
-        require(block.timestamp > oldTimestamp, "now must come after before");
+        if (block.timestamp < oldTimestamp) revert("now must come after before");
+
         uint256 timeElapsed = block.timestamp - oldTimestamp;
 
-        // Calculate Pancakge *twap**
+        // Calculate Pancake *twap**
         FixedPoint.uq112x112 memory priceAverage = FixedPoint.uq112x112(
             uint224((nowCumulativePrice - oldCumulativePrice) / timeElapsed)
         );
@@ -233,11 +231,11 @@ contract TwapOracle is AccessControlled, TwapInterface {
         // if this token is paired with BNB, convert its price to USD
         if (config.isBnbBased) {
             uint256 bnbPrice = prices[WBNB];
-            require(bnbPrice != 0, "bnb price is invalid");
+            if (bnbPrice == 0) revert("bnb price is invalid");
             anchorPriceMantissa = (anchorPriceMantissa * bnbPrice) / bnbBaseUnit;
         }
 
-        require(anchorPriceMantissa != 0, "twap price cannot be 0");
+        if (anchorPriceMantissa == 0) revert("twap price cannot be 0");
 
         emit AnchorPriceUpdated(config.asset, anchorPriceMantissa, oldTimestamp, block.timestamp);
 

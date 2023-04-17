@@ -44,7 +44,7 @@ describe("Twap Oracle unit tests", function () {
     this.bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
 
     const TwapOracle = await ethers.getContractFactory("TwapOracle", admin);
-    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
     fakeAccessControlManager.isAllowedToCall.returns(true);
 
     const twapInstance = <TwapOracle>await upgrades.deployProxy(TwapOracle, [fakeAccessControlManager.address], {

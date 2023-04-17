@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/utils/math/SignedMath.sol";
 import "../interfaces/PythInterface.sol";
 import "../interfaces/OracleInterface.sol";
 import "../interfaces/VBep20Interface.sol";
-import "../Governance/AccessControlled.sol";
+import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
 struct TokenConfig {
     bytes32 pythId;
@@ -19,9 +18,7 @@ struct TokenConfig {
  * PythOracle contract reads prices from actual Pyth oracle contract which accepts, verifies and stores the
  * updated prices from external sources
  */
-contract PythOracle is AccessControlled, OracleInterface {
-    using SafeMath for uint256;
-
+contract PythOracle is AccessControlledV8, OracleInterface {
     // To calculate 10 ** n(which is a signed type)
     using SignedMath for int256;
 
@@ -55,7 +52,7 @@ contract PythOracle is AccessControlled, OracleInterface {
     event TokenConfigAdded(address indexed vToken, bytes32 indexed pythId, uint64 indexed maxStalePeriod);
 
     modifier notNullAddress(address someone) {
-        require(someone != address(0), "can't be zero address");
+        if (someone == address(0)) revert("can't be zero address");
         _;
     }
 
@@ -77,7 +74,7 @@ contract PythOracle is AccessControlled, OracleInterface {
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
         _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
-        require(tokenConfigs_.length != 0, "length can't be 0");
+        if (tokenConfigs_.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
         for (uint256 i; i < numTokenConfigs; ++i) {
             setTokenConfig(tokenConfigs_[i]);
@@ -105,10 +102,9 @@ contract PythOracle is AccessControlled, OracleInterface {
      * @param accessControlManager_ Address of the access control manager contract
      */
     function initialize(address underlyingPythOracle_, address accessControlManager_) public initializer {
-        __Ownable2Step_init();
-        __AccessControlled_init_unchained(accessControlManager_);
+        __AccessControlled_init(accessControlManager_);
 
-        require(underlyingPythOracle_ != address(0), "pyth oracle cannot be zero address");
+        if (underlyingPythOracle_ == address(0)) revert("pyth oracle cannot be zero address");
         underlyingPythOracle = IPyth(underlyingPythOracle_);
         emit PythOracleSet(underlyingPythOracle_);
     }
@@ -122,7 +118,7 @@ contract PythOracle is AccessControlled, OracleInterface {
      */
     function setTokenConfig(TokenConfig memory tokenConfig) public notNullAddress(tokenConfig.asset) {
         _checkAccessAllowed("setTokenConfig(TokenConfig)");
-        require(tokenConfig.maxStalePeriod != 0, "max stale period cannot be 0");
+        if (tokenConfig.maxStalePeriod == 0) revert("max stale period cannot be 0");
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(tokenConfig.asset, tokenConfig.pythId, tokenConfig.maxStalePeriod);
     }
@@ -137,7 +133,7 @@ contract PythOracle is AccessControlled, OracleInterface {
      * @custom:error Range error thrown if price of Pyth oracle is not greater than zero
      */
     function getUnderlyingPrice(address vToken) public view override returns (uint256) {
-        require(address(underlyingPythOracle) != address(0), "Pyth oracle is zero address");
+        if (address(underlyingPythOracle) == address(0)) revert("Pyth oracle is zero address");
 
         address asset;
         uint256 decimals;
@@ -155,7 +151,7 @@ contract PythOracle is AccessControlled, OracleInterface {
         }
 
         TokenConfig storage tokenConfig = tokenConfigs[asset];
-        require(tokenConfig.asset != address(0), "asset doesn't exist");
+        if (tokenConfig.asset == address(0)) revert("asset doesn't exist");
 
         // if the price is expired after it's compared against `maxStalePeriod`, the following call will revert
         PythStructs.Price memory priceInfo = underlyingPythOracle.getPriceNoOlderThan(
@@ -165,14 +161,14 @@ contract PythOracle is AccessControlled, OracleInterface {
 
         uint256 price = int256(priceInfo.price).toUint256();
 
-        require(price > 0, "Pyth oracle price must be positive");
+        if (price == 0) revert("invalid pyth oracle price");
 
         // the price returned from Pyth is price ** 10^expo, which is the real dollar price of the assets
         // we need to multiply it by 1e18 to make the price 18 decimals
         if (priceInfo.expo > 0) {
-            return price.mul(EXP_SCALE).mul(10 ** int256(priceInfo.expo).toUint256()) * (10 ** (18 - decimals));
+            return price * EXP_SCALE * (10 ** int256(priceInfo.expo).toUint256()) * (10 ** (18 - decimals));
         } else {
-            return price.mul(EXP_SCALE).div(10 ** int256(-priceInfo.expo).toUint256()) * (10 ** (18 - decimals));
+            return ((price * EXP_SCALE) / (10 ** int256(-priceInfo.expo).toUint256())) * (10 ** (18 - decimals));
         }
     }
 }

@@ -19,7 +19,7 @@ const getPythOracle = async (account: SignerWithAddress, vBnb: string, vai: stri
   await actualOracle.deployed();
 
   const PythOracle = await ethers.getContractFactory("PythOracle", account);
-  const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+  const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
   fakeAccessControlManager.isAllowedToCall.returns(true);
 
   const instance = <PythOracle>await upgrades.deployProxy(
@@ -217,7 +217,7 @@ describe("Oracle plugin frame unit tests", function () {
       feed.price.price = BigNumber.from(0);
       await this.underlyingPythOracle.updatePriceFeedsHarness([feed]);
       await expect(this.pythOracle.getUnderlyingPrice(this.vETH.address)).to.be.revertedWith(
-        "Pyth oracle price must be positive",
+        "invalid pyth oracle price",
       );
     });
 
