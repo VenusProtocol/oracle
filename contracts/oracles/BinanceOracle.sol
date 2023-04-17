@@ -9,7 +9,7 @@ import "../interfaces/FeedRegistryInterface.sol";
 import "../interfaces/PublicResolverInterface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
-contract BinanceOracle is Initializable, AccessControlledV8 {
+contract BinanceOracle is AccessControlledV8 {
     address public sidRegistryAddress;
 
     /// @notice vBNB address
