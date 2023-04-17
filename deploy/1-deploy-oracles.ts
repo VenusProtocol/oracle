@@ -171,27 +171,27 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const boundValidatorOwner = await boundValidator.owner();
 
   if (resilientOracleOwner == deployer) {
-    await resilientOracle.transferOwnership(ADDRESSES[networkName].timelock)
+    await resilientOracle.transferOwnership(ADDRESSES[networkName].timelock);
   }
 
   if (pythOracleOwner == deployer) {
-    await pythOracle.transferOwnership(ADDRESSES[networkName].timelock)
+    await pythOracle.transferOwnership(ADDRESSES[networkName].timelock);
   }
 
   if (binanceOracleOwner == deployer) {
-    await binanceOracleOwner.transferOwnership(ADDRESSES[networkName].timelock)
+    await binanceOracleOwner.transferOwnership(ADDRESSES[networkName].timelock);
   }
 
   if (chainlinkOracleOwner == deployer) {
-    await chainlinkOracle.transferOwnership(ADDRESSES[networkName].timelock)
+    await chainlinkOracle.transferOwnership(ADDRESSES[networkName].timelock);
   }
 
   if (twapOracleOwner == deployer) {
-    await twapOracle.transferOwnership(ADDRESSES[networkName].timelock)
+    await twapOracle.transferOwnership(ADDRESSES[networkName].timelock);
   }
 
   if (boundValidatorOwner == deployer) {
-    await boundValidator.transferOwnership(ADDRESSES[networkName].timelock)
+    await boundValidator.transferOwnership(ADDRESSES[networkName].timelock);
   }
 };
 
