@@ -11,7 +11,7 @@ const networkName: string = network.name === "bscmainnet" ? "bscmainnet" : "bsct
 const FORK_MAINNET = process.env.FORK_MAINNET === "true";
 const oracleAddress = {
   bsctestnet: "0xb0de3Fce006d3434342383f941bD22720Ff9Fc0C",
-  bscmainnet: "",
+  bscmainnet: "0x833c980ADDAa4B9d1f8432EDdA51B89676702759",
 };
 
 type FakeVtokenInfo = {
@@ -27,7 +27,7 @@ type PriceResult = {
 
 // NOTE: in order to test the configuration, the blockNumber should be after the configuration transaction took place
 if (FORK_MAINNET) {
-  const blockNumer = 28300935;
+  const blockNumer = 27541139;
   forking(blockNumer, () => {
     let oracle: Contract;
     let admin: SignerWithAddress;
