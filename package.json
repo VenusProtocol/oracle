@@ -26,6 +26,7 @@
     "test": "npm run compile && hardhat test",
     "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
     "build": "rm -rf dist && tsc --declaration && hardhat compile && cp -r ./{package.json,yarn.lock,artifacts,networks,contracts,deployments} dist/",
+    "postinstall": "yarn build",
     "publish": "yarn build && cd dist && yarn npm publish",
     "docgen": "hardhat docgen"
   },
