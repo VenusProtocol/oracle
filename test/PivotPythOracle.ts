@@ -4,8 +4,7 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { artifacts, ethers, upgrades, waffle } from "hardhat";
 
-import { BoundValidator, PythOracle } from "../src/types";
-import { AccessControlManager } from "../typechain-types";
+import { AccessControlManager, BoundValidator, PythOracle } from "../typechain-types";
 import { MockPyth } from "../typechain-types/contracts/test/MockPyth";
 import { addr0000, addr1111, getBytes32String, getSimpleAddress } from "./utils/data";
 import { makeVToken } from "./utils/makeVToken";
@@ -18,12 +17,12 @@ const getPythOracle = async (account: SignerWithAddress, vBnb: string, vai: stri
   const actualOracle = await waffle.deployContract(account, actualOracleArtifact, [0, 0]);
   await actualOracle.deployed();
 
-  const PythOracle = await ethers.getContractFactory("PythOracle", account);
+  const pythOracle = await ethers.getContractFactory("PythOracle", account);
   const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
   fakeAccessControlManager.isAllowedToCall.returns(true);
 
   const instance = <PythOracle>await upgrades.deployProxy(
-    PythOracle,
+    pythOracle,
     [actualOracle.address, fakeAccessControlManager.address],
     {
       constructorArgs: [vBnb, vai],
@@ -33,17 +32,17 @@ const getPythOracle = async (account: SignerWithAddress, vBnb: string, vai: stri
 };
 
 const getBoundValidator = async (account: SignerWithAddress, vBnb: string, vai: string) => {
-  const BoundValidator = await ethers.getContractFactory("BoundValidator", account);
+  const boundValidator = await ethers.getContractFactory("BoundValidator", account);
   const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
   fakeAccessControlManager.isAllowedToCall.returns(true);
 
-  const instance = <BoundValidator>await upgrades.deployProxy(BoundValidator, [fakeAccessControlManager.address], {
+  const instance = <BoundValidator>await upgrades.deployProxy(boundValidator, [fakeAccessControlManager.address], {
     constructorArgs: [vBnb, vai],
   });
   return instance;
 };
 
-describe("Oracle plugin frame unit tests", function () {
+describe("Oracle plugin frame unit tests", () => {
   beforeEach(async function () {
     const signers: SignerWithAddress[] = await ethers.getSigners();
     const admin = signers[0];
@@ -55,7 +54,7 @@ describe("Oracle plugin frame unit tests", function () {
     this.boundValidator = await getBoundValidator(admin, this.vBnb, this.vai);
   });
 
-  describe("admin check", function () {
+  describe("admin check", () => {
     it("transfer owner", async function () {
       const config = {
         pythId: getBytes32String(2),
@@ -71,8 +70,8 @@ describe("Oracle plugin frame unit tests", function () {
     });
   });
 
-  describe("token config", function () {
-    describe("add single token config", function () {
+  describe("token config", () => {
+    describe("add single token config", () => {
       it("vToken can\"t be zero & maxStalePeriod can't be zero", async function () {
         await expect(
           this.pythOracle.setTokenConfig({
@@ -101,7 +100,7 @@ describe("Oracle plugin frame unit tests", function () {
       });
     });
 
-    describe("batch add token configs", function () {
+    describe("batch add token configs", () => {
       it("length check", async function () {
         await expect(this.pythOracle.setTokenConfigs([])).to.be.revertedWith("length can't be 0");
       });
@@ -125,7 +124,7 @@ describe("Oracle plugin frame unit tests", function () {
     });
   });
 
-  describe("get underlying price", function () {
+  describe("get underlying price", () => {
     beforeEach(async function () {
       const underlyingPythAddress = await this.pythOracle.underlyingPythOracle();
       const UnderlyingPythFactory = await ethers.getContractFactory("MockPyth");
@@ -253,7 +252,7 @@ describe("Oracle plugin frame unit tests", function () {
     });
   });
 
-  describe("validation", function () {
+  describe("validation", () => {
     it("validate price", async function () {
       const vToken = await makeVToken(
         this.admin,

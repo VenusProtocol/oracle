@@ -13,7 +13,7 @@ import { getTime, increaseTime } from "./utils/time";
 
 const MAX_STALE_PERIOD = 60 * 15; // 15min
 
-describe("Oracle unit tests", function () {
+describe("Oracle unit tests", () => {
   before(async function () {
     const signers: SignerWithAddress[] = await ethers.getSigners();
     const admin = signers[0];
@@ -44,11 +44,11 @@ describe("Oracle unit tests", function () {
     this.usdtFeed = await makeChainlinkOracle(admin, 8, 100000000);
     this.daiFeed = await makeChainlinkOracle(admin, 8, 100000000);
 
-    const ChainlinkOracle = await ethers.getContractFactory("ChainlinkOracle", admin);
+    const chainlinkOracle = await ethers.getContractFactory("ChainlinkOracle", admin);
     const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
     fakeAccessControlManager.isAllowedToCall.returns(true);
 
-    const instance = <ChainlinkOracle>await upgrades.deployProxy(ChainlinkOracle, [fakeAccessControlManager.address], {
+    const instance = <ChainlinkOracle>await upgrades.deployProxy(chainlinkOracle, [fakeAccessControlManager.address], {
       constructorArgs: [this.vBnb.address, this.vai.address],
     });
     this.chainlinkOracle = instance;

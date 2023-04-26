@@ -31,9 +31,9 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
   const networkName = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
 
-  const vBNBAddress = ADDRESSES[networkName].vBNBAddress;
-  const VAIAddress = ADDRESSES[networkName].VAIAddress;
-  const WBNBAddress = ADDRESSES[networkName].WBNBAddress;
+  const {vBNBAddress} = ADDRESSES[networkName];
+  const {VAIAddress} = ADDRESSES[networkName];
+  const {WBNBAddress} = ADDRESSES[networkName];
 
   let accessControlManager;
   if (!ADDRESSES[networkName].acm) {
@@ -115,7 +115,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
-  const pythOracleAddress = ADDRESSES[networkName].pythOracleAddress;
+  const {pythOracleAddress} = ADDRESSES[networkName];
 
   await deploy("PythOracle", {
     contract: network.live ? "PythOracle" : "MockPythOracle",
@@ -133,7 +133,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
-  const sidRegistryAddress = ADDRESSES[networkName].sidRegistryAddress;
+  const {sidRegistryAddress} = ADDRESSES[networkName];
 
   await deploy("BinanceOracle", {
     contract: network.live ? "BinanceOracle" : "MockBinanceOracle",
@@ -170,30 +170,30 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const twapOracleOwner = await twapOracle.owner();
   const boundValidatorOwner = await boundValidator.owner();
 
-  if (resilientOracleOwner == deployer) {
+  if (resilientOracleOwner === deployer) {
     await resilientOracle.transferOwnership(ADDRESSES[networkName].timelock);
   }
 
-  if (pythOracleOwner == deployer) {
+  if (pythOracleOwner === deployer) {
     await pythOracle.transferOwnership(ADDRESSES[networkName].timelock);
   }
 
-  if (binanceOracleOwner == deployer) {
+  if (binanceOracleOwner === deployer) {
     await binanceOracle.transferOwnership(ADDRESSES[networkName].timelock);
   }
 
-  if (chainlinkOracleOwner == deployer) {
+  if (chainlinkOracleOwner === deployer) {
     await chainlinkOracle.transferOwnership(ADDRESSES[networkName].timelock);
   }
 
-  if (twapOracleOwner == deployer) {
+  if (twapOracleOwner === deployer) {
     await twapOracle.transferOwnership(ADDRESSES[networkName].timelock);
   }
 
-  if (boundValidatorOwner == deployer) {
+  if (boundValidatorOwner === deployer) {
     await boundValidator.transferOwnership(ADDRESSES[networkName].timelock);
   }
 };
 
-module.exports = func;
-module.exports.tags = ["deploy"];
+export default func;
+export const tags = ["deploy"];

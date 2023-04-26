@@ -6,7 +6,7 @@ import { ethers, upgrades } from "hardhat";
 import { AccessControlManager, BinanceOracle, MockBinanceFeedRegistry } from "../typechain-types";
 import { makeVToken } from "./utils/makeVToken";
 
-describe("Binance Oracle unit tests", function () {
+describe("Binance Oracle unit tests", () => {
   before(async function () {
     const signers: SignerWithAddress[] = await ethers.getSigners();
     const admin = signers[0];
@@ -16,11 +16,11 @@ describe("Binance Oracle unit tests", function () {
 
     this.vEth = await makeVToken(admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
     this.vBnb = await makeVToken(admin, { name: "vBNB", symbol: "vBNB" }, { name: "Binance", symbol: "BNB" });
-    this.ethPrice = "133378924169"; //$1333.78924169
-    this.bnbPrice = "24598000000"; //$245.98
+    this.ethPrice = "133378924169"; // $1333.78924169
+    this.bnbPrice = "24598000000"; // $245.98
 
-    const MockBinanceFeedRegistry = await ethers.getContractFactory("MockBinanceFeedRegistry", admin);
-    this.mockBinanceFeedRegistry = <MockBinanceFeedRegistry>await upgrades.deployProxy(MockBinanceFeedRegistry, []);
+    const mockBinanceFeedRegistry = await ethers.getContractFactory("MockBinanceFeedRegistry", admin);
+    this.mockBinanceFeedRegistry = <MockBinanceFeedRegistry>await upgrades.deployProxy(mockBinanceFeedRegistry, []);
 
     const publicResolver = await smock.fake("PublicResolverInterface");
     const sidRegistry = await smock.fake("SIDRegistryInterface");
@@ -30,9 +30,9 @@ describe("Binance Oracle unit tests", function () {
     const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
     fakeAccessControlManager.isAllowedToCall.returns(true);
 
-    const BinanceOracle = await ethers.getContractFactory("BinanceOracle", admin);
+    const binanceOracle = await ethers.getContractFactory("BinanceOracle", admin);
     this.binanceOracle = <BinanceOracle>await upgrades.deployProxy(
-      BinanceOracle,
+      binanceOracle,
       [sidRegistry.address, fakeAccessControlManager.address],
       {
         constructorArgs: [this.vBnb.address, this.vai],
