@@ -110,15 +110,13 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     }
 
     /**
-     * @notice Get the underlying TWAP price for the given vToken
-     * @param vToken vToken address
+     * @notice Get the underlying TWAP price for the given asset
+     * @param asset asset address
      * @return price Underlying price in USD
      * @custom:error Missing error is thrown if the token config does not exist
      * @custom:error Range error is thrown if TWAP price is not greater than zero
      */
-    function getUnderlyingPrice(address vToken) external view override returns (uint256) {
-        address asset = _getUnderlyingAsset(vToken);
-
+    function getPrice(address asset) external view override returns (uint256) {
         if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
         uint256 price = prices[asset];
 
@@ -167,12 +165,10 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
 
     /**
      * @notice Updates the current token/BUSD price from PancakeSwap, with 18 decimals of precision.
-     * @return anchorPrice anchor price of the underlying asset of the vToken
+     * @return anchorPrice anchor price of the underlying asset of the asset
      * @custom:error Missing error is thrown if token config does not exist
      */
-    function updateTwap(address vToken) public returns (uint256) {
-        address asset = _getUnderlyingAsset(vToken);
-
+    function updateTwap(address asset) public returns (uint256) {
         if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
         // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
         if (asset != WBNB && tokenConfigs[asset].isBnbBased) {
@@ -290,20 +286,5 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
             cumulativePrice
         );
         return (cumulativePrice, startCumulativePrice, startCumulativeTimestamp);
-    }
-
-    /**
-     * @dev This function returns the underlying asset of a vToken
-     * @param vToken vToken address
-     * @return asset underlying asset address
-     */
-    function _getUnderlyingAsset(address vToken) internal view returns (address asset) {
-        if (address(vToken) == vBnb) {
-            asset = WBNB;
-        } else if (address(vToken) == vai) {
-            asset = vai;
-        } else {
-            asset = VBep20Interface(vToken).underlying();
-        }
     }
 }

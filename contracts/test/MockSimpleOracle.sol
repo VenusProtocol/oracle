@@ -14,6 +14,10 @@ contract MockSimpleOracle is OracleInterface {
         return prices[vToken];
     }
 
+    function getPrice(address asset) external view returns (uint256) {
+        return prices[asset];
+    }
+
     function setPrice(address vToken, uint256 price) public {
         prices[vToken] = price;
     }
@@ -35,7 +39,15 @@ contract MockBoundValidator is BoundValidatorInterface {
         return validateResults[vToken];
     }
 
-    function setValidateResult(address vToken, bool pass) public {
-        validateResults[vToken] = pass;
+    function validateAssetPriceWithAnchorPrice(
+        address asset,
+        uint256 reporterPrice,
+        uint256 anchorPrice
+    ) external view returns (bool) {
+        return validateResults[asset];
+    }
+
+    function setValidateResult(address token, bool pass) public {
+        validateResults[token] = pass;
     }
 }

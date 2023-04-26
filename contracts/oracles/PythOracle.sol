@@ -123,33 +123,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
         emit TokenConfigAdded(tokenConfig.asset, tokenConfig.pythId, tokenConfig.maxStalePeriod);
     }
 
-    /**
-     * @notice Get price of underlying asset of the input vToken, under the hood this function
-     * get price from Pyth contract, the prices of which are updated externally
-     * @param vToken vToken address
-     * @return price Underlying price with a precision of 10 decimals
-     * @custom:error Zero address error thrown if underlyingPythOracle address is null
-     * @custom:error Zero address error thrown if asset address is null
-     * @custom:error Range error thrown if price of Pyth oracle is not greater than zero
-     */
-    function getUnderlyingPrice(address vToken) public view override returns (uint256) {
-        if (address(underlyingPythOracle) == address(0)) revert("Pyth oracle is zero address");
-
-        address asset;
-        uint256 decimals;
-
-        // VBNB token doesn't have `underlying` method
-        if (address(vToken) == vBnb) {
-            asset = BNB_ADDR;
-            decimals = 18;
-        } else if (address(vToken) == vai) {
-            asset = vai;
-            decimals = 18;
-        } else {
-            asset = VBep20Interface(vToken).underlying();
-            decimals = VBep20Interface(asset).decimals();
-        }
-
+    function _getPriceInternal(address asset, uint256 decimals) internal view returns (uint256) {
         TokenConfig storage tokenConfig = tokenConfigs[asset];
         if (tokenConfig.asset == address(0)) revert("asset doesn't exist");
 
@@ -170,5 +144,16 @@ contract PythOracle is AccessControlledV8, OracleInterface {
         } else {
             return ((price * EXP_SCALE) / (10 ** int256(-priceInfo.expo).toUint256())) * (10 ** (18 - decimals));
         }
+    }
+
+    /**
+     * @notice Gets the price of a asset from the pyth oracle
+     * @param asset Address of the address
+     * @return Price in USD
+     */
+    function getPrice(address asset) public view returns (uint256) {
+        IERC20Metadata token = IERC20Metadata(asset);
+        uint256 decimals = token.decimals();
+        return _getPriceInternal(asset, decimals);
     }
 }

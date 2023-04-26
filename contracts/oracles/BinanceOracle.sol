@@ -7,8 +7,9 @@ import "../interfaces/SIDRegistryInterface.sol";
 import "../interfaces/FeedRegistryInterface.sol";
 import "../interfaces/PublicResolverInterface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
+import "../interfaces/OracleInterface.sol";
 
-contract BinanceOracle is AccessControlledV8 {
+contract BinanceOracle is AccessControlledV8, OracleInterface {
     address public sidRegistryAddress;
 
     /// @notice vBNB address
@@ -74,32 +75,7 @@ contract BinanceOracle is AccessControlledV8 {
         return publicResolver.addr(nodeHash);
     }
 
-    /**
-     * @notice Gets the price of a vToken from the binance oracle
-     * @param vToken Address of the vToken
-     * @return Price in USD
-     */
-    function getUnderlyingPrice(VBep20Interface vToken) public view returns (uint256) {
-        string memory symbol;
-        uint256 decimals;
-
-        // VBNB token doesn't have `underlying` method
-        if (address(vToken) == vBnb) {
-            symbol = "BNB";
-            decimals = 18;
-        } else if (address(vToken) == vai) {
-            symbol = "VAI";
-            decimals = 18;
-        } else {
-            IERC20Metadata underlyingToken = IERC20Metadata(vToken.underlying());
-            symbol = underlyingToken.symbol();
-            decimals = underlyingToken.decimals();
-        }
-
-        if (compare(symbol, "WBNB")) {
-            symbol = "BNB";
-        }
-
+    function _getPrice(string memory symbol, uint256 decimals) internal view returns (uint256) {
         FeedRegistryInterface feedRegistry = FeedRegistryInterface(getFeedRegistryAddress());
 
         (, int256 answer, , uint256 updatedAt, ) = feedRegistry.latestRoundDataByName(symbol, "USD");
@@ -111,6 +87,18 @@ contract BinanceOracle is AccessControlledV8 {
 
         uint256 decimalDelta = feedRegistry.decimalsByName(symbol, "USD");
         return (uint256(answer) * (10 ** (18 - decimalDelta))) * (10 ** (18 - decimals));
+    }
+
+    /**
+     * @notice Gets the price of a asset from the binance oracle
+     * @param asset Address of the address
+     * @return Price in USD
+     */
+    function getPrice(address asset) public view returns (uint256) {
+        IERC20Metadata token = IERC20Metadata(asset);
+        string memory symbol = token.symbol();
+        uint256 decimals = token.decimals();
+        return _getPrice(symbol, decimals);
     }
 
     /**

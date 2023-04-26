@@ -136,38 +136,23 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     }
 
     /**
-     * @notice Gets the Chainlink price for the underlying asset of a given vToken, revert when vToken is a null address
-     * @param vToken vToken address
-     * @return price Underlying price in USD
+     * @notice Gets the price of a asset from the chainlink oracle
+     * @param asset Address of the address
+     * @return Price in USD
      */
-    function getUnderlyingPrice(address vToken) public view override returns (uint256) {
-        return _getUnderlyingPriceInternal(VBep20Interface(vToken));
+    function getPrice(address asset) public view returns (uint256) {
+        IERC20Metadata token = IERC20Metadata(asset);
+        uint256 decimals = token.decimals();
+        return _getPriceInternal(asset, decimals);
     }
 
     /**
-     * @notice Gets the Chainlink price for the underlying asset of a given vToken
-     * or the manually set price if it's been set
-     * @dev The decimals of the underlying token are considered to ensure the returned price
-     * has 18 decimals of precision
-     * @param vToken vToken address
+     * @notice Gets the Chainlink price for a given asset 
+     * @param token address of the asset
+     * @param decimals decimals of the asset
      * @return price Underlying price in USD
      */
-    function _getUnderlyingPriceInternal(VBep20Interface vToken) internal view returns (uint256 price) {
-        address token;
-        uint256 decimals;
-
-        // vBNB token doesn't have `underlying` method
-        if (address(vToken) == vBnb) {
-            token = BNB_ADDR;
-            decimals = 18;
-        } else if (address(vToken) == vai) {
-            token = vai;
-            decimals = 18;
-        } else {
-            token = vToken.underlying();
-            decimals = VBep20Interface(token).decimals();
-        }
-
+    function _getPriceInternal(address token, uint256 decimals) internal view returns (uint256 price) {
         uint256 tokenPrice = prices[token];
         if (tokenPrice != 0) {
             price = tokenPrice;

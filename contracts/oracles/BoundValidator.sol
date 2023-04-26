@@ -94,18 +94,16 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
 
     /**
      * @notice Test reported asset price against anchor price
-     * @param vToken vToken address
+     * @param asset asset address
      * @param reportedPrice The price to be tested
      * @custom:error Missing error thrown if asset config is not set
      * @custom:error Price error thrown if anchor price is not valid
      */
     function validatePriceWithAnchorPrice(
-        address vToken,
+        address asset,
         uint256 reportedPrice,
         uint256 anchorPrice
     ) public view virtual override returns (bool) {
-        address asset = _getUnderlyingAsset(vToken);
-
         if (validateConfigs[asset].upperBoundRatio == 0) revert("validation config not exist");
         if (anchorPrice == 0) revert("anchor price is not valid");
         return _isWithinAnchor(asset, reportedPrice, anchorPrice);
@@ -125,21 +123,6 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
             return anchorRatio <= upperBoundAnchorRatio && anchorRatio >= lowerBoundAnchorRatio;
         }
         return false;
-    }
-
-    /**
-     * @dev This function returns the underlying asset of a vToken
-     * @param vToken vToken address
-     * @return asset underlying asset address
-     */
-    function _getUnderlyingAsset(address vToken) internal view returns (address asset) {
-        if (address(vToken) == vBnb) {
-            asset = BNB_ADDR;
-        } else if (address(vToken) == vai) {
-            asset = vai;
-        } else {
-            asset = VBep20Interface(vToken).underlying();
-        }
     }
 
     // BoundValidator is to get inherited, so it's a good practice to add some storage gaps like
