@@ -31,17 +31,12 @@ struct TokenConfig {
 contract TwapOracle is AccessControlledV8, TwapInterface {
     using FixedPoint for *;
 
+    /// @notice Set this as asset address for BNB. This is the underlying for vBNB
+    address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
+
     /// @notice WBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable WBNB;
-
-    /// @notice vBNB address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vBnb;
-
-    /// @notice VAI address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vai;
 
     /// @notice the base unit of WBNB and BUSD, which are the paired tokens for all assets
     uint256 public constant bnbBaseUnit = 1e18;
@@ -80,18 +75,12 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     }
 
     /// @notice Constructor for the implementation contract. Sets immutable variables.
-    /// @param vBnbAddress The address of the VBNB
     /// @param wBnbAddress The address of the WBNB
-    /// @param vaiAddress The address of the WBNB
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
-        address vBnbAddress,
-        address wBnbAddress,
-        address vaiAddress
-    ) notNullAddress(vBnbAddress) notNullAddress(wBnbAddress) notNullAddress(vaiAddress) {
-        vBnb = vBnbAddress;
+        address wBnbAddress
+    ) notNullAddress(wBnbAddress)  {
         WBNB = wBnbAddress;
-        vai = vaiAddress;
         _disableInitializers();
     }
 
@@ -117,12 +106,21 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
      * @custom:error Range error is thrown if TWAP price is not greater than zero
      */
     function getPrice(address asset) external view override returns (uint256) {
+        uint256 decimals;
+
+        if (asset == BNB_ADDR) {
+            decimals = 18;
+        } else {
+            IERC20Metadata token = IERC20Metadata(asset);
+            decimals = token.decimals();
+        }
+
         if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
         uint256 price = prices[asset];
 
         // if price is 0, it means the price hasn't been updated yet and it's meaningless, revert
         if (price == 0) revert("TWAP price must be positive");
-        return (price * (10 ** (18 - IERC20Metadata(asset).decimals())));
+        return (price * (10 ** (18 - decimals)));
     }
 
     /**

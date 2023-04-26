@@ -28,14 +28,6 @@ contract PythOracle is AccessControlledV8, OracleInterface {
     /// @notice Exponent scale (decimal precision) of prices
     uint256 public constant EXP_SCALE = 1e18;
 
-    /// @notice vBNB address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vBnb;
-
-    /// @notice VAI address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vai;
-
     /// @notice Set this as asset address for BNB. This is the underlying for vBNB
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
@@ -56,13 +48,9 @@ contract PythOracle is AccessControlledV8, OracleInterface {
         _;
     }
 
-    /// @notice Constructor for the implementation contract. Sets immutable variables.
-    /// @param vBnbAddress The address of the vBNB
-    /// @param vaiAddress The address of the VAI
+    /// @notice Constructor for the implementation contract. 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress, address vaiAddress) notNullAddress(vBnbAddress) notNullAddress(vaiAddress) {
-        vBnb = vBnbAddress;
-        vai = vaiAddress;
+    constructor() {
         _disableInitializers();
     }
 
@@ -152,8 +140,15 @@ contract PythOracle is AccessControlledV8, OracleInterface {
      * @return Price in USD
      */
     function getPrice(address asset) public view returns (uint256) {
-        IERC20Metadata token = IERC20Metadata(asset);
-        uint256 decimals = token.decimals();
+        uint256 decimals;
+
+        if (asset == BNB_ADDR) {
+            decimals = 18;
+        } else {
+            IERC20Metadata token = IERC20Metadata(asset);
+            decimals = token.decimals();
+        }
+
         return _getPriceInternal(asset, decimals);
     }
 }

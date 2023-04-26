@@ -17,10 +17,6 @@ struct TokenConfig {
 }
 
 contract ChainlinkOracle is AccessControlledV8, OracleInterface {
-    /// @notice vBNB address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vBnb;
-
     /// @notice VAI address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vai;
@@ -51,30 +47,27 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     }
 
     /// @notice Constructor for the implementation contract. Sets immutable variables.
-    /// @param vBnbAddress The address of the vBNB
     /// @param vaiAddress The address of the VAI
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress, address vaiAddress) notNullAddress(vBnbAddress) notNullAddress(vaiAddress) {
-        vBnb = vBnbAddress;
+    constructor(address vaiAddress) notNullAddress(vaiAddress) {
         vai = vaiAddress;
         _disableInitializers();
     }
 
     /**
      * @notice Set the forced prices of the underlying token of input vToken
-     * @param vToken vToken address
+     * @param asset asset address
      * @param underlyingPriceMantissa price in 18 decimals
      * @custom:access Only Governance
      * @custom:error NotNullAddress thrown if address of vToken is null
      * @custom:event Emits PricePosted event on succesfully setup of underlying price
      */
     function setUnderlyingPrice(
-        VBep20Interface vToken,
+        address asset,
         uint256 underlyingPriceMantissa
-    ) external notNullAddress(address(vToken)) {
+    ) external notNullAddress(address(asset)) {
         _checkAccessAllowed("setUnderlyingPrice(VBep20Interface,uint256)");
 
-        address asset = address(vToken) == vBnb ? BNB_ADDR : address(vToken.underlying());
         emit PricePosted(asset, prices[asset], underlyingPriceMantissa, underlyingPriceMantissa);
         prices[asset] = underlyingPriceMantissa;
     }
@@ -117,7 +110,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     }
 
     /**
-     * @notice Add single token config. vToken & feed cannot be null addresses and maxStalePeriod must be positive
+     * @notice Add single token config. asset & feed cannot be null addresses and maxStalePeriod must be positive
      * @param tokenConfig Token config struct
      * @custom:access Only Governance
      * @custom:error NotNullAddress error is thrown if asset address is null
@@ -141,8 +134,15 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
      * @return Price in USD
      */
     function getPrice(address asset) public view returns (uint256) {
-        IERC20Metadata token = IERC20Metadata(asset);
-        uint256 decimals = token.decimals();
+        uint256 decimals;
+
+        if (asset == BNB_ADDR) {
+            decimals = 18;
+        } else {
+            IERC20Metadata token = IERC20Metadata(asset);
+            decimals = token.decimals();
+        }
+
         return _getPriceInternal(asset, decimals);
     }
 

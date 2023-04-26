@@ -49,7 +49,7 @@ describe("Oracle unit tests", function () {
     fakeAccessControlManager.isAllowedToCall.returns(true);
 
     const instance = <ChainlinkOracle>await upgrades.deployProxy(ChainlinkOracle, [fakeAccessControlManager.address], {
-      constructorArgs: [this.vBnb.address, this.vai.address],
+      constructorArgs: [this.vai.address],
     });
     this.chainlinkOracle = instance;
     return instance;
@@ -152,36 +152,36 @@ describe("Oracle unit tests", function () {
         maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
       });
       await this.chainlinkOracle.setDirectPrice(this.xvs.address, 7);
-      await this.chainlinkOracle.setUnderlyingPrice(this.vExampleSet.address, 1);
+      await this.chainlinkOracle.setUnderlyingPrice(this.vExampleSet.underlying(), 1);
     });
 
     it("gets the price from Chainlink for vBNB", async function () {
-      const price = await this.chainlinkOracle.getUnderlyingPrice(this.vBnb.address);
+      const price = await this.chainlinkOracle.getPrice(this.bnbAddr);
       expect(price).to.equal("300000000000000000000");
     });
 
     it("gets the price from Chainlink for USDC", async function () {
-      const price = await this.chainlinkOracle.getUnderlyingPrice(this.vUsdc.address);
+      const price = await this.chainlinkOracle.getPrice(this.vUsdc.underlying());
       expect(price).to.equal("1000000000000000000000000000000");
     });
 
     it("gets the price from Chainlink for USDT", async function () {
-      const price = await this.chainlinkOracle.getUnderlyingPrice(this.vUsdt.address);
+      const price = await this.chainlinkOracle.getPrice(this.vUsdt.underlying());
       expect(price).to.equal("1000000000000000000000000000000");
     });
 
     it("gets the price from Chainlink for DAI", async function () {
-      const price = await this.chainlinkOracle.getUnderlyingPrice(this.vDai.address);
+      const price = await this.chainlinkOracle.getPrice(this.vDai.underlying());
       expect(price).to.equal("1000000000000000000");
     });
 
     it("gets the direct price of a set asset", async function () {
-      const price = await this.chainlinkOracle.getUnderlyingPrice(this.vExampleSet.address);
+      const price = await this.chainlinkOracle.getPrice(this.vExampleSet.underlying());
       expect(price).to.equal("1");
     });
 
     it("reverts if no price or feed has been set", async function () {
-      await expect(this.chainlinkOracle.getUnderlyingPrice(this.vExampleUnset.address)).to.revertedWith(
+      await expect(this.chainlinkOracle.getPrice(this.vExampleUnset.underlying())).to.revertedWith(
         "can't be zero address",
       );
     });
@@ -236,20 +236,20 @@ describe("Oracle unit tests", function () {
 
     it("revert when price stale", async function () {
       const ADVANCE_SECONDS = 90000;
-      let price = await this.chainlinkOracle.getUnderlyingPrice(this.vBnb.address);
+      let price = await this.chainlinkOracle.getPrice(this.bnbAddr);
       expect(price).to.equal("300000000000000000000");
 
       const nowSeconds = await getTime();
 
       await increaseTime(ADVANCE_SECONDS);
 
-      await expect(this.chainlinkOracle.getUnderlyingPrice(this.vBnb.address)).to.revertedWith(
+      await expect(this.chainlinkOracle.getPrice(this.bnbAddr)).to.revertedWith(
         "chainlink price expired",
       );
 
       // update round data
       await this.bnbFeed.updateRoundData(1111, 12345, nowSeconds + ADVANCE_SECONDS, nowSeconds);
-      price = await this.chainlinkOracle.getUnderlyingPrice(this.vBnb.address);
+      price = await this.chainlinkOracle.getPrice(this.bnbAddr);
       expect(price).to.equal(BigNumber.from(12345).mul(1e10));
     });
 
@@ -257,7 +257,7 @@ describe("Oracle unit tests", function () {
       const nowSeconds = await getTime();
       await this.bnbFeed.updateRoundData(1111, 12345, nowSeconds + 900000, nowSeconds);
 
-      await expect(this.chainlinkOracle.getUnderlyingPrice(this.vBnb.address)).to.revertedWith(
+      await expect(this.chainlinkOracle.getPrice(this.bnbAddr)).to.revertedWith(
         "updatedAt exceeds block time",
       );
     });
@@ -266,7 +266,7 @@ describe("Oracle unit tests", function () {
       const nowSeconds = await getTime();
       await this.bnbFeed.updateRoundData(1111, 0, nowSeconds + 1000, nowSeconds);
 
-      await expect(this.chainlinkOracle.getUnderlyingPrice(this.vBnb.address)).to.revertedWith(
+      await expect(this.chainlinkOracle.getPrice(this.bnbAddr)).to.revertedWith(
         "chainlink price must be positive",
       );
     });

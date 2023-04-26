@@ -12,28 +12,17 @@ import "../interfaces/OracleInterface.sol";
 contract BinanceOracle is AccessControlledV8, OracleInterface {
     address public sidRegistryAddress;
 
-    /// @notice vBNB address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vBnb;
-
-    /// @notice VAI address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vai;
+    /// @notice Set this as asset address for BNB. This is the underlying address for vBNB
+    address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
     /// @notice Max stale period configuration for assets
     mapping(string => uint256) public maxStalePeriod;
 
     event MaxStalePeriodAdded(string indexed asset, uint256 maxStalePeriod);
 
-    /// @notice Constructor for the implementation contract. Sets immutable variables.
-    /// @param vBnbAddress The address of the vBNB
-    /// @param vaiAddress The address of the VAI
+    /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress, address vaiAddress) {
-        if (vBnbAddress == address(0)) revert("vBNB can't be zero address");
-        if (vaiAddress == address(0)) revert("VAI can't be zero address");
-        vBnb = vBnbAddress;
-        vai = vaiAddress;
+    constructor() {
         _disableInitializers();
     }
 
@@ -95,9 +84,18 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
      * @return Price in USD
      */
     function getPrice(address asset) public view returns (uint256) {
-        IERC20Metadata token = IERC20Metadata(asset);
-        string memory symbol = token.symbol();
-        uint256 decimals = token.decimals();
+        string memory symbol;
+        uint256 decimals;
+
+        if (asset == BNB_ADDR) {
+            symbol = "BNB";
+            decimals = 18;
+        } else {
+            IERC20Metadata token = IERC20Metadata(asset);
+            symbol = token.symbol();
+            decimals = token.decimals();
+        }
+
         return _getPrice(symbol, decimals);
     }
 

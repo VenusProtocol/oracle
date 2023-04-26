@@ -22,29 +22,12 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
     /// @notice validation configs by asset
     mapping(address => ValidateConfig) public validateConfigs;
 
-    /// @notice vBNB address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vBnb;
-
-    /// @notice VAI address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vai;
-
-    /// @notice Set this as asset address for BNB. This is the underlying for vBNB
-    address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
-
     /// @notice Emit this event when new validation configs are added
     event ValidateConfigAdded(address indexed asset, uint256 indexed upperBound, uint256 indexed lowerBound);
 
     /// @notice Constructor for the implementation contract. Sets immutable variables.
-    /// @param vBnbAddress The address of the vBNB
-    /// @param vaiAddress The address of the VAI
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress, address vaiAddress) {
-        if (vBnbAddress == address(0)) revert("vBNB can't be zero address");
-        if (vaiAddress == address(0)) revert("VAI can't be zero address");
-        vBnb = vBnbAddress;
-        vai = vaiAddress;
+    constructor() {
         _disableInitializers();
     }
 
