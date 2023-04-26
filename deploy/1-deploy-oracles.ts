@@ -36,8 +36,8 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const { WBNBAddress } = ADDRESSES[networkName];
 
   let accessControlManager;
-  if (!ADDRESSES[networkName].acm) {
-    await deploy("AccessControlManager", {
+  if (!network.live) {
+    await deploy("AccessControlManagerScenario", {
       from: deployer,
       args: [],
       log: true,
@@ -46,10 +46,8 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
     accessControlManager = await hre.ethers.getContract("AccessControlManagerScenario");
   }
-  const accessControlManagerAddress = ADDRESSES[networkName].acm
-    ? ADDRESSES[networkName].acm
-    : accessControlManager?.address;
-  const proxyOwnerAddress = ADDRESSES[networkName].acm ? ADDRESSES[networkName].timelock : deployer;
+  const accessControlManagerAddress = network.live ? ADDRESSES[networkName].acm : accessControlManager?.address;
+  const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
 
   await deploy("BoundValidator", {
     from: deployer,
@@ -157,11 +155,9 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const binanceOracle = await hre.ethers.getContract("BinanceOracle");
   const twapOracle = await hre.ethers.getContract("TwapOracle");
 
-  if (!ADDRESSES[networkName].acm) {
-    await accessControlManager?.giveCallPermission(chainlinkOracle.address, "setTokenConfig(TokenConfig)", deployer);
-    await accessControlManager?.giveCallPermission(pythOracle.address, "setTokenConfig(TokenConfig)", deployer);
-    await accessControlManager?.giveCallPermission(resilientOracle.address, "setTokenConfig(TokenConfig)", deployer);
-  }
+  await accessControlManager?.giveCallPermission(chainlinkOracle.address, "setTokenConfig(TokenConfig)", deployer);
+  await accessControlManager?.giveCallPermission(pythOracle.address, "setTokenConfig(TokenConfig)", deployer);
+  await accessControlManager?.giveCallPermission(resilientOracle.address, "setTokenConfig(TokenConfig)", deployer);
 
   const resilientOracleOwner = await resilientOracle.owner();
   const pythOracleOwner = await pythOracle.owner();
