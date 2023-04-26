@@ -120,7 +120,7 @@ describe("bound validator", () => {
     });
 
     it("validate vBnb price", async function () {
-      const {vBnb} = this;
+      const { vBnb } = this;
       const validationConfig = {
         asset: this.bnbAddr,
         upperBoundRatio: EXP_SCALE.mul(12).div(10),

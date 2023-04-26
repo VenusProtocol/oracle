@@ -31,9 +31,9 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
   const networkName = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
 
-  const {vBNBAddress} = ADDRESSES[networkName];
-  const {VAIAddress} = ADDRESSES[networkName];
-  const {WBNBAddress} = ADDRESSES[networkName];
+  const { vBNBAddress } = ADDRESSES[networkName];
+  const { VAIAddress } = ADDRESSES[networkName];
+  const { WBNBAddress } = ADDRESSES[networkName];
 
   let accessControlManager;
   if (!ADDRESSES[networkName].acm) {
@@ -115,7 +115,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
-  const {pythOracleAddress} = ADDRESSES[networkName];
+  const { pythOracleAddress } = ADDRESSES[networkName];
 
   await deploy("PythOracle", {
     contract: network.live ? "PythOracle" : "MockPythOracle",
@@ -133,7 +133,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
-  const {sidRegistryAddress} = ADDRESSES[networkName];
+  const { sidRegistryAddress } = ADDRESSES[networkName];
 
   await deploy("BinanceOracle", {
     contract: network.live ? "BinanceOracle" : "MockBinanceOracle",

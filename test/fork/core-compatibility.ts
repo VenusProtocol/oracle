@@ -29,7 +29,8 @@ const VAI = "0x4BD17003473389A42DAF6a0a729f6Fdb328BbBd7";
 interface OracleFixture {
   resilientOracle: ResilientOracle;
   boundValidator: BoundValidator;
-  chainlinkOracle: ChainlinkOracle;x
+  chainlinkOracle: ChainlinkOracle;
+  x;
   twapOracle: TwapOracle;
   pythOracle: PythOracle;
   binanceOracle: BinanceOracle;

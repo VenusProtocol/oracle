@@ -284,7 +284,10 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
       }
 
       const { getStalePeriodConfig } = oraclesData[oracle];
-      if (oraclesData[oracle].underlyingOracle.address === binanceOracle.address && getStalePeriodConfig !== undefined) {
+      if (
+        oraclesData[oracle].underlyingOracle.address === binanceOracle.address &&
+        getStalePeriodConfig !== undefined
+      ) {
         const tx = await oraclesData[oracle].underlyingOracle?.setTokenConfig(...getStalePeriodConfig(asset));
         tx.wait(1);
       }

@@ -5,8 +5,8 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers, upgrades } from "hardhat";
 
-import { TwapOracle } from "../typechain-types/contracts/oracles/TwapOracle";
 import { AccessControlManager, BoundValidator } from "../typechain-types";
+import { TwapOracle } from "../typechain-types/contracts/oracles/TwapOracle";
 import { addr0000 } from "./utils/data";
 import { makePairWithTokens } from "./utils/makePair";
 import { makeToken } from "./utils/makeToken";
