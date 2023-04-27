@@ -11,8 +11,6 @@ import { HardhatUserConfig } from "hardhat/config";
 import "solidity-coverage";
 import "solidity-docgen";
 
-import "./tasks";
-
 dotenv.config();
 
 function isFork() {

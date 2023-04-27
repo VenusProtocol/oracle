@@ -5,7 +5,6 @@ deploy
 deployments
 docs
 networks
-tasks
 test
 .npmignore
 hardhat.config.ts
