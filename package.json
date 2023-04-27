@@ -3,7 +3,7 @@
   "description": "Venus Protocol Price Oracle",
   "version": "1.6.11",
   "author": "",
-    "engines": {
+  "engines": {
     "node": ">=14.x.x"
   },
   "files": [
