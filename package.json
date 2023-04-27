@@ -117,7 +117,8 @@
   ],
   "packageManager": "yarn@3.2.0",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "_moduleAliases": {
     "@nomiclabs/hardhat-ethers": "node_modules/hardhat-deploy-ethers",
