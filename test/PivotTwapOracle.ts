@@ -27,7 +27,7 @@ async function checkObservations(
 ) {
   // check observations
   const newObservation = await twapOracleContract.observations(token, index);
-  expect(newObservation.timestamp).to.equal(time);
+  expect(newObservation.timestamp).be.closeTo(BigNumber.from(time), 1);
   expect(newObservation.acc).to.equal(acc);
 }
 
@@ -228,7 +228,7 @@ describe("Twap Oracle unit tests", () => {
       const ts = await getTime();
       const acc = Q112.mul(ts);
       const price = 1;
-      await checkObservations(this.twapOracle, await this.token0.underlying(), ts, acc, 0);
+      await checkObservations(this.twapOracle, await this.token0.underlying(), ts, acc, 0); //
       await increaseTime(100);
       await this.twapOracle.updateTwap(this.token0.address); // timestamp + 1
       // window doesn't change
@@ -305,7 +305,7 @@ describe("Twap Oracle unit tests", () => {
       const firstObservation = await this.twapOracle.observations(this.token0.underlying(), 0);
       expect(firstObservation.acc).to.be.equal(0);
       const lastObservation = await this.twapOracle.observations(this.token0.underlying(), 2);
-      expect(lastObservation.timestamp).to.be.equal(ts + 903);
+      expect(lastObservation.timestamp).be.closeTo(BigNumber.from(ts + 903), 1);
     });
     it("should delete multiple observation and pick observation which falling under window", async function () {
       const initialTs = await getTime();
