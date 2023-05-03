@@ -101,7 +101,6 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
      * @custom:error Zero length error thrown, if length of the config array is 0
      */
     function setTokenConfigs(TokenConfig[] memory configs) external {
-        _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         if (configs.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = configs.length;
         for (uint256 i; i < numTokenConfigs;) {
@@ -156,7 +155,6 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
         _checkAccessAllowed("setTokenConfig(TokenConfig)");
 
         if (config.anchorPeriod == 0) revert("anchor period must be positive");
-        if (config.baseUnit == 0) revert("base unit must be positive");
         if (config.baseUnit != 10 ** IERC20Metadata(config.asset).decimals())
             revert("base unit decimals must be same as asset decimals");
 

@@ -115,7 +115,6 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @custom:error Throws a length error if the length of the token configs array is 0
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
-        _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         if (tokenConfigs_.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
         for (uint256 i; i < numTokenConfigs;) {

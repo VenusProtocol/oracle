@@ -56,8 +56,6 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
      * @custom:event Emits ValidateConfigAdded for each validation config that is successfully set
      */
     function setValidateConfigs(ValidateConfig[] memory configs) external virtual {
-        _checkAccessAllowed("setValidateConfigs(ValidateConfig[])");
-
         uint256 length = configs.length;
         if (length == 0) revert("invalid validate config length");
         for (uint256 i; i < length;) {
