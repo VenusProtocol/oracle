@@ -207,7 +207,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         uint256 decimalDelta = uint256(18) - feed.decimals();
 
         (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
-        if (answer == 0) revert("chainlink price must be positive");
+        if (answer <= 0) revert("chainlink price must be positive");
         if (block.timestamp < updatedAt) revert("updatedAt exceeds block time");
 
         uint256 deltaTime;
