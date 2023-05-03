@@ -104,8 +104,11 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
         _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         if (configs.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = configs.length;
-        for (uint256 i; i < numTokenConfigs; ++i) {
+        for (uint256 i; i < numTokenConfigs;) {
             setTokenConfig(configs[i]);
+            unchecked {
+                 ++i;
+            }
         }
     }
 
@@ -214,7 +217,10 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
         // This should be impossible, but better safe than sorry
         if (block.timestamp < oldTimestamp) revert("now must come after before");
 
-        uint256 timeElapsed = block.timestamp - oldTimestamp;
+        uint256 timeElapsed;
+        unchecked {
+            timeElapsed = block.timestamp - oldTimestamp;
+        } 
 
         // Calculate Pancake *twap**
         FixedPoint.uq112x112 memory priceAverage = FixedPoint.uq112x112(
@@ -266,7 +272,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
         for (
             uint256 windowStartIndex = windowStart[config.asset];
             windowStartIndex < storedObservationsLength;
-            ++windowStartIndex
+            
         ) {
             if (
                 (storedObservations[windowStartIndex].timestamp >= windowStartTimestamp) ||
@@ -278,6 +284,10 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
                 break;
             } else {
                 delete observations[config.asset][windowStartIndex];
+            }
+
+            unchecked {
+                ++windowStartIndex;
             }
         }
 

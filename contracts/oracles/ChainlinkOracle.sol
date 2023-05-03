@@ -104,8 +104,11 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         if (tokenConfigs_.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
-        for (uint256 i; i < numTokenConfigs; ++i) {
+        for (uint256 i; i < numTokenConfigs; ) {
             setTokenConfig(tokenConfigs_[i]);
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -207,7 +210,11 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         if (answer == 0) revert("chainlink price must be positive");
         if (block.timestamp < updatedAt) revert("updatedAt exceeds block time");
 
-        uint256 deltaTime = block.timestamp - updatedAt;
+        uint256 deltaTime;
+        unchecked {
+            deltaTime = block.timestamp - updatedAt;
+        }
+        
         if (deltaTime > maxStalePeriod) revert("chainlink price expired");
 
         return uint256(answer) * (10 ** decimalDelta);

@@ -76,8 +76,11 @@ contract PythOracle is AccessControlledV8, OracleInterface {
         _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         if (tokenConfigs_.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
-        for (uint256 i; i < numTokenConfigs; ++i) {
+        for (uint256 i; i < numTokenConfigs;) {
             setTokenConfig(tokenConfigs_[i]);
+            unchecked {
+                ++i;
+            }
         }
     }
 

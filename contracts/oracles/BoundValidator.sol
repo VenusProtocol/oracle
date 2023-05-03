@@ -60,8 +60,11 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
 
         uint256 length = configs.length;
         if (length == 0) revert("invalid validate config length");
-        for (uint256 i; i < length; ++i) {
+        for (uint256 i; i < length;) {
             setValidateConfig(configs[i]);
+            unchecked {
+                ++i;
+            }
         }
     }
 

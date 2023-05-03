@@ -106,7 +106,11 @@ contract BinanceOracle is AccessControlledV8 {
         if (answer <= 0) revert("invalid binance oracle price");
         if (block.timestamp < updatedAt) revert("updatedAt exceeds block time");
 
-        uint256 deltaTime = block.timestamp - updatedAt;
+        uint256 deltaTime;
+        unchecked {
+            deltaTime = block.timestamp - updatedAt;
+        }
+        
         if (deltaTime > maxStalePeriod[symbol]) revert("binance oracle price expired");
 
         uint256 decimalDelta = feedRegistry.decimalsByName(symbol, "USD");
