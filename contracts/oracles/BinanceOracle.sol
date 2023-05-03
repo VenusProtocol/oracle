@@ -44,7 +44,7 @@ contract BinanceOracle is AccessControlledV8 {
     function setMaxStalePeriod(string memory symbol, uint256 _maxStalePeriod) external {
         _checkAccessAllowed("setMaxStalePeriod(string,uint256)");
         if (_maxStalePeriod == 0) revert("stale period can't be zero");
-        if (compare(symbol, "")) revert("symbol cannot be empty");
+        if (bytes(symbol).length == 0) revert("symbol cannot be empty");
 
         maxStalePeriod[symbol] = _maxStalePeriod;
         emit MaxStalePeriodAdded(symbol, _maxStalePeriod);
@@ -124,6 +124,6 @@ contract BinanceOracle is AccessControlledV8 {
      * @return equal Returns true if both are equal or else false.
      */
     function compare(string memory str1, string memory str2) internal pure returns (bool) {
-        return keccak256(abi.encodePacked(str1)) == keccak256(abi.encodePacked(str2));
+        return keccak256(bytes(str1)) == keccak256(bytes(str2));
     }
 }
