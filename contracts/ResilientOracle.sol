@@ -112,7 +112,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @notice Batch sets token configs
      * @param tokenConfigs_ Token config array
      * @custom:access Only Governance
-     * @custom:error Throws a length error if the lenght of the token configs array is 0
+     * @custom:error Throws a length error if the length of the token configs array is 0
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
         _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
@@ -166,7 +166,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Updates the pivot oracle price. Currently using TWAP
+     * @notice Updates the TWAP pivot oracle price.
      * @dev This function should always be called before calling getUnderlyingPrice
      * @param vToken vToken address
      */

@@ -141,9 +141,4 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
             asset = VBep20Interface(vToken).underlying();
         }
     }
-
-    // BoundValidator is to get inherited, so it's a good practice to add some storage gaps like
-    // OpenZepplin proposed in their contracts: https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
-    // solhint-disable-next-line
-    uint256[49] private __gap;
 }

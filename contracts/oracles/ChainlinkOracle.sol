@@ -180,7 +180,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     }
 
     /**
-     * @notice Get the Chainlink price for the underlying asset of a given vToken, revert if token config doesn't exit
+     * @notice Get the Chainlink price for the underlying asset of a given vToken, revert if token config doesn't exist
      * @dev The precision of the price feed is used to ensure the returned price has 18 decimals of precision
      * @param asset Underlying asset address
      * @return price Underlying price in USD, with 18 decimals of precision

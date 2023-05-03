@@ -127,7 +127,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
      * @notice Get price of underlying asset of the input vToken, under the hood this function
      * get price from Pyth contract, the prices of which are updated externally
      * @param vToken vToken address
-     * @return price Underlying price with a precision of 10 decimals
+     * @return price Underlying price with a precision of 18 decimals
      * @custom:error Zero address error thrown if underlyingPythOracle address is null
      * @custom:error Zero address error thrown if asset address is null
      * @custom:error Range error thrown if price of Pyth oracle is not greater than zero
