@@ -110,7 +110,9 @@ describe("Twap Oracle unit tests", () => {
         await expect(this.twapOracle.setTokenConfig(config)).to.be.revertedWith("anchor period must be positive");
 
         config.anchorPeriod = 100;
-        await expect(this.twapOracle.setTokenConfig(config)).to.be.revertedWith("base unit decimals must be same as asset decimals");
+        await expect(this.twapOracle.setTokenConfig(config)).to.be.revertedWith(
+          "base unit decimals must be same as asset decimals",
+        );
         config.baseUnit = EXP_SCALE;
 
         // nothing happen
