@@ -6,9 +6,10 @@ import "../interfaces/VBep20Interface.sol";
 import "../interfaces/SIDRegistryInterface.sol";
 import "../interfaces/FeedRegistryInterface.sol";
 import "../interfaces/PublicResolverInterface.sol";
+import "../interfaces/OracleInterface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
-contract BinanceOracle is AccessControlledV8 {
+contract BinanceOracle is AccessControlledV8, OracleInterface {
     address public sidRegistryAddress;
 
     /// @notice vBNB address
@@ -79,19 +80,19 @@ contract BinanceOracle is AccessControlledV8 {
      * @param vToken Address of the vToken
      * @return Price in USD
      */
-    function getUnderlyingPrice(VBep20Interface vToken) public view returns (uint256) {
+    function getUnderlyingPrice(address vToken) public view override returns (uint256) {
         string memory symbol;
         uint256 decimals;
 
         // VBNB token doesn't have `underlying` method
-        if (address(vToken) == vBnb) {
+        if (vToken == vBnb) {
             symbol = "BNB";
             decimals = 18;
-        } else if (address(vToken) == vai) {
+        } else if (vToken == vai) {
             symbol = "VAI";
             decimals = 18;
         } else {
-            IERC20Metadata underlyingToken = IERC20Metadata(vToken.underlying());
+            IERC20Metadata underlyingToken = IERC20Metadata(VBep20Interface(vToken).underlying());
             symbol = underlyingToken.symbol();
             decimals = underlyingToken.decimals();
         }
