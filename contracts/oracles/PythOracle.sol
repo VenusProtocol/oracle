@@ -103,10 +103,9 @@ contract PythOracle is AccessControlledV8, OracleInterface {
      * @param underlyingPythOracle_ Address of the Pyth oracle
      * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize(address underlyingPythOracle_, address accessControlManager_) public initializer {
+    function initialize(address underlyingPythOracle_, address accessControlManager_) public initializer notNullAddress(underlyingPythOracle_) {
         __AccessControlled_init(accessControlManager_);
 
-        if (underlyingPythOracle_ == address(0)) revert("pyth oracle cannot be zero address");
         underlyingPythOracle = IPyth(underlyingPythOracle_);
         emit PythOracleSet(underlyingPythOracle_);
     }
@@ -134,9 +133,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
      * @custom:error Zero address error thrown if asset address is null
      * @custom:error Range error thrown if price of Pyth oracle is not greater than zero
      */
-    function getUnderlyingPrice(address vToken) public view override returns (uint256) {
-        if (address(underlyingPythOracle) == address(0)) revert("Pyth oracle is zero address");
-
+    function getUnderlyingPrice(address vToken) public view override notNullAddress(address(underlyingPythOracle)) returns  (uint256) {
         address asset;
         uint256 decimals;
 
