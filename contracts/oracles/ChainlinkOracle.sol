@@ -72,7 +72,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         VBep20Interface vToken,
         uint256 underlyingPriceMantissa
     ) external notNullAddress(address(vToken)) {
-        _checkAccessAllowed("setUnderlyingPrice(VBep20Interface,uint256)");
+        _checkAccessAllowed("setUnderlyingPrice(address,uint256)");
 
         address asset = address(vToken) == vBnb ? BNB_ADDR : address(vToken.underlying());
         emit PricePosted(asset, prices[asset], underlyingPriceMantissa, underlyingPriceMantissa);

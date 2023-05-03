@@ -91,7 +91,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
     function setUnderlyingPythOracle(
         IPyth underlyingPythOracle_
     ) external notNullAddress(address(underlyingPythOracle_)) {
-        _checkAccessAllowed("setUnderlyingPythOracle(IPyth)");
+        _checkAccessAllowed("setUnderlyingPythOracle(address)");
         underlyingPythOracle = underlyingPythOracle_;
         emit PythOracleSet(address(underlyingPythOracle_));
     }

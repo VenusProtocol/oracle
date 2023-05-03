@@ -140,7 +140,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         address oracle,
         OracleRole role
     ) external notNullAddress(asset) checkTokenConfigExistence(asset) {
-        _checkAccessAllowed("setOracle(address,address,OracleRole)");
+        _checkAccessAllowed("setOracle(address,address,uint8)");
         if (oracle == address(0) && role == OracleRole.MAIN) revert("can't set zero address to main oracle");
         tokenConfigs[asset].oracles[uint256(role)] = oracle;
         emit OracleSet(asset, oracle, uint256(role));
@@ -160,7 +160,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         OracleRole role,
         bool enable
     ) external notNullAddress(asset) checkTokenConfigExistence(asset) {
-        _checkAccessAllowed("enableOracle(address,OracleRole,bool)");
+        _checkAccessAllowed("enableOracle(address,uint8,bool)");
         tokenConfigs[asset].enableFlagsForOracles[uint256(role)] = enable;
         emit OracleEnabled(asset, uint256(role), enable);
     }
