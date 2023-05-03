@@ -89,8 +89,9 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     function setDirectPrice(address asset, uint256 price) external notNullAddress(asset) {
         _checkAccessAllowed("setDirectPrice(address,uint256)");
 
+        uint256 previousPriceMantissa = prices[asset];
         prices[asset] = price;
-        emit PricePosted(asset, prices[asset], price, price);
+        emit PricePosted(asset, previousPriceMantissa, price, price);
     }
 
     /**
