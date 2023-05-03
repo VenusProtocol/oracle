@@ -58,7 +58,7 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
     function setValidateConfigs(ValidateConfig[] memory configs) external virtual {
         uint256 length = configs.length;
         if (length == 0) revert("invalid validate config length");
-        for (uint256 i; i < length;) {
+        for (uint256 i; i < length; ) {
             setValidateConfig(configs[i]);
             unchecked {
                 ++i;

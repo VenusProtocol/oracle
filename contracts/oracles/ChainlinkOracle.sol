@@ -214,7 +214,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         unchecked {
             deltaTime = block.timestamp - updatedAt;
         }
-        
+
         if (deltaTime > maxStalePeriod) revert("chainlink price expired");
 
         return uint256(answer) * (10 ** decimalDelta);

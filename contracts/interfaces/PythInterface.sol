@@ -235,7 +235,7 @@ abstract contract AbstractPyth is IPyth {
         require(priceIds.length == publishTimes.length, "priceIds and publishTimes arrays should have same length");
 
         bool updateNeeded = false;
-        for (uint256 i = 0; i < priceIds.length;) {
+        for (uint256 i = 0; i < priceIds.length; ) {
             if (!priceFeedExists(priceIds[i]) || queryPriceFeed(priceIds[i]).price.publishTime < publishTimes[i]) {
                 updateNeeded = true;
                 break;

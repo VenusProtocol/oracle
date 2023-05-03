@@ -111,7 +111,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         unchecked {
             deltaTime = block.timestamp - updatedAt;
         }
-        
+
         if (deltaTime > maxStalePeriod[symbol]) revert("binance oracle price expired");
 
         uint256 decimalDelta = feedRegistry.decimalsByName(symbol, "USD");

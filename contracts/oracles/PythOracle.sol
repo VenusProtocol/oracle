@@ -75,7 +75,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
         if (tokenConfigs_.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
-        for (uint256 i; i < numTokenConfigs;) {
+        for (uint256 i; i < numTokenConfigs; ) {
             setTokenConfig(tokenConfigs_[i]);
             unchecked {
                 ++i;
@@ -103,7 +103,10 @@ contract PythOracle is AccessControlledV8, OracleInterface {
      * @param underlyingPythOracle_ Address of the Pyth oracle
      * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize(address underlyingPythOracle_, address accessControlManager_) public initializer notNullAddress(underlyingPythOracle_) {
+    function initialize(
+        address underlyingPythOracle_,
+        address accessControlManager_
+    ) public initializer notNullAddress(underlyingPythOracle_) {
         __AccessControlled_init(accessControlManager_);
 
         underlyingPythOracle = IPyth(underlyingPythOracle_);
@@ -133,7 +136,9 @@ contract PythOracle is AccessControlledV8, OracleInterface {
      * @custom:error Zero address error thrown if asset address is null
      * @custom:error Range error thrown if price of Pyth oracle is not greater than zero
      */
-    function getUnderlyingPrice(address vToken) public view override notNullAddress(address(underlyingPythOracle)) returns  (uint256) {
+    function getUnderlyingPrice(
+        address vToken
+    ) public view override notNullAddress(address(underlyingPythOracle)) returns (uint256) {
         address asset;
         uint256 decimals;
 
