@@ -1,3 +1,10 @@
+## [1.6.11-dev.3](https://github.com/VenusProtocol/oracle/compare/v1.6.11-dev.2...v1.6.11-dev.3) (2023-05-04)
+
+
+### Bug Fixes
+
+* remove postinstall script ([17792bc](https://github.com/VenusProtocol/oracle/commit/17792bcbfab955e62a5988992e7d1ef65157e6fe))
+
 ## [1.6.11-dev.2](https://github.com/VenusProtocol/oracle/compare/v1.6.11-dev.1...v1.6.11-dev.2) (2023-05-04)
 
 
