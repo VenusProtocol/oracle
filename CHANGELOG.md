@@ -1,3 +1,10 @@
+## [1.6.11-dev.2](https://github.com/VenusProtocol/oracle/compare/v1.6.11-dev.1...v1.6.11-dev.2) (2023-05-04)
+
+
+### Bug Fixes
+
+* update version to trigger semantic-release ([b42b39a](https://github.com/VenusProtocol/oracle/commit/b42b39a2b1ba125c47cc03bf2c8505de18870469))
+
 ## 1.0.0-dev.1 (2023-05-03)
 
 
