@@ -28,6 +28,9 @@ jobs:
         # Hack to get around failing "ethereumjs-abi The remote archive doesn't match the expected checksum" error
         run: YARN_CHECKSUM_BEHAVIOR=update yarn
 
+      - name: Compile contract types
+        run: yarn hardhat compile
+
       - name: Lint solidity and ts files
         run: yarn lint
 

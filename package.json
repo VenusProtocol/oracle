@@ -36,7 +36,6 @@
     "test": "npm run compile && hardhat test",
     "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
     "build": "rm -rf dist && tsc --declaration && hardhat compile",
-    "postinstall": "yarn build",
     "publish": "yarn build && yarn npm publish",
     "docgen": "hardhat docgen",
     "prepare": "husky install"
