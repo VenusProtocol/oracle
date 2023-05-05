@@ -143,10 +143,10 @@ contract PythOracle is AccessControlledV8, OracleInterface {
         uint256 decimals;
 
         // VBNB token doesn't have `underlying` method
-        if (address(vToken) == vBnb) {
+        if (vToken == vBnb) {
             asset = BNB_ADDR;
             decimals = 18;
-        } else if (address(vToken) == vai) {
+        } else if (vToken == vai) {
             asset = vai;
             decimals = 18;
         } else {
