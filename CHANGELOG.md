@@ -1,3 +1,25 @@
+## [1.6.11-dev.4](https://github.com/VenusProtocol/oracle/compare/v1.6.11-dev.3...v1.6.11-dev.4) (2023-05-05)
+
+
+### Bug Fixes
+
+* BOV-01 | `BinanceOracle` Does Not Properly Implement `OracleInterface` ([c4799d0](https://github.com/VenusProtocol/oracle/commit/c4799d087ca2d1940854b7bee1c834fc2e59c2f9))
+* BOV-02 | Gas Optimizations When Comparing Strings ([d7e1588](https://github.com/VenusProtocol/oracle/commit/d7e15884f5f6a2def4875b775d203e0b90bbac05))
+* COV-01 | Chainlink Can Return Negative Price That Will Not Be Reverted ([78921ef](https://github.com/VenusProtocol/oracle/commit/78921ef20f98cc3acedd3d381ed6005b2fc2bd6e))
+* COV-02 | Incorrect Emit Event ([d1bf4dc](https://github.com/VenusProtocol/oracle/commit/d1bf4dc199ae87d6b5e4e1567ff41bdd11d0d6bb))
+* COV-04 | Use Temporary Variable To Store `previousPriceMantissa` ([58b3b2f](https://github.com/VenusProtocol/oracle/commit/58b3b2ff26fdcdbdaf6522fb4ffe6ebe71331af0))
+* fixed flaky tests ([991517d](https://github.com/VenusProtocol/oracle/commit/991517da607019f43db71c9aac7695a474f01da1))
+* fixed lint ([849ffd5](https://github.com/VenusProtocol/oracle/commit/849ffd563e60a45780eae4d1126983e7b32d9ed6))
+* POV-01 | Can Use Modifier To Zero Check Address ([8439068](https://github.com/VenusProtocol/oracle/commit/8439068499515f40cabc8ed5f1d6632dd621826f))
+* POV-02 | Unnecessary Casting ([0cc250e](https://github.com/VenusProtocol/oracle/commit/0cc250e327adcfd0aa982d03c840266f0238f6e6))
+* ROV-01 | `fallbackPrice` Is Tested Against `mainPrice` ([47ea827](https://github.com/VenusProtocol/oracle/commit/47ea8274691ca8f9a8fcd691dfe48e5269b4cfbc))
+* ROV-02 | Missing Zero Address Validation ([8a1fe02](https://github.com/VenusProtocol/oracle/commit/8a1fe027d65bd298fdabfb139a253dc9b86d14fc))
+* VPB-01 | Typos and Inconsistencies ([9162a49](https://github.com/VenusProtocol/oracle/commit/9162a4900c21f83a743ae3ed2a2d4174e7e76ef0))
+* VPB-01 | Typos and Inconsistencies ([d6747cc](https://github.com/VenusProtocol/oracle/commit/d6747cca2e552afad4e8a7977beb7e516f71c93f))
+* VPB-02 | Unnecessary Checks ([81dc384](https://github.com/VenusProtocol/oracle/commit/81dc384e076b3f42b70912d144b2b9d7d36d0d5b))
+* VPB-05 | Discussion On Access Control Convention ([cf682c7](https://github.com/VenusProtocol/oracle/commit/cf682c76f381d9dbc07cb5f478e02c8602343875))
+* VPU-01 | Unchecked Blocks Can Optimize Contract ([e3dd0e4](https://github.com/VenusProtocol/oracle/commit/e3dd0e4a78390cc718abcaf977b8281cb2ba7a71))
+
 ## [1.6.11-dev.3](https://github.com/VenusProtocol/oracle/compare/v1.6.11-dev.2...v1.6.11-dev.3) (2023-05-04)
 
 
