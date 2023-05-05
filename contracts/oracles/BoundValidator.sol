@@ -56,12 +56,13 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
      * @custom:event Emits ValidateConfigAdded for each validation config that is successfully set
      */
     function setValidateConfigs(ValidateConfig[] memory configs) external virtual {
-        _checkAccessAllowed("setValidateConfigs(ValidateConfig[])");
-
         uint256 length = configs.length;
         if (length == 0) revert("invalid validate config length");
-        for (uint256 i; i < length; ++i) {
+        for (uint256 i; i < length; ) {
             setValidateConfig(configs[i]);
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -141,9 +142,4 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
             asset = VBep20Interface(vToken).underlying();
         }
     }
-
-    // BoundValidator is to get inherited, so it's a good practice to add some storage gaps like
-    // OpenZepplin proposed in their contracts: https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
-    // solhint-disable-next-line
-    uint256[49] private __gap;
 }

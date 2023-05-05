@@ -72,11 +72,12 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         VBep20Interface vToken,
         uint256 underlyingPriceMantissa
     ) external notNullAddress(address(vToken)) {
-        _checkAccessAllowed("setUnderlyingPrice(VBep20Interface,uint256)");
+        _checkAccessAllowed("setUnderlyingPrice(address,uint256)");
 
         address asset = address(vToken) == vBnb ? BNB_ADDR : address(vToken.underlying());
-        emit PricePosted(asset, prices[asset], underlyingPriceMantissa, underlyingPriceMantissa);
+        uint256 previousPriceMantissa = prices[asset];
         prices[asset] = underlyingPriceMantissa;
+        emit PricePosted(asset, previousPriceMantissa, prices[asset], prices[asset]);
     }
 
     /**
@@ -89,8 +90,9 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     function setDirectPrice(address asset, uint256 price) external notNullAddress(asset) {
         _checkAccessAllowed("setDirectPrice(address,uint256)");
 
+        uint256 previousPriceMantissa = prices[asset];
         prices[asset] = price;
-        emit PricePosted(asset, prices[asset], price, price);
+        emit PricePosted(asset, previousPriceMantissa, price, price);
     }
 
     /**
@@ -100,11 +102,13 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
      * @custom:error Zero length error thrown, if length of the array in parameter is 0
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
-        _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         if (tokenConfigs_.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
-        for (uint256 i; i < numTokenConfigs; ++i) {
+        for (uint256 i; i < numTokenConfigs; ) {
             setTokenConfig(tokenConfigs_[i]);
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -180,7 +184,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     }
 
     /**
-     * @notice Get the Chainlink price for the underlying asset of a given vToken, revert if token config doesn't exit
+     * @notice Get the Chainlink price for the underlying asset of a given vToken, revert if token config doesn't exist
      * @dev The precision of the price feed is used to ensure the returned price has 18 decimals of precision
      * @param asset Underlying asset address
      * @return price Underlying price in USD, with 18 decimals of precision
@@ -203,10 +207,14 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         uint256 decimalDelta = uint256(18) - feed.decimals();
 
         (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
-        if (answer == 0) revert("chainlink price must be positive");
+        if (answer <= 0) revert("chainlink price must be positive");
         if (block.timestamp < updatedAt) revert("updatedAt exceeds block time");
 
-        uint256 deltaTime = block.timestamp - updatedAt;
+        uint256 deltaTime;
+        unchecked {
+            deltaTime = block.timestamp - updatedAt;
+        }
+
         if (deltaTime > maxStalePeriod) revert("chainlink price expired");
 
         return uint256(answer) * (10 ** decimalDelta);

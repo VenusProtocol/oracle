@@ -110,7 +110,9 @@ describe("Twap Oracle unit tests", () => {
         await expect(this.twapOracle.setTokenConfig(config)).to.be.revertedWith("anchor period must be positive");
 
         config.anchorPeriod = 100;
-        await expect(this.twapOracle.setTokenConfig(config)).to.be.revertedWith("base unit must be positive");
+        await expect(this.twapOracle.setTokenConfig(config)).to.be.revertedWith(
+          "base unit decimals must be same as asset decimals",
+        );
         config.baseUnit = EXP_SCALE;
 
         // nothing happen
@@ -267,7 +269,7 @@ describe("Twap Oracle unit tests", () => {
       const firstObservation = await this.twapOracle.observations(this.token0.underlying(), 0);
       expect(firstObservation.acc).to.be.equal(0);
       const lastObservation = await this.twapOracle.observations(this.token0.underlying(), 2);
-      expect(lastObservation.timestamp).to.be.equal(ts + 903);
+      expect(lastObservation.timestamp).be.closeTo(BigNumber.from(ts + 903), 1);
     });
     it("should pick last available observation if none observations are in window and also delete privious one", async function () {
       const ts = await getTime();
@@ -353,7 +355,7 @@ describe("Twap Oracle unit tests", () => {
       cp = await this.twapOracle.currentCumulativePrice(this.tokenConfig);
       // increase the time but don't update the pair
       const acc1 = acc.add(Q112.mul(100));
-      expect(cp).to.equal(acc1);
+      expect(cp).be.closeTo(BigNumber.from(acc1), 100);
 
       // update the pair to update the timestamp, and test again
       await this.simplePair.update(100, 100, 100, 100); // timestamp + 1

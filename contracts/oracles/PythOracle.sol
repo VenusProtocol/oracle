@@ -73,11 +73,13 @@ contract PythOracle is AccessControlledV8, OracleInterface {
      * @custom:error Zero length error is thrown if length of the array in parameter is 0
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
-        _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         if (tokenConfigs_.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
-        for (uint256 i; i < numTokenConfigs; ++i) {
+        for (uint256 i; i < numTokenConfigs; ) {
             setTokenConfig(tokenConfigs_[i]);
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -91,7 +93,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
     function setUnderlyingPythOracle(
         IPyth underlyingPythOracle_
     ) external notNullAddress(address(underlyingPythOracle_)) {
-        _checkAccessAllowed("setUnderlyingPythOracle(IPyth)");
+        _checkAccessAllowed("setUnderlyingPythOracle(address)");
         underlyingPythOracle = underlyingPythOracle_;
         emit PythOracleSet(address(underlyingPythOracle_));
     }
@@ -101,10 +103,12 @@ contract PythOracle is AccessControlledV8, OracleInterface {
      * @param underlyingPythOracle_ Address of the Pyth oracle
      * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize(address underlyingPythOracle_, address accessControlManager_) public initializer {
+    function initialize(
+        address underlyingPythOracle_,
+        address accessControlManager_
+    ) public initializer notNullAddress(underlyingPythOracle_) {
         __AccessControlled_init(accessControlManager_);
 
-        if (underlyingPythOracle_ == address(0)) revert("pyth oracle cannot be zero address");
         underlyingPythOracle = IPyth(underlyingPythOracle_);
         emit PythOracleSet(underlyingPythOracle_);
     }
@@ -127,22 +131,22 @@ contract PythOracle is AccessControlledV8, OracleInterface {
      * @notice Get price of underlying asset of the input vToken, under the hood this function
      * get price from Pyth contract, the prices of which are updated externally
      * @param vToken vToken address
-     * @return price Underlying price with a precision of 10 decimals
+     * @return price Underlying price with a precision of 18 decimals
      * @custom:error Zero address error thrown if underlyingPythOracle address is null
      * @custom:error Zero address error thrown if asset address is null
      * @custom:error Range error thrown if price of Pyth oracle is not greater than zero
      */
-    function getUnderlyingPrice(address vToken) public view override returns (uint256) {
-        if (address(underlyingPythOracle) == address(0)) revert("Pyth oracle is zero address");
-
+    function getUnderlyingPrice(
+        address vToken
+    ) public view override notNullAddress(address(underlyingPythOracle)) returns (uint256) {
         address asset;
         uint256 decimals;
 
         // VBNB token doesn't have `underlying` method
-        if (address(vToken) == vBnb) {
+        if (vToken == vBnb) {
             asset = BNB_ADDR;
             decimals = 18;
-        } else if (address(vToken) == vai) {
+        } else if (vToken == vai) {
             asset = vai;
             decimals = 18;
         } else {

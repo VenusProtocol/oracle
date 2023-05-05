@@ -6,9 +6,10 @@ import "../interfaces/VBep20Interface.sol";
 import "../interfaces/SIDRegistryInterface.sol";
 import "../interfaces/FeedRegistryInterface.sol";
 import "../interfaces/PublicResolverInterface.sol";
+import "../interfaces/OracleInterface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
-contract BinanceOracle is AccessControlledV8 {
+contract BinanceOracle is AccessControlledV8, OracleInterface {
     address public sidRegistryAddress;
 
     /// @notice vBNB address
@@ -44,7 +45,7 @@ contract BinanceOracle is AccessControlledV8 {
     function setMaxStalePeriod(string memory symbol, uint256 _maxStalePeriod) external {
         _checkAccessAllowed("setMaxStalePeriod(string,uint256)");
         if (_maxStalePeriod == 0) revert("stale period can't be zero");
-        if (compare(symbol, "")) revert("symbol cannot be empty");
+        if (bytes(symbol).length == 0) revert("symbol cannot be empty");
 
         maxStalePeriod[symbol] = _maxStalePeriod;
         emit MaxStalePeriodAdded(symbol, _maxStalePeriod);
@@ -79,19 +80,19 @@ contract BinanceOracle is AccessControlledV8 {
      * @param vToken Address of the vToken
      * @return Price in USD
      */
-    function getUnderlyingPrice(VBep20Interface vToken) public view returns (uint256) {
+    function getUnderlyingPrice(address vToken) public view override returns (uint256) {
         string memory symbol;
         uint256 decimals;
 
         // VBNB token doesn't have `underlying` method
-        if (address(vToken) == vBnb) {
+        if (vToken == vBnb) {
             symbol = "BNB";
             decimals = 18;
-        } else if (address(vToken) == vai) {
+        } else if (vToken == vai) {
             symbol = "VAI";
             decimals = 18;
         } else {
-            IERC20Metadata underlyingToken = IERC20Metadata(vToken.underlying());
+            IERC20Metadata underlyingToken = IERC20Metadata(VBep20Interface(vToken).underlying());
             symbol = underlyingToken.symbol();
             decimals = underlyingToken.decimals();
         }
@@ -106,7 +107,11 @@ contract BinanceOracle is AccessControlledV8 {
         if (answer <= 0) revert("invalid binance oracle price");
         if (block.timestamp < updatedAt) revert("updatedAt exceeds block time");
 
-        uint256 deltaTime = block.timestamp - updatedAt;
+        uint256 deltaTime;
+        unchecked {
+            deltaTime = block.timestamp - updatedAt;
+        }
+
         if (deltaTime > maxStalePeriod[symbol]) revert("binance oracle price expired");
 
         uint256 decimalDelta = feedRegistry.decimalsByName(symbol, "USD");
@@ -120,6 +125,6 @@ contract BinanceOracle is AccessControlledV8 {
      * @return equal Returns true if both are equal or else false.
      */
     function compare(string memory str1, string memory str2) internal pure returns (bool) {
-        return keccak256(abi.encodePacked(str1)) == keccak256(abi.encodePacked(str2));
+        return keccak256(bytes(str1)) == keccak256(bytes(str2));
     }
 }
