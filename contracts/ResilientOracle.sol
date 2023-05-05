@@ -194,7 +194,8 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @notice Gets price of the underlying asset for a given vToken. Validation flow:
      * - Check if the oracle is paused globally
      * - Validate price from main oracle against pivot oracle
-     * - Validate price from fallback oracle against pivot oracle or main oracle if the first validation failed
+     * - Validate price from fallback oracle against pivot oracle if the first validation failed
+     * - Validate price from main oracle against fallback oracle if the second validation failed
      * In the case that the pivot oracle is not available but main price is available and validation is successful,
      * main oracle price is returned.
      * @param vToken vToken address
@@ -233,7 +234,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         if (
             mainPrice != INVALID_PRICE &&
             fallbackPrice != INVALID_PRICE &&
-            boundValidator.validatePriceWithAnchorPrice(vToken, fallbackPrice, mainPrice)
+            boundValidator.validatePriceWithAnchorPrice(vToken, mainPrice, fallbackPrice)
         ) {
             return mainPrice;
         }
