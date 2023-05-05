@@ -84,7 +84,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     /// @param vBnbAddress The address of the vBNB
     /// @param vaiAddress The address of the VAI
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress, address vaiAddress) notNullAddress(vBnbAddress) {
+    constructor(address vBnbAddress, address vaiAddress) notNullAddress(vBnbAddress) notNullAddress(vaiAddress) {
         vBnb = vBnbAddress;
         vai = vaiAddress;
         _disableInitializers();
