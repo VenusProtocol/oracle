@@ -1,3 +1,10 @@
+## [1.6.11-dev.5](https://github.com/VenusProtocol/oracle/compare/v1.6.11-dev.4...v1.6.11-dev.5) (2023-05-08)
+
+
+### Bug Fixes
+
+* ignore changelog ([5b9029c](https://github.com/VenusProtocol/oracle/commit/5b9029ca62e3af960f2acc37edf6d4efd2a622a5))
+
 ## [1.6.11-dev.4](https://github.com/VenusProtocol/oracle/compare/v1.6.11-dev.3...v1.6.11-dev.4) (2023-05-05)
 
 
