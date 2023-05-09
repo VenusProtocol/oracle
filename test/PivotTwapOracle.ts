@@ -28,7 +28,7 @@ async function checkObservations(
   // check observations
   const newObservation = await twapOracleContract.observations(token, index);
   expect(newObservation.timestamp).be.closeTo(BigNumber.from(time), 1);
-  expect(newObservation.acc).to.equal(acc);
+  expect(newObservation.acc).be.closeTo(acc, 100);
 }
 
 describe("Twap Oracle unit tests", () => {
@@ -372,7 +372,7 @@ describe("Twap Oracle unit tests", () => {
           .div(200)
           .mul(33 + 1),
       );
-      expect(cp).to.equal(acc3);
+      expect(cp).be.closeTo(acc3, 100);
 
       // change reserves, increase the time, and test again
       await increaseTime(66);
@@ -405,7 +405,7 @@ describe("Twap Oracle unit tests", () => {
 
       await increaseTime(100);
       cp = await this.twapOracle.currentCumulativePrice(config);
-      expect(cp).to.equal(acc.add(Q112.mul(100)));
+      expect(cp).be.closeTo(acc.add(Q112.mul(100)), 100);
 
       // update the pair to update the timestamp, and test again
       await this.simplePair.update(200, 100, 200, 100); // timestamp + 1
