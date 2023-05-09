@@ -1,3 +1,10 @@
+## [1.6.11-dev.6](https://github.com/VenusProtocol/oracle/compare/v1.6.11-dev.5...v1.6.11-dev.6) (2023-05-09)
+
+
+### Bug Fixes
+
+* remove exports add dist ([23c768b](https://github.com/VenusProtocol/oracle/commit/23c768b95b2ce9449d0009f8a14248fa55453ea7))
+
 ## [1.6.11-dev.5](https://github.com/VenusProtocol/oracle/compare/v1.6.11-dev.4...v1.6.11-dev.5) (2023-05-08)
 
 
