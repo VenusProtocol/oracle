@@ -9,17 +9,10 @@
   "files": [
     "artifacts",
     "networks",
-    "deploy",
+    "dist",
     "deployments",
     "contracts"
   ],
-  "exports": {
-    "deploy": "./dist/deploy",
-    "artifacts": "./artifacts",
-    "networks": "./networks",
-    "contracts": "./contracts",
-    "deployments": "./deployments"
-  },
   "scripts": {
     "clean": "shx rm -rf ./artifacts ./cache ./coverage ./coverage.json",
     "commit": "git-cz",
