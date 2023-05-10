@@ -233,8 +233,10 @@ export const assets: Assets = {
 const addr0000 = "0x0000000000000000000000000000000000000000";
 const DEFAULT_STALE_PERIOD = 24 * 60 * 60; // 24 hrs
 
-const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironment) {
+const func: DeployFunction = async function ({ network, deployments, getNamedAccounts }: HardhatRuntimeEnvironment) {
   const networkName: string = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
+  const { deploy } = deployments;
+  const { deployer } = await getNamedAccounts();
 
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
   const binanceOracle = await hre.ethers.getContract("BinanceOracle");
@@ -301,8 +303,16 @@ const func: DeployFunction = async function ({ network }: HardhatRuntimeEnvironm
 
       await tx.wait(1);
     } else {
-      const MockToken = await hre.ethers.getContractFactory("BEP20Harness");
-      const mock = await MockToken.deploy(`Mock${asset.token}`, `Mock${asset.token}`, 18);
+      await deploy(`Mock${asset.token}`, {
+        from: deployer,
+        log: true,
+        deterministicDeployment: false,
+        args: [`Mock${asset.token}`, `Mock${asset.token}`, 18],
+        autoMine: true,
+        contract: "BEP20Harness",
+      });
+
+      const mock = await hre.ethers.getContract(`Mock${asset.token}`);
 
       console.log(`Configuring resillient oracle for ${asset.token}`);
       let tx = await resilientOracle.setTokenConfig({
