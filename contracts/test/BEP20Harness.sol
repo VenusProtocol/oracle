@@ -10,6 +10,10 @@ contract BEP20Harness is ERC20 {
         decimalsInternal = decimals_;
     }
 
+    function faucet(uint256 amount) external {
+        _mint(msg.sender, amount);
+    }
+
     function decimals() public view virtual override returns (uint8) {
         return decimalsInternal;
     }
