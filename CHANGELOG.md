@@ -1,3 +1,11 @@
+## [1.6.11-dev.7](https://github.com/VenusProtocol/oracle/compare/v1.6.11-dev.6...v1.6.11-dev.7) (2023-05-11)
+
+
+### Bug Fixes
+
+* add faucet ([0f7b8f1](https://github.com/VenusProtocol/oracle/commit/0f7b8f18fb982bf09d27372d907461f788570ece))
+* deploy contracts using hh runtime ([0ab3294](https://github.com/VenusProtocol/oracle/commit/0ab32943749f666fb160ace5795242ff8f14afbb))
+
 ## [1.6.11-dev.6](https://github.com/VenusProtocol/oracle/compare/v1.6.11-dev.5...v1.6.11-dev.6) (2023-05-09)
 
 
