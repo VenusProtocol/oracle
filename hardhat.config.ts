@@ -88,12 +88,10 @@ const config: HardhatUserConfig = {
       },
     },
     bscmainnet: {
-      url: "https://bsc-dataseed1.ninicoin.io",
+      url: "http://127.0.0.1:1248",
       chainId: 56,
       live: true,
-      accounts: {
-        mnemonic: process.env.MNEMONIC || "",
-      },
+      timeout: 1200000,
     },
   },
   gasReporter: {
@@ -105,6 +103,24 @@ const config: HardhatUserConfig = {
       bscmainnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       bsctestnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
     },
+    customChains: [
+      {
+        network: "bscmainnet",
+        chainId: 56,
+        urls: {
+          apiURL: "https://api.bscscan.com/api",
+          browserURL: "https://bscscan.com",
+        },
+      },
+      {
+        network: "bsctestnet",
+        chainId: 97,
+        urls: {
+          apiURL: "https://api-testnet.bscscan.com/api",
+          browserURL: "https://testnet.bscscan.com",
+        },
+      },
+    ],
   },
   paths: {
     tests: "./test",
