@@ -8,7 +8,8 @@ import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlle
 
 contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     struct TokenConfig {
-        /// @notice Underlying token address, which can't be a null address and can be used to check if a token is supported
+        /// @notice Underlying token address, which can't be a null address
+        /// @notice Used to check if a token is supported
         /// @notice 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB for BNB
         address asset;
         /// @notice Chainlink feed address
@@ -35,11 +36,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     mapping(address => TokenConfig) public tokenConfigs;
 
     /// @notice Emit when a price is manually set
-    event PricePosted(
-        address indexed asset,
-        uint256 previousPriceMantissa,
-        uint256 newPriceMantissa
-    );
+    event PricePosted(address indexed asset, uint256 previousPriceMantissa, uint256 newPriceMantissa);
 
     /// @notice Emit when a token config is added
     event TokenConfigAdded(address indexed asset, address feed, uint256 maxStalePeriod);
@@ -120,6 +117,15 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     }
 
     /**
+     * @notice Gets the Chainlink price for the underlying asset of a given vToken, revert when vToken is a null address
+     * @param vToken vToken address
+     * @return price Underlying price in USD
+     */
+    function getUnderlyingPrice(address vToken) external view override returns (uint256) {
+        return _getUnderlyingPriceInternal(VBep20Interface(vToken));
+    }
+
+    /**
      * @notice Add single token config. vToken & feed cannot be null addresses and maxStalePeriod must be positive
      * @param tokenConfig Token config struct
      * @custom:access Only Governance
@@ -136,15 +142,6 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         if (tokenConfig.maxStalePeriod == 0) revert("stale period can't be zero");
         tokenConfigs[tokenConfig.asset] = tokenConfig;
         emit TokenConfigAdded(tokenConfig.asset, tokenConfig.feed, tokenConfig.maxStalePeriod);
-    }
-
-    /**
-     * @notice Gets the Chainlink price for the underlying asset of a given vToken, revert when vToken is a null address
-     * @param vToken vToken address
-     * @return price Underlying price in USD
-     */
-    function getUnderlyingPrice(address vToken) external view override returns (uint256) {
-        return _getUnderlyingPriceInternal(VBep20Interface(vToken));
     }
 
     /**

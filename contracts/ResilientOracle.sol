@@ -91,6 +91,19 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
+     * @notice Initializes the contract admin and sets the BoundValidator contract address
+     * @param _boundValidator Address of the bound validator contract
+     * @param accessControlManager_ Address of the access control manager contract
+     */
+    function initialize(BoundValidatorInterface _boundValidator, address accessControlManager_) external initializer {
+        if (address(_boundValidator) == address(0)) revert("invalid bound validator address");
+        boundValidator = _boundValidator;
+
+        __AccessControlled_init(accessControlManager_);
+        __Pausable_init();
+    }
+
+    /**
      * @notice Pauses oracle
      * @custom:access Only Governance
      */
@@ -240,19 +253,6 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         }
 
         revert("invalid resilient oracle price");
-    }
-
-    /**
-     * @notice Initializes the contract admin and sets the BoundValidator contract address
-     * @param _boundValidator Address of the bound validator contract
-     * @param accessControlManager_ Address of the access control manager contract
-     */
-    function initialize(BoundValidatorInterface _boundValidator, address accessControlManager_) external initializer {
-        if (address(_boundValidator) == address(0)) revert("invalid bound validator address");
-        boundValidator = _boundValidator;
-
-        __AccessControlled_init(accessControlManager_);
-        __Pausable_init();
     }
 
     /**

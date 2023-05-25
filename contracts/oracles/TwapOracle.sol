@@ -8,6 +8,8 @@ import "../interfaces/VBep20Interface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
 contract TwapOracle is AccessControlledV8, TwapInterface {
+    using FixedPoint for *;
+
     struct Observation {
         uint256 timestamp;
         uint256 acc;
@@ -28,8 +30,6 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
         /// @notice The minimum window in seconds required between TWAP updates
         uint256 anchorPeriod;
     }
-
-    using FixedPoint for *;
 
     /// @notice WBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
@@ -112,6 +112,31 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     }
 
     /**
+     * @notice Initializes the owner of the contract
+     * @param accessControlManager_ Address of the access control manager contract
+     */
+    function initialize(address accessControlManager_) external initializer {
+        __AccessControlled_init(accessControlManager_);
+    }
+
+    /**
+     * @notice Updates the current token/BUSD price from PancakeSwap, with 18 decimals of precision.
+     * @return anchorPrice anchor price of the underlying asset of the vToken
+     * @custom:error Missing error is thrown if token config does not exist
+     */
+    function updateTwap(address vToken) external returns (uint256) {
+        address asset = _getUnderlyingAsset(vToken);
+
+        if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
+        // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
+        if (asset != WBNB && tokenConfigs[asset].isBnbBased) {
+            if (tokenConfigs[WBNB].asset == address(0)) revert("WBNB not exist");
+            _updateTwapInternal(tokenConfigs[WBNB]);
+        }
+        return _updateTwapInternal(tokenConfigs[asset]);
+    }
+
+    /**
      * @notice Get the underlying TWAP price for the given vToken
      * @param vToken vToken address
      * @return price Underlying price in USD
@@ -127,14 +152,6 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
         // if price is 0, it means the price hasn't been updated yet and it's meaningless, revert
         if (price == 0) revert("TWAP price must be positive");
         return (price * (10 ** (18 - IERC20Metadata(asset).decimals())));
-    }
-
-    /**
-     * @notice Initializes the owner of the contract
-     * @param accessControlManager_ Address of the access control manager contract
-     */
-    function initialize(address accessControlManager_) external initializer {
-        __AccessControlled_init(accessControlManager_);
     }
 
     /**
@@ -164,23 +181,6 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
         observations[config.asset].push(Observation(block.timestamp, cumulativePrice));
         tokenConfigs[config.asset] = config;
         emit TokenConfigAdded(config.asset, config.pancakePool, config.anchorPeriod);
-    }
-
-    /**
-     * @notice Updates the current token/BUSD price from PancakeSwap, with 18 decimals of precision.
-     * @return anchorPrice anchor price of the underlying asset of the vToken
-     * @custom:error Missing error is thrown if token config does not exist
-     */
-    function updateTwap(address vToken) external returns (uint256) {
-        address asset = _getUnderlyingAsset(vToken);
-
-        if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
-        // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
-        if (asset != WBNB && tokenConfigs[asset].isBnbBased) {
-            if (tokenConfigs[WBNB].asset == address(0)) revert("WBNB not exist");
-            _updateTwapInternal(tokenConfigs[WBNB]);
-        }
-        return _updateTwapInternal(tokenConfigs[asset]);
     }
 
     /**

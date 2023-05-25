@@ -8,7 +8,6 @@ import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlle
 // BoundValidator provides some common functions and can be used
 // to wrap up other contracts to form pivot oracles
 contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
-
     struct ValidateConfig {
         /// @notice asset address
         address asset;
@@ -76,25 +75,6 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
     }
 
     /**
-     * @notice Add a single validation config
-     * @param config Validation config struct
-     * @custom:access Only Governance
-     * @custom:error Null address error is thrown if asset address is null
-     * @custom:error Range error thrown if bound ratio is not positive
-     * @custom:error Range error thrown if lower bound is greater than or equal to upper bound
-     * @custom:event Emits ValidateConfigAdded when a validation config is successfully set
-     */
-    function setValidateConfig(ValidateConfig memory config) public {
-        _checkAccessAllowed("setValidateConfig(ValidateConfig)");
-
-        if (config.asset == address(0)) revert("asset can't be zero address");
-        if (config.upperBoundRatio == 0 || config.lowerBoundRatio == 0) revert("bound must be positive");
-        if (config.upperBoundRatio <= config.lowerBoundRatio) revert("upper bound must be higher than lowner bound");
-        validateConfigs[config.asset] = config;
-        emit ValidateConfigAdded(config.asset, config.upperBoundRatio, config.lowerBoundRatio);
-    }
-
-    /**
      * @notice Test reported asset price against anchor price
      * @param vToken vToken address
      * @param reportedPrice The price to be tested
@@ -111,6 +91,25 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
         if (validateConfigs[asset].upperBoundRatio == 0) revert("validation config not exist");
         if (anchorPrice == 0) revert("anchor price is not valid");
         return _isWithinAnchor(asset, reportedPrice, anchorPrice);
+    }
+
+    /**
+     * @notice Add a single validation config
+     * @param config Validation config struct
+     * @custom:access Only Governance
+     * @custom:error Null address error is thrown if asset address is null
+     * @custom:error Range error thrown if bound ratio is not positive
+     * @custom:error Range error thrown if lower bound is greater than or equal to upper bound
+     * @custom:event Emits ValidateConfigAdded when a validation config is successfully set
+     */
+    function setValidateConfig(ValidateConfig memory config) public {
+        _checkAccessAllowed("setValidateConfig(ValidateConfig)");
+
+        if (config.asset == address(0)) revert("asset can't be zero address");
+        if (config.upperBoundRatio == 0 || config.lowerBoundRatio == 0) revert("bound must be positive");
+        if (config.upperBoundRatio <= config.lowerBoundRatio) revert("upper bound must be higher than lowner bound");
+        validateConfigs[config.asset] = config;
+        emit ValidateConfigAdded(config.asset, config.upperBoundRatio, config.lowerBoundRatio);
     }
 
     /**

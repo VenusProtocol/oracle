@@ -62,20 +62,6 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
     }
 
     /**
-     * @notice Uses Space ID to fetch the feed registry address
-     * @return feedRegistryAddress Address of binance oracle feed registry.
-     */
-    function getFeedRegistryAddress() public view returns (address) {
-        bytes32 nodeHash = 0x94fe3821e0768eb35012484db4df61890f9a6ca5bfa984ef8ff717e73139faff;
-
-        SIDRegistryInterface sidRegistry = SIDRegistryInterface(sidRegistryAddress);
-        address publicResolverAddress = sidRegistry.resolver(nodeHash);
-        PublicResolverInterface publicResolver = PublicResolverInterface(publicResolverAddress);
-
-        return publicResolver.addr(nodeHash);
-    }
-
-    /**
      * @notice Gets the price of a vToken from the binance oracle
      * @param vToken Address of the vToken
      * @return Price in USD
@@ -116,6 +102,20 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
 
         uint256 decimalDelta = feedRegistry.decimalsByName(symbol, "USD");
         return (uint256(answer) * (10 ** (18 - decimalDelta))) * (10 ** (18 - decimals));
+    }
+
+    /**
+     * @notice Uses Space ID to fetch the feed registry address
+     * @return feedRegistryAddress Address of binance oracle feed registry.
+     */
+    function getFeedRegistryAddress() public view returns (address) {
+        bytes32 nodeHash = 0x94fe3821e0768eb35012484db4df61890f9a6ca5bfa984ef8ff717e73139faff;
+
+        SIDRegistryInterface sidRegistry = SIDRegistryInterface(sidRegistryAddress);
+        address publicResolverAddress = sidRegistry.resolver(nodeHash);
+        PublicResolverInterface publicResolver = PublicResolverInterface(publicResolverAddress);
+
+        return publicResolver.addr(nodeHash);
     }
 
     /**
