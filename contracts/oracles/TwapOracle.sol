@@ -302,9 +302,9 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
      * @return asset underlying asset address
      */
     function _getUnderlyingAsset(address vToken) internal view returns (address asset) {
-        if (address(vToken) == vBnb) {
+        if (vToken == vBnb) {
             asset = WBNB;
-        } else if (address(vToken) == vai) {
+        } else if (vToken == vai) {
             asset = vai;
         } else {
             asset = VBep20Interface(vToken).underlying();

@@ -179,7 +179,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
             price = _getChainlinkPrice(token);
         }
 
-        uint256 decimalDelta = uint256(18) - uint256(decimals);
+        uint256 decimalDelta = 18 - uint256(decimals);
         return price * (10 ** decimalDelta);
     }
 
@@ -204,7 +204,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         uint256 maxStalePeriod = tokenConfig.maxStalePeriod;
 
         // Chainlink USD-denominated feeds store answers at 8 decimals, mostly
-        uint256 decimalDelta = uint256(18) - feed.decimals();
+        uint256 decimalDelta = 18 - feed.decimals();
 
         (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
         if (answer <= 0) revert("chainlink price must be positive");
