@@ -46,7 +46,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
     mapping(address => TokenConfig) public tokenConfigs;
 
     /// @notice Emit when setting a new pyth oracle address
-    event PythOracleSet(address indexed newPythOracle);
+    event PythOracleSet(address indexed oldPythOracle, address indexed newPythOracle);
 
     /// @notice Emit when a token config is added
     event TokenConfigAdded(address indexed vToken, bytes32 indexed pythId, uint64 indexed maxStalePeriod);
@@ -94,8 +94,9 @@ contract PythOracle is AccessControlledV8, OracleInterface {
         IPyth underlyingPythOracle_
     ) external notNullAddress(address(underlyingPythOracle_)) {
         _checkAccessAllowed("setUnderlyingPythOracle(address)");
+        IPyth oldUnderlyingPythOracle = underlyingPythOracle;
         underlyingPythOracle = underlyingPythOracle_;
-        emit PythOracleSet(address(underlyingPythOracle_));
+        emit PythOracleSet(address(oldUnderlyingPythOracle), address(underlyingPythOracle_));
     }
 
     /**
@@ -110,7 +111,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
         __AccessControlled_init(accessControlManager_);
 
         underlyingPythOracle = IPyth(underlyingPythOracle_);
-        emit PythOracleSet(underlyingPythOracle_);
+        emit PythOracleSet(address(0), underlyingPythOracle_);
     }
 
     /**
