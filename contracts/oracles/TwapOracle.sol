@@ -15,14 +15,14 @@ struct Observation {
 struct TokenConfig {
     /// @notice Asset address, which can't be zero address and can be used for existance check
     address asset;
-    /// @notice Decimals of underlying asset
+    /// @notice Decimals of underlying asset respresented as 1e{decimals}
     uint256 baseUnit;
     /// @notice The address of Pancake pair
     address pancakePool;
     /// @notice Whether the token is paired with WBNB
     bool isBnbBased;
     /// @notice A flag identifies whether the Pancake pair is reversed
-    /// e.g. XVS-WBNB is not reversed, while WBNB-XVS is.
+    /// e.g. XVS-WBNB is reversed, while WBNB-XVS is not.
     bool isReversedPool;
     /// @notice The minimum window in seconds required between TWAP updates
     uint256 anchorPeriod;

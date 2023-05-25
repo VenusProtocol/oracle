@@ -80,7 +80,7 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
      * @custom:access Only Governance
      * @custom:error Null address error is thrown if asset address is null
      * @custom:error Range error thrown if bound ratio is not positive
-     * @custom:error Range error thrown if lower bound is greater than upper bound
+     * @custom:error Range error thrown if lower bound is greater than or equal to upper bound
      * @custom:event Emits ValidateConfigAdded when a validation config is successfully set
      */
     function setValidateConfig(ValidateConfig memory config) public virtual {
