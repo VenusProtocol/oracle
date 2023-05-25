@@ -3,7 +3,7 @@ pragma solidity 0.8.13;
 
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV2V3Interface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
 struct TokenConfig {
@@ -198,7 +198,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         address asset
     ) internal view notNullAddress(tokenConfigs[asset].asset) returns (uint256) {
         TokenConfig memory tokenConfig = tokenConfigs[asset];
-        AggregatorV2V3Interface feed = AggregatorV2V3Interface(tokenConfig.feed);
+        AggregatorV3Interface feed = AggregatorV3Interface(tokenConfig.feed);
 
         // note: maxStalePeriod cannot be 0
         uint256 maxStalePeriod = tokenConfig.maxStalePeriod;
