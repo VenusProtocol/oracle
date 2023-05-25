@@ -44,8 +44,8 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     address public immutable vai;
 
     /// @notice the base unit of WBNB and BUSD, which are the paired tokens for all assets
-    uint256 public constant bnbBaseUnit = 1e18;
-    uint256 public constant busdBaseUnit = 1e18;
+    uint256 public constant BNB_BASE_UNIT = 1e18;
+    uint256 public constant BUSD_BASE_UNIT = 1e18;
 
     /// @notice Configs by token
     mapping(address => TokenConfig) public tokenConfigs;
@@ -228,15 +228,15 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
         uint256 priceAverageMantissa = priceAverage.decode112with18();
 
         // To cancel the decimals in cumulative price, we need to mulitply the average price with
-        // tokenBaseUnit / (wbnbBaseUnit or busdBaseUnit, which is 1e18)
-        uint256 pairedTokenBaseUnit = config.isBnbBased ? bnbBaseUnit : busdBaseUnit;
+        // tokenBaseUnit / (BNB_BASE_UNIT or BUSD_BASE_UNIT, which is 1e18)
+        uint256 pairedTokenBaseUnit = config.isBnbBased ? BNB_BASE_UNIT : BUSD_BASE_UNIT;
         uint256 anchorPriceMantissa = (priceAverageMantissa * config.baseUnit) / pairedTokenBaseUnit;
 
         // if this token is paired with BNB, convert its price to USD
         if (config.isBnbBased) {
             uint256 bnbPrice = prices[WBNB];
             if (bnbPrice == 0) revert("bnb price is invalid");
-            anchorPriceMantissa = (anchorPriceMantissa * bnbPrice) / bnbBaseUnit;
+            anchorPriceMantissa = (anchorPriceMantissa * bnbPrice) / BNB_BASE_UNIT;
         }
 
         if (anchorPriceMantissa == 0) revert("twap price cannot be 0");
