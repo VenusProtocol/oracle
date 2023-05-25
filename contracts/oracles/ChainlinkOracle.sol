@@ -6,17 +6,17 @@ import "../interfaces/OracleInterface.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
-struct TokenConfig {
-    /// @notice Underlying token address, which can't be a null address and can be used to check if a token is supported
-    /// @notice 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB for BNB
-    address asset;
-    /// @notice Chainlink feed address
-    address feed;
-    /// @notice Price expiration period of this asset
-    uint256 maxStalePeriod;
-}
-
 contract ChainlinkOracle is AccessControlledV8, OracleInterface {
+    struct TokenConfig {
+        /// @notice Underlying token address, which can't be a null address and can be used to check if a token is supported
+        /// @notice 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB for BNB
+        address asset;
+        /// @notice Chainlink feed address
+        address feed;
+        /// @notice Price expiration period of this asset
+        uint256 maxStalePeriod;
+    }
+
     /// @notice vBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vBnb;

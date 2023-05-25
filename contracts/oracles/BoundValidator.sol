@@ -5,20 +5,21 @@ import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
-struct ValidateConfig {
-    /// @notice asset address
-    address asset;
-    /// @notice Upper bound of deviation between reported price and anchor price,
-    /// beyond which the reported price will be invalidated
-    uint256 upperBoundRatio;
-    /// @notice Lower bound of deviation between reported price and anchor price,
-    /// below which the reported price will be invalidated
-    uint256 lowerBoundRatio;
-}
-
 // BoundValidator provides some common functions and can be used
 // to wrap up other contracts to form pivot oracles
 contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
+
+    struct ValidateConfig {
+        /// @notice asset address
+        address asset;
+        /// @notice Upper bound of deviation between reported price and anchor price,
+        /// beyond which the reported price will be invalidated
+        uint256 upperBoundRatio;
+        /// @notice Lower bound of deviation between reported price and anchor price,
+        /// below which the reported price will be invalidated
+        uint256 lowerBoundRatio;
+    }
+
     /// @notice validation configs by asset
     mapping(address => ValidateConfig) public validateConfigs;
 

@@ -8,17 +8,17 @@ import "../interfaces/OracleInterface.sol";
 import "../interfaces/VBep20Interface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
-struct TokenConfig {
-    bytes32 pythId;
-    address asset;
-    uint64 maxStalePeriod;
-}
-
 /**
  * PythOracle contract reads prices from actual Pyth oracle contract which accepts, verifies and stores the
  * updated prices from external sources
  */
 contract PythOracle is AccessControlledV8, OracleInterface {
+    struct TokenConfig {
+        bytes32 pythId;
+        address asset;
+        uint64 maxStalePeriod;
+    }
+
     // To calculate 10 ** n(which is a signed type)
     using SignedMath for int256;
 
