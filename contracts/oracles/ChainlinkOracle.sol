@@ -116,7 +116,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
      * @notice Initializes the owner of the contract
      * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize(address accessControlManager_) public initializer {
+    function initialize(address accessControlManager_) external initializer {
         __AccessControlled_init(accessControlManager_);
     }
 
@@ -144,7 +144,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
      * @param vToken vToken address
      * @return price Underlying price in USD
      */
-    function getUnderlyingPrice(address vToken) public view override returns (uint256) {
+    function getUnderlyingPrice(address vToken) external view override returns (uint256) {
         return _getUnderlyingPriceInternal(VBep20Interface(vToken));
     }
 
@@ -156,7 +156,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
      * @param vToken vToken address
      * @return price Underlying price in USD
      */
-    function _getUnderlyingPriceInternal(VBep20Interface vToken) internal view returns (uint256 price) {
+    function _getUnderlyingPriceInternal(VBep20Interface vToken) private view returns (uint256 price) {
         address token;
         uint256 decimals;
 
@@ -196,7 +196,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
      */
     function _getChainlinkPrice(
         address asset
-    ) internal view notNullAddress(tokenConfigs[asset].asset) returns (uint256) {
+    ) private view notNullAddress(tokenConfigs[asset].asset) returns (uint256) {
         TokenConfig memory tokenConfig = tokenConfigs[asset];
         AggregatorV3Interface feed = AggregatorV3Interface(tokenConfig.feed);
 

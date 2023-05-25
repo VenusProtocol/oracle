@@ -56,7 +56,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
      * @param _sidRegistryAddress Address of SID registry
      * @param _accessControlManager Address of the access control manager contract
      */
-    function initialize(address _sidRegistryAddress, address _accessControlManager) public initializer {
+    function initialize(address _sidRegistryAddress, address _accessControlManager) external initializer {
         sidRegistryAddress = _sidRegistryAddress;
         __AccessControlled_init(_accessControlManager);
     }
@@ -80,7 +80,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
      * @param vToken Address of the vToken
      * @return Price in USD
      */
-    function getUnderlyingPrice(address vToken) public view override returns (uint256) {
+    function getUnderlyingPrice(address vToken) external view override returns (uint256) {
         string memory symbol;
         uint256 decimals;
 
@@ -124,7 +124,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
      * @param str2 The second string
      * @return equal Returns true if both are equal or else false.
      */
-    function compare(string memory str1, string memory str2) internal pure returns (bool) {
+    function compare(string memory str1, string memory str2) private pure returns (bool) {
         return keccak256(bytes(str1)) == keccak256(bytes(str2));
     }
 }

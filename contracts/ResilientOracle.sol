@@ -247,7 +247,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @param _boundValidator Address of the bound validator contract
      * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize(BoundValidatorInterface _boundValidator, address accessControlManager_) public initializer {
+    function initialize(BoundValidatorInterface _boundValidator, address accessControlManager_) external initializer {
         if (address(_boundValidator) == address(0)) revert("invalid bound validator address");
         boundValidator = _boundValidator;
 
@@ -311,7 +311,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         address vToken,
         uint256 pivotPrice,
         bool pivotEnabled
-    ) internal view returns (uint256, bool) {
+    ) private view returns (uint256, bool) {
         (address mainOracle, bool mainOracleEnabled) = getOracle(vToken, OracleRole.MAIN);
         if (mainOracleEnabled && mainOracle != address(0)) {
             try OracleInterface(mainOracle).getUnderlyingPrice(vToken) returns (uint256 mainOraclePrice) {
@@ -343,7 +343,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @custom:error Invalid price error is thrown if fallback oracle is not enabled or fallback oracle
      * address is null
      */
-    function _getFallbackOraclePrice(address vToken, uint256 pivotPrice) internal view returns (uint256, bool) {
+    function _getFallbackOraclePrice(address vToken, uint256 pivotPrice) private view returns (uint256, bool) {
         (address fallbackOracle, bool fallbackEnabled) = getOracle(vToken, OracleRole.FALLBACK);
         if (fallbackEnabled && fallbackOracle != address(0)) {
             try OracleInterface(fallbackOracle).getUnderlyingPrice(vToken) returns (uint256 fallbackOraclePrice) {
@@ -367,7 +367,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @param vToken vToken address
      * @return asset underlying asset address
      */
-    function _getUnderlyingAsset(address vToken) internal view returns (address asset) {
+    function _getUnderlyingAsset(address vToken) private view returns (address asset) {
         if (address(vToken) == vBnb) {
             asset = BNB_ADDR;
         } else if (address(vToken) == vai) {

@@ -106,7 +106,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
     function initialize(
         address underlyingPythOracle_,
         address accessControlManager_
-    ) public initializer notNullAddress(underlyingPythOracle_) {
+    ) external initializer notNullAddress(underlyingPythOracle_) {
         __AccessControlled_init(accessControlManager_);
 
         underlyingPythOracle = IPyth(underlyingPythOracle_);
@@ -138,7 +138,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
      */
     function getUnderlyingPrice(
         address vToken
-    ) public view override notNullAddress(address(underlyingPythOracle)) returns (uint256) {
+    ) external view override notNullAddress(address(underlyingPythOracle)) returns (uint256) {
         address asset;
         uint256 decimals;
 

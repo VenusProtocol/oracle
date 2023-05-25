@@ -133,7 +133,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
      * @notice Initializes the owner of the contract
      * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize(address accessControlManager_) public initializer {
+    function initialize(address accessControlManager_) external initializer {
         __AccessControlled_init(accessControlManager_);
     }
 
@@ -171,7 +171,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
      * @return anchorPrice anchor price of the underlying asset of the vToken
      * @custom:error Missing error is thrown if token config does not exist
      */
-    function updateTwap(address vToken) public returns (uint256) {
+    function updateTwap(address vToken) external returns (uint256) {
         address asset = _getUnderlyingAsset(vToken);
 
         if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
@@ -205,7 +205,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
      * @custom:event Emits AnchorPriceUpdated event on successful update of observation with assset address,
      * AnchorPrice, old observation timestamp and current timestamp
      */
-    function _updateTwapInternal(TokenConfig memory config) internal virtual returns (uint256) {
+    function _updateTwapInternal(TokenConfig memory config) private returns (uint256) {
         // pokeWindowValues already handled reversed pool cases,
         // priceAverage will always be Token/BNB or Token/BUSD *twap** price.
         (uint256 nowCumulativePrice, uint256 oldCumulativePrice, uint256 oldTimestamp) = pokeWindowValues(config);
@@ -260,7 +260,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
      */
     function pokeWindowValues(
         TokenConfig memory config
-    ) internal returns (uint256, uint256 startCumulativePrice, uint256 startCumulativeTimestamp) {
+    ) private returns (uint256, uint256 startCumulativePrice, uint256 startCumulativeTimestamp) {
         uint256 cumulativePrice = currentCumulativePrice(config);
         uint256 currentTimestamp = block.timestamp;
         uint256 windowStartTimestamp = currentTimestamp - config.anchorPeriod;
@@ -301,7 +301,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
      * @param vToken vToken address
      * @return asset underlying asset address
      */
-    function _getUnderlyingAsset(address vToken) internal view returns (address asset) {
+    function _getUnderlyingAsset(address vToken) private view returns (address asset) {
         if (vToken == vBnb) {
             asset = WBNB;
         } else if (vToken == vai) {

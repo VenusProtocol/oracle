@@ -56,7 +56,7 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
      * @custom:error Zero length error is thrown if length of the config array is 0
      * @custom:event Emits ValidateConfigAdded for each validation config that is successfully set
      */
-    function setValidateConfigs(ValidateConfig[] memory configs) external virtual {
+    function setValidateConfigs(ValidateConfig[] memory configs) external {
         uint256 length = configs.length;
         if (length == 0) revert("invalid validate config length");
         for (uint256 i; i < length; ) {
@@ -71,7 +71,7 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
      * @notice Initializes the owner of the contract
      * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize(address accessControlManager_) public initializer {
+    function initialize(address accessControlManager_) external initializer {
         __AccessControlled_init(accessControlManager_);
     }
 
@@ -84,7 +84,7 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
      * @custom:error Range error thrown if lower bound is greater than or equal to upper bound
      * @custom:event Emits ValidateConfigAdded when a validation config is successfully set
      */
-    function setValidateConfig(ValidateConfig memory config) public virtual {
+    function setValidateConfig(ValidateConfig memory config) public {
         _checkAccessAllowed("setValidateConfig(ValidateConfig)");
 
         if (config.asset == address(0)) revert("asset can't be zero address");
@@ -105,7 +105,7 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
         address vToken,
         uint256 reportedPrice,
         uint256 anchorPrice
-    ) public view virtual override returns (bool) {
+    ) external view override returns (bool) {
         address asset = _getUnderlyingAsset(vToken);
 
         if (validateConfigs[asset].upperBoundRatio == 0) revert("validation config not exist");
@@ -119,7 +119,7 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
      * @param reportedPrice The price to be tested
      * @param anchorPrice The reported price must be within the the valid bounds of this price
      */
-    function _isWithinAnchor(address asset, uint256 reportedPrice, uint256 anchorPrice) internal view returns (bool) {
+    function _isWithinAnchor(address asset, uint256 reportedPrice, uint256 anchorPrice) private view returns (bool) {
         if (reportedPrice != 0) {
             uint256 anchorRatio = (anchorPrice * 100e16) / reportedPrice;
             uint256 upperBoundAnchorRatio = validateConfigs[asset].upperBoundRatio;
@@ -134,7 +134,7 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
      * @param vToken vToken address
      * @return asset underlying asset address
      */
-    function _getUnderlyingAsset(address vToken) internal view returns (address asset) {
+    function _getUnderlyingAsset(address vToken) private view returns (address asset) {
         if (address(vToken) == vBnb) {
             asset = BNB_ADDR;
         } else if (address(vToken) == vai) {
