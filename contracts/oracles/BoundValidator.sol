@@ -120,7 +120,8 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
      */
     function _isWithinAnchor(address asset, uint256 reportedPrice, uint256 anchorPrice) private view returns (bool) {
         if (reportedPrice != 0) {
-            uint256 anchorRatio = (anchorPrice * 100e16) / reportedPrice;
+            // we need to multiply anchorPrice by 1e18 to make the ratio 18 decimals
+            uint256 anchorRatio = (anchorPrice * 1e18) / reportedPrice;
             uint256 upperBoundAnchorRatio = validateConfigs[asset].upperBoundRatio;
             uint256 lowerBoundAnchorRatio = validateConfigs[asset].lowerBoundRatio;
             return anchorRatio <= upperBoundAnchorRatio && anchorRatio >= lowerBoundAnchorRatio;
