@@ -45,7 +45,9 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     /// @notice Set this as asset address for BNB. This is the underlying for vBNB
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
-    BoundValidatorInterface public boundValidator;
+    /// @notice Bound validator contract address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    BoundValidatorInterface public immutable boundValidator;
 
     mapping(address => TokenConfig) private tokenConfigs;
 
@@ -83,22 +85,25 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     /// @notice Constructor for the implementation contract. Sets immutable variables.
     /// @param vBnbAddress The address of the vBNB
     /// @param vaiAddress The address of the VAI
+    /// @param _boundValidator Address of the bound validator contract
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress, address vaiAddress) notNullAddress(vBnbAddress) notNullAddress(vaiAddress) {
+    constructor(
+        address vBnbAddress,
+        address vaiAddress,
+        BoundValidatorInterface _boundValidator
+    ) notNullAddress(vBnbAddress) notNullAddress(vaiAddress) notNullAddress(address(_boundValidator)) {
         vBnb = vBnbAddress;
         vai = vaiAddress;
+        boundValidator = _boundValidator;
+
         _disableInitializers();
     }
 
     /**
      * @notice Initializes the contract admin and sets the BoundValidator contract address
-     * @param _boundValidator Address of the bound validator contract
      * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize(BoundValidatorInterface _boundValidator, address accessControlManager_) external initializer {
-        if (address(_boundValidator) == address(0)) revert("invalid bound validator address");
-        boundValidator = _boundValidator;
-
+    function initialize(address accessControlManager_) external initializer {
         __AccessControlled_init(accessControlManager_);
         __Pausable_init();
     }
