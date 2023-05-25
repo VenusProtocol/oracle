@@ -38,7 +38,6 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     event PricePosted(
         address indexed asset,
         uint256 previousPriceMantissa,
-        uint256 requestedPriceMantissa,
         uint256 newPriceMantissa
     );
 
@@ -77,7 +76,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         address asset = address(vToken) == vBnb ? BNB_ADDR : address(vToken.underlying());
         uint256 previousPriceMantissa = prices[asset];
         prices[asset] = underlyingPriceMantissa;
-        emit PricePosted(asset, previousPriceMantissa, prices[asset], prices[asset]);
+        emit PricePosted(asset, previousPriceMantissa, prices[asset]);
     }
 
     /**
@@ -92,7 +91,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
 
         uint256 previousPriceMantissa = prices[asset];
         prices[asset] = price;
-        emit PricePosted(asset, previousPriceMantissa, price, price);
+        emit PricePosted(asset, previousPriceMantissa, price);
     }
 
     /**
