@@ -670,9 +670,7 @@
         "blockNumber": 30137622,
         "transactionHash": "0x402d32b0ce7fd96d402fe76dfd89593d262af764f6eb8117abf10f1db61021a4",
         "address": "0xA65d9c3593B8ca0EF4C475E16Eb93f92Ca81F98B",
-        "topics": [
-          "0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"
-        ],
+        "topics": ["0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"],
         "data": "0x00000000000000000000000000000000000000000000000000000000000000ff",
         "logIndex": 1,
         "blockHash": "0x15c971ec2e16b7b425a7f6c7e35333a9d510beb014b0dceba7b63d5d0b1d6475"
