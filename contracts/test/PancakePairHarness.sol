@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: BSD-3-Clause
+pragma solidity 0.8.13;
 
 // a library for performing various math operations
 
@@ -28,7 +28,7 @@ library Math {
 
 library UQ112x112 {
     //solhint-disable-next-line state-visibility
-    uint224 constant Q112 = 2**112;
+    uint224 constant Q112 = 2 ** 112;
 
     // encode a uint112 as a UQ112x112
     function encode(uint112 y) internal pure returns (uint224 z) {
@@ -55,24 +55,6 @@ contract PancakePairHarness {
     uint256 public price1CumulativeLast;
     uint256 public kLast; // reserve0 * reserve1, as of immediately after the most recent liquidity event
 
-    function currentBlockTimestamp() external view returns (uint32) {
-        return uint32(block.timestamp % 2**32);
-    }
-
-    function getReserves()
-        public
-        view
-        returns (
-            uint112 _reserve0,
-            uint112 _reserve1,
-            uint32 _blockTimestampLast
-        )
-    {
-        _reserve0 = reserve0;
-        _reserve1 = reserve1;
-        _blockTimestampLast = blockTimestampLast;
-    }
-
     // called once by the factory at time of deployment
     function initialize(address _token0, address _token1) external {
         token0 = _token0;
@@ -80,14 +62,9 @@ contract PancakePairHarness {
     }
 
     // update reserves and, on the first call per block, price accumulators
-    function update(
-        uint256 balance0,
-        uint256 balance1,
-        uint112 _reserve0,
-        uint112 _reserve1
-    ) external {
+    function update(uint256 balance0, uint256 balance1, uint112 _reserve0, uint112 _reserve1) external {
         require(balance0 <= type(uint112).max && balance1 <= type(uint112).max, "PancakeV2: OVERFLOW");
-        uint32 blockTimestamp = uint32(block.timestamp % 2**32);
+        uint32 blockTimestamp = uint32(block.timestamp % 2 ** 32);
         unchecked {
             uint32 timeElapsed = blockTimestamp - blockTimestampLast; // overflow is desired
             if (timeElapsed > 0 && _reserve0 != 0 && _reserve1 != 0) {
@@ -99,5 +76,15 @@ contract PancakePairHarness {
         reserve0 = uint112(balance0);
         reserve1 = uint112(balance1);
         blockTimestampLast = blockTimestamp;
+    }
+
+    function currentBlockTimestamp() external view returns (uint32) {
+        return uint32(block.timestamp % 2 ** 32);
+    }
+
+    function getReserves() public view returns (uint112 _reserve0, uint112 _reserve1, uint32 _blockTimestampLast) {
+        _reserve0 = reserve0;
+        _reserve1 = reserve1;
+        _blockTimestampLast = blockTimestampLast;
     }
 }

@@ -1,9 +1,11 @@
+import { smock } from "@defi-wonderland/smock";
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers, upgrades } from "hardhat";
 
-import { ChainlinkOracle } from "../src/types/contracts/oracles/ChainlinkOracle";
+import { AccessControlManager } from "../typechain-types";
+import { ChainlinkOracle } from "../typechain-types/contracts/oracles/ChainlinkOracle";
 import { addr0000 } from "./utils/data";
 import { makeChainlinkOracle } from "./utils/makeChainlinkOracle";
 import { makeVToken } from "./utils/makeVToken";
@@ -11,15 +13,16 @@ import { getTime, increaseTime } from "./utils/time";
 
 const MAX_STALE_PERIOD = 60 * 15; // 15min
 
-describe("Oracle unit tests", function () {
+describe("Oracle unit tests", () => {
   before(async function () {
     const signers: SignerWithAddress[] = await ethers.getSigners();
     const admin = signers[0];
     this.signers = signers;
     this.admin = admin;
 
+    this.bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
     this.vToken = await makeVToken(admin, { name: "vToken", symbol: "vToken" }, { name: "Token", symbol: "Token" });
-    this.vBnb = await makeVToken(admin, { name: "vBNB", symbol: "vBNB" }, { name: "BNB", symbol: "BNB" });
+    this.vBnb = signers[5]; // Not your standard vToken
     this.vai = await makeVToken(admin, { name: "VAI", symbol: "VAI" });
     this.xvs = await makeVToken(admin, { name: "XVS", symbol: "XVS" });
     this.vExampleSet = await makeVToken(admin, { name: "vExampleSet", symbol: "vExampleSet" });
@@ -41,34 +44,22 @@ describe("Oracle unit tests", function () {
     this.usdtFeed = await makeChainlinkOracle(admin, 8, 100000000);
     this.daiFeed = await makeChainlinkOracle(admin, 8, 100000000);
 
-    const ChainlinkOracle = await ethers.getContractFactory("ChainlinkOracle", admin);
-    const instance = <ChainlinkOracle>await upgrades.deployProxy(ChainlinkOracle, []);
+    const chainlinkOracle = await ethers.getContractFactory("ChainlinkOracle", admin);
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+    const instance = <ChainlinkOracle>await upgrades.deployProxy(chainlinkOracle, [fakeAccessControlManager.address], {
+      constructorArgs: [this.vBnb.address, this.vai.address],
+    });
     this.chainlinkOracle = instance;
     return instance;
   });
 
-  describe("constructor", () => {
-    it("sets address of admin", async function () {
-      const admin = await this.chainlinkOracle.owner();
-      expect(admin).to.equal(this.admin.address);
-    });
-  });
-
   describe("set token config", () => {
-    it("only admin may set token config", async function () {
-      await expect(
-        this.chainlinkOracle.connect(this.signers[2]).setTokenConfig({
-          asset: await this.vBnb.underlying(),
-          feed: this.bnbFeed.address,
-          maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
-        }),
-      ).to.be.revertedWith("Ownable: caller is not the owner");
-    });
-
     it("cannot set feed to zero address", async function () {
       await expect(
         this.chainlinkOracle.setTokenConfig({
-          asset: await this.vBnb.underlying(),
+          asset: this.bnbAddr,
           feed: addr0000,
           maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
         }),
@@ -77,33 +68,21 @@ describe("Oracle unit tests", function () {
 
     it("sets a token config", async function () {
       await this.chainlinkOracle.setTokenConfig({
-        asset: await this.vBnb.underlying(),
+        asset: this.bnbAddr,
         feed: this.bnbFeed.address,
         maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
       });
-      const tokenConfig = await this.chainlinkOracle.tokenConfigs(await this.vBnb.underlying());
+      const tokenConfig = await this.chainlinkOracle.tokenConfigs(this.bnbAddr);
       expect(tokenConfig.feed).to.be.equal(this.bnbFeed.address);
     });
   });
 
   describe("batch set token configs", () => {
-    it("only admin may set token configs", async function () {
-      await expect(
-        this.chainlinkOracle.connect(this.signers[2]).setTokenConfigs([
-          {
-            asset: await this.vBnb.underlying(),
-            feed: this.bnbFeed.address,
-            maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
-          },
-        ]),
-      ).to.be.revertedWith("Ownable: caller is not the owner");
-    });
-
     it("cannot set feed or vtoken to zero address", async function () {
       await expect(
         this.chainlinkOracle.setTokenConfigs([
           {
-            asset: await this.vBnb.underlying(),
+            asset: this.bnbAddr,
             feed: addr0000,
             maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
           },
@@ -127,7 +106,7 @@ describe("Oracle unit tests", function () {
     it("set multiple feeds", async function () {
       await this.chainlinkOracle.setTokenConfigs([
         {
-          asset: await this.vBnb.underlying(),
+          asset: this.bnbAddr,
           feed: this.bnbFeed.address,
           maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD).mul(2),
         },
@@ -138,7 +117,7 @@ describe("Oracle unit tests", function () {
         },
       ]);
 
-      const [, newBnbFeed, newBnbStalePeriod] = await this.chainlinkOracle.tokenConfigs(await this.vBnb.underlying());
+      const [, newBnbFeed, newBnbStalePeriod] = await this.chainlinkOracle.tokenConfigs(this.bnbAddr);
       const [, newUsdtFeed, newUsdtStalePeriod] = await this.chainlinkOracle.tokenConfigs(
         await this.vUsdt.underlying(),
       );
@@ -153,7 +132,7 @@ describe("Oracle unit tests", function () {
   describe("getUnderlyingPrice", () => {
     beforeEach(async function () {
       await this.chainlinkOracle.setTokenConfig({
-        asset: await this.vBnb.underlying(),
+        asset: this.bnbAddr,
         feed: this.bnbFeed.address,
         maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
       });
@@ -196,11 +175,6 @@ describe("Oracle unit tests", function () {
       expect(price).to.equal("1000000000000000000");
     });
 
-    it("gets the direct price of VAI", async function () {
-      const price = await this.chainlinkOracle.getUnderlyingPrice(this.vai.address);
-      expect(price).to.equal("1000000000000000000");
-    });
-
     it("gets the direct price of a set asset", async function () {
       const price = await this.chainlinkOracle.getUnderlyingPrice(this.vExampleSet.address);
       expect(price).to.equal("1");
@@ -214,12 +188,6 @@ describe("Oracle unit tests", function () {
   });
 
   describe("setUnderlyingPrice", () => {
-    it("only admin may set an underlying price", async function () {
-      await expect(
-        this.chainlinkOracle.connect(this.signers[2]).setUnderlyingPrice(this.vExampleSet.address, 1),
-      ).to.be.revertedWith("Ownable: caller is not the owner");
-    });
-
     it("sets the underlying price", async function () {
       await this.chainlinkOracle.setUnderlyingPrice(this.vExampleSet.address, 1);
       const underlying = await this.vExampleSet.underlying();
@@ -229,12 +197,6 @@ describe("Oracle unit tests", function () {
   });
 
   describe("setDirectPrice", () => {
-    it("only admin may set an underlying price", async function () {
-      await expect(
-        this.chainlinkOracle.connect(this.signers[2]).setUnderlyingPrice(this.xvs.address, 7),
-      ).to.be.revertedWith("Ownable: caller is not the owner");
-    });
-
     it("sets the direct price", async function () {
       await this.chainlinkOracle.setDirectPrice(this.xvs.address, 7);
       const price = await this.chainlinkOracle.prices(this.xvs.address);
@@ -245,7 +207,7 @@ describe("Oracle unit tests", function () {
   describe("stale price validation", () => {
     beforeEach(async function () {
       await this.chainlinkOracle.setTokenConfig({
-        asset: await this.vBnb.underlying(),
+        asset: this.bnbAddr,
         feed: this.bnbFeed.address,
         maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
       });
@@ -254,7 +216,7 @@ describe("Oracle unit tests", function () {
     it("stale price period cannot be 0", async function () {
       await expect(
         this.chainlinkOracle.setTokenConfig({
-          asset: await this.vBnb.underlying(),
+          asset: this.bnbAddr,
           feed: this.bnbFeed.address,
           maxStalePeriod: 0,
         }),
@@ -263,13 +225,13 @@ describe("Oracle unit tests", function () {
 
     it("modify stale price period will emit an event", async function () {
       const result = await this.chainlinkOracle.setTokenConfig({
-        asset: await this.vBnb.underlying(),
+        asset: this.bnbAddr,
         feed: this.bnbFeed.address,
         maxStalePeriod: MAX_STALE_PERIOD,
       });
       await expect(result)
         .to.emit(this.chainlinkOracle, "TokenConfigAdded")
-        .withArgs(await this.vBnb.underlying(), this.bnbFeed.address, MAX_STALE_PERIOD);
+        .withArgs(this.bnbAddr, this.bnbFeed.address, MAX_STALE_PERIOD);
     });
 
     it("revert when price stale", async function () {

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-pragma solidity ^0.8.0;
+// SPDX-FileCopyrightText: 2021 Pyth Data Foundation
+pragma solidity 0.8.13;
 
 contract PythStructs {
     // A price with a degree of uncertainty, represented as a price +- a confidence interval.
@@ -188,12 +189,10 @@ abstract contract AbstractPyth is IPyth {
         return priceFeed.price;
     }
 
-    function getPriceNoOlderThan(bytes32 id, uint256 age)
-        public
-        view
-        override
-        returns (PythStructs.Price memory price)
-    {
+    function getPriceNoOlderThan(
+        bytes32 id,
+        uint256 age
+    ) public view override returns (PythStructs.Price memory price) {
         price = getPriceUnsafe(id);
 
         require(diff(block.timestamp, price.publishTime) <= age, "no price available which is recent enough");
@@ -206,12 +205,10 @@ abstract contract AbstractPyth is IPyth {
         return priceFeed.emaPrice;
     }
 
-    function getEmaPriceNoOlderThan(bytes32 id, uint256 age)
-        public
-        view
-        override
-        returns (PythStructs.Price memory price)
-    {
+    function getEmaPriceNoOlderThan(
+        bytes32 id,
+        uint256 age
+    ) public view override returns (PythStructs.Price memory price) {
         price = getEmaPriceUnsafe(id);
 
         require(diff(block.timestamp, price.publishTime) <= age, "no ema price available which is recent enough");
@@ -238,10 +235,13 @@ abstract contract AbstractPyth is IPyth {
         require(priceIds.length == publishTimes.length, "priceIds and publishTimes arrays should have same length");
 
         bool updateNeeded = false;
-        for (uint256 i = 0; i < priceIds.length; i++) {
+        for (uint256 i = 0; i < priceIds.length; ) {
             if (!priceFeedExists(priceIds[i]) || queryPriceFeed(priceIds[i]).price.publishTime < publishTimes[i]) {
                 updateNeeded = true;
                 break;
+            }
+            unchecked {
+                i++;
             }
         }
 

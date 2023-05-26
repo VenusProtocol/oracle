@@ -1,7 +1,7 @@
 import { Signer } from "ethers";
 import { artifacts, waffle } from "hardhat";
 
-import { VBEP20Harness } from "../../src/types";
+import { VBEP20Harness } from "../../typechain-types";
 
 export const makeVToken = async (
   admin: Signer,

@@ -1,4 +1,4 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["deploy", "test", "tasks"]
+  "include": ["typechain-types", "deploy", "test", "tasks", "docgen-templates", "commitlint.config.js"]
 }

@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.10;
+// SPDX-License-Identifier: BSD-3-Clause
+pragma solidity 0.8.13;
 
 import "../../interfaces/FeedRegistryInterface.sol";
 
@@ -10,20 +10,17 @@ contract MockBinanceFeedRegistry is FeedRegistryInterface {
         assetPrices[base] = price;
     }
 
-    function latestRoundDataByName(string memory base, string memory quote)
+    function latestRoundDataByName(
+        string memory base,
+        string memory quote
+    )
         external
         view
         override
-        returns (
-            uint80 roundId,
-            int256 answer,
-            uint256 startedAt,
-            uint256 updatedAt,
-            uint80 answeredInRound
-        )
+        returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)
     {
         quote;
-        return (0, int256(assetPrices[base]), 0, 0, 0);
+        return (0, int256(assetPrices[base]), 0, block.timestamp - 10, 0);
     }
 
     function decimalsByName(string memory base, string memory quote) external view override returns (uint8) {

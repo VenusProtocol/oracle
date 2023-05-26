@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: BSD-3-Clause
+pragma solidity 0.8.13;
 
 import "../interfaces/OracleInterface.sol";
 
@@ -10,12 +10,12 @@ contract MockSimpleOracle is OracleInterface {
         //
     }
 
-    function setPrice(address vToken, uint256 price) public {
-        prices[vToken] = price;
-    }
-
     function getUnderlyingPrice(address vToken) external view returns (uint256) {
         return prices[vToken];
+    }
+
+    function setPrice(address vToken, uint256 price) public {
+        prices[vToken] = price;
     }
 }
 
@@ -27,15 +27,15 @@ contract MockBoundValidator is BoundValidatorInterface {
         //
     }
 
-    function setValidateResult(address vToken, bool pass) public {
-        validateResults[vToken] = pass;
-    }
-
     function validatePriceWithAnchorPrice(
         address vToken,
         uint256 reporterPrice,
         uint256 anchorPrice
     ) external view returns (bool) {
         return validateResults[vToken];
+    }
+
+    function setValidateResult(address vToken, bool pass) public {
+        validateResults[vToken] = pass;
     }
 }

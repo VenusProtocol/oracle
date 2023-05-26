@@ -1,9 +1,15 @@
-const shell = require("shelljs");
-
 module.exports = {
-  istanbulReporter: ["html", "lcov"],
-  providerOptions: {
-    mnemonic: process.env.MNEMONIC,
+  port: 8555,
+  providerOpts: {
+    // See example coverage settings at https://github.com/sc-forks/solidity-coverage
+    gas: 0xfffffff,
+    gasPrice: 0x01,
   },
-  skipFiles: ["test"],
+  mocha: {
+    enableTimeouts: false,
+    grep: /@gas|@no-cov/,
+    invert: true,
+  },
+  skipFiles: ["test", "oracles/mocks"],
+  istanbulReporter: ["html", "lcov", "text", "json", "cobertura"],
 };

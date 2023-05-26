@@ -1,27 +1,46 @@
+import { smock } from "@defi-wonderland/smock";
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
 
-import { BinanceOracle, MockBinanceFeedRegistry } from "../src/types";
+import { AccessControlManager, BinanceOracle, MockBinanceFeedRegistry } from "../typechain-types";
 import { makeVToken } from "./utils/makeVToken";
 
-describe("Binance Oracle unit tests", function () {
+describe("Binance Oracle unit tests", () => {
   before(async function () {
     const signers: SignerWithAddress[] = await ethers.getSigners();
     const admin = signers[0];
     this.signers = signers;
     this.admin = admin;
+    this.vai = signers[5].address;
 
     this.vEth = await makeVToken(admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
-    this.ethPrice = "133378924169"; //$1333.78924169
+    this.vBnb = await makeVToken(admin, { name: "vBNB", symbol: "vBNB" }, { name: "Binance", symbol: "BNB" });
+    this.ethPrice = "133378924169"; // $1333.78924169
+    this.bnbPrice = "24598000000"; // $245.98
 
-    const MockBinanceFeedRegistry = await ethers.getContractFactory("MockBinanceFeedRegistry", admin);
-    this.mockBinanceFeedRegistry = <MockBinanceFeedRegistry>await upgrades.deployProxy(MockBinanceFeedRegistry, []);
+    const mockBinanceFeedRegistry = await ethers.getContractFactory("MockBinanceFeedRegistry", admin);
+    this.mockBinanceFeedRegistry = <MockBinanceFeedRegistry>await upgrades.deployProxy(mockBinanceFeedRegistry, []);
 
-    const BinanceOracle = await ethers.getContractFactory("BinanceOracle", admin);
-    this.binanceOracle = <BinanceOracle>(
-      await upgrades.deployProxy(BinanceOracle, [this.mockBinanceFeedRegistry.address])
+    const publicResolver = await smock.fake("PublicResolverInterface");
+    const sidRegistry = await smock.fake("SIDRegistryInterface");
+    sidRegistry.resolver.returns(publicResolver.address);
+    publicResolver.addr.returns(this.mockBinanceFeedRegistry.address);
+
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+    const binanceOracle = await ethers.getContractFactory("BinanceOracle", admin);
+    this.binanceOracle = <BinanceOracle>await upgrades.deployProxy(
+      binanceOracle,
+      [sidRegistry.address, fakeAccessControlManager.address],
+      {
+        constructorArgs: [this.vBnb.address, this.vai],
+      },
     );
+
+    await this.binanceOracle.setMaxStalePeriod("ETH", 24 * 60 * 60);
+    await this.binanceOracle.setMaxStalePeriod("BNB", 24 * 60 * 60);
   });
 
   it("set price", async function () {
@@ -29,7 +48,29 @@ describe("Binance Oracle unit tests", function () {
     expect(await this.mockBinanceFeedRegistry.assetPrices("ETH")).to.be.equal(this.ethPrice);
   });
 
+  it("set BNB price", async function () {
+    this.mockBinanceFeedRegistry.setAssetPrice("BNB", this.bnbPrice);
+    expect(await this.mockBinanceFeedRegistry.assetPrices("BNB")).to.be.equal(this.bnbPrice);
+  });
+
   it("fetch price", async function () {
     expect(await this.binanceOracle.getUnderlyingPrice(this.vEth.address)).to.be.equal("1333789241690000000000");
+    expect(await this.binanceOracle.getUnderlyingPrice(this.vBnb.address)).to.be.equal("245980000000000000000");
+  });
+
+  it("fetch BNB price", async function () {
+    expect(await this.binanceOracle.getUnderlyingPrice(this.vBnb.address)).to.be.equal("245980000000000000000");
+  });
+
+  it("price expired", async function () {
+    await this.binanceOracle.setMaxStalePeriod("ETH", 5);
+    await this.binanceOracle.setMaxStalePeriod("BNB", 5);
+
+    await expect(this.binanceOracle.getUnderlyingPrice(this.vEth.address)).to.be.revertedWith(
+      "binance oracle price expired",
+    );
+    await expect(this.binanceOracle.getUnderlyingPrice(this.vBnb.address)).to.be.revertedWith(
+      "binance oracle price expired",
+    );
   });
 });

@@ -14,8 +14,8 @@
 **/.coverage_contracts
 **/dist
 **/node_modules
-src/types
 .openzeppelin
+typechain-types
 
 # files
 *.env
@@ -28,3 +28,6 @@ yarn-error.log*
 
 # local
 deployments/localhost
+
+# docs
+docs

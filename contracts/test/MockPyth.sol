@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Apache-2.0
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: BSD-3-Clause
+pragma solidity 0.8.13;
 
 import "../interfaces/PythInterface.sol";
 
@@ -15,25 +15,15 @@ contract MockPyth is AbstractPyth {
         validTimePeriod = _validTimePeriod;
     }
 
-    function queryPriceFeed(bytes32 id) public view override returns (PythStructs.PriceFeed memory priceFeed) {
-        require(priceFeeds[id].id != 0, "no price feed found for the given price id");
-        return priceFeeds[id];
-    }
-
     // simply update price feeds
     function updatePriceFeedsHarness(PythStructs.PriceFeed[] calldata feeds) external {
         require(feeds.length > 0, "feeds length must > 0");
-        for (uint256 i = 0; i < feeds.length; ++i) {
+        for (uint256 i = 0; i < feeds.length; ) {
             priceFeeds[feeds[i].id] = feeds[i];
+            unchecked {
+                ++i;
+            }
         }
-    }
-
-    function priceFeedExists(bytes32 id) public view override returns (bool) {
-        return (priceFeeds[id].id != 0);
-    }
-
-    function getValidTimePeriod() public view override returns (uint256) {
-        return validTimePeriod;
     }
 
     // Takes an array of encoded price feeds and stores them.
@@ -54,7 +44,7 @@ contract MockPyth is AbstractPyth {
         // We set it to 1.
         uint16 chainId = 1;
 
-        for (uint256 i = 0; i < updateData.length; i++) {
+        for (uint256 i = 0; i < updateData.length; ) {
             PythStructs.PriceFeed memory priceFeed = abi.decode(updateData[i], (PythStructs.PriceFeed));
 
             bool fresh = false;
@@ -77,6 +67,10 @@ contract MockPyth is AbstractPyth {
                 priceFeed.price.price,
                 priceFeed.price.conf
             );
+
+            unchecked {
+                i++;
+            }
         }
 
         // In the real contract, the input of this function contains multiple batches that each contain multiple prices.
@@ -89,6 +83,19 @@ contract MockPyth is AbstractPyth {
 
         // There is only 1 batch of prices
         emit UpdatePriceFeeds(msg.sender, 1, requiredFee);
+    }
+
+    function queryPriceFeed(bytes32 id) public view override returns (PythStructs.PriceFeed memory priceFeed) {
+        require(priceFeeds[id].id != 0, "no price feed found for the given price id");
+        return priceFeeds[id];
+    }
+
+    function priceFeedExists(bytes32 id) public view override returns (bool) {
+        return (priceFeeds[id].id != 0);
+    }
+
+    function getValidTimePeriod() public view override returns (uint256) {
+        return validTimePeriod;
     }
 
     function getUpdateFee(uint256 updateDataSize) public view override returns (uint256 feeAmount) {
