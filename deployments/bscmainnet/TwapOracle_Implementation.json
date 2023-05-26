@@ -670,9 +670,7 @@
         "blockNumber": 28525813,
         "transactionHash": "0xfc818130869b67fba6e319c8e95cfe88cfb656e0f776c7d39e224f8e19f28c04",
         "address": "0x17D00a8926566CB4b02B25f4EE6ecC2cEB34A784",
-        "topics": [
-          "0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"
-        ],
+        "topics": ["0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"],
         "data": "0x00000000000000000000000000000000000000000000000000000000000000ff",
         "logIndex": 206,
         "blockHash": "0x2dbf1b798ffe76f9fa89076b38af2261b8ae5aff587d3d4bc962ebc849181f19"
