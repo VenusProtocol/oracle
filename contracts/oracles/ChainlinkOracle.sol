@@ -3,20 +3,21 @@ pragma solidity 0.8.13;
 
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV2V3Interface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
-struct TokenConfig {
-    /// @notice Underlying token address, which can't be a null address and can be used to check if a token is supported
-    /// @notice 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB for BNB
-    address asset;
-    /// @notice Chainlink feed address
-    address feed;
-    /// @notice Price expiration period of this asset
-    uint256 maxStalePeriod;
-}
-
 contract ChainlinkOracle is AccessControlledV8, OracleInterface {
+    struct TokenConfig {
+        /// @notice Underlying token address, which can't be a null address
+        /// @notice Used to check if a token is supported
+        /// @notice 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB for BNB
+        address asset;
+        /// @notice Chainlink feed address
+        address feed;
+        /// @notice Price expiration period of this asset
+        uint256 maxStalePeriod;
+    }
+
     /// @notice vBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vBnb;
@@ -35,12 +36,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     mapping(address => TokenConfig) public tokenConfigs;
 
     /// @notice Emit when a price is manually set
-    event PricePosted(
-        address indexed asset,
-        uint256 previousPriceMantissa,
-        uint256 requestedPriceMantissa,
-        uint256 newPriceMantissa
-    );
+    event PricePosted(address indexed asset, uint256 previousPriceMantissa, uint256 newPriceMantissa);
 
     /// @notice Emit when a token config is added
     event TokenConfigAdded(address indexed asset, address feed, uint256 maxStalePeriod);
@@ -77,7 +73,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         address asset = address(vToken) == vBnb ? BNB_ADDR : address(vToken.underlying());
         uint256 previousPriceMantissa = prices[asset];
         prices[asset] = underlyingPriceMantissa;
-        emit PricePosted(asset, previousPriceMantissa, prices[asset], prices[asset]);
+        emit PricePosted(asset, previousPriceMantissa, prices[asset]);
     }
 
     /**
@@ -92,7 +88,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
 
         uint256 previousPriceMantissa = prices[asset];
         prices[asset] = price;
-        emit PricePosted(asset, previousPriceMantissa, price, price);
+        emit PricePosted(asset, previousPriceMantissa, price);
     }
 
     /**
@@ -116,8 +112,17 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
      * @notice Initializes the owner of the contract
      * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize(address accessControlManager_) public initializer {
+    function initialize(address accessControlManager_) external initializer {
         __AccessControlled_init(accessControlManager_);
+    }
+
+    /**
+     * @notice Gets the Chainlink price for the underlying asset of a given vToken, revert when vToken is a null address
+     * @param vToken vToken address
+     * @return price Underlying price in USD
+     */
+    function getUnderlyingPrice(address vToken) external view override returns (uint256) {
+        return _getUnderlyingPriceInternal(VBep20Interface(vToken));
     }
 
     /**
@@ -140,15 +145,6 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     }
 
     /**
-     * @notice Gets the Chainlink price for the underlying asset of a given vToken, revert when vToken is a null address
-     * @param vToken vToken address
-     * @return price Underlying price in USD
-     */
-    function getUnderlyingPrice(address vToken) public view override returns (uint256) {
-        return _getUnderlyingPriceInternal(VBep20Interface(vToken));
-    }
-
-    /**
      * @notice Gets the Chainlink price for the underlying asset of a given vToken
      * or the manually set price if it's been set
      * @dev The decimals of the underlying token are considered to ensure the returned price
@@ -156,7 +152,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
      * @param vToken vToken address
      * @return price Underlying price in USD
      */
-    function _getUnderlyingPriceInternal(VBep20Interface vToken) internal view returns (uint256 price) {
+    function _getUnderlyingPriceInternal(VBep20Interface vToken) private view returns (uint256 price) {
         address token;
         uint256 decimals;
 
@@ -179,7 +175,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
             price = _getChainlinkPrice(token);
         }
 
-        uint256 decimalDelta = uint256(18) - uint256(decimals);
+        uint256 decimalDelta = 18 - uint256(decimals);
         return price * (10 ** decimalDelta);
     }
 
@@ -196,15 +192,15 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
      */
     function _getChainlinkPrice(
         address asset
-    ) internal view notNullAddress(tokenConfigs[asset].asset) returns (uint256) {
+    ) private view notNullAddress(tokenConfigs[asset].asset) returns (uint256) {
         TokenConfig memory tokenConfig = tokenConfigs[asset];
-        AggregatorV2V3Interface feed = AggregatorV2V3Interface(tokenConfig.feed);
+        AggregatorV3Interface feed = AggregatorV3Interface(tokenConfig.feed);
 
         // note: maxStalePeriod cannot be 0
         uint256 maxStalePeriod = tokenConfig.maxStalePeriod;
 
         // Chainlink USD-denominated feeds store answers at 8 decimals, mostly
-        uint256 decimalDelta = uint256(18) - feed.decimals();
+        uint256 decimalDelta = 18 - feed.decimals();
 
         (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
         if (answer <= 0) revert("chainlink price must be positive");

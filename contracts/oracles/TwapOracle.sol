@@ -7,29 +7,29 @@ import "../interfaces/OracleInterface.sol";
 import "../interfaces/VBep20Interface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
-struct Observation {
-    uint256 timestamp;
-    uint256 acc;
-}
-
-struct TokenConfig {
-    /// @notice Asset address, which can't be zero address and can be used for existance check
-    address asset;
-    /// @notice Decimals of underlying asset
-    uint256 baseUnit;
-    /// @notice The address of Pancake pair
-    address pancakePool;
-    /// @notice Whether the token is paired with WBNB
-    bool isBnbBased;
-    /// @notice A flag identifies whether the Pancake pair is reversed
-    /// e.g. XVS-WBNB is not reversed, while WBNB-XVS is.
-    bool isReversedPool;
-    /// @notice The minimum window in seconds required between TWAP updates
-    uint256 anchorPeriod;
-}
-
 contract TwapOracle is AccessControlledV8, TwapInterface {
     using FixedPoint for *;
+
+    struct Observation {
+        uint256 timestamp;
+        uint256 acc;
+    }
+
+    struct TokenConfig {
+        /// @notice Asset address, which can't be zero address and can be used for existance check
+        address asset;
+        /// @notice Decimals of underlying asset respresented as 1e{decimals}
+        uint256 baseUnit;
+        /// @notice The address of Pancake pair
+        address pancakePool;
+        /// @notice Whether the token is paired with WBNB
+        bool isBnbBased;
+        /// @notice A flag identifies whether the Pancake pair is reversed
+        /// e.g. XVS-WBNB is reversed, while WBNB-XVS is not.
+        bool isReversedPool;
+        /// @notice The minimum window in seconds required between TWAP updates
+        uint256 anchorPeriod;
+    }
 
     /// @notice WBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
@@ -44,8 +44,8 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     address public immutable vai;
 
     /// @notice the base unit of WBNB and BUSD, which are the paired tokens for all assets
-    uint256 public constant bnbBaseUnit = 1e18;
-    uint256 public constant busdBaseUnit = 1e18;
+    uint256 public constant BNB_BASE_UNIT = 1e18;
+    uint256 public constant BUSD_BASE_UNIT = 1e18;
 
     /// @notice Configs by token
     mapping(address => TokenConfig) public tokenConfigs;
@@ -112,6 +112,31 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     }
 
     /**
+     * @notice Initializes the owner of the contract
+     * @param accessControlManager_ Address of the access control manager contract
+     */
+    function initialize(address accessControlManager_) external initializer {
+        __AccessControlled_init(accessControlManager_);
+    }
+
+    /**
+     * @notice Updates the current token/BUSD price from PancakeSwap, with 18 decimals of precision.
+     * @return anchorPrice anchor price of the underlying asset of the vToken
+     * @custom:error Missing error is thrown if token config does not exist
+     */
+    function updateTwap(address vToken) external returns (uint256) {
+        address asset = _getUnderlyingAsset(vToken);
+
+        if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
+        // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
+        if (asset != WBNB && tokenConfigs[asset].isBnbBased) {
+            if (tokenConfigs[WBNB].asset == address(0)) revert("WBNB not exist");
+            _updateTwapInternal(tokenConfigs[WBNB]);
+        }
+        return _updateTwapInternal(tokenConfigs[asset]);
+    }
+
+    /**
      * @notice Get the underlying TWAP price for the given vToken
      * @param vToken vToken address
      * @return price Underlying price in USD
@@ -127,14 +152,6 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
         // if price is 0, it means the price hasn't been updated yet and it's meaningless, revert
         if (price == 0) revert("TWAP price must be positive");
         return (price * (10 ** (18 - IERC20Metadata(asset).decimals())));
-    }
-
-    /**
-     * @notice Initializes the owner of the contract
-     * @param accessControlManager_ Address of the access control manager contract
-     */
-    function initialize(address accessControlManager_) public initializer {
-        __AccessControlled_init(accessControlManager_);
     }
 
     /**
@@ -167,23 +184,6 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     }
 
     /**
-     * @notice Updates the current token/BUSD price from PancakeSwap, with 18 decimals of precision.
-     * @return anchorPrice anchor price of the underlying asset of the vToken
-     * @custom:error Missing error is thrown if token config does not exist
-     */
-    function updateTwap(address vToken) public returns (uint256) {
-        address asset = _getUnderlyingAsset(vToken);
-
-        if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
-        // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
-        if (asset != WBNB && tokenConfigs[asset].isBnbBased) {
-            if (tokenConfigs[WBNB].asset == address(0)) revert("WBNB not exist");
-            _updateTwapInternal(tokenConfigs[WBNB]);
-        }
-        return _updateTwapInternal(tokenConfigs[asset]);
-    }
-
-    /**
      * @notice Fetches the current token/WBNB and token/BUSD price accumulator from PancakeSwap.
      * @return cumulative price of target token regardless of pair order
      */
@@ -205,7 +205,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
      * @custom:event Emits AnchorPriceUpdated event on successful update of observation with assset address,
      * AnchorPrice, old observation timestamp and current timestamp
      */
-    function _updateTwapInternal(TokenConfig memory config) internal virtual returns (uint256) {
+    function _updateTwapInternal(TokenConfig memory config) private returns (uint256) {
         // pokeWindowValues already handled reversed pool cases,
         // priceAverage will always be Token/BNB or Token/BUSD *twap** price.
         (uint256 nowCumulativePrice, uint256 oldCumulativePrice, uint256 oldTimestamp) = pokeWindowValues(config);
@@ -228,15 +228,15 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
         uint256 priceAverageMantissa = priceAverage.decode112with18();
 
         // To cancel the decimals in cumulative price, we need to mulitply the average price with
-        // tokenBaseUnit / (wbnbBaseUnit or busdBaseUnit, which is 1e18)
-        uint256 pairedTokenBaseUnit = config.isBnbBased ? bnbBaseUnit : busdBaseUnit;
+        // tokenBaseUnit / (BNB_BASE_UNIT or BUSD_BASE_UNIT, which is 1e18)
+        uint256 pairedTokenBaseUnit = config.isBnbBased ? BNB_BASE_UNIT : BUSD_BASE_UNIT;
         uint256 anchorPriceMantissa = (priceAverageMantissa * config.baseUnit) / pairedTokenBaseUnit;
 
         // if this token is paired with BNB, convert its price to USD
         if (config.isBnbBased) {
             uint256 bnbPrice = prices[WBNB];
             if (bnbPrice == 0) revert("bnb price is invalid");
-            anchorPriceMantissa = (anchorPriceMantissa * bnbPrice) / bnbBaseUnit;
+            anchorPriceMantissa = (anchorPriceMantissa * bnbPrice) / BNB_BASE_UNIT;
         }
 
         if (anchorPriceMantissa == 0) revert("twap price cannot be 0");
@@ -260,7 +260,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
      */
     function pokeWindowValues(
         TokenConfig memory config
-    ) internal returns (uint256, uint256 startCumulativePrice, uint256 startCumulativeTimestamp) {
+    ) private returns (uint256, uint256 startCumulativePrice, uint256 startCumulativeTimestamp) {
         uint256 cumulativePrice = currentCumulativePrice(config);
         uint256 currentTimestamp = block.timestamp;
         uint256 windowStartTimestamp = currentTimestamp - config.anchorPeriod;
@@ -301,10 +301,10 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
      * @param vToken vToken address
      * @return asset underlying asset address
      */
-    function _getUnderlyingAsset(address vToken) internal view returns (address asset) {
-        if (address(vToken) == vBnb) {
+    function _getUnderlyingAsset(address vToken) private view returns (address asset) {
+        if (vToken == vBnb) {
             asset = WBNB;
-        } else if (address(vToken) == vai) {
+        } else if (vToken == vai) {
             asset = vai;
         } else {
             asset = VBep20Interface(vToken).underlying();

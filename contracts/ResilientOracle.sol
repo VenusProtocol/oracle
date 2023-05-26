@@ -45,7 +45,9 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     /// @notice Set this as asset address for BNB. This is the underlying for vBNB
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
-    BoundValidatorInterface public boundValidator;
+    /// @notice Bound validator contract address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    BoundValidatorInterface public immutable boundValidator;
 
     mapping(address => TokenConfig) private tokenConfigs;
 
@@ -83,11 +85,27 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     /// @notice Constructor for the implementation contract. Sets immutable variables.
     /// @param vBnbAddress The address of the vBNB
     /// @param vaiAddress The address of the VAI
+    /// @param _boundValidator Address of the bound validator contract
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress, address vaiAddress) notNullAddress(vBnbAddress) notNullAddress(vaiAddress) {
+    constructor(
+        address vBnbAddress,
+        address vaiAddress,
+        BoundValidatorInterface _boundValidator
+    ) notNullAddress(vBnbAddress) notNullAddress(vaiAddress) notNullAddress(address(_boundValidator)) {
         vBnb = vBnbAddress;
         vai = vaiAddress;
+        boundValidator = _boundValidator;
+
         _disableInitializers();
+    }
+
+    /**
+     * @notice Initializes the contract admin and sets the BoundValidator contract address
+     * @param accessControlManager_ Address of the access control manager contract
+     */
+    function initialize(address accessControlManager_) external initializer {
+        __AccessControlled_init(accessControlManager_);
+        __Pausable_init();
     }
 
     /**
@@ -243,19 +261,6 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Initializes the contract admin and sets the BoundValidator contract address
-     * @param _boundValidator Address of the bound validator contract
-     * @param accessControlManager_ Address of the access control manager contract
-     */
-    function initialize(BoundValidatorInterface _boundValidator, address accessControlManager_) public initializer {
-        if (address(_boundValidator) == address(0)) revert("invalid bound validator address");
-        boundValidator = _boundValidator;
-
-        __AccessControlled_init(accessControlManager_);
-        __Pausable_init();
-    }
-
-    /**
      * @notice Sets/resets single token configs.
      * @dev main oracle **must not** be a null address
      * @param tokenConfig Token config struct
@@ -311,7 +316,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         address vToken,
         uint256 pivotPrice,
         bool pivotEnabled
-    ) internal view returns (uint256, bool) {
+    ) private view returns (uint256, bool) {
         (address mainOracle, bool mainOracleEnabled) = getOracle(vToken, OracleRole.MAIN);
         if (mainOracleEnabled && mainOracle != address(0)) {
             try OracleInterface(mainOracle).getUnderlyingPrice(vToken) returns (uint256 mainOraclePrice) {
@@ -343,7 +348,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @custom:error Invalid price error is thrown if fallback oracle is not enabled or fallback oracle
      * address is null
      */
-    function _getFallbackOraclePrice(address vToken, uint256 pivotPrice) internal view returns (uint256, bool) {
+    function _getFallbackOraclePrice(address vToken, uint256 pivotPrice) private view returns (uint256, bool) {
         (address fallbackOracle, bool fallbackEnabled) = getOracle(vToken, OracleRole.FALLBACK);
         if (fallbackEnabled && fallbackOracle != address(0)) {
             try OracleInterface(fallbackOracle).getUnderlyingPrice(vToken) returns (uint256 fallbackOraclePrice) {
@@ -367,7 +372,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @param vToken vToken address
      * @return asset underlying asset address
      */
-    function _getUnderlyingAsset(address vToken) internal view returns (address asset) {
+    function _getUnderlyingAsset(address vToken) private view returns (address asset) {
         if (address(vToken) == vBnb) {
             asset = BNB_ADDR;
         } else if (address(vToken) == vai) {

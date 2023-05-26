@@ -70,13 +70,13 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [vBNBAddress, VAIAddress],
+    args: [vBNBAddress, VAIAddress, boundValidator.address],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: [boundValidator.address, accessControlManagerAddress],
+        args: [accessControlManagerAddress],
       },
     },
   });

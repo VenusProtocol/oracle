@@ -8,12 +8,6 @@ import "../interfaces/OracleInterface.sol";
 import "../interfaces/VBep20Interface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
-struct TokenConfig {
-    bytes32 pythId;
-    address asset;
-    uint64 maxStalePeriod;
-}
-
 /**
  * PythOracle contract reads prices from actual Pyth oracle contract which accepts, verifies and stores the
  * updated prices from external sources
@@ -24,6 +18,12 @@ contract PythOracle is AccessControlledV8, OracleInterface {
 
     // To cast int64/int8 types from Pyth to unsigned types
     using SafeCast for int256;
+
+    struct TokenConfig {
+        bytes32 pythId;
+        address asset;
+        uint64 maxStalePeriod;
+    }
 
     /// @notice Exponent scale (decimal precision) of prices
     uint256 public constant EXP_SCALE = 1e18;
@@ -46,7 +46,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
     mapping(address => TokenConfig) public tokenConfigs;
 
     /// @notice Emit when setting a new pyth oracle address
-    event PythOracleSet(address indexed newPythOracle);
+    event PythOracleSet(address indexed oldPythOracle, address indexed newPythOracle);
 
     /// @notice Emit when a token config is added
     event TokenConfigAdded(address indexed vToken, bytes32 indexed pythId, uint64 indexed maxStalePeriod);
@@ -94,8 +94,9 @@ contract PythOracle is AccessControlledV8, OracleInterface {
         IPyth underlyingPythOracle_
     ) external notNullAddress(address(underlyingPythOracle_)) {
         _checkAccessAllowed("setUnderlyingPythOracle(address)");
+        IPyth oldUnderlyingPythOracle = underlyingPythOracle;
         underlyingPythOracle = underlyingPythOracle_;
-        emit PythOracleSet(address(underlyingPythOracle_));
+        emit PythOracleSet(address(oldUnderlyingPythOracle), address(underlyingPythOracle_));
     }
 
     /**
@@ -106,25 +107,11 @@ contract PythOracle is AccessControlledV8, OracleInterface {
     function initialize(
         address underlyingPythOracle_,
         address accessControlManager_
-    ) public initializer notNullAddress(underlyingPythOracle_) {
+    ) external initializer notNullAddress(underlyingPythOracle_) {
         __AccessControlled_init(accessControlManager_);
 
         underlyingPythOracle = IPyth(underlyingPythOracle_);
-        emit PythOracleSet(underlyingPythOracle_);
-    }
-
-    /**
-     * @notice Set single token config. `maxStalePeriod` cannot be 0 and `vToken` can be a null address
-     * @param tokenConfig Token config struct
-     * @custom:access Only Governance
-     * @custom:error Range error is thrown if max stale period is zero
-     * @custom:error NotNullAddress error is thrown if asset address is null
-     */
-    function setTokenConfig(TokenConfig memory tokenConfig) public notNullAddress(tokenConfig.asset) {
-        _checkAccessAllowed("setTokenConfig(TokenConfig)");
-        if (tokenConfig.maxStalePeriod == 0) revert("max stale period cannot be 0");
-        tokenConfigs[tokenConfig.asset] = tokenConfig;
-        emit TokenConfigAdded(tokenConfig.asset, tokenConfig.pythId, tokenConfig.maxStalePeriod);
+        emit PythOracleSet(address(0), underlyingPythOracle_);
     }
 
     /**
@@ -138,7 +125,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
      */
     function getUnderlyingPrice(
         address vToken
-    ) public view override notNullAddress(address(underlyingPythOracle)) returns (uint256) {
+    ) external view override notNullAddress(address(underlyingPythOracle)) returns (uint256) {
         address asset;
         uint256 decimals;
 
@@ -174,5 +161,19 @@ contract PythOracle is AccessControlledV8, OracleInterface {
         } else {
             return ((price * EXP_SCALE) / (10 ** int256(-priceInfo.expo).toUint256())) * (10 ** (18 - decimals));
         }
+    }
+
+    /**
+     * @notice Set single token config. `maxStalePeriod` cannot be 0 and `vToken` can be a null address
+     * @param tokenConfig Token config struct
+     * @custom:access Only Governance
+     * @custom:error Range error is thrown if max stale period is zero
+     * @custom:error NotNullAddress error is thrown if asset address is null
+     */
+    function setTokenConfig(TokenConfig memory tokenConfig) public notNullAddress(tokenConfig.asset) {
+        _checkAccessAllowed("setTokenConfig(TokenConfig)");
+        if (tokenConfig.maxStalePeriod == 0) revert("max stale period cannot be 0");
+        tokenConfigs[tokenConfig.asset] = tokenConfig;
+        emit TokenConfigAdded(tokenConfig.asset, tokenConfig.pythId, tokenConfig.maxStalePeriod);
     }
 }

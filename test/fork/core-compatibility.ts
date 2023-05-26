@@ -30,7 +30,6 @@ interface OracleFixture {
   resilientOracle: ResilientOracle;
   boundValidator: BoundValidator;
   chainlinkOracle: ChainlinkOracle;
-  x;
   twapOracle: TwapOracle;
   pythOracle: PythOracle;
   binanceOracle: BinanceOracle;
@@ -57,9 +56,9 @@ async function deployOracleFixture(): Promise<OracleFixture> {
   const ResilientOracleFactory: ResilientOracle__factory = await ethers.getContractFactory("ResilientOracle");
   const resilientOracle = <ResilientOracle>await upgrades.deployProxy(
     ResilientOracleFactory,
-    [boundValidator.address, accessControlManager.address],
+    [accessControlManager.address],
     {
-      constructorArgs: [vBNB, VAI],
+      constructorArgs: [vBNB, VAI, boundValidator.address],
     },
   );
 
