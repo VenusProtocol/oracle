@@ -1,3 +1,20 @@
+## [1.6.11-dev.9](https://github.com/VenusProtocol/oracle/compare/v1.6.11-dev.8...v1.6.11-dev.9) (2023-05-26)
+
+
+### Bug Fixes
+
+* fixed deployment in fork tests ([672a0ed](https://github.com/VenusProtocol/oracle/commit/672a0ed58c81ad1d76678f260cc3923ee609ab67))
+* L-01 ([ddd4b02](https://github.com/VenusProtocol/oracle/commit/ddd4b0222e40f1b6accf4f003face5206e947489))
+* L-02 ([f4352f1](https://github.com/VenusProtocol/oracle/commit/f4352f1403bf7adb5d4a10533b1806bc73b797e4))
+* N-01 ([70a2211](https://github.com/VenusProtocol/oracle/commit/70a22115b2f0d55c0ab431ce2380a54208460954))
+* N-03 ([66707bd](https://github.com/VenusProtocol/oracle/commit/66707bd77d7fd6011d1ea86f423212d17febd802))
+* N-04 ([28f4924](https://github.com/VenusProtocol/oracle/commit/28f49241f8d88fed6b523c6fe2059c9bbfc25c12))
+* N-07 ([e11f135](https://github.com/VenusProtocol/oracle/commit/e11f135c5876cf86f236b810b0ff4930ef140160))
+* N-10 ([5d811fd](https://github.com/VenusProtocol/oracle/commit/5d811fdcf703d2d2c3fddbe0a41e978ed5bb1b6e))
+* N-11 ([cf6a66c](https://github.com/VenusProtocol/oracle/commit/cf6a66cca1b58e6593c175bfe403d1c6207356f0))
+* N-13 ([c420a18](https://github.com/VenusProtocol/oracle/commit/c420a18cac4ac7b65e65b6eb73d1753b11aaa9e6))
+* N-15 ([4f56661](https://github.com/VenusProtocol/oracle/commit/4f56661234ce02e44063464c8f7a87b97cfb5acd))
+
 ## [1.6.11-dev.8](https://github.com/VenusProtocol/oracle/compare/v1.6.11-dev.7...v1.6.11-dev.8) (2023-05-26)
 
 ## [1.6.11-dev.7](https://github.com/VenusProtocol/oracle/compare/v1.6.11-dev.6...v1.6.11-dev.7) (2023-05-11)
