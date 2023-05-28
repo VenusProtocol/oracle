@@ -18,7 +18,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     struct TokenConfig {
         /// @notice Asset address, which can't be zero address and can be used for existance check
         address asset;
-        /// @notice Decimals of underlying asset respresented as 1e{decimals}
+        /// @notice Decimals of underlying asset represented as 1e{decimals}
         uint256 baseUnit;
         /// @notice The address of Pancake pair
         address pancakePool;
