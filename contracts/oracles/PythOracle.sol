@@ -114,6 +114,35 @@ contract PythOracle is AccessControlledV8, OracleInterface {
         emit PythOracleSet(address(0), underlyingPythOracle_);
     }
 
+    function _getPythOraclePrice(address asset, uint256 decimals) private view returns(uint256) {
+        TokenConfig storage tokenConfig = tokenConfigs[asset];
+        if (tokenConfig.asset == address(0)) revert("asset doesn't exist");
+
+        // if the price is expired after it's compared against `maxStalePeriod`, the following call will revert
+        PythStructs.Price memory priceInfo = underlyingPythOracle.getPriceNoOlderThan(
+            tokenConfig.pythId,
+            tokenConfig.maxStalePeriod
+        );
+
+        uint256 price = int256(priceInfo.price).toUint256();
+
+        if (price == 0) revert("invalid pyth oracle price");
+
+        // the price returned from Pyth is price ** 10^expo, which is the real dollar price of the assets
+        // we need to multiply it by 1e18 to make the price 18 decimals
+        if (priceInfo.expo > 0) {
+            return price * EXP_SCALE * (10 ** int256(priceInfo.expo).toUint256()) * (10 ** (18 - decimals));
+        } else {
+            return ((price * EXP_SCALE) / (10 ** int256(-priceInfo.expo).toUint256())) * (10 ** (18 - decimals));
+        }
+    }
+
+    function getPrice(address asset) view external returns (uint256) {
+        IERC20Metadata token = IERC20Metadata(asset);
+        uint256 decimals = token.decimals();
+        return _getPythOraclePrice(asset, decimals);
+    }
+
     /**
      * @notice Get price of underlying asset of the input vToken, under the hood this function
      * get price from Pyth contract, the prices of which are updated externally
@@ -141,26 +170,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
             decimals = VBep20Interface(asset).decimals();
         }
 
-        TokenConfig storage tokenConfig = tokenConfigs[asset];
-        if (tokenConfig.asset == address(0)) revert("asset doesn't exist");
-
-        // if the price is expired after it's compared against `maxStalePeriod`, the following call will revert
-        PythStructs.Price memory priceInfo = underlyingPythOracle.getPriceNoOlderThan(
-            tokenConfig.pythId,
-            tokenConfig.maxStalePeriod
-        );
-
-        uint256 price = int256(priceInfo.price).toUint256();
-
-        if (price == 0) revert("invalid pyth oracle price");
-
-        // the price returned from Pyth is price ** 10^expo, which is the real dollar price of the assets
-        // we need to multiply it by 1e18 to make the price 18 decimals
-        if (priceInfo.expo > 0) {
-            return price * EXP_SCALE * (10 ** int256(priceInfo.expo).toUint256()) * (10 ** (18 - decimals));
-        } else {
-            return ((price * EXP_SCALE) / (10 ** int256(-priceInfo.expo).toUint256())) * (10 ** (18 - decimals));
-        }
+        return _getPythOraclePrice(asset, decimals);
     }
 
     /**

@@ -61,6 +61,36 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         __AccessControlled_init(_accessControlManager);
     }
 
+    function _getBinanceOraclePrice(string memory symbol, uint256 decimals) view private returns (uint256) {
+        FeedRegistryInterface feedRegistry = FeedRegistryInterface(getFeedRegistryAddress());
+
+        (, int256 answer, , uint256 updatedAt, ) = feedRegistry.latestRoundDataByName(symbol, "USD");
+        if (answer <= 0) revert("invalid binance oracle price");
+        if (block.timestamp < updatedAt) revert("updatedAt exceeds block time");
+
+        uint256 deltaTime;
+        unchecked {
+            deltaTime = block.timestamp - updatedAt;
+        }
+
+        if (deltaTime > maxStalePeriod[symbol]) revert("binance oracle price expired");
+
+        uint256 decimalDelta = feedRegistry.decimalsByName(symbol, "USD");
+        return (uint256(answer) * (10 ** (18 - decimalDelta))) * (10 ** (18 - decimals));
+    }
+
+    function getPrice(address asset) external view returns (uint256) {
+        IERC20Metadata token = IERC20Metadata(asset);
+        string memory symbol = token.symbol();
+        uint256 decimals = token.decimals();
+
+        if (compare(symbol, "WBNB")) {
+            symbol = "BNB";
+        }
+
+        return _getBinanceOraclePrice(symbol, decimals);
+    }
+
     /**
      * @notice Gets the price of a vToken from the binance oracle
      * @param vToken Address of the vToken
@@ -87,21 +117,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
             symbol = "BNB";
         }
 
-        FeedRegistryInterface feedRegistry = FeedRegistryInterface(getFeedRegistryAddress());
-
-        (, int256 answer, , uint256 updatedAt, ) = feedRegistry.latestRoundDataByName(symbol, "USD");
-        if (answer <= 0) revert("invalid binance oracle price");
-        if (block.timestamp < updatedAt) revert("updatedAt exceeds block time");
-
-        uint256 deltaTime;
-        unchecked {
-            deltaTime = block.timestamp - updatedAt;
-        }
-
-        if (deltaTime > maxStalePeriod[symbol]) revert("binance oracle price expired");
-
-        uint256 decimalDelta = feedRegistry.decimalsByName(symbol, "USD");
-        return (uint256(answer) * (10 ** (18 - decimalDelta))) * (10 ** (18 - decimals));
+        return _getBinanceOraclePrice(symbol, decimals);
     }
 
     /**

@@ -116,32 +116,19 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         __AccessControlled_init(accessControlManager_);
     }
 
-    /**
-     * @notice Gets the Chainlink price for the underlying asset of a given vToken, revert when vToken is a null address
-     * @param vToken vToken address
-     * @return price Underlying price in USD
-     */
-    function getUnderlyingPrice(address vToken) external view override returns (uint256) {
-        return _getUnderlyingPriceInternal(VBep20Interface(vToken));
-    }
+    function getPrice(address asset) external view returns (uint256 price) {
+        IERC20Metadata token = IERC20Metadata(asset);
+        uint256 decimals = token.decimals();
+        uint256 tokenPrice = prices[asset];
 
-    /**
-     * @notice Add single token config. vToken & feed cannot be null addresses and maxStalePeriod must be positive
-     * @param tokenConfig Token config struct
-     * @custom:access Only Governance
-     * @custom:error NotNullAddress error is thrown if asset address is null
-     * @custom:error NotNullAddress error is thrown if token feed address is null
-     * @custom:error Range error is thrown if maxStale period of token is not greater than zero
-     * @custom:event Emits TokenConfigAdded event on succesfully setting of the token config
-     */
-    function setTokenConfig(
-        TokenConfig memory tokenConfig
-    ) public notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.feed) {
-        _checkAccessAllowed("setTokenConfig(TokenConfig)");
+        if (tokenPrice != 0) {
+            price = tokenPrice;
+        } else {
+            price = _getChainlinkPrice(asset);
+        }
 
-        if (tokenConfig.maxStalePeriod == 0) revert("stale period can't be zero");
-        tokenConfigs[tokenConfig.asset] = tokenConfig;
-        emit TokenConfigAdded(tokenConfig.asset, tokenConfig.feed, tokenConfig.maxStalePeriod);
+        uint256 decimalDelta = 18 - uint256(decimals);
+        return price * (10 ** decimalDelta);
     }
 
     /**
@@ -149,12 +136,14 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
      * or the manually set price if it's been set
      * @dev The decimals of the underlying token are considered to ensure the returned price
      * has 18 decimals of precision
-     * @param vToken vToken address
+     * @param market vToken address
      * @return price Underlying price in USD
      */
-    function _getUnderlyingPriceInternal(VBep20Interface vToken) private view returns (uint256 price) {
+    function getUnderlyingPrice(address market) external view override returns (uint256 price) {
         address token;
         uint256 decimals;
+
+        VBep20Interface vToken = VBep20Interface(market);
 
         // vBNB token doesn't have `underlying` method
         if (address(vToken) == vBnb) {
@@ -177,6 +166,25 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
 
         uint256 decimalDelta = 18 - uint256(decimals);
         return price * (10 ** decimalDelta);
+    }
+
+    /**
+     * @notice Add single token config. vToken & feed cannot be null addresses and maxStalePeriod must be positive
+     * @param tokenConfig Token config struct
+     * @custom:access Only Governance
+     * @custom:error NotNullAddress error is thrown if asset address is null
+     * @custom:error NotNullAddress error is thrown if token feed address is null
+     * @custom:error Range error is thrown if maxStale period of token is not greater than zero
+     * @custom:event Emits TokenConfigAdded event on succesfully setting of the token config
+     */
+    function setTokenConfig(
+        TokenConfig memory tokenConfig
+    ) public notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.feed) {
+        _checkAccessAllowed("setTokenConfig(TokenConfig)");
+
+        if (tokenConfig.maxStalePeriod == 0) revert("stale period can't be zero");
+        tokenConfigs[tokenConfig.asset] = tokenConfig;
+        emit TokenConfigAdded(tokenConfig.asset, tokenConfig.feed, tokenConfig.maxStalePeriod);
     }
 
     /**
