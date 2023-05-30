@@ -1,16 +1,16 @@
-# Resilient Price Feed
+# Resilient Price Feeds
 
-Resilient Price Feed is a set of smart contracts that uses multiple oracles and a price validation algorithm to fetch asset prices for the [Venus Protocol](https://app.venus.io).
+Resilient Price Feeds is a set of smart contracts that uses multiple oracles and a price validation algorithm to fetch asset prices for the [Venus Protocol](https://app.venus.io).
 
 DeFi protocols are vulnerable to incorrectly reported prices which can lead to lost money. A price oracle can be manipulated,fail, or suffer other attacks depending on the type of price oracle. It creates a single point of failure, opening attack vectors to the protocol if not mitigated.
 
-The Resilient Price Feed uses multiple oracle sources and fallback mechanisms to return accurate prices and protect from oracle failures. Currently, it includes integrations with Chainlink, Pyth, Binance Oracle and TWAP (Time-Weighted Average Price) oracles. TWAP uses PancakeSwap as the on-chain price source.
+The Resilient Price Feeds uses multiple oracle sources and fallback mechanisms to return accurate prices and protect from oracle failures. Currently, it includes integrations with Chainlink, Pyth, Binance Oracle and TWAP (Time-Weighted Average Price) oracles. TWAP uses PancakeSwap as the on-chain price source.
 
 ## Details
 
-The Resilient Price Feed configures a main, pivot and fallback oracle for every asset. The main oracle is the most trustworthy price source, the pivot oracle is used as a loose sanity checker and the fallback oracle is used as a backup price source.
+The Resilient Price Feeds configures a main, pivot and fallback oracle for every asset. The main oracle is the most trustworthy price source, the pivot oracle is used as a loose sanity checker and the fallback oracle is used as a backup price source.
 
-![Resilient Price Feed](./marketing-assets/oracles.png)
+![Resilient Price Feeds](./marketing-assets/oracles.png)
 
 Oracle prices are validated using an **upper** and **lower** bound ratio, which is set for every market. The **upper bound ratio** represents the **deviation** between the **reported price** (price from oracle that’s being validated) and anchor price (price from oracle we are validating against) beyond which the reported price will be invalidated. The **lower bound ratio** presents the **deviation** between **reported price and anchor price** below which the reported price will be invalidated. For an oracle price to be considered valid the below statement should be true:
 
