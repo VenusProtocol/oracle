@@ -3,6 +3,7 @@ pragma solidity 0.8.13;
 
 interface OracleInterface {
     function getUnderlyingPrice(address vToken) external view returns (uint256);
+    // function getPrice(address asset) external view returns (uint256);
 }
 
 interface ResilientOracleInterface is OracleInterface {
@@ -11,6 +12,7 @@ interface ResilientOracleInterface is OracleInterface {
 
 interface TwapInterface is OracleInterface {
     function updateTwap(address vToken) external returns (uint256);
+    function updateTwapForAsset(address asset) external returns (uint256);
 }
 
 interface BoundValidatorInterface {

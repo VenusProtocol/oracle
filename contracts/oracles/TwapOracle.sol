@@ -126,7 +126,10 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
      */
     function updateTwap(address vToken) external returns (uint256) {
         address asset = _getUnderlyingAsset(vToken);
+        return updateTwapForAsset(asset);
+    }
 
+    function updateTwapForAsset(address asset) public returns (uint256) {
         if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
         // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
         if (asset != WBNB && tokenConfigs[asset].isBnbBased) {
@@ -145,7 +148,10 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
      */
     function getUnderlyingPrice(address vToken) external view override returns (uint256) {
         address asset = _getUnderlyingAsset(vToken);
+        return getPrice(asset);
+    }
 
+    function getPrice(address asset) public view returns (uint256) {
         if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
         uint256 price = prices[asset];
 
