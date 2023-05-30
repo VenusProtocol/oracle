@@ -2,8 +2,8 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
 
-import { AccessControlManager__factory } from "../../../isolated-pools/typechain";
 import {
+  AccessControlManager__factory,
   BinanceOracle,
   BinanceOracle__factory,
   BoundValidator,
@@ -56,9 +56,9 @@ async function deployOracleFixture(): Promise<OracleFixture> {
   const ResilientOracleFactory: ResilientOracle__factory = await ethers.getContractFactory("ResilientOracle");
   const resilientOracle = <ResilientOracle>await upgrades.deployProxy(
     ResilientOracleFactory,
-    [boundValidator.address, accessControlManager.address],
+    [accessControlManager.address],
     {
-      constructorArgs: [vBNB, VAI],
+      constructorArgs: [vBNB, VAI, boundValidator.address],
     },
   );
 
@@ -125,7 +125,7 @@ describe("Core protocol", async () => {
     });
 
     it("validate vBNB price", async () => {
-      //Configure price feed for vBNB
+      // Configure price feed for vBNB
       await chainlinkOracle.setTokenConfig({
         asset: BNBAddress,
         feed: "0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE",
@@ -146,7 +146,7 @@ describe("Core protocol", async () => {
       const LTCAddress = "0x4338665CBB7B2485A8855A139b75D5e34AB0DB94";
       const vLTCAddress = "0x57A5297F2cB2c0AaC9D554660acd6D385Ab50c6B";
 
-      //Configure price feed for vLTC
+      // Configure price feed for vLTC
       await chainlinkOracle.setTokenConfig({
         asset: LTCAddress,
         feed: "0x74e72f37a8c415c8f1a98ed42e78ff997435791d",
@@ -167,7 +167,7 @@ describe("Core protocol", async () => {
       const XVSAddress = "0xcF6BB5389c92Bdda8a3747Ddb454cB7a64626C63";
       const vXVSAddress = "0x151B1e2635A717bcDc836ECd6FbB62B674FE3E1D";
 
-      //Configure price feed for vXVS
+      // Configure price feed for vXVS
       await chainlinkOracle.setTokenConfig({
         asset: XVSAddress,
         feed: "0xbf63f430a79d4036a5900c19818aff1fa710f206",
@@ -185,7 +185,7 @@ describe("Core protocol", async () => {
     });
 
     it("validate VAI price", async () => {
-      //Configure price feed for VAI
+      // Configure price feed for VAI
       await chainlinkOracle.setTokenConfig({
         asset: VAI,
         feed: "0x058316f8bb13acd442ee7a216c7b60cfb4ea1b53",
@@ -206,7 +206,7 @@ describe("Core protocol", async () => {
       const vUSDCAddress = "0xecA88125a5ADbe82614ffC12D0DB554E2e2867C8";
       const USDCAddress = "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d";
 
-      //Configure price feed for USDC
+      // Configure price feed for USDC
       await chainlinkOracle.setTokenConfig({
         asset: USDCAddress,
         feed: "0x51597f405303C4377E36123cBc172b13269EA163",

@@ -1,7 +1,7 @@
 import { Signer } from "ethers";
 import { artifacts, waffle } from "hardhat";
 
-import { BEP20Harness } from "../../src/types";
+import { BEP20Harness } from "../../typechain-types";
 
 export const makeToken = async (admin: Signer, name: string, symbol: string, decimals: number = 18) => {
   // make underlying

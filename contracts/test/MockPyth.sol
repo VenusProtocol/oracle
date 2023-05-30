@@ -18,8 +18,11 @@ contract MockPyth is AbstractPyth {
     // simply update price feeds
     function updatePriceFeedsHarness(PythStructs.PriceFeed[] calldata feeds) external {
         require(feeds.length > 0, "feeds length must > 0");
-        for (uint256 i = 0; i < feeds.length; ++i) {
+        for (uint256 i = 0; i < feeds.length; ) {
             priceFeeds[feeds[i].id] = feeds[i];
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -41,7 +44,7 @@ contract MockPyth is AbstractPyth {
         // We set it to 1.
         uint16 chainId = 1;
 
-        for (uint256 i = 0; i < updateData.length; i++) {
+        for (uint256 i = 0; i < updateData.length; ) {
             PythStructs.PriceFeed memory priceFeed = abi.decode(updateData[i], (PythStructs.PriceFeed));
 
             bool fresh = false;
@@ -64,6 +67,10 @@ contract MockPyth is AbstractPyth {
                 priceFeed.price.price,
                 priceFeed.price.conf
             );
+
+            unchecked {
+                i++;
+            }
         }
 
         // In the real contract, the input of this function contains multiple batches that each contain multiple prices.

@@ -1,12 +1,12 @@
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import type { Fixture } from "ethereum-waffle";
 
-import { BoundValidator, PivotPythOracle } from "../src/types";
-import { ResilientOracle } from "../src/types/contracts/ResilientOracle";
-import { ChainlinkOracle } from "../src/types/contracts/oracles/ChainlinkOracle";
-import { PivotTwapOracle } from "../src/types/contracts/oracles/PivotTwapOracle";
-import { MockPyth } from "../src/types/contracts/test/MockPyth";
-import { PancakePairHarness } from "../src/types/contracts/test/PancakePairHarness";
+import { BoundValidator, PythOracle } from "../typechain-types";
+import { ResilientOracle } from "../typechain-types/contracts/ResilientOracle";
+import { ChainlinkOracle } from "../typechain-types/contracts/oracles/ChainlinkOracle";
+import { TwapOracle } from "../typechain-types/contracts/oracles/TwapOracle";
+import { MockPyth } from "../typechain-types/contracts/test/MockPyth";
+import { PancakePairHarness } from "../typechain-types/contracts/test/PancakePairHarness";
 
 declare module "mocha" {
   export interface Context {
@@ -15,7 +15,7 @@ declare module "mocha" {
     // chainlink oracle tests
     chainlinkOracle: ChainlinkOracle;
     // twap oracle tests
-    twapOracle: PivotTwapOracle;
+    twapOracle: TwapOracle;
     simplePair: PancakePairHarness;
     bnbBasedPair: PancakePairHarness;
     bnbPair: PancakePairHarness;
@@ -26,7 +26,7 @@ declare module "mocha" {
     signers: SignerWithAddress[];
     admin: SignerWithAddress;
     // pyth oracle
-    pythOracle: PivotPythOracle;
+    pythOracle: PythOracle;
     underlyingPythOracle: MockPyth;
   }
 }

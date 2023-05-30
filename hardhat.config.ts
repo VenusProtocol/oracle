@@ -11,9 +11,28 @@ import { HardhatUserConfig } from "hardhat/config";
 import "solidity-coverage";
 import "solidity-docgen";
 
-import "./tasks";
-
 dotenv.config();
+
+function isFork() {
+  return process.env.FORK_MAINNET === "true"
+    ? {
+        allowUnlimitedContractSize: false,
+        loggingEnabled: false,
+        forking: {
+          url: process.env.QUICK_NODE_URL || "",
+          blockNumber: 26349263,
+        },
+        accounts: {
+          accountsBalance: "1000000000000000000",
+        },
+        live: false,
+      }
+    : {
+        allowUnlimitedContractSize: true,
+        loggingEnabled: false,
+        live: false,
+      };
+}
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -69,12 +88,10 @@ const config: HardhatUserConfig = {
       },
     },
     bscmainnet: {
-      url: "https://bsc-dataseed1.ninicoin.io",
+      url: "http://127.0.0.1:1248",
       chainId: 56,
       live: true,
-      accounts: {
-        mnemonic: process.env.MNEMONIC || "",
-      },
+      timeout: 1200000,
     },
   },
   gasReporter: {
@@ -86,6 +103,24 @@ const config: HardhatUserConfig = {
       bscmainnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       bsctestnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
     },
+    customChains: [
+      {
+        network: "bscmainnet",
+        chainId: 56,
+        urls: {
+          apiURL: "https://api.bscscan.com/api",
+          browserURL: "https://bscscan.com",
+        },
+      },
+      {
+        network: "bsctestnet",
+        chainId: 97,
+        urls: {
+          apiURL: "https://api-testnet.bscscan.com/api",
+          browserURL: "https://testnet.bscscan.com",
+        },
+      },
+    ],
   },
   paths: {
     tests: "./test",
@@ -100,26 +135,5 @@ const config: HardhatUserConfig = {
     templates: "./docgen-templates",
   },
 };
-
-function isFork() {
-  return process.env.FORK_MAINNET === "true"
-    ? {
-        allowUnlimitedContractSize: false,
-        loggingEnabled: false,
-        forking: {
-          url: process.env.QUICK_NODE_URL || "",
-          blockNumber: 26349263,
-        },
-        accounts: {
-          accountsBalance: "1000000000000000000",
-        },
-        live: false,
-      }
-    : {
-        allowUnlimitedContractSize: true,
-        loggingEnabled: false,
-        live: false,
-      };
-}
 
 export default config;

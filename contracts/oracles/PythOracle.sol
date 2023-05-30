@@ -8,12 +8,6 @@ import "../interfaces/OracleInterface.sol";
 import "../interfaces/VBep20Interface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
-struct TokenConfig {
-    bytes32 pythId;
-    address asset;
-    uint64 maxStalePeriod;
-}
-
 /**
  * PythOracle contract reads prices from actual Pyth oracle contract which accepts, verifies and stores the
  * updated prices from external sources
@@ -24,6 +18,12 @@ contract PythOracle is AccessControlledV8, OracleInterface {
 
     // To cast int64/int8 types from Pyth to unsigned types
     using SafeCast for int256;
+
+    struct TokenConfig {
+        bytes32 pythId;
+        address asset;
+        uint64 maxStalePeriod;
+    }
 
     /// @notice Exponent scale (decimal precision) of prices
     uint256 public constant EXP_SCALE = 1e18;
@@ -38,7 +38,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
     mapping(address => TokenConfig) public tokenConfigs;
 
     /// @notice Emit when setting a new pyth oracle address
-    event PythOracleSet(address indexed newPythOracle);
+    event PythOracleSet(address indexed oldPythOracle, address indexed newPythOracle);
 
     /// @notice Emit when a token config is added
     event TokenConfigAdded(address indexed vToken, bytes32 indexed pythId, uint64 indexed maxStalePeriod);
@@ -61,11 +61,13 @@ contract PythOracle is AccessControlledV8, OracleInterface {
      * @custom:error Zero length error is thrown if length of the array in parameter is 0
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
-        _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         if (tokenConfigs_.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
-        for (uint256 i; i < numTokenConfigs; ++i) {
+        for (uint256 i; i < numTokenConfigs; ) {
             setTokenConfig(tokenConfigs_[i]);
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -79,9 +81,10 @@ contract PythOracle is AccessControlledV8, OracleInterface {
     function setUnderlyingPythOracle(
         IPyth underlyingPythOracle_
     ) external notNullAddress(address(underlyingPythOracle_)) {
-        _checkAccessAllowed("setUnderlyingPythOracle(IPyth)");
+        _checkAccessAllowed("setUnderlyingPythOracle(address)");
+        IPyth oldUnderlyingPythOracle = underlyingPythOracle;
         underlyingPythOracle = underlyingPythOracle_;
-        emit PythOracleSet(address(underlyingPythOracle_));
+        emit PythOracleSet(address(oldUnderlyingPythOracle), address(underlyingPythOracle_));
     }
 
     /**
@@ -89,26 +92,14 @@ contract PythOracle is AccessControlledV8, OracleInterface {
      * @param underlyingPythOracle_ Address of the Pyth oracle
      * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize(address underlyingPythOracle_, address accessControlManager_) public initializer {
+    function initialize(
+        address underlyingPythOracle_,
+        address accessControlManager_
+    ) external initializer notNullAddress(underlyingPythOracle_) {
         __AccessControlled_init(accessControlManager_);
 
-        if (underlyingPythOracle_ == address(0)) revert("pyth oracle cannot be zero address");
         underlyingPythOracle = IPyth(underlyingPythOracle_);
-        emit PythOracleSet(underlyingPythOracle_);
-    }
-
-    /**
-     * @notice Set single token config. `maxStalePeriod` cannot be 0 and `vToken` can be a null address
-     * @param tokenConfig Token config struct
-     * @custom:access Only Governance
-     * @custom:error Range error is thrown if max stale period is zero
-     * @custom:error NotNullAddress error is thrown if asset address is null
-     */
-    function setTokenConfig(TokenConfig memory tokenConfig) public notNullAddress(tokenConfig.asset) {
-        _checkAccessAllowed("setTokenConfig(TokenConfig)");
-        if (tokenConfig.maxStalePeriod == 0) revert("max stale period cannot be 0");
-        tokenConfigs[tokenConfig.asset] = tokenConfig;
-        emit TokenConfigAdded(tokenConfig.asset, tokenConfig.pythId, tokenConfig.maxStalePeriod);
+        emit PythOracleSet(address(0), underlyingPythOracle_);
     }
 
     function _getPriceInternal(address asset, uint256 decimals) internal view returns (uint256) {
@@ -150,5 +141,19 @@ contract PythOracle is AccessControlledV8, OracleInterface {
         }
 
         return _getPriceInternal(asset, decimals);
+    }
+
+    /**
+     * @notice Set single token config. `maxStalePeriod` cannot be 0 and `vToken` can be a null address
+     * @param tokenConfig Token config struct
+     * @custom:access Only Governance
+     * @custom:error Range error is thrown if max stale period is zero
+     * @custom:error NotNullAddress error is thrown if asset address is null
+     */
+    function setTokenConfig(TokenConfig memory tokenConfig) public notNullAddress(tokenConfig.asset) {
+        _checkAccessAllowed("setTokenConfig(TokenConfig)");
+        if (tokenConfig.maxStalePeriod == 0) revert("max stale period cannot be 0");
+        tokenConfigs[tokenConfig.asset] = tokenConfig;
+        emit TokenConfigAdded(tokenConfig.asset, tokenConfig.pythId, tokenConfig.maxStalePeriod);
     }
 }

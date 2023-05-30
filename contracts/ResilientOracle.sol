@@ -45,7 +45,9 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     /// @notice Set this as asset address for BNB. This is the underlying for vBNB
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
-    BoundValidatorInterface public boundValidator;
+    /// @notice Bound validator contract address
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    BoundValidatorInterface public immutable boundValidator;
 
     mapping(address => TokenConfig) private tokenConfigs;
 
@@ -83,11 +85,27 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     /// @notice Constructor for the implementation contract. Sets immutable variables.
     /// @param vBnbAddress The address of the vBNB
     /// @param vaiAddress The address of the VAI
+    /// @param _boundValidator Address of the bound validator contract
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress, address vaiAddress) notNullAddress(vBnbAddress) {
+    constructor(
+        address vBnbAddress,
+        address vaiAddress,
+        BoundValidatorInterface _boundValidator
+    ) notNullAddress(vBnbAddress) notNullAddress(vaiAddress) notNullAddress(address(_boundValidator)) {
         vBnb = vBnbAddress;
         vai = vaiAddress;
+        boundValidator = _boundValidator;
+
         _disableInitializers();
+    }
+
+    /**
+     * @notice Initializes the contract admin and sets the BoundValidator contract address
+     * @param accessControlManager_ Address of the access control manager contract
+     */
+    function initialize(address accessControlManager_) external initializer {
+        __AccessControlled_init(accessControlManager_);
+        __Pausable_init();
     }
 
     /**
@@ -112,14 +130,16 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @notice Batch sets token configs
      * @param tokenConfigs_ Token config array
      * @custom:access Only Governance
-     * @custom:error Throws a length error if the lenght of the token configs array is 0
+     * @custom:error Throws a length error if the length of the token configs array is 0
      */
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
-        _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         if (tokenConfigs_.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
-        for (uint256 i; i < numTokenConfigs; ++i) {
+        for (uint256 i; i < numTokenConfigs; ) {
             setTokenConfig(tokenConfigs_[i]);
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -140,7 +160,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         address oracle,
         OracleRole role
     ) external notNullAddress(asset) checkTokenConfigExistence(asset) {
-        _checkAccessAllowed("setOracle(address,address,OracleRole)");
+        _checkAccessAllowed("setOracle(address,address,uint8)");
         if (oracle == address(0) && role == OracleRole.MAIN) revert("can't set zero address to main oracle");
         tokenConfigs[asset].oracles[uint256(role)] = oracle;
         emit OracleSet(asset, oracle, uint256(role));
@@ -160,13 +180,13 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         OracleRole role,
         bool enable
     ) external notNullAddress(asset) checkTokenConfigExistence(asset) {
-        _checkAccessAllowed("enableOracle(address,OracleRole,bool)");
+        _checkAccessAllowed("enableOracle(address,uint8,bool)");
         tokenConfigs[asset].enableFlagsForOracles[uint256(role)] = enable;
         emit OracleEnabled(asset, uint256(role), enable);
     }
 
     /**
-     * @notice Updates the pivot oracle price. Currently using TWAP
+     * @notice Updates the TWAP pivot oracle price.
      * @dev This function should always be called before calling getUnderlyingPrice
      * @param vToken vToken address
      */
@@ -174,7 +194,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         address asset = _getUnderlyingAsset(vToken);
         (address pivotOracle, bool pivotOracleEnabled) = getOracle(asset, OracleRole.PIVOT);
         if (pivotOracle != address(0) && pivotOracleEnabled) {
-            //if **pivot** oracle is PythOrcle it will revert so we need to catch the revert
+            //if pivot oracle is not TwapOracle it will revert so we need to catch the revert
             try TwapInterface(pivotOracle).updateTwap(asset) {} catch {}
         }
     }
@@ -187,7 +207,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     function updateAssetPrice(address asset) external {
         (address pivotOracle, bool pivotOracleEnabled) = getOracle(asset, OracleRole.PIVOT);
         if (pivotOracle != address(0) && pivotOracleEnabled) {
-            //if **pivot** oracle is PythOrcle it will revert so we need to catch the revert
+            //if pivot oracle is not TwapOracle it will revert so we need to catch the revert
             try TwapInterface(pivotOracle).updateTwap(asset) {} catch {}
         }
     }
@@ -205,7 +225,8 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @notice Gets price of the underlying asset for a given vToken. Validation flow:
      * - Check if the oracle is paused globally
      * - Validate price from main oracle against pivot oracle
-     * - Validate price from fallback oracle against pivot oracle or main oracle if the first validation failed
+     * - Validate price from fallback oracle against pivot oracle if the first validation failed
+     * - Validate price from main oracle against fallback oracle if the second validation failed
      * In the case that the pivot oracle is not available but main price is available and validation is successful,
      * main oracle price is returned.
      * @param vToken vToken address
@@ -268,19 +289,6 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         }
 
         revert("invalid resilient oracle price");
-    }
-
-    /**
-     * @notice Initializes the contract admin and sets the BoundValidator contract address
-     * @param _boundValidator Address of the bound validator contract
-     * @param accessControlManager_ Address of the access control manager contract
-     */
-    function initialize(BoundValidatorInterface _boundValidator, address accessControlManager_) public initializer {
-        if (address(_boundValidator) == address(0)) revert("invalid bound validator address");
-        boundValidator = _boundValidator;
-
-        __AccessControlled_init(accessControlManager_);
-        __Pausable_init();
     }
 
     /**
@@ -393,7 +401,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @param vToken vToken address
      * @return asset underlying asset address
      */
-    function _getUnderlyingAsset(address vToken) internal view returns (address asset) {
+    function _getUnderlyingAsset(address vToken) private view returns (address asset) {
         if (address(vToken) == vBnb) {
             asset = BNB_ADDR;
         } else if (address(vToken) == vai) {

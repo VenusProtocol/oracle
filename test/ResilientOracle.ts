@@ -26,7 +26,7 @@ const getBoundValidator = async () => {
   return boundValidator;
 };
 
-describe("Oracle plugin frame unit tests", function () {
+describe("Oracle plugin frame unit tests", () => {
   before(async function () {
     const signers: SignerWithAddress[] = await ethers.getSigners();
     const admin = signers[0];
@@ -46,19 +46,15 @@ describe("Oracle plugin frame unit tests", function () {
     const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
     fakeAccessControlManager.isAllowedToCall.returns(true);
 
-    const ResilientOracle = await ethers.getContractFactory("ResilientOracle", this.admin);
-    const instance = <ResilientOracle>await upgrades.deployProxy(
-      ResilientOracle,
-      [this.boundValidator.address, fakeAccessControlManager.address],
-      {
-        constructorArgs: [this.vBnb, this.vai],
-      },
-    );
+    const resilientOracle = await ethers.getContractFactory("ResilientOracle", this.admin);
+    const instance = <ResilientOracle>await upgrades.deployProxy(resilientOracle, [fakeAccessControlManager.address], {
+      constructorArgs: [this.vBnb, this.vai, this.boundValidator.address],
+    });
     this.oracleBasement = instance;
   });
 
-  describe("token config", function () {
-    describe("add single token config", function () {
+  describe("token config", () => {
+    describe("add single token config", () => {
       it("vToken can\"t be zero & main oracle can't be zero", async function () {
         await expect(
           this.oracleBasement.setTokenConfig({
@@ -86,13 +82,13 @@ describe("Oracle plugin frame unit tests", function () {
         const asset = await vToken.underlying();
 
         await this.oracleBasement.setTokenConfig({
-          asset: asset,
+          asset,
           oracles: [addr1111, addr1111, addr1111],
           enableFlagsForOracles: [true, false, true],
         });
         expect((await this.oracleBasement.getTokenConfig(vToken.address)).enableFlagsForOracles[0]).to.equal(true);
         await this.oracleBasement.setTokenConfig({
-          asset: asset,
+          asset,
           oracles: [addr1111, addr0000, addr0000],
           enableFlagsForOracles: [false, false, true],
         });
@@ -108,7 +104,7 @@ describe("Oracle plugin frame unit tests", function () {
         const asset = await vToken.underlying();
 
         const result = await this.oracleBasement.setTokenConfig({
-          asset: asset,
+          asset,
           oracles: [addr1111, addr1111, addr1111],
           enableFlagsForOracles: [true, false, true],
         });
@@ -118,7 +114,7 @@ describe("Oracle plugin frame unit tests", function () {
       });
     });
 
-    describe("batch add token configs", function () {
+    describe("batch add token configs", () => {
       it("length check", async function () {
         await expect(this.oracleBasement.setTokenConfigs([])).to.be.revertedWith("length can't be 0");
       });
@@ -159,8 +155,8 @@ describe("Oracle plugin frame unit tests", function () {
     });
   });
 
-  describe("change oracle", function () {
-    describe("set oracle", function () {
+  describe("change oracle", () => {
+    describe("set oracle", () => {
       it("null check", async function () {
         const vToken = await makeVToken(
           this.admin,
@@ -174,7 +170,7 @@ describe("Oracle plugin frame unit tests", function () {
 
         // main oracle can't be zero
         await this.oracleBasement.setTokenConfig({
-          asset: asset,
+          asset,
           oracles: [addr1111, addr1111, addr0000],
           enableFlagsForOracles: [true, false, true],
         });
@@ -206,7 +202,7 @@ describe("Oracle plugin frame unit tests", function () {
         const asset = await vToken.underlying();
 
         await this.oracleBasement.setTokenConfig({
-          asset: asset,
+          asset,
           oracles: [addr1111, addr1111, addr0000],
           enableFlagsForOracles: [true, false, true],
         });
@@ -226,7 +222,7 @@ describe("Oracle plugin frame unit tests", function () {
     });
   });
 
-  describe("get underlying price", function () {
+  describe("get underlying price", () => {
     let token1;
     let asset1;
     let token2;
@@ -349,11 +345,11 @@ describe("Oracle plugin frame unit tests", function () {
       await expect(this.oracleBasement.getUnderlyingPrice(token2)).to.be.revertedWith("invalid resilient oracle price");
     });
     it("Return fallback price when fallback price is validated successfully with pivot oracle", async function () {
-      //main oracle price is invalid
+      // main oracle price is invalid
       await this.mainOracle.getUnderlyingPrice.whenCalledWith(token1).returns(0);
       await this.pivotOracle.getUnderlyingPrice.whenCalledWith(token1).returns(1000);
       await this.fallbackOracle.getUnderlyingPrice.whenCalledWith(token1).returns(2000);
-      //fallback oracle is enabled
+      // fallback oracle is enabled
       await this.oracleBasement.enableOracle(asset1, 0, false);
       await this.oracleBasement.enableOracle(asset1, 2, true);
       await this.boundValidator.validatePriceWithAnchorPrice.returns(true);
@@ -361,10 +357,10 @@ describe("Oracle plugin frame unit tests", function () {
     });
     it("Return main price when fallback price validation failed with pivot oracle", async function () {
       await this.mainOracle.getUnderlyingPrice.whenCalledWith(token1).returns(2000);
-      //pivot oracle price is invalid
+      // pivot oracle price is invalid
       await this.pivotOracle.getUnderlyingPrice.whenCalledWith(token1).returns(0);
       await this.fallbackOracle.getUnderlyingPrice.whenCalledWith(token1).returns(1000);
-      //fallback oracle is enabled
+      // fallback oracle is enabled
       await this.oracleBasement.enableOracle(asset1, 2, true);
       await this.boundValidator.validatePriceWithAnchorPrice.returns(true);
       expect(await this.oracleBasement.getUnderlyingPrice(token1)).to.be.equal(2000);

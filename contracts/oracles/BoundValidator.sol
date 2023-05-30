@@ -5,20 +5,20 @@ import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
-struct ValidateConfig {
-    /// @notice asset address
-    address asset;
-    /// @notice Upper bound of deviation between reported price and anchor price,
-    /// beyond which the reported price will be invalidated
-    uint256 upperBoundRatio;
-    /// @notice Lower bound of deviation between reported price and anchor price,
-    /// below which the reported price will be invalidated
-    uint256 lowerBoundRatio;
-}
-
 // BoundValidator provides some common functions and can be used
 // to wrap up other contracts to form pivot oracles
 contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
+    struct ValidateConfig {
+        /// @notice asset address
+        address asset;
+        /// @notice Upper bound of deviation between reported price and anchor price,
+        /// beyond which the reported price will be invalidated
+        uint256 upperBoundRatio;
+        /// @notice Lower bound of deviation between reported price and anchor price,
+        /// below which the reported price will be invalidated
+        uint256 lowerBoundRatio;
+    }
+
     /// @notice validation configs by asset
     mapping(address => ValidateConfig) public validateConfigs;
 
@@ -38,13 +38,14 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
      * @custom:error Zero length error is thrown if length of the config array is 0
      * @custom:event Emits ValidateConfigAdded for each validation config that is successfully set
      */
-    function setValidateConfigs(ValidateConfig[] memory configs) external virtual {
-        _checkAccessAllowed("setValidateConfigs(ValidateConfig[])");
-
+    function setValidateConfigs(ValidateConfig[] memory configs) external {
         uint256 length = configs.length;
         if (length == 0) revert("invalid validate config length");
-        for (uint256 i; i < length; ++i) {
+        for (uint256 i; i < length; ) {
             setValidateConfig(configs[i]);
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -52,27 +53,8 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
      * @notice Initializes the owner of the contract
      * @param accessControlManager_ Address of the access control manager contract
      */
-    function initialize(address accessControlManager_) public initializer {
+    function initialize(address accessControlManager_) external initializer {
         __AccessControlled_init(accessControlManager_);
-    }
-
-    /**
-     * @notice Add a single validation config
-     * @param config Validation config struct
-     * @custom:access Only Governance
-     * @custom:error Null address error is thrown if asset address is null
-     * @custom:error Range error thrown if bound ratio is not positive
-     * @custom:error Range error thrown if lower bound is greater than upper bound
-     * @custom:event Emits ValidateConfigAdded when a validation config is successfully set
-     */
-    function setValidateConfig(ValidateConfig memory config) public virtual {
-        _checkAccessAllowed("setValidateConfig(ValidateConfig)");
-
-        if (config.asset == address(0)) revert("asset can't be zero address");
-        if (config.upperBoundRatio == 0 || config.lowerBoundRatio == 0) revert("bound must be positive");
-        if (config.upperBoundRatio <= config.lowerBoundRatio) revert("upper bound must be higher than lowner bound");
-        validateConfigs[config.asset] = config;
-        emit ValidateConfigAdded(config.asset, config.upperBoundRatio, config.lowerBoundRatio);
     }
 
     /**
@@ -93,14 +75,34 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
     }
 
     /**
+     * @notice Add a single validation config
+     * @param config Validation config struct
+     * @custom:access Only Governance
+     * @custom:error Null address error is thrown if asset address is null
+     * @custom:error Range error thrown if bound ratio is not positive
+     * @custom:error Range error thrown if lower bound is greater than or equal to upper bound
+     * @custom:event Emits ValidateConfigAdded when a validation config is successfully set
+     */
+    function setValidateConfig(ValidateConfig memory config) public {
+        _checkAccessAllowed("setValidateConfig(ValidateConfig)");
+
+        if (config.asset == address(0)) revert("asset can't be zero address");
+        if (config.upperBoundRatio == 0 || config.lowerBoundRatio == 0) revert("bound must be positive");
+        if (config.upperBoundRatio <= config.lowerBoundRatio) revert("upper bound must be higher than lowner bound");
+        validateConfigs[config.asset] = config;
+        emit ValidateConfigAdded(config.asset, config.upperBoundRatio, config.lowerBoundRatio);
+    }
+
+    /**
      * @notice Test whether the reported price is within the valid bounds
      * @param asset Asset address
      * @param reportedPrice The price to be tested
      * @param anchorPrice The reported price must be within the the valid bounds of this price
      */
-    function _isWithinAnchor(address asset, uint256 reportedPrice, uint256 anchorPrice) internal view returns (bool) {
+    function _isWithinAnchor(address asset, uint256 reportedPrice, uint256 anchorPrice) private view returns (bool) {
         if (reportedPrice != 0) {
-            uint256 anchorRatio = (anchorPrice * 100e16) / reportedPrice;
+            // we need to multiply anchorPrice by 1e18 to make the ratio 18 decimals
+            uint256 anchorRatio = (anchorPrice * 1e18) / reportedPrice;
             uint256 upperBoundAnchorRatio = validateConfigs[asset].upperBoundRatio;
             uint256 lowerBoundAnchorRatio = validateConfigs[asset].lowerBoundRatio;
             return anchorRatio <= upperBoundAnchorRatio && anchorRatio >= lowerBoundAnchorRatio;

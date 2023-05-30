@@ -6,6 +6,7 @@ import "../interfaces/VBep20Interface.sol";
 import "../interfaces/SIDRegistryInterface.sol";
 import "../interfaces/FeedRegistryInterface.sol";
 import "../interfaces/PublicResolverInterface.sol";
+import "../interfaces/OracleInterface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 import "../interfaces/OracleInterface.sol";
 
@@ -34,7 +35,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
     function setMaxStalePeriod(string memory symbol, uint256 _maxStalePeriod) external {
         _checkAccessAllowed("setMaxStalePeriod(string,uint256)");
         if (_maxStalePeriod == 0) revert("stale period can't be zero");
-        if (compare(symbol, "")) revert("symbol cannot be empty");
+        if (bytes(symbol).length == 0) revert("symbol cannot be empty");
 
         maxStalePeriod[symbol] = _maxStalePeriod;
         emit MaxStalePeriodAdded(symbol, _maxStalePeriod);
@@ -45,7 +46,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
      * @param _sidRegistryAddress Address of SID registry
      * @param _accessControlManager Address of the access control manager contract
      */
-    function initialize(address _sidRegistryAddress, address _accessControlManager) public initializer {
+    function initialize(address _sidRegistryAddress, address _accessControlManager) external initializer {
         sidRegistryAddress = _sidRegistryAddress;
         __AccessControlled_init(_accessControlManager);
     }
@@ -105,7 +106,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
      * @param str2 The second string
      * @return equal Returns true if both are equal or else false.
      */
-    function compare(string memory str1, string memory str2) internal pure returns (bool) {
-        return keccak256(abi.encodePacked(str1)) == keccak256(abi.encodePacked(str2));
+    function compare(string memory str1, string memory str2) private pure returns (bool) {
+        return keccak256(bytes(str1)) == keccak256(bytes(str2));
     }
 }

@@ -11,17 +11,17 @@ import { makeVToken } from "./utils/makeVToken";
 const EXP_SCALE = BigNumber.from(10).pow(18);
 
 const getBoundValidator = async (account: SignerWithAddress, vBnb: string, vai: string) => {
-  const BoundValidator = await ethers.getContractFactory("BoundValidator", account);
+  const boundValidator = await ethers.getContractFactory("BoundValidator", account);
 
   const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
   fakeAccessControlManager.isAllowedToCall.returns(true);
 
-  return <BoundValidator>await upgrades.deployProxy(BoundValidator, [fakeAccessControlManager.address], {
+  return <BoundValidator>await upgrades.deployProxy(boundValidator, [fakeAccessControlManager.address], {
     constructorArgs: [vBnb, vai],
   });
 };
 
-describe("bound validator", function () {
+describe("bound validator", () => {
   beforeEach(async function () {
     const signers: SignerWithAddress[] = await ethers.getSigners();
     const admin = signers[0];
@@ -33,7 +33,7 @@ describe("bound validator", function () {
     this.vToken = await makeVToken(admin, { name: "vToken", symbol: "vToken" }, { name: "Token", symbol: "Token" });
     this.bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
   });
-  describe("add validation config", function () {
+  describe("add validation config", () => {
     it("length check", async function () {
       await expect(this.boundValidator.setValidateConfigs([])).to.be.revertedWith("invalid validate config length");
     });
@@ -71,7 +71,7 @@ describe("bound validator", function () {
     });
   });
 
-  describe("validate price", function () {
+  describe("validate price", () => {
     it("validate price", async function () {
       const token0 = await makeVToken(
         this.admin,
@@ -120,7 +120,7 @@ describe("bound validator", function () {
     });
 
     it("validate vBnb price", async function () {
-      const vBnb = this.vBnb;
+      const { vBnb } = this;
       const validationConfig = {
         asset: this.bnbAddr,
         upperBoundRatio: EXP_SCALE.mul(12).div(10),

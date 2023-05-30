@@ -31,13 +31,13 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
   const networkName = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
 
-  const vBNBAddress = ADDRESSES[networkName].vBNBAddress;
-  const VAIAddress = ADDRESSES[networkName].VAIAddress;
-  const WBNBAddress = ADDRESSES[networkName].WBNBAddress;
+  const { vBNBAddress } = ADDRESSES[networkName];
+  const { VAIAddress } = ADDRESSES[networkName];
+  const { WBNBAddress } = ADDRESSES[networkName];
 
   let accessControlManager;
-  if (!ADDRESSES[networkName].acm) {
-    await deploy("AccessControlManager", {
+  if (!network.live) {
+    await deploy("AccessControlManagerScenario", {
       from: deployer,
       args: [],
       log: true,
@@ -46,10 +46,8 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
     accessControlManager = await hre.ethers.getContract("AccessControlManagerScenario");
   }
-  const accessControlManagerAddress = ADDRESSES[networkName].acm
-    ? ADDRESSES[networkName].acm
-    : accessControlManager?.address;
-  const proxyOwnerAddress = ADDRESSES[networkName].acm ? ADDRESSES[networkName].timelock : deployer;
+  const accessControlManagerAddress = network.live ? ADDRESSES[networkName].acm : accessControlManager?.address;
+  const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
 
   await deploy("BoundValidator", {
     from: deployer,
@@ -72,13 +70,13 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [vBNBAddress, VAIAddress],
+    args: [vBNBAddress, VAIAddress, boundValidator.address],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
       execute: {
         methodName: "initialize",
-        args: [boundValidator.address, accessControlManagerAddress],
+        args: [accessControlManagerAddress],
       },
     },
   });
@@ -115,7 +113,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
-  const pythOracleAddress = ADDRESSES[networkName].pythOracleAddress;
+  const { pythOracleAddress } = ADDRESSES[networkName];
 
   await deploy("PythOracle", {
     contract: network.live ? "PythOracle" : "MockPythOracle",
@@ -133,7 +131,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
-  const sidRegistryAddress = ADDRESSES[networkName].sidRegistryAddress;
+  const { sidRegistryAddress } = ADDRESSES[networkName];
 
   await deploy("BinanceOracle", {
     contract: network.live ? "BinanceOracle" : "MockBinanceOracle",
@@ -157,11 +155,9 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const binanceOracle = await hre.ethers.getContract("BinanceOracle");
   const twapOracle = await hre.ethers.getContract("TwapOracle");
 
-  if (!ADDRESSES[networkName].acm) {
-    await accessControlManager?.giveCallPermission(chainlinkOracle.address, "setTokenConfig(TokenConfig)", deployer);
-    await accessControlManager?.giveCallPermission(pythOracle.address, "setTokenConfig(TokenConfig)", deployer);
-    await accessControlManager?.giveCallPermission(resilientOracle.address, "setTokenConfig(TokenConfig)", deployer);
-  }
+  await accessControlManager?.giveCallPermission(chainlinkOracle.address, "setTokenConfig(TokenConfig)", deployer);
+  await accessControlManager?.giveCallPermission(pythOracle.address, "setTokenConfig(TokenConfig)", deployer);
+  await accessControlManager?.giveCallPermission(resilientOracle.address, "setTokenConfig(TokenConfig)", deployer);
 
   const resilientOracleOwner = await resilientOracle.owner();
   const pythOracleOwner = await pythOracle.owner();
@@ -170,30 +166,30 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const twapOracleOwner = await twapOracle.owner();
   const boundValidatorOwner = await boundValidator.owner();
 
-  if (resilientOracleOwner == deployer) {
+  if (resilientOracleOwner === deployer) {
     await resilientOracle.transferOwnership(ADDRESSES[networkName].timelock);
   }
 
-  if (pythOracleOwner == deployer) {
+  if (pythOracleOwner === deployer) {
     await pythOracle.transferOwnership(ADDRESSES[networkName].timelock);
   }
 
-  if (binanceOracleOwner == deployer) {
+  if (binanceOracleOwner === deployer) {
     await binanceOracle.transferOwnership(ADDRESSES[networkName].timelock);
   }
 
-  if (chainlinkOracleOwner == deployer) {
+  if (chainlinkOracleOwner === deployer) {
     await chainlinkOracle.transferOwnership(ADDRESSES[networkName].timelock);
   }
 
-  if (twapOracleOwner == deployer) {
+  if (twapOracleOwner === deployer) {
     await twapOracle.transferOwnership(ADDRESSES[networkName].timelock);
   }
 
-  if (boundValidatorOwner == deployer) {
+  if (boundValidatorOwner === deployer) {
     await boundValidator.transferOwnership(ADDRESSES[networkName].timelock);
   }
 };
 
-module.exports = func;
-module.exports.tags = ["deploy"];
+export default func;
+export const tags = ["deploy"];

@@ -7,29 +7,29 @@ import "../interfaces/OracleInterface.sol";
 import "../interfaces/VBep20Interface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
-struct Observation {
-    uint256 timestamp;
-    uint256 acc;
-}
-
-struct TokenConfig {
-    /// @notice Asset address, which can't be zero address and can be used for existance check
-    address asset;
-    /// @notice Decimals of underlying asset
-    uint256 baseUnit;
-    /// @notice The address of Pancake pair
-    address pancakePool;
-    /// @notice Whether the token is paired with WBNB
-    bool isBnbBased;
-    /// @notice A flag identifies whether the Pancake pair is reversed
-    /// e.g. XVS-WBNB is not reversed, while WBNB-XVS is.
-    bool isReversedPool;
-    /// @notice The minimum window in seconds required between TWAP updates
-    uint256 anchorPeriod;
-}
-
 contract TwapOracle is AccessControlledV8, TwapInterface {
     using FixedPoint for *;
+
+    struct Observation {
+        uint256 timestamp;
+        uint256 acc;
+    }
+
+    struct TokenConfig {
+        /// @notice Asset address, which can't be zero address and can be used for existance check
+        address asset;
+        /// @notice Decimals of underlying asset represented as 1e{decimals}
+        uint256 baseUnit;
+        /// @notice The address of Pancake pair
+        address pancakePool;
+        /// @notice Whether the token is paired with WBNB
+        bool isBnbBased;
+        /// @notice A flag identifies whether the Pancake pair is reversed
+        /// e.g. XVS-WBNB is reversed, while WBNB-XVS is not.
+        bool isReversedPool;
+        /// @notice The minimum window in seconds required between TWAP updates
+        uint256 anchorPeriod;
+    }
 
     /// @notice Set this as asset address for BNB. This is the underlying for vBNB
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
@@ -39,8 +39,8 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     address public immutable WBNB;
 
     /// @notice the base unit of WBNB and BUSD, which are the paired tokens for all assets
-    uint256 public constant bnbBaseUnit = 1e18;
-    uint256 public constant busdBaseUnit = 1e18;
+    uint256 public constant BNB_BASE_UNIT = 1e18;
+    uint256 public constant BUSD_BASE_UNIT = 1e18;
 
     /// @notice Configs by token
     mapping(address => TokenConfig) public tokenConfigs;
@@ -90,12 +90,22 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
      * @custom:error Zero length error thrown, if length of the config array is 0
      */
     function setTokenConfigs(TokenConfig[] memory configs) external {
-        _checkAccessAllowed("setTokenConfigs(TokenConfig[])");
         if (configs.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = configs.length;
-        for (uint256 i; i < numTokenConfigs; ++i) {
+        for (uint256 i; i < numTokenConfigs; ) {
             setTokenConfig(configs[i]);
+            unchecked {
+                ++i;
+            }
         }
+    }
+
+    /**
+     * @notice Initializes the owner of the contract
+     * @param accessControlManager_ Address of the access control manager contract
+     */
+    function initialize(address accessControlManager_) external initializer {
+        __AccessControlled_init(accessControlManager_);
     }
 
     /**
@@ -124,14 +134,6 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     }
 
     /**
-     * @notice Initializes the owner of the contract
-     * @param accessControlManager_ Address of the access control manager contract
-     */
-    function initialize(address accessControlManager_) public initializer {
-        __AccessControlled_init(accessControlManager_);
-    }
-
-    /**
      * @notice Adds a single token config
      * @param config token config struct
      * @custom:access Only Governance
@@ -149,7 +151,6 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
         _checkAccessAllowed("setTokenConfig(TokenConfig)");
 
         if (config.anchorPeriod == 0) revert("anchor period must be positive");
-        if (config.baseUnit == 0) revert("base unit must be positive");
         if (config.baseUnit != 10 ** IERC20Metadata(config.asset).decimals())
             revert("base unit decimals must be same as asset decimals");
 
@@ -198,7 +199,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
      * @custom:event Emits AnchorPriceUpdated event on successful update of observation with assset address,
      * AnchorPrice, old observation timestamp and current timestamp
      */
-    function _updateTwapInternal(TokenConfig memory config) internal virtual returns (uint256) {
+    function _updateTwapInternal(TokenConfig memory config) private returns (uint256) {
         // pokeWindowValues already handled reversed pool cases,
         // priceAverage will always be Token/BNB or Token/BUSD *twap** price.
         (uint256 nowCumulativePrice, uint256 oldCumulativePrice, uint256 oldTimestamp) = pokeWindowValues(config);
@@ -208,7 +209,10 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
         // This should be impossible, but better safe than sorry
         if (block.timestamp < oldTimestamp) revert("now must come after before");
 
-        uint256 timeElapsed = block.timestamp - oldTimestamp;
+        uint256 timeElapsed;
+        unchecked {
+            timeElapsed = block.timestamp - oldTimestamp;
+        }
 
         // Calculate Pancake *twap**
         FixedPoint.uq112x112 memory priceAverage = FixedPoint.uq112x112(
@@ -218,15 +222,15 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
         uint256 priceAverageMantissa = priceAverage.decode112with18();
 
         // To cancel the decimals in cumulative price, we need to mulitply the average price with
-        // tokenBaseUnit / (wbnbBaseUnit or busdBaseUnit, which is 1e18)
-        uint256 pairedTokenBaseUnit = config.isBnbBased ? bnbBaseUnit : busdBaseUnit;
+        // tokenBaseUnit / (BNB_BASE_UNIT or BUSD_BASE_UNIT, which is 1e18)
+        uint256 pairedTokenBaseUnit = config.isBnbBased ? BNB_BASE_UNIT : BUSD_BASE_UNIT;
         uint256 anchorPriceMantissa = (priceAverageMantissa * config.baseUnit) / pairedTokenBaseUnit;
 
         // if this token is paired with BNB, convert its price to USD
         if (config.isBnbBased) {
             uint256 bnbPrice = prices[WBNB];
             if (bnbPrice == 0) revert("bnb price is invalid");
-            anchorPriceMantissa = (anchorPriceMantissa * bnbPrice) / bnbBaseUnit;
+            anchorPriceMantissa = (anchorPriceMantissa * bnbPrice) / BNB_BASE_UNIT;
         }
 
         if (anchorPriceMantissa == 0) revert("twap price cannot be 0");
@@ -250,18 +254,14 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
      */
     function pokeWindowValues(
         TokenConfig memory config
-    ) internal returns (uint256, uint256 startCumulativePrice, uint256 startCumulativeTimestamp) {
+    ) private returns (uint256, uint256 startCumulativePrice, uint256 startCumulativeTimestamp) {
         uint256 cumulativePrice = currentCumulativePrice(config);
         uint256 currentTimestamp = block.timestamp;
         uint256 windowStartTimestamp = currentTimestamp - config.anchorPeriod;
         Observation[] memory storedObservations = observations[config.asset];
 
         uint256 storedObservationsLength = storedObservations.length;
-        for (
-            uint256 windowStartIndex = windowStart[config.asset];
-            windowStartIndex < storedObservationsLength;
-            ++windowStartIndex
-        ) {
+        for (uint256 windowStartIndex = windowStart[config.asset]; windowStartIndex < storedObservationsLength; ) {
             if (
                 (storedObservations[windowStartIndex].timestamp >= windowStartTimestamp) ||
                 (windowStartIndex == storedObservationsLength - 1)
@@ -272,6 +272,10 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
                 break;
             } else {
                 delete observations[config.asset][windowStartIndex];
+            }
+
+            unchecked {
+                ++windowStartIndex;
             }
         }
 
