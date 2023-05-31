@@ -35,7 +35,7 @@ describe("Binance Oracle unit tests", () => {
       binanceOracle,
       [sidRegistry.address, fakeAccessControlManager.address],
       {
-        constructorArgs: [this.vBnb.address, this.vai],
+        constructorArgs: [],
       },
     );
 
