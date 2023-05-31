@@ -8,8 +8,8 @@ import { AccessControlManager } from "../typechain-types";
 import { ChainlinkOracle } from "../typechain-types/contracts/oracles/ChainlinkOracle";
 import { addr0000 } from "./utils/data";
 import { makeChainlinkOracle } from "./utils/makeChainlinkOracle";
-import { makeVToken } from "./utils/makeVToken";
 import { getTime, increaseTime } from "./utils/time";
+import { makeToken } from "./utils/makeToken";
 
 const MAX_STALE_PERIOD = 60 * 15; // 15min
 
@@ -21,23 +21,15 @@ describe("Oracle unit tests", () => {
     this.admin = admin;
 
     this.bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
-    this.vToken = await makeVToken(admin, { name: "vToken", symbol: "vToken" }, { name: "Token", symbol: "Token" });
+    this.token = await makeToken(admin, "Token", "Token");
     this.vBnb = signers[5]; // Not your standard vToken
-    this.vai = await makeVToken(admin, { name: "VAI", symbol: "VAI" });
-    this.xvs = await makeVToken(admin, { name: "XVS", symbol: "XVS" });
-    this.vExampleSet = await makeVToken(admin, { name: "vExampleSet", symbol: "vExampleSet" });
-    this.vExampleUnset = await makeVToken(admin, { name: "vExampleUnset", symbol: "vExampleUnset" });
-    this.vUsdc = await makeVToken(
-      admin,
-      { name: "vUSDC", symbol: "vUSDC" },
-      { name: "USDC", symbol: "USDC", decimals: 6 },
-    );
-    this.vUsdt = await makeVToken(
-      admin,
-      { name: "vUSDT", symbol: "vUSDT" },
-      { name: "USDT", symbol: "USDT", decimals: 6 },
-    );
-    this.vDai = await makeVToken(admin, { name: "vDAI", symbol: "vDAI" }, { name: "DAI", symbol: "DAI", decimals: 18 });
+    this.vai = await makeToken(admin, "VAI", "VAI");
+    this.xvs = await makeToken(admin, "XVS", "XVS");
+    this.exampleSet = await makeToken(admin, "ExampleSet", "ExampleSet");
+    this.exampleUnset = await makeToken(admin, "ExampleUnset", "ExampleUnset");
+    this.usdc = await makeToken(admin, "USDC", "USDC", 6);
+    this.usdt = await makeToken(admin, "USDT", "USDT", 6);
+    this.dai = await makeToken(admin, "DAI", "DAI", 18);
 
     this.bnbFeed = await makeChainlinkOracle(admin, 8, 30000000000);
     this.usdcFeed = await makeChainlinkOracle(admin, 8, 100000000);
@@ -49,7 +41,7 @@ describe("Oracle unit tests", () => {
     fakeAccessControlManager.isAllowedToCall.returns(true);
 
     const instance = <ChainlinkOracle>await upgrades.deployProxy(chainlinkOracle, [fakeAccessControlManager.address], {
-      constructorArgs: [this.vBnb.address, this.vai.address],
+      constructorArgs: [],
     });
     this.chainlinkOracle = instance;
     return instance;
@@ -111,7 +103,7 @@ describe("Oracle unit tests", () => {
           maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD).mul(2),
         },
         {
-          asset: await this.vUsdt.underlying(),
+          asset: await this.usdt.address,
           feed: this.usdtFeed.address,
           maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD).mul(3),
         },
@@ -119,7 +111,7 @@ describe("Oracle unit tests", () => {
 
       const [, newBnbFeed, newBnbStalePeriod] = await this.chainlinkOracle.tokenConfigs(this.bnbAddr);
       const [, newUsdtFeed, newUsdtStalePeriod] = await this.chainlinkOracle.tokenConfigs(
-        await this.vUsdt.underlying(),
+        await this.usdt.address,
       );
 
       expect(newBnbFeed).to.equal(this.bnbFeed.address);
@@ -129,7 +121,7 @@ describe("Oracle unit tests", () => {
     });
   });
 
-  describe("getUnderlyingPrice", () => {
+  describe("getPrice", () => {
     beforeEach(async function () {
       await this.chainlinkOracle.setTokenConfig({
         asset: this.bnbAddr,
@@ -137,22 +129,22 @@ describe("Oracle unit tests", () => {
         maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
       });
       await this.chainlinkOracle.setTokenConfig({
-        asset: await this.vUsdc.underlying(),
+        asset: await this.usdc.address,
         feed: this.usdcFeed.address,
         maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
       });
       await this.chainlinkOracle.setTokenConfig({
-        asset: await this.vUsdt.underlying(),
+        asset: await this.usdt.address,
         feed: this.usdtFeed.address,
         maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
       });
       await this.chainlinkOracle.setTokenConfig({
-        asset: await this.vDai.underlying(),
+        asset: await this.dai.address,
         feed: this.daiFeed.address,
         maxStalePeriod: BigNumber.from(MAX_STALE_PERIOD),
       });
       await this.chainlinkOracle.setDirectPrice(this.xvs.address, 7);
-      await this.chainlinkOracle.setUnderlyingPrice(this.vExampleSet.underlying(), 1);
+      await this.chainlinkOracle.setDirectPrice(this.exampleSet.address, 1);
     });
 
     it("gets the price from Chainlink for vBNB", async function () {
@@ -161,38 +153,29 @@ describe("Oracle unit tests", () => {
     });
 
     it("gets the price from Chainlink for USDC", async function () {
-      const price = await this.chainlinkOracle.getPrice(this.vUsdc.underlying());
+      const price = await this.chainlinkOracle.getPrice(this.usdc.address);
       expect(price).to.equal("1000000000000000000000000000000");
     });
 
     it("gets the price from Chainlink for USDT", async function () {
-      const price = await this.chainlinkOracle.getPrice(this.vUsdt.underlying());
+      const price = await this.chainlinkOracle.getPrice(this.usdt.address);
       expect(price).to.equal("1000000000000000000000000000000");
     });
 
     it("gets the price from Chainlink for DAI", async function () {
-      const price = await this.chainlinkOracle.getPrice(this.vDai.underlying());
+      const price = await this.chainlinkOracle.getPrice(this.dai.address);
       expect(price).to.equal("1000000000000000000");
     });
 
     it("gets the direct price of a set asset", async function () {
-      const price = await this.chainlinkOracle.getPrice(this.vExampleSet.underlying());
+      const price = await this.chainlinkOracle.getPrice(this.exampleSet.address);
       expect(price).to.equal("1");
     });
 
     it("reverts if no price or feed has been set", async function () {
-      await expect(this.chainlinkOracle.getPrice(this.vExampleUnset.underlying())).to.revertedWith(
+      await expect(this.chainlinkOracle.getPrice(this.exampleUnset.address)).to.revertedWith(
         "can't be zero address",
       );
-    });
-  });
-
-  describe("setUnderlyingPrice", () => {
-    it("sets the underlying price", async function () {
-      await this.chainlinkOracle.setUnderlyingPrice(this.vExampleSet.address, 1);
-      const underlying = await this.vExampleSet.underlying();
-      const price = await this.chainlinkOracle.prices(underlying);
-      expect(price).to.be.equal("1");
     });
   });
 
