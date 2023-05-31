@@ -120,6 +120,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
 
         if (asset == BNB_ADDR) {
             decimals = 18;
+            asset = WBNB;
         } else {
             IERC20Metadata token = IERC20Metadata(asset);
             decimals = token.decimals();
@@ -168,6 +169,10 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
      * @custom:error Missing error is thrown if token config does not exist
      */
     function updateTwap(address asset) public returns (uint256) {
+        if (asset == BNB_ADDR) {
+            asset = WBNB;
+        }
+        
         if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
         // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
         if (asset != WBNB && tokenConfigs[asset].isBnbBased) {
