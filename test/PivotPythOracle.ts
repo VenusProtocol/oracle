@@ -7,12 +7,11 @@ import { artifacts, ethers, upgrades, waffle } from "hardhat";
 import { AccessControlManager, BoundValidator, PythOracle } from "../typechain-types";
 import { MockPyth } from "../typechain-types/contracts/test/MockPyth";
 import { addr0000, addr1111, getBytes32String, getSimpleAddress } from "./utils/data";
-import { getTime, increaseTime } from "./utils/time";
 import { makeToken } from "./utils/makeToken";
+import { getTime, increaseTime } from "./utils/time";
 
 const EXP_SCALE = BigNumber.from(10).pow(18);
 const bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
-      
 
 const getPythOracle = async (account: SignerWithAddress) => {
   const actualOracleArtifact = await artifacts.readArtifact("MockPyth");
@@ -166,7 +165,7 @@ describe("Oracle plugin frame unit tests", () => {
         },
       ]);
 
-      this.eth = await makeToken(this.admin, "ETH", "ETH") 
+      this.eth = await makeToken(this.admin, "ETH", "ETH");
     });
     it("revert when asset not exist", async function () {
       await expect(this.pythOracle.getPrice(this.eth.address)).to.be.revertedWith("asset doesn't exist");
@@ -210,19 +209,15 @@ describe("Oracle plugin frame unit tests", () => {
       });
 
       // test negative price
-      await expect(this.pythOracle.getPrice(this.eth.address)).to.be.revertedWith(
-        "SafeCast: value must be positive",
-      );
+      await expect(this.pythOracle.getPrice(this.eth.address)).to.be.revertedWith("SafeCast: value must be positive");
 
       feed.price.price = BigNumber.from(0);
       await this.underlyingPythOracle.updatePriceFeedsHarness([feed]);
-      await expect(this.pythOracle.getPrice(this.eth.address)).to.be.revertedWith(
-        "invalid pyth oracle price",
-      );
+      await expect(this.pythOracle.getPrice(this.eth.address)).to.be.revertedWith("invalid pyth oracle price");
     });
 
     it("price should be 18 decimals", async function () {
-      let token = await makeToken(this.admin, "ETH", "ETH")
+      let token = await makeToken(this.admin, "ETH", "ETH");
 
       await this.pythOracle.setTokenConfig({
         asset: await this.eth.address,
@@ -234,12 +229,7 @@ describe("Oracle plugin frame unit tests", () => {
       // 10000000 * 10**-6 * 10**18 * 10**0 = 1e19
       expect(price).to.equal(BigNumber.from(10).pow(19));
 
-      token = await makeToken(
-        this.admin,
-        "BTC",
-        "BTC",
-        8
-      );
+      token = await makeToken(this.admin, "BTC", "BTC", 8);
 
       // test another token
       await this.pythOracle.setTokenConfig({
@@ -256,11 +246,7 @@ describe("Oracle plugin frame unit tests", () => {
 
   describe("validation", () => {
     it("validate price", async function () {
-      const token = await makeToken(
-        this.admin,
-        "ETH",
-        "ETH",
-      );
+      const token = await makeToken(this.admin, "ETH", "ETH");
 
       const validationConfig = {
         asset: await token.address,

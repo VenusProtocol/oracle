@@ -70,17 +70,9 @@ describe("bound validator", () => {
 
   describe("validate price", () => {
     it("validate price", async function () {
-      const token0 = await makeToken(
-        this.admin,
-        "Token1",
-        "Token1"
-      );
+      const token0 = await makeToken(this.admin, "Token1", "Token1");
 
-      const token1 = await makeToken(
-        this.admin,
-        "Token2",
-        "Token2"
-      );
+      const token1 = await makeToken(this.admin, "Token2", "Token2");
       const validationConfig = {
         asset: token0.address,
         upperBoundRatio: EXP_SCALE.mul(12).div(10),

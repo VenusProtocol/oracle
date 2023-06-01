@@ -208,11 +208,7 @@ describe("Oracle plugin frame unit tests", () => {
         });
 
         await this.oracleBasement.setOracle(asset, getSimpleAddress(2), 1);
-        expect((await this.oracleBasement.getTokenConfig(asset)).enableFlagsForOracles).to.eql([
-          true,
-          false,
-          true,
-        ]);
+        expect((await this.oracleBasement.getTokenConfig(asset)).enableFlagsForOracles).to.eql([true, false, true]);
         expect((await this.oracleBasement.getTokenConfig(asset)).oracles).to.eql([
           addr1111,
           getSimpleAddress(2),

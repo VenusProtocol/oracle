@@ -122,7 +122,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     }
 
     /**
-     * @notice Gets the Chainlink price for a given asset 
+     * @notice Gets the Chainlink price for a given asset
      * @param token address of the asset
      * @param decimals decimals of the asset
      * @return price Underlying price in USD

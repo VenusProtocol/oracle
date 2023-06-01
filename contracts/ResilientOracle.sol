@@ -253,6 +253,41 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         return _getPrice(asset);
     }
 
+    /**
+     * @notice Sets/resets single token configs.
+     * @dev main oracle **must not** be a null address
+     * @param tokenConfig Token config struct
+     * @custom:access Only Governance
+     * @custom:error NotNullAddress is thrown if asset address is null
+     * @custom:error NotNullAddress is thrown if main-role oracle address for asset is null
+     * @custom:event Emits TokenConfigAdded event when vToken config is set successfully by governnace
+     */
+    function setTokenConfig(
+        TokenConfig memory tokenConfig
+    ) public notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)]) {
+        _checkAccessAllowed("setTokenConfig(TokenConfig)");
+
+        tokenConfigs[tokenConfig.asset] = tokenConfig;
+        emit TokenConfigAdded(
+            tokenConfig.asset,
+            tokenConfig.oracles[uint256(OracleRole.MAIN)],
+            tokenConfig.oracles[uint256(OracleRole.PIVOT)],
+            tokenConfig.oracles[uint256(OracleRole.FALLBACK)]
+        );
+    }
+
+    /**
+     * @notice Gets oracle and enabled status by vToken address
+     * @param asset asset address
+     * @param role Oracle role
+     * @return oracle Oracle address based on role
+     * @return enabled Enabled flag of the oracle based on token config
+     */
+    function getOracle(address asset, OracleRole role) public view returns (address oracle, bool enabled) {
+        oracle = tokenConfigs[asset].oracles[uint256(role)];
+        enabled = tokenConfigs[asset].enableFlagsForOracles[uint256(role)];
+    }
+
     function _getPrice(address asset) internal view returns (uint256) {
         uint256 pivotPrice = INVALID_PRICE;
 
@@ -289,41 +324,6 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         }
 
         revert("invalid resilient oracle price");
-    }
-
-    /**
-     * @notice Sets/resets single token configs.
-     * @dev main oracle **must not** be a null address
-     * @param tokenConfig Token config struct
-     * @custom:access Only Governance
-     * @custom:error NotNullAddress is thrown if asset address is null
-     * @custom:error NotNullAddress is thrown if main-role oracle address for asset is null
-     * @custom:event Emits TokenConfigAdded event when vToken config is set successfully by governnace
-     */
-    function setTokenConfig(
-        TokenConfig memory tokenConfig
-    ) public notNullAddress(tokenConfig.asset) notNullAddress(tokenConfig.oracles[uint256(OracleRole.MAIN)]) {
-        _checkAccessAllowed("setTokenConfig(TokenConfig)");
-
-        tokenConfigs[tokenConfig.asset] = tokenConfig;
-        emit TokenConfigAdded(
-            tokenConfig.asset,
-            tokenConfig.oracles[uint256(OracleRole.MAIN)],
-            tokenConfig.oracles[uint256(OracleRole.PIVOT)],
-            tokenConfig.oracles[uint256(OracleRole.FALLBACK)]
-        );
-    }
-
-    /**
-     * @notice Gets oracle and enabled status by vToken address
-     * @param asset asset address
-     * @param role Oracle role
-     * @return oracle Oracle address based on role
-     * @return enabled Enabled flag of the oracle based on token config
-     */
-    function getOracle(address asset, OracleRole role) public view returns (address oracle, bool enabled) {
-        oracle = tokenConfigs[asset].oracles[uint256(role)];
-        enabled = tokenConfigs[asset].enableFlagsForOracles[uint256(role)];
     }
 
     /**

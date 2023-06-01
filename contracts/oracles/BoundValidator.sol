@@ -58,23 +58,6 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
     }
 
     /**
-     * @notice Test reported asset price against anchor price
-     * @param asset asset address
-     * @param reportedPrice The price to be tested
-     * @custom:error Missing error thrown if asset config is not set
-     * @custom:error Price error thrown if anchor price is not valid
-     */
-    function validatePriceWithAnchorPrice(
-        address asset,
-        uint256 reportedPrice,
-        uint256 anchorPrice
-    ) public view virtual override returns (bool) {
-        if (validateConfigs[asset].upperBoundRatio == 0) revert("validation config not exist");
-        if (anchorPrice == 0) revert("anchor price is not valid");
-        return _isWithinAnchor(asset, reportedPrice, anchorPrice);
-    }
-
-    /**
      * @notice Add a single validation config
      * @param config Validation config struct
      * @custom:access Only Governance
@@ -91,6 +74,23 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
         if (config.upperBoundRatio <= config.lowerBoundRatio) revert("upper bound must be higher than lowner bound");
         validateConfigs[config.asset] = config;
         emit ValidateConfigAdded(config.asset, config.upperBoundRatio, config.lowerBoundRatio);
+    }
+
+    /**
+     * @notice Test reported asset price against anchor price
+     * @param asset asset address
+     * @param reportedPrice The price to be tested
+     * @custom:error Missing error thrown if asset config is not set
+     * @custom:error Price error thrown if anchor price is not valid
+     */
+    function validatePriceWithAnchorPrice(
+        address asset,
+        uint256 reportedPrice,
+        uint256 anchorPrice
+    ) public view virtual override returns (bool) {
+        if (validateConfigs[asset].upperBoundRatio == 0) revert("validation config not exist");
+        if (anchorPrice == 0) revert("anchor price is not valid");
+        return _isWithinAnchor(asset, reportedPrice, anchorPrice);
     }
 
     /**

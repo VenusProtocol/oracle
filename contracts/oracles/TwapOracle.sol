@@ -77,9 +77,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     /// @notice Constructor for the implementation contract. Sets immutable variables.
     /// @param wBnbAddress The address of the WBNB
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(
-        address wBnbAddress
-    ) notNullAddress(wBnbAddress)  {
+    constructor(address wBnbAddress) notNullAddress(wBnbAddress) {
         WBNB = wBnbAddress;
         _disableInitializers();
     }
@@ -172,7 +170,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
         if (asset == BNB_ADDR) {
             asset = WBNB;
         }
-        
+
         if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
         // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
         if (asset != WBNB && tokenConfigs[asset].isBnbBased) {

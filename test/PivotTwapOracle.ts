@@ -59,7 +59,7 @@ describe("Twap Oracle unit tests", () => {
     );
     this.boundValidator = boundValidatorInstance;
 
-    const token1 = await makeToken(this.admin, "TOKEN1", "TOKEN1")
+    const token1 = await makeToken(this.admin, "TOKEN1", "TOKEN1");
     const tokenBusd = await makeToken(this.admin, "BUSD", "BUSD", 18);
     const simplePair = await makePairWithTokens(this.admin, await token1.address, tokenBusd.address);
     this.simplePair = simplePair;
@@ -110,11 +110,7 @@ describe("Twap Oracle unit tests", () => {
       });
 
       it("reset token config", async function () {
-        const token = await makeToken(
-          this.admin,
-          "Token",
-          "Token"
-        );
+        const token = await makeToken(this.admin, "Token", "Token");
 
         const config1 = {
           asset: this.wBnb.address,
@@ -185,8 +181,8 @@ describe("Twap Oracle unit tests", () => {
 
   describe("update twap", () => {
     beforeEach(async function () {
-      const token0 = await makeToken(this.admin, "ETH", "ETH")
-      const token1 = await makeToken(this.admin, "MATIC", "MATIC")
+      const token0 = await makeToken(this.admin, "ETH", "ETH");
+      const token1 = await makeToken(this.admin, "MATIC", "MATIC");
 
       this.tokenConfig = {
         asset: await token0.address,
@@ -204,9 +200,7 @@ describe("Twap Oracle unit tests", () => {
       await expect(this.twapOracle.getPrice(this.token1.address)).to.be.revertedWith("asset not exist");
     });
     it("revert if get underlying price of token has not been updated", async function () {
-      await expect(this.twapOracle.getPrice(this.token0.address)).to.be.revertedWith(
-        "TWAP price must be positive",
-      );
+      await expect(this.twapOracle.getPrice(this.token0.address)).to.be.revertedWith("TWAP price must be positive");
     });
     it("twap update after multiple observations", async function () {
       const ts = await getTime();
@@ -456,7 +450,7 @@ describe("Twap Oracle unit tests", () => {
       await expect(result)
         .to.emit(this.twapOracle, "AnchorPriceUpdated")
         .withArgs(await this.token0.address, avgPrice0, oldObservation.timestamp, ts2);
-      
+
       // check saved price
       price = await this.twapOracle.getPrice(this.token0.address);
       expect(price).to.equal(avgPrice0);
@@ -468,12 +462,8 @@ describe("Twap Oracle unit tests", () => {
       beforeEach(async function () {
         // add bnb pair config
 
-        const token0 = await makeToken(this.admin, "ETH", "ETH")
-        const token1 = await makeToken(
-          this.admin,
-          "MATIC",
-          "MATIC"
-        );
+        const token0 = await makeToken(this.admin, "ETH", "ETH");
+        const token1 = await makeToken(this.admin, "MATIC", "MATIC");
         this.tokenConfig = {
           asset: await token0.address,
           baseUnit: EXP_SCALE,
@@ -586,9 +576,7 @@ describe("Twap Oracle unit tests", () => {
       await this.twapOracle.setTokenConfig(tokenConfig);
 
       // without updateTwap the price is not written and should revert
-      await expect(this.twapOracle.getPrice(this.token1.address)).to.be.revertedWith(
-        "TWAP price must be positive",
-      );
+      await expect(this.twapOracle.getPrice(this.token1.address)).to.be.revertedWith("TWAP price must be positive");
 
       await this.twapOracle.updateTwap(this.token1.address);
 

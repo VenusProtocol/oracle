@@ -6,8 +6,9 @@ interface OracleInterface {
 }
 
 interface ResilientOracleInterface is OracleInterface {
-    function getUnderlyingPrice(address vToken) external view returns (uint256);
     function updatePrice(address vToken) external;
+
+    function getUnderlyingPrice(address vToken) external view returns (uint256);
 }
 
 interface TwapInterface is OracleInterface {

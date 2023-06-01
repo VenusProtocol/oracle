@@ -8,8 +8,8 @@ import { AccessControlManager } from "../typechain-types";
 import { ChainlinkOracle } from "../typechain-types/contracts/oracles/ChainlinkOracle";
 import { addr0000 } from "./utils/data";
 import { makeChainlinkOracle } from "./utils/makeChainlinkOracle";
-import { getTime, increaseTime } from "./utils/time";
 import { makeToken } from "./utils/makeToken";
+import { getTime, increaseTime } from "./utils/time";
 
 const MAX_STALE_PERIOD = 60 * 15; // 15min
 
@@ -110,9 +110,7 @@ describe("Oracle unit tests", () => {
       ]);
 
       const [, newBnbFeed, newBnbStalePeriod] = await this.chainlinkOracle.tokenConfigs(this.bnbAddr);
-      const [, newUsdtFeed, newUsdtStalePeriod] = await this.chainlinkOracle.tokenConfigs(
-        await this.usdt.address,
-      );
+      const [, newUsdtFeed, newUsdtStalePeriod] = await this.chainlinkOracle.tokenConfigs(await this.usdt.address);
 
       expect(newBnbFeed).to.equal(this.bnbFeed.address);
       expect(newUsdtFeed).to.equal(this.usdtFeed.address);
@@ -173,9 +171,7 @@ describe("Oracle unit tests", () => {
     });
 
     it("reverts if no price or feed has been set", async function () {
-      await expect(this.chainlinkOracle.getPrice(this.exampleUnset.address)).to.revertedWith(
-        "can't be zero address",
-      );
+      await expect(this.chainlinkOracle.getPrice(this.exampleUnset.address)).to.revertedWith("can't be zero address");
     });
   });
 
@@ -226,9 +222,7 @@ describe("Oracle unit tests", () => {
 
       await increaseTime(ADVANCE_SECONDS);
 
-      await expect(this.chainlinkOracle.getPrice(this.bnbAddr)).to.revertedWith(
-        "chainlink price expired",
-      );
+      await expect(this.chainlinkOracle.getPrice(this.bnbAddr)).to.revertedWith("chainlink price expired");
 
       // update round data
       await this.bnbFeed.updateRoundData(1111, 12345, nowSeconds + ADVANCE_SECONDS, nowSeconds);
@@ -240,18 +234,14 @@ describe("Oracle unit tests", () => {
       const nowSeconds = await getTime();
       await this.bnbFeed.updateRoundData(1111, 12345, nowSeconds + 900000, nowSeconds);
 
-      await expect(this.chainlinkOracle.getPrice(this.bnbAddr)).to.revertedWith(
-        "updatedAt exceeds block time",
-      );
+      await expect(this.chainlinkOracle.getPrice(this.bnbAddr)).to.revertedWith("updatedAt exceeds block time");
     });
 
     it("the chainlink anwser is 0, revert it", async function () {
       const nowSeconds = await getTime();
       await this.bnbFeed.updateRoundData(1111, 0, nowSeconds + 1000, nowSeconds);
 
-      await expect(this.chainlinkOracle.getPrice(this.bnbAddr)).to.revertedWith(
-        "chainlink price must be positive",
-      );
+      await expect(this.chainlinkOracle.getPrice(this.bnbAddr)).to.revertedWith("chainlink price must be positive");
     });
   });
 });
