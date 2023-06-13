@@ -9,8 +9,10 @@ import "../interfaces/VBep20Interface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
 /**
- * PythOracle contract reads prices from actual Pyth oracle contract which accepts, verifies and stores the
- * updated prices from external sources
+ * @title PythOracle
+ * @author Venus
+ * @notice PythOracle contract reads prices from actual Pyth oracle contract which accepts, verifies and stores
+ * the updated prices from external sources
  */
 contract PythOracle is AccessControlledV8, OracleInterface {
     // To calculate 10 ** n(which is a signed type)

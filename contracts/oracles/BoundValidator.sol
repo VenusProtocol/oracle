@@ -5,8 +5,12 @@ import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
-// BoundValidator provides some common functions and can be used
-// to wrap up other contracts to form pivot oracles
+/**
+ * @title BoundValidator
+ * @author Venus
+ * @notice This contracts is used to validate prices from two different sources. We need to set upper
+ * and lower bound ratios config for each vToken in this contract.
+ */
 contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
     struct ValidateConfig {
         /// @notice asset address
