@@ -7,6 +7,11 @@ import "../interfaces/OracleInterface.sol";
 import "../interfaces/VBep20Interface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
+/**
+ * @title TwapOracle
+ * @author Venus
+ * @notice This oracle fetches price of assets from PancakeSwap.
+ */
 contract TwapOracle is AccessControlledV8, TwapInterface {
     using FixedPoint for *;
 
