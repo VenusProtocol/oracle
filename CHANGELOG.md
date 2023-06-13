@@ -1,3 +1,5 @@
+## [1.6.11](https://github.com/VenusProtocol/oracle/compare/v1.6.10...v1.6.11) (2023-06-13)
+
 ## 1.0.0 (2023-05-26)
 
 
