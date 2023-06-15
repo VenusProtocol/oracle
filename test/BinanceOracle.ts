@@ -19,7 +19,7 @@ describe("Binance Oracle unit tests", () => {
     this.wbeth = await makeVToken(
       admin,
       { name: "vWBETH", symbol: "vWBETH" },
-      { name: " Wrapped Beacon ETH", symbol: "wBETH" },
+      { name: "Wrapped Beacon ETH", symbol: "wBETH" },
     );
     this.ethPrice = "133378924169"; // $1333.78924169
     this.bnbPrice = "24598000000"; // $245.98
