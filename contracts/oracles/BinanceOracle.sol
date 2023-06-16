@@ -92,6 +92,10 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
             symbol = "BNB";
         }
 
+        if (compare(symbol, "wBETH")) {
+            symbol = "WBETH";
+        }
+
         FeedRegistryInterface feedRegistry = FeedRegistryInterface(getFeedRegistryAddress());
 
         (, int256 answer, , uint256 updatedAt, ) = feedRegistry.latestRoundDataByName(symbol, "USD");
