@@ -7701,7 +7701,7 @@ __metadata:
   dependencies:
     bn.js: ^4.11.8
     ethereumjs-util: ^6.0.0
-  checksum: ae074be0bb012857ab5d3ae644d1163b908a48dd724b7d2567cfde309dc72222d460438f2411936a70dc949dc604ce1ef7118f7273bd525815579143c907e336
+  checksum: 03127d09960e5f8a44167463faf25b2894db2f746376dbb8195b789ed11762f93db9c574eaa7c498c400063508e9dfc1c80de2edf5f0e1406b25c87d860ff2f1
   languageName: node
   linkType: hard
 
@@ -9427,8 +9427,8 @@ __metadata:
   linkType: hard
 
 "hardhat-deploy@npm:^0.11.14":
-  version: 0.11.26
-  resolution: "hardhat-deploy@npm:0.11.26"
+  version: 0.11.31
+  resolution: "hardhat-deploy@npm:0.11.31"
   dependencies:
     "@ethersproject/abi": ^5.7.0
     "@ethersproject/abstract-signer": ^5.7.0
@@ -9454,7 +9454,7 @@ __metadata:
     murmur-128: ^0.2.1
     qs: ^6.9.4
     zksync-web3: ^0.14.3
-  checksum: 037278600639047cbd2f3924f04450b24eb28fda479b63cc44a066c0e9a1418288861da75c4cff10036162f1cf33baf44c3ed36df1a8cef0fb1493bed849ffe0
+  checksum: 75ea28d6fe745c2b685f7b2d17b280967adb37ff1ea7daf651182ae593aeb133273c9815c089b24b31607ba216baeee0c9fb761245dfa8b4186627349fdd1522
   languageName: node
   linkType: hard
 

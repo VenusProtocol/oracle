@@ -9,7 +9,7 @@ import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlle
 /**
  * @title ChainlinkOracle
  * @author Venus
- * @notice This oracle fetches price of assets from Chainlink.
+ * @notice This oracle fetches prices of assets from the Chainlink oracle.
  */
 contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     struct TokenConfig {
