@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [master, develop]
 
-env:
-  YARN_NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   lint:
     name: Lint
