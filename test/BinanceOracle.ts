@@ -97,7 +97,5 @@ describe("Binance Oracle unit tests", () => {
   it("fetch WBNB price", async function () {
     await this.binanceOracle.setMaxStalePeriod("BNB", 24 * 60 * 60);
     expect(await this.binanceOracle.getPrice(await this.vWBnb.underlying())).to.be.equal("245980000000000000000");
-    this.mockBinanceFeedRegistry.setAssetPrice("WBETH", this.wbethPrice);
-    expect(await this.mockBinanceFeedRegistry.assetPrices("WBETH")).to.be.equal(this.wbethPrice);
   });
 });
