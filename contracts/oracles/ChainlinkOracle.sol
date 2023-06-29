@@ -6,6 +6,11 @@ import "../interfaces/OracleInterface.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
+/**
+ * @title ChainlinkOracle
+ * @author Venus
+ * @notice This oracle fetches prices of assets from the Chainlink oracle.
+ */
 contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     struct TokenConfig {
         /// @notice Underlying token address, which can't be a null address

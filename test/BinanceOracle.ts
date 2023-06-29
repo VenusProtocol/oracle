@@ -16,8 +16,14 @@ describe("Binance Oracle unit tests", () => {
 
     this.vEth = await makeVToken(admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
     this.vBnb = await makeVToken(admin, { name: "vBNB", symbol: "vBNB" }, { name: "Binance", symbol: "BNB" });
+    this.wbeth = await makeVToken(
+      admin,
+      { name: "vWBETH", symbol: "vWBETH" },
+      { name: "Wrapped Beacon ETH", symbol: "wBETH" },
+    );
     this.ethPrice = "133378924169"; // $1333.78924169
     this.bnbPrice = "24598000000"; // $245.98
+    this.wbethPrice = "133378924169"; // $1333.78924169
 
     const mockBinanceFeedRegistry = await ethers.getContractFactory("MockBinanceFeedRegistry", admin);
     this.mockBinanceFeedRegistry = <MockBinanceFeedRegistry>await upgrades.deployProxy(mockBinanceFeedRegistry, []);
@@ -41,6 +47,7 @@ describe("Binance Oracle unit tests", () => {
 
     await this.binanceOracle.setMaxStalePeriod("ETH", 24 * 60 * 60);
     await this.binanceOracle.setMaxStalePeriod("BNB", 24 * 60 * 60);
+    await this.binanceOracle.setMaxStalePeriod("WBETH", 24 * 60 * 60);
   });
 
   it("set price", async function () {
@@ -72,5 +79,14 @@ describe("Binance Oracle unit tests", () => {
     await expect(this.binanceOracle.getPrice(this.vBnb.underlying())).to.be.revertedWith(
       "binance oracle price expired",
     );
+  });
+
+  it("set WBETH price", async function () {
+    this.mockBinanceFeedRegistry.setAssetPrice("WBETH", this.wbethPrice);
+    expect(await this.mockBinanceFeedRegistry.assetPrices("WBETH")).to.be.equal(this.wbethPrice);
+  });
+
+  it("fetch WBETH price", async function () {
+    expect(await this.binanceOracle.getUnderlyingPrice(this.wbeth.address)).to.be.equal("1333789241690000000000");
   });
 });
