@@ -10,7 +10,10 @@ contract MockBinanceFeedRegistry is FeedRegistryInterface {
         assetPrices[base] = price;
     }
 
-    function latestRoundData(address base, address quote)
+    function latestRoundData(
+        address base,
+        address quote
+    )
         external
         view
         override

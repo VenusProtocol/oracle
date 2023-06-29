@@ -68,7 +68,9 @@ describe("Binance Oracle unit tests", () => {
 
   it("fetch BNB price", async function () {
     this.mockBinanceFeedRegistry.setAssetPrice(await this.vWBnb.underlying(), this.bnbPrice);
-    expect(await this.binanceOracle.getPrice("0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB")).to.be.equal("245980000000000000000");
+    expect(await this.binanceOracle.getPrice("0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB")).to.be.equal(
+      "245980000000000000000",
+    );
   });
 
   it("price expired", async function () {
