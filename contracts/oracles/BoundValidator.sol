@@ -5,8 +5,13 @@ import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
-// BoundValidator provides some common functions and can be used
-// to wrap up other contracts to form pivot oracles
+/**
+ * @title BoundValidator
+ * @author Venus
+ * @notice The BoundValidator contract is used to validate prices fetched from two different sources.
+ * Each asset has an upper and lower bound ratio set in the config. In order for a price to be valid
+ * it must fall within this range of the validator price.
+ */
 contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
     struct ValidateConfig {
         /// @notice asset address

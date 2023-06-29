@@ -10,6 +10,11 @@ import "../interfaces/OracleInterface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 import "../interfaces/OracleInterface.sol";
 
+/**
+ * @title BinanceOracle
+ * @author Venus
+ * @notice This oracle fetches price of assets from Binance.
+ */
 contract BinanceOracle is AccessControlledV8, OracleInterface {
     address public sidRegistryAddress;
 
