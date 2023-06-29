@@ -82,11 +82,11 @@ describe("Binance Oracle unit tests", () => {
   });
 
   it("set WBETH price", async function () {
-    this.mockBinanceFeedRegistry.setAssetPrice("WBETH", this.wbethPrice);
+    await this.mockBinanceFeedRegistry.setAssetPrice("WBETH", this.wbethPrice);
     expect(await this.mockBinanceFeedRegistry.assetPrices("WBETH")).to.be.equal(this.wbethPrice);
   });
 
   it("fetch WBETH price", async function () {
-    expect(await this.binanceOracle.getUnderlyingPrice(this.wbeth.address)).to.be.equal("1333789241690000000000");
+    expect(await this.binanceOracle.getPrice(this.wbeth.underlying())).to.be.equal("1333789241690000000000");
   });
 });
