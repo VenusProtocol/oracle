@@ -413,7 +413,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @custom:error Invalid price error is thrown if fallback oracle is not enabled or fallback oracle
      * address is null
      */
-    function _getFallbackOraclePrice(address asset, uint256 pivotPrice) internal view returns (uint256, bool) {
+    function _getFallbackOraclePrice(address asset, uint256 pivotPrice) private view returns (uint256, bool) {
         (address fallbackOracle, bool fallbackEnabled) = getOracle(asset, OracleRole.FALLBACK);
         if (fallbackEnabled && fallbackOracle != address(0)) {
             try OracleInterface(fallbackOracle).getPrice(asset) returns (uint256 fallbackOraclePrice) {
