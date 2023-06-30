@@ -100,14 +100,6 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
             decimals = token.decimals();
         }
 
-        if (compare(symbol, "WBNB")) {
-            symbol = "BNB";
-        }
-
-        if (compare(symbol, "wBETH")) {
-            symbol = "WBETH";
-        }
-
         return _getPrice(asset, symbol, decimals);
     }
 

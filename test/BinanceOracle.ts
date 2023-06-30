@@ -48,7 +48,8 @@ describe("Binance Oracle unit tests", () => {
 
     await this.binanceOracle.setMaxStalePeriod("ETH", 24 * 60 * 60);
     await this.binanceOracle.setMaxStalePeriod("BNB", 24 * 60 * 60);
-    await this.binanceOracle.setMaxStalePeriod("WBETH", 24 * 60 * 60);
+    await this.binanceOracle.setMaxStalePeriod("WBNB", 24 * 60 * 60);
+    await this.binanceOracle.setMaxStalePeriod("wBETH", 24 * 60 * 60);
   });
 
   it("set price", async function () {
