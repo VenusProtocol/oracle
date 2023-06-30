@@ -47,7 +47,6 @@ describe("Binance Oracle unit tests", () => {
     );
 
     await this.binanceOracle.setMaxStalePeriod("ETH", 24 * 60 * 60);
-    await this.binanceOracle.setMaxStalePeriod("BNB", 24 * 60 * 60);
     await this.binanceOracle.setMaxStalePeriod("WBNB", 24 * 60 * 60);
     await this.binanceOracle.setMaxStalePeriod("wBETH", 24 * 60 * 60);
   });
@@ -57,14 +56,8 @@ describe("Binance Oracle unit tests", () => {
     expect(await this.mockBinanceFeedRegistry.assetPrices(await this.vEth.underlying())).to.be.equal(this.ethPrice);
   });
 
-  it("set BNB price", async function () {
-    this.mockBinanceFeedRegistry.setAssetPrice(await this.vBnb.underlying(), this.bnbPrice);
-    expect(await this.mockBinanceFeedRegistry.assetPrices(await this.vBnb.underlying())).to.be.equal(this.bnbPrice);
-  });
-
   it("fetch price", async function () {
     expect(await this.binanceOracle.getPrice(this.vEth.underlying())).to.be.equal("1333789241690000000000");
-    expect(await this.binanceOracle.getPrice(this.vBnb.underlying())).to.be.equal("245980000000000000000");
   });
 
   it("fetch BNB price", async function () {
@@ -76,12 +69,12 @@ describe("Binance Oracle unit tests", () => {
 
   it("price expired", async function () {
     await this.binanceOracle.setMaxStalePeriod("ETH", 5);
-    await this.binanceOracle.setMaxStalePeriod("BNB", 5);
+    await this.binanceOracle.setMaxStalePeriod("WBNB", 5);
 
     await expect(this.binanceOracle.getPrice(this.vEth.underlying())).to.be.revertedWith(
       "binance oracle price expired",
     );
-    await expect(this.binanceOracle.getPrice(this.vBnb.underlying())).to.be.revertedWith(
+    await expect(this.binanceOracle.getPrice("0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB")).to.be.revertedWith(
       "binance oracle price expired",
     );
   });
@@ -96,7 +89,7 @@ describe("Binance Oracle unit tests", () => {
   });
 
   it("fetch WBNB price", async function () {
-    await this.binanceOracle.setMaxStalePeriod("BNB", 24 * 60 * 60);
+    await this.binanceOracle.setMaxStalePeriod("WBNB", 24 * 60 * 60);
     expect(await this.binanceOracle.getPrice(await this.vWBnb.underlying())).to.be.equal("245980000000000000000");
   });
 });

@@ -91,7 +91,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         uint256 decimals;
 
         if (asset == BNB_ADDR) {
-            symbol = "BNB";
+            symbol = "WBNB";
             decimals = 18;
             asset = WBNB;
         } else {
