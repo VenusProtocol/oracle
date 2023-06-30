@@ -27,6 +27,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
     /// @notice Max stale period configuration for assets
     mapping(string => uint256) public maxStalePeriod;
 
+    /// @notice Address of WBNB contract
     address public WBNB;
 
     event MaxStalePeriodAdded(string indexed asset, uint256 maxStalePeriod);
