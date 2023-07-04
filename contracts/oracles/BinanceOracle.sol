@@ -32,6 +32,14 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
 
     event MaxStalePeriodAdded(string indexed asset, uint256 maxStalePeriod);
 
+    /**
+     * @notice Checks whether an address is null or not
+     */
+    modifier notNullAddress(address someone) {
+        if (someone == address(0)) revert("can't be zero address");
+        _;
+    }
+
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -62,7 +70,13 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         address _sidRegistryAddress,
         address _accessControlManager,
         address _WBNB
-    ) external reinitializer(2) {
+    )
+        external
+        reinitializer(2)
+        notNullAddress(_sidRegistryAddress)
+        notNullAddress(_accessControlManager)
+        notNullAddress(_WBNB)
+    {
         sidRegistryAddress = _sidRegistryAddress;
         WBNB = _WBNB;
         __AccessControlled_init(_accessControlManager);
@@ -115,7 +129,6 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         unchecked {
             deltaTime = block.timestamp - updatedAt;
         }
-        
         if (deltaTime > maxStalePeriod[symbol]) revert("binance oracle price expired");
 
         uint256 decimalDelta = feedRegistry.decimals(asset, USD_ADDR);
