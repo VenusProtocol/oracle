@@ -354,7 +354,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         if (
             mainPrice != INVALID_PRICE &&
             fallbackPrice != INVALID_PRICE &&
-            boundValidator.validatePriceWithAnchorPrice(asset, fallbackPrice, mainPrice)
+            boundValidator.validatePriceWithAnchorPrice(asset, mainPrice, fallbackPrice)
         ) {
             return mainPrice;
         }
