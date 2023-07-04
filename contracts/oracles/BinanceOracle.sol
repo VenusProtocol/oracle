@@ -117,14 +117,4 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         uint256 decimalDelta = feedRegistry.decimals(asset, USD_ADDR);
         return (uint256(answer) * (10 ** (18 - decimalDelta))) * (10 ** (18 - decimals));
     }
-
-    /**
-     * @notice Used to compare if two strings are equal or not
-     * @param str1 The first string
-     * @param str2 The second string
-     * @return equal Returns true if both are equal or else false.
-     */
-    function compare(string memory str1, string memory str2) private pure returns (bool) {
-        return keccak256(bytes(str1)) == keccak256(bytes(str2));
-    }
 }
