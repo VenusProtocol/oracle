@@ -20,9 +20,9 @@ import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlle
  * the protocol from oracle attacks. Currently it includes integrations with Chainlink, Pyth, Binance Oracle
  * and TWAP (Time-Weighted Average Price) oracles. TWAP uses PancakeSwap as the on-chain price source.
  * 
- * For every market (vToken) we configure the main, pivot and fallback oracles. The oracles are configured per vToken's underlying asset address.
- * The main oracle oracle is the most trustworthy price source, the pivot oracle is used as a loose sanity checker and the fallback oracle
- * is used as a backup price source.
+ * For every market (vToken) we configure the main, pivot and fallback oracles. The oracles are configured per 
+ * vToken's underlying asset address. The main oracle oracle is the most trustworthy price source, the pivot 
+ * oracle is used as a loose sanity checker and the fallback oracle is used as a backup price source. 
  * 
  * To validate prices returned from two oracles, we use an upper and lower bound ratio that is set for every
  * market. The upper bound ratio represents the deviation between reported price (the price that’s being
