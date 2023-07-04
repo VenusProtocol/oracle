@@ -237,7 +237,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
 
     /**
      * @notice Updates the pivot oracle price. Currently using TWAP
-     * @dev This function should always be called before calling getUnderlyingPrice
+     * @dev This function should always be called before calling getPrice
      * @param asset asset address
      */
     function updateAssetPrice(address asset) external {
