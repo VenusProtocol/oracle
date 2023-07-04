@@ -43,7 +43,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         _;
     }
 
-    /// @notice Constructor for the implementation contract. Sets immutable variables.
+    /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
@@ -52,9 +52,9 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     /**
      * @notice Manually set the price of a given asset
      * @param asset Asset address
-     * @param price Underlying price in 18 decimals
+     * @param price Asset price in 18 decimals
      * @custom:access Only Governance
-     * @custom:event Emits PricePosted event on succesfully setup of underlying price
+     * @custom:event Emits PricePosted event on succesfully setup of asset price
      */
     function setDirectPrice(address asset, uint256 price) external notNullAddress(asset) {
         _checkAccessAllowed("setDirectPrice(address,uint256)");
@@ -110,8 +110,8 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
 
     /**
      * @notice Gets the price of a asset from the chainlink oracle
-     * @param asset Address of the address
-     * @return Price in USD
+     * @param asset Address of the asset
+     * @return Price in USD from Chainlink or a manually set price for the asset
      */
     function getPrice(address asset) public view returns (uint256) {
         uint256 decimals;
@@ -130,7 +130,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
      * @notice Gets the Chainlink price for a given asset
      * @param token address of the asset
      * @param decimals decimals of the asset
-     * @return price Underlying price in USD
+     * @return price Asset price in USD or a manually set price of the asset
      */
     function _getPriceInternal(address token, uint256 decimals) internal view returns (uint256 price) {
         uint256 tokenPrice = prices[token];
@@ -145,10 +145,10 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     }
 
     /**
-     * @notice Get the Chainlink price for the underlying asset of a given vToken, revert if token config doesn't exist
+     * @notice Get the Chainlink price for an asset, revert if token config doesn't exist
      * @dev The precision of the price feed is used to ensure the returned price has 18 decimals of precision
-     * @param asset Underlying asset address
-     * @return price Underlying price in USD, with 18 decimals of precision
+     * @param asset Address of the asset
+     * @return price Price in USD, with 18 decimals of precision
      * @custom:error NotNullAddress error is thrown if the asset address is null
      * @custom:error Price error is thrown if the Chainlink price of asset is not greater than zero
      * @custom:error Timing error is thrown if current timestamp is less than the last updatedAt timestamp

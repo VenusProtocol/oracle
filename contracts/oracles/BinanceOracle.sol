@@ -84,7 +84,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
 
     /**
      * @notice Gets the price of a asset from the binance oracle
-     * @param asset Address of the address
+     * @param asset Address of the asset
      * @return Price in USD
      */
     function getPrice(address asset) public view returns (uint256) {
