@@ -8,6 +8,7 @@ import "../interfaces/FeedRegistryInterface.sol";
 import "../interfaces/PublicResolverInterface.sol";
 import "../interfaces/OracleInterface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
+import "../interfaces/OracleInterface.sol";
 
 /**
  * @title BinanceOracle
@@ -17,28 +18,23 @@ import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlle
 contract BinanceOracle is AccessControlledV8, OracleInterface {
     address public sidRegistryAddress;
 
-    /// @notice vBNB address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vBnb;
+    /// @notice Set this as asset address for BNB. This is the underlying address for vBNB
+    address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
-    /// @notice VAI address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vai;
+    /// @notice Quote address for USD
+    address public constant USD_ADDR = 0x0000000000000000000000000000000000000348;
 
     /// @notice Max stale period configuration for assets
     mapping(string => uint256) public maxStalePeriod;
 
+    /// @notice Address of WBNB contract
+    address public WBNB;
+
     event MaxStalePeriodAdded(string indexed asset, uint256 maxStalePeriod);
 
-    /// @notice Constructor for the implementation contract. Sets immutable variables.
-    /// @param vBnbAddress The address of the vBNB
-    /// @param vaiAddress The address of the VAI
+    /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress, address vaiAddress) {
-        if (vBnbAddress == address(0)) revert("vBNB can't be zero address");
-        if (vaiAddress == address(0)) revert("VAI can't be zero address");
-        vBnb = vBnbAddress;
-        vai = vaiAddress;
+    constructor() {
         _disableInitializers();
     }
 
@@ -60,57 +56,16 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
      * @notice Sets the contracts required to fetch prices
      * @param _sidRegistryAddress Address of SID registry
      * @param _accessControlManager Address of the access control manager contract
+     * @param _WBNB Address of the access control manager contract
      */
-    function initialize(address _sidRegistryAddress, address _accessControlManager) external initializer {
+    function initialize(
+        address _sidRegistryAddress,
+        address _accessControlManager,
+        address _WBNB
+    ) external reinitializer(2) {
         sidRegistryAddress = _sidRegistryAddress;
+        WBNB = _WBNB;
         __AccessControlled_init(_accessControlManager);
-    }
-
-    /**
-     * @notice Gets the price of a vToken from the binance oracle
-     * @param vToken Address of the vToken
-     * @return Price in USD
-     */
-    function getUnderlyingPrice(address vToken) external view override returns (uint256) {
-        string memory symbol;
-        uint256 decimals;
-
-        // VBNB token doesn't have `underlying` method
-        if (vToken == vBnb) {
-            symbol = "BNB";
-            decimals = 18;
-        } else if (vToken == vai) {
-            symbol = "VAI";
-            decimals = 18;
-        } else {
-            IERC20Metadata underlyingToken = IERC20Metadata(VBep20Interface(vToken).underlying());
-            symbol = underlyingToken.symbol();
-            decimals = underlyingToken.decimals();
-        }
-
-        if (compare(symbol, "WBNB")) {
-            symbol = "BNB";
-        }
-
-        if (compare(symbol, "wBETH")) {
-            symbol = "WBETH";
-        }
-
-        FeedRegistryInterface feedRegistry = FeedRegistryInterface(getFeedRegistryAddress());
-
-        (, int256 answer, , uint256 updatedAt, ) = feedRegistry.latestRoundDataByName(symbol, "USD");
-        if (answer <= 0) revert("invalid binance oracle price");
-        if (block.timestamp < updatedAt) revert("updatedAt exceeds block time");
-
-        uint256 deltaTime;
-        unchecked {
-            deltaTime = block.timestamp - updatedAt;
-        }
-
-        if (deltaTime > maxStalePeriod[symbol]) revert("binance oracle price expired");
-
-        uint256 decimalDelta = feedRegistry.decimalsByName(symbol, "USD");
-        return (uint256(answer) * (10 ** (18 - decimalDelta))) * (10 ** (18 - decimals));
     }
 
     /**
@@ -125,6 +80,42 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         PublicResolverInterface publicResolver = PublicResolverInterface(publicResolverAddress);
 
         return publicResolver.addr(nodeHash);
+    }
+
+    /**
+     * @notice Gets the price of a asset from the binance oracle
+     * @param asset Address of the address
+     * @return Price in USD
+     */
+    function getPrice(address asset) public view returns (uint256) {
+        string memory symbol;
+        uint256 decimals;
+
+        if (asset == BNB_ADDR) {
+            symbol = "WBNB";
+            decimals = 18;
+            asset = WBNB;
+        } else {
+            IERC20Metadata token = IERC20Metadata(asset);
+            symbol = token.symbol();
+            decimals = token.decimals();
+        }
+
+        return _getPrice(asset, symbol, decimals);
+    }
+
+    function _getPrice(address asset, string memory symbol, uint256 decimals) internal view returns (uint256) {
+        FeedRegistryInterface feedRegistry = FeedRegistryInterface(getFeedRegistryAddress());
+
+        (, int256 answer, , uint256 updatedAt, ) = feedRegistry.latestRoundData(asset, USD_ADDR);
+        if (answer <= 0) revert("invalid binance oracle price");
+        if (block.timestamp < updatedAt) revert("updatedAt exceeds block time");
+
+        uint256 deltaTime = block.timestamp - updatedAt;
+        if (deltaTime > maxStalePeriod[symbol]) revert("binance oracle price expired");
+
+        uint256 decimalDelta = feedRegistry.decimals(asset, USD_ADDR);
+        return (uint256(answer) * (10 ** (18 - decimalDelta))) * (10 ** (18 - decimals));
     }
 
     /**

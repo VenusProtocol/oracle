@@ -6,18 +6,18 @@ import { ethers, upgrades } from "hardhat";
 
 import { AccessControlManager, BoundValidator } from "../typechain-types";
 import { addr0000, addr1111 } from "./utils/data";
-import { makeVToken } from "./utils/makeVToken";
+import { makeToken } from "./utils/makeToken";
 
 const EXP_SCALE = BigNumber.from(10).pow(18);
 
-const getBoundValidator = async (account: SignerWithAddress, vBnb: string, vai: string) => {
+const getBoundValidator = async (account: SignerWithAddress) => {
   const boundValidator = await ethers.getContractFactory("BoundValidator", account);
 
   const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
   fakeAccessControlManager.isAllowedToCall.returns(true);
 
   return <BoundValidator>await upgrades.deployProxy(boundValidator, [fakeAccessControlManager.address], {
-    constructorArgs: [vBnb, vai],
+    constructorArgs: [],
   });
 };
 
@@ -25,13 +25,10 @@ describe("bound validator", () => {
   beforeEach(async function () {
     const signers: SignerWithAddress[] = await ethers.getSigners();
     const admin = signers[0];
-    this.vBnb = signers[5].address;
-    this.vai = signers[5].address;
     this.signers = signers;
     this.admin = admin;
-    this.boundValidator = <BoundValidator>(<unknown>await getBoundValidator(admin, this.vBnb, this.vai));
-    this.vToken = await makeVToken(admin, { name: "vToken", symbol: "vToken" }, { name: "Token", symbol: "Token" });
-    this.bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
+    this.boundValidator = <BoundValidator>(<unknown>await getBoundValidator(admin));
+    this.token = await makeToken(admin, "Token", "Token");
   });
   describe("add validation config", () => {
     it("length check", async function () {
@@ -56,35 +53,28 @@ describe("bound validator", () => {
     });
     it("config added successfully & event check", async function () {
       const config = {
-        asset: await this.vToken.underlying(),
+        asset: await this.token.address,
         upperBoundRatio: 100,
         lowerBoundRatio: 80,
       };
       const result = await this.boundValidator.setValidateConfigs([config]);
       await expect(result)
         .to.emit(this.boundValidator, "ValidateConfigAdded")
-        .withArgs(await this.vToken.underlying(), 100, 80);
-      const savedConfig = await this.boundValidator.validateConfigs(await this.vToken.underlying());
+        .withArgs(await this.token.address, 100, 80);
+      const savedConfig = await this.boundValidator.validateConfigs(await this.token.address);
       expect(savedConfig.upperBoundRatio).to.equal(100);
       expect(savedConfig.lowerBoundRatio).to.equal(80);
-      expect(savedConfig.asset).to.equal(await this.vToken.underlying());
+      expect(savedConfig.asset).to.equal(await this.token.address);
     });
   });
 
   describe("validate price", () => {
     it("validate price", async function () {
-      const token0 = await makeVToken(
-        this.admin,
-        { name: "vToken1", symbol: "vToken1" },
-        { name: "Token1", symbol: "Token1" },
-      );
-      const token1 = await makeVToken(
-        this.admin,
-        { name: "vToken2", symbol: "vToken2" },
-        { name: "Token2", symbol: "Token2" },
-      );
+      const token0 = await makeToken(this.admin, "Token1", "Token1");
+
+      const token1 = await makeToken(this.admin, "Token2", "Token2");
       const validationConfig = {
-        asset: await token0.underlying(),
+        asset: token0.address,
         upperBoundRatio: EXP_SCALE.mul(12).div(10),
         lowerBoundRatio: EXP_SCALE.mul(8).div(10),
       };
@@ -95,6 +85,7 @@ describe("bound validator", () => {
       await expect(this.boundValidator.validatePriceWithAnchorPrice(token1.address, 100, 0)).to.be.revertedWith(
         "validation config not exist",
       );
+
       await expect(this.boundValidator.validatePriceWithAnchorPrice(token0.address, 100, 0)).to.be.revertedWith(
         "anchor price is not valid",
       );
@@ -113,37 +104,6 @@ describe("bound validator", () => {
       expect(validateResult).to.equal(false);
       validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
         token0.address,
-        EXP_SCALE.mul(100).div(121),
-        anchorPrice,
-      );
-      expect(validateResult).to.equal(false);
-    });
-
-    it("validate vBnb price", async function () {
-      const { vBnb } = this;
-      const validationConfig = {
-        asset: this.bnbAddr,
-        upperBoundRatio: EXP_SCALE.mul(12).div(10),
-        lowerBoundRatio: EXP_SCALE.mul(8).div(10),
-      };
-      await this.boundValidator.setValidateConfigs([validationConfig]);
-
-      const anchorPrice = EXP_SCALE;
-
-      await expect(this.boundValidator.validatePriceWithAnchorPrice(vBnb, 100, 0)).to.be.revertedWith(
-        "anchor price is not valid",
-      );
-
-      let validateResult = await this.boundValidator.validatePriceWithAnchorPrice(vBnb, EXP_SCALE, anchorPrice);
-      expect(validateResult).to.equal(true);
-      validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
-        vBnb,
-        EXP_SCALE.mul(100).div(79),
-        anchorPrice,
-      );
-      expect(validateResult).to.equal(false);
-      validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
-        vBnb,
         EXP_SCALE.mul(100).div(121),
         anchorPrice,
       );
