@@ -1,3 +1,18 @@
+## [1.6.12-dev.3](https://github.com/VenusProtocol/oracle/compare/v1.6.12-dev.2...v1.6.12-dev.3) (2023-07-04)
+
+
+### Bug Fixes
+
+* fixed binance and bound validator tests ([51bf6a4](https://github.com/VenusProtocol/oracle/commit/51bf6a443fb12f2b032fbf4f7bb9e3bd00141b7c))
+* fixed chainlink tests ([eb68d82](https://github.com/VenusProtocol/oracle/commit/eb68d8253796d6749c31dca71cc46b7e989d47b6))
+* fixed deployment script ([fa795ba](https://github.com/VenusProtocol/oracle/commit/fa795babe9a60e68a2652917a2199aac081d8976))
+* fixed fork tests ([af365c9](https://github.com/VenusProtocol/oracle/commit/af365c905acf9da26a8307c9f008cb73c11e4940))
+* fixed pyth oracle tests ([fbc8391](https://github.com/VenusProtocol/oracle/commit/fbc83913001938895a603f3060d8b11a8a8d324e))
+* fixed resilient oracle tests ([39c82ca](https://github.com/VenusProtocol/oracle/commit/39c82ca33d007c09c49dad94d9683ea7b9a3f53c))
+* fixed twap oracle tests ([44a927b](https://github.com/VenusProtocol/oracle/commit/44a927be0c202fa2e567087ea7f9a4a41cea8983))
+* handle wbeth symbol ([3f771c4](https://github.com/VenusProtocol/oracle/commit/3f771c4b32e41e2c6794d99fe058814c26906558))
+* revert visibility modifier ([ef51e60](https://github.com/VenusProtocol/oracle/commit/ef51e60e290d1dd17e34ffc176956e8ab7000890))
+
 ## [1.6.12](https://github.com/VenusProtocol/oracle/compare/v1.6.11...v1.6.12) (2023-06-20)
 
 ## [1.6.12-dev.2](https://github.com/VenusProtocol/oracle/compare/v1.6.12-dev.1...v1.6.12-dev.2) (2023-06-21)
