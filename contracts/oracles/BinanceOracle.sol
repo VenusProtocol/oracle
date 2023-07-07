@@ -32,6 +32,14 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
 
     event MaxStalePeriodAdded(string indexed asset, uint256 maxStalePeriod);
 
+    /**
+     * @notice Checks whether an address is null or not
+     */
+    modifier notNullAddress(address someone) {
+        if (someone == address(0)) revert("can't be zero address");
+        _;
+    }
+
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -56,13 +64,13 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
      * @notice Sets the contracts required to fetch prices
      * @param _sidRegistryAddress Address of SID registry
      * @param _accessControlManager Address of the access control manager contract
-     * @param _WBNB Address of the access control manager contract
+     * @param _WBNB Address of the wBNB contract
      */
     function initialize(
         address _sidRegistryAddress,
         address _accessControlManager,
         address _WBNB
-    ) external reinitializer(2) {
+    ) external reinitializer(2) notNullAddress(_sidRegistryAddress) notNullAddress(_WBNB) {
         sidRegistryAddress = _sidRegistryAddress;
         WBNB = _WBNB;
         __AccessControlled_init(_accessControlManager);
@@ -84,7 +92,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
 
     /**
      * @notice Gets the price of a asset from the binance oracle
-     * @param asset Address of the address
+     * @param asset Address of the asset
      * @return Price in USD
      */
     function getPrice(address asset) public view returns (uint256) {
@@ -111,20 +119,13 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         if (answer <= 0) revert("invalid binance oracle price");
         if (block.timestamp < updatedAt) revert("updatedAt exceeds block time");
 
-        uint256 deltaTime = block.timestamp - updatedAt;
+        uint256 deltaTime;
+        unchecked {
+            deltaTime = block.timestamp - updatedAt;
+        }
         if (deltaTime > maxStalePeriod[symbol]) revert("binance oracle price expired");
 
         uint256 decimalDelta = feedRegistry.decimals(asset, USD_ADDR);
         return (uint256(answer) * (10 ** (18 - decimalDelta))) * (10 ** (18 - decimals));
-    }
-
-    /**
-     * @notice Used to compare if two strings are equal or not
-     * @param str1 The first string
-     * @param str2 The second string
-     * @return equal Returns true if both are equal or else false.
-     */
-    function compare(string memory str1, string memory str2) private pure returns (bool) {
-        return keccak256(bytes(str1)) == keccak256(bytes(str2));
     }
 }

@@ -20,9 +20,9 @@ import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlle
  * the protocol from oracle attacks. Currently it includes integrations with Chainlink, Pyth, Binance Oracle
  * and TWAP (Time-Weighted Average Price) oracles. TWAP uses PancakeSwap as the on-chain price source.
  * 
- * For every market (vToken) we configure the main, pivot and fallback oracles. The main oracle oracle is the
- * most trustworthy price source, the pivot oracle is used as a loose sanity checker and the fallback oracle
- * is used as a backup price source.
+ * For every market (vToken) we configure the main, pivot and fallback oracles. The oracles are configured per 
+ * vToken's underlying asset address. The main oracle oracle is the most trustworthy price source, the pivot 
+ * oracle is used as a loose sanity checker and the fallback oracle is used as a backup price source. 
  * 
  * To validate prices returned from two oracles, we use an upper and lower bound ratio that is set for every
  * market. The upper bound ratio represents the deviation between reported price (the price that’s being
@@ -109,8 +109,8 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Checks whether token config exists by checking whether vToken is null address
-     * @dev vToken can't be null, so it's suitable to be used to check the validity of the config
+     * @notice Checks whether token config exists by checking whether asset is null address
+     * @dev address can't be null, so it's suitable to be used to check the validity of the config
      * @param asset asset address
      */
     modifier checkTokenConfigExistence(address asset) {
@@ -180,8 +180,8 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Sets oracle for a given vToken and role.
-     * @dev Supplied vToken **must** exist and main oracle may not be null
+     * @notice Sets oracle for a given asset and role.
+     * @dev Supplied asset **must** exist and main oracle may not be null
      * @param asset Asset address
      * @param oracle Oracle address
      * @param role Oracle role
@@ -203,7 +203,8 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Enables/ disables oracle for the input vToken, input vToken **must** exist
+     * @notice Enables/ disables oracle for the input asset. Token config for the input asset **must** exist
+     * @dev Configuration for the asset **must** already exist and the asset cannot be 0 address
      * @param asset Asset address
      * @param role Oracle role
      * @param enable Enabled boolean of the oracle
@@ -237,7 +238,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
 
     /**
      * @notice Updates the pivot oracle price. Currently using TWAP
-     * @dev This function should always be called before calling getUnderlyingPrice
+     * @dev This function should always be called before calling getPrice
      * @param asset asset address
      */
     function updateAssetPrice(address asset) external {
@@ -249,9 +250,9 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @dev Gets token config by vToken address
+     * @dev Gets token config by asset address
      * @param asset asset address
-     * @return tokenConfig Config for the vToken
+     * @return tokenConfig Config for the asset
      */
     function getTokenConfig(address asset) external view returns (TokenConfig memory) {
         return tokenConfigs[asset];
@@ -296,7 +297,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @custom:access Only Governance
      * @custom:error NotNullAddress is thrown if asset address is null
      * @custom:error NotNullAddress is thrown if main-role oracle address for asset is null
-     * @custom:event Emits TokenConfigAdded event when vToken config is set successfully by governnace
+     * @custom:event Emits TokenConfigAdded event when the asset config is set successfully by the authorized account
      */
     function setTokenConfig(
         TokenConfig memory tokenConfig
@@ -313,7 +314,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Gets oracle and enabled status by vToken address
+     * @notice Gets oracle and enabled status by asset address
      * @param asset asset address
      * @param role Oracle role
      * @return oracle Oracle address based on role
@@ -354,7 +355,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         if (
             mainPrice != INVALID_PRICE &&
             fallbackPrice != INVALID_PRICE &&
-            boundValidator.validatePriceWithAnchorPrice(asset, fallbackPrice, mainPrice)
+            boundValidator.validatePriceWithAnchorPrice(asset, mainPrice, fallbackPrice)
         ) {
             return mainPrice;
         }
@@ -363,7 +364,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Gets underlying asset price for the provided asset
+     * @notice Gets a price for the provided asset
      * @dev This function won't revert when price is 0, because the fallback oracle may still be
      * able to fetch a correct price
      * @param asset asset address
@@ -373,7 +374,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * e.g. asset decimals is 8 then price is returned as 10**18 * 10**(18-8) = 10**28 decimals
      * @return pivotValidated Boolean representing if the validation of main oracle price
      * and pivot oracle price were successful
-     * @custom:error Invalid price error is thrown if main oracle fails to fetch price of underlying asset
+     * @custom:error Invalid price error is thrown if main oracle fails to fetch price of the asset
      * @custom:error Invalid price error is thrown if main oracle is not enabled or main oracle
      * address is null
      */
@@ -404,12 +405,12 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @dev This function won't revert when the price is 0 because getUnderlyingPrice checks if price is > 0
+     * @dev This function won't revert when the price is 0 because getPrice checks if price is > 0
      * @param asset asset address
      * @return price USD price in 18 decimals
      * @return pivotValidated Boolean representing if the validation of fallback oracle price
      * and pivot oracle price were successfull
-     * @custom:error Invalid price error is thrown if fallback oracle fails to fetch price of underlying asset
+     * @custom:error Invalid price error is thrown if fallback oracle fails to fetch price of the asset
      * @custom:error Invalid price error is thrown if fallback oracle is not enabled or fallback oracle
      * address is null
      */

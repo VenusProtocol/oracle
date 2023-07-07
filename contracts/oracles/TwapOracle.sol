@@ -23,7 +23,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     struct TokenConfig {
         /// @notice Asset address, which can't be zero address and can be used for existance check
         address asset;
-        /// @notice Decimals of underlying asset represented as 1e{decimals}
+        /// @notice Decimals of asset represented as 1e{decimals}
         uint256 baseUnit;
         /// @notice The address of Pancake pair
         address pancakePool;
@@ -112,9 +112,9 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     }
 
     /**
-     * @notice Get the underlying TWAP price for the given asset
+     * @notice Get the TWAP price for the given asset
      * @param asset asset address
-     * @return price Underlying price in USD
+     * @return price asset price in USD
      * @custom:error Missing error is thrown if the token config does not exist
      * @custom:error Range error is thrown if TWAP price is not greater than zero
      */
@@ -168,7 +168,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
 
     /**
      * @notice Updates the current token/BUSD price from PancakeSwap, with 18 decimals of precision.
-     * @return anchorPrice anchor price of the underlying asset of the asset
+     * @return anchorPrice anchor price of the asset
      * @custom:error Missing error is thrown if token config does not exist
      */
     function updateTwap(address asset) public returns (uint256) {
@@ -200,7 +200,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
 
     /**
      * @notice Fetches the current token/BUSD price from PancakeSwap, with 18 decimals of precision.
-     * @return price Underlying price in USD, with 18 decimals
+     * @return price Asset price in USD, with 18 decimals
      * @custom:error Timing error is thrown if current time is not greater than old observation timestamp
      * @custom:error Zero price error is thrown if token is BNB based and price is zero
      * @custom:error Zero price error is thrown if fetched anchorPriceMantissa is zero
