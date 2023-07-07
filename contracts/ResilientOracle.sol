@@ -180,8 +180,8 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Sets oracle for a given vToken and role.
-     * @dev Supplied vToken **must** exist and main oracle may not be null
+     * @notice Sets oracle for a given asset and role.
+     * @dev Supplied asset **must** exist and main oracle may not be null
      * @param asset Asset address
      * @param oracle Oracle address
      * @param role Oracle role
@@ -203,7 +203,8 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Enables/ disables oracle for the input vToken, input vToken **must** exist
+     * @notice Enables/ disables oracle for the input asset, input vToken **must** exist
+     * @dev Configuration for the asset **must** already exist and the asset cannot be 0 address
      * @param asset Asset address
      * @param role Oracle role
      * @param enable Enabled boolean of the oracle

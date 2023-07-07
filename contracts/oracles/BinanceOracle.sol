@@ -64,7 +64,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
      * @notice Sets the contracts required to fetch prices
      * @param _sidRegistryAddress Address of SID registry
      * @param _accessControlManager Address of the access control manager contract
-     * @param _WBNB Address of the access control manager contract
+     * @param _WBNB Address of the wBNB contract
      */
     function initialize(
         address _sidRegistryAddress,
