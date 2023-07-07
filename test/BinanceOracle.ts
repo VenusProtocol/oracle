@@ -40,9 +40,9 @@ describe("Binance Oracle unit tests", () => {
     const binanceOracle = await ethers.getContractFactory("BinanceOracle", admin);
     this.binanceOracle = <BinanceOracle>await upgrades.deployProxy(
       binanceOracle,
-      [sidRegistry.address, fakeAccessControlManager.address, await this.vWBnb.underlying()],
+      [sidRegistry.address, fakeAccessControlManager.address],
       {
-        constructorArgs: [],
+        constructorArgs: [await this.vWBnb.underlying()],
       },
     );
 

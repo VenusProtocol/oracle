@@ -24,17 +24,24 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
     /// @notice Quote address for USD
     address public constant USD_ADDR = 0x0000000000000000000000000000000000000348;
 
+    /// @notice Address of WBNB contract
+    address public immutable WBNB;
+
     /// @notice Max stale period configuration for assets
     mapping(string => uint256) public maxStalePeriod;
 
-    /// @notice Address of WBNB contract
-    address public WBNB;
-
     event MaxStalePeriodAdded(string indexed asset, uint256 maxStalePeriod);
 
-    /// @notice Constructor for the implementation contract.
+    modifier notNullAddress(address someone) {
+        if (someone == address(0)) revert("can't be zero address");
+        _;
+    }
+
+    /// @notice Constructor for the implementation contract. Sets immutable variables.
+    /// @param wBnbAddress The address of the WBNB
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
+    constructor(address wBnbAddress) notNullAddress(wBnbAddress) {
+        WBNB = wBnbAddress;
         _disableInitializers();
     }
 
@@ -56,15 +63,12 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
      * @notice Sets the contracts required to fetch prices
      * @param _sidRegistryAddress Address of SID registry
      * @param _accessControlManager Address of the access control manager contract
-     * @param _WBNB Address of the access control manager contract
      */
     function initialize(
         address _sidRegistryAddress,
-        address _accessControlManager,
-        address _WBNB
+        address _accessControlManager
     ) external reinitializer(2) {
         sidRegistryAddress = _sidRegistryAddress;
-        WBNB = _WBNB;
         __AccessControlled_init(_accessControlManager);
     }
 
