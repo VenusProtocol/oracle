@@ -4,7 +4,7 @@
   "version": "1.6.12-dev.4",
   "author": "Venus",
   "engines": {
-    "node": ">=16.x.x"
+    "node": ">=18.x.x"
   },
   "files": [
     "artifacts",
