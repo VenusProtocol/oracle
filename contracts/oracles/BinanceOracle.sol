@@ -70,12 +70,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         address _sidRegistryAddress,
         address _accessControlManager,
         address _WBNB
-    )
-        external
-        reinitializer(2)
-        notNullAddress(_sidRegistryAddress)
-        notNullAddress(_WBNB)
-    {
+    ) external reinitializer(2) notNullAddress(_sidRegistryAddress) notNullAddress(_WBNB) {
         sidRegistryAddress = _sidRegistryAddress;
         WBNB = _WBNB;
         __AccessControlled_init(_accessControlManager);

@@ -203,7 +203,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Enables/ disables oracle for the input asset, input vToken **must** exist
+     * @notice Enables/ disables oracle for the input asset. Token config for the input asset **must** exist
      * @dev Configuration for the asset **must** already exist and the asset cannot be 0 address
      * @param asset Asset address
      * @param role Oracle role
@@ -297,7 +297,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @custom:access Only Governance
      * @custom:error NotNullAddress is thrown if asset address is null
      * @custom:error NotNullAddress is thrown if main-role oracle address for asset is null
-     * @custom:event Emits TokenConfigAdded event when vToken config is set successfully by governnace
+     * @custom:event Emits TokenConfigAdded event when the asset config is set successfully by the authorized account
      */
     function setTokenConfig(
         TokenConfig memory tokenConfig
