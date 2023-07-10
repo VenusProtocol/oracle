@@ -1,3 +1,22 @@
+## [1.6.12-dev.5](https://github.com/VenusProtocol/oracle/compare/v1.6.12-dev.4...v1.6.12-dev.5) (2023-07-10)
+
+
+### Bug Fixes
+
+* use hardhat 2.16.1 ([9ed82a1](https://github.com/VenusProtocol/oracle/commit/9ed82a1ae67b0bd27af08943dc3c3bd0dbc5a1f0))
+* use node 18 ([b4c0289](https://github.com/VenusProtocol/oracle/commit/b4c0289e5aabf25470230551dac897eb95397eca))
+
+## [1.6.12-dev.4](https://github.com/VenusProtocol/oracle/compare/v1.6.12-dev.3...v1.6.12-dev.4) (2023-07-07)
+
+
+### Bug Fixes
+
+* **refactor:** bov-01: unchecked blocks can optimize contract ([d0035d4](https://github.com/VenusProtocol/oracle/commit/d0035d46725e59a477d4055d1fefac67cb998f44))
+* **refactor:** bov-02: unused function ([ef3b5d7](https://github.com/VenusProtocol/oracle/commit/ef3b5d7904f96a4bc0f12189640224df41e9dc8f))
+* **refactor:** bov-03: missing zero address validation ([ad9cd99](https://github.com/VenusProtocol/oracle/commit/ad9cd99458b9ee30dc4e852d643de2d8c68f4a2e))
+* **refactor:** rov-01: fallbackPrice is tested Against mainPrice ([cd1a2b9](https://github.com/VenusProtocol/oracle/commit/cd1a2b9273bfcc568d2c5e9b59d570d13c51f725))
+* **refactor:** vpb-01: fix-typos-and-inconsistencies ([9677dd6](https://github.com/VenusProtocol/oracle/commit/9677dd613f24fc8ca6fff220301e647657ba4b74))
+
 ## [1.6.12-dev.3](https://github.com/VenusProtocol/oracle/compare/v1.6.12-dev.2...v1.6.12-dev.3) (2023-07-04)
 
 

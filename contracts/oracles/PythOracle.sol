@@ -43,7 +43,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
     event PythOracleSet(address indexed oldPythOracle, address indexed newPythOracle);
 
     /// @notice Emit when a token config is added
-    event TokenConfigAdded(address indexed vToken, bytes32 indexed pythId, uint64 indexed maxStalePeriod);
+    event TokenConfigAdded(address indexed asset, bytes32 indexed pythId, uint64 indexed maxStalePeriod);
 
     modifier notNullAddress(address someone) {
         if (someone == address(0)) revert("can't be zero address");
@@ -105,7 +105,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
     }
 
     /**
-     * @notice Set single token config. `maxStalePeriod` cannot be 0 and `vToken` can be a null address
+     * @notice Set single token config. `maxStalePeriod` cannot be 0 and `asset` cannot be a null address
      * @param tokenConfig Token config struct
      * @custom:access Only Governance
      * @custom:error Range error is thrown if max stale period is zero
@@ -120,7 +120,7 @@ contract PythOracle is AccessControlledV8, OracleInterface {
 
     /**
      * @notice Gets the price of a asset from the pyth oracle
-     * @param asset Address of the address
+     * @param asset Address of the asset
      * @return Price in USD
      */
     function getPrice(address asset) public view returns (uint256) {
