@@ -25,6 +25,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
     address public constant USD_ADDR = 0x0000000000000000000000000000000000000348;
 
     /// @notice Address of WBNB contract
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable WBNB;
 
     /// @notice Max stale period configuration for assets
@@ -64,10 +65,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
      * @param _sidRegistryAddress Address of SID registry
      * @param _accessControlManager Address of the access control manager contract
      */
-    function initialize(
-        address _sidRegistryAddress,
-        address _accessControlManager
-    ) external reinitializer(2) {
+    function initialize(address _sidRegistryAddress, address _accessControlManager) external reinitializer(2) {
         sidRegistryAddress = _sidRegistryAddress;
         __AccessControlled_init(_accessControlManager);
     }
