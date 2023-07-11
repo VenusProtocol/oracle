@@ -1,3 +1,16 @@
+## [1.6.12-dev.6](https://github.com/VenusProtocol/oracle/compare/v1.6.12-dev.5...v1.6.12-dev.6) (2023-07-11)
+
+
+### Bug Fixes
+
+* bop-01 ([e9bfdc3](https://github.com/VenusProtocol/oracle/commit/e9bfdc313628169629490d3607f3490610548d2e))
+* bop-01 ([3a7f9e2](https://github.com/VenusProtocol/oracle/commit/3a7f9e2d1e0e7d56dc0642f9b1ef3c43f88d61d6))
+* n1-1 ([cfab7e4](https://github.com/VenusProtocol/oracle/commit/cfab7e44143513c7381d3ff0db7152f49b2c61e5))
+* n2 ([666f6b2](https://github.com/VenusProtocol/oracle/commit/666f6b2657b98e8d61d2b41f08c68d49bfb97616))
+* n4 ([fe0719d](https://github.com/VenusProtocol/oracle/commit/fe0719dc5e3941751cb88250c06a6a8b82dad717))
+* resolved conflicts ([7f30a7b](https://github.com/VenusProtocol/oracle/commit/7f30a7b40d9d935994c79557929d586bae8a5355))
+* validate sidRegistryAddress ([d71060a](https://github.com/VenusProtocol/oracle/commit/d71060a310b4fc6195a8aa804a86f73b5f4d176e))
+
 ## [1.6.12-dev.5](https://github.com/VenusProtocol/oracle/compare/v1.6.12-dev.4...v1.6.12-dev.5) (2023-07-10)
 
 
