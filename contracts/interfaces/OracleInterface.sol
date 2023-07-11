@@ -12,12 +12,12 @@ interface ResilientOracleInterface is OracleInterface {
 }
 
 interface TwapInterface is OracleInterface {
-    function updateTwap(address vToken) external returns (uint256);
+    function updateTwap(address asset) external returns (uint256);
 }
 
 interface BoundValidatorInterface {
     function validatePriceWithAnchorPrice(
-        address vToken,
+        address asset,
         uint256 reporterPrice,
         uint256 anchorPrice
     ) external view returns (bool);

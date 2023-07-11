@@ -128,19 +128,19 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
 
     /**
      * @notice Gets the Chainlink price for a given asset
-     * @param token address of the asset
+     * @param asset address of the asset
      * @param decimals decimals of the asset
      * @return price Asset price in USD or a manually set price of the asset
      */
-    function _getPriceInternal(address token, uint256 decimals) internal view returns (uint256 price) {
-        uint256 tokenPrice = prices[token];
+    function _getPriceInternal(address asset, uint256 decimals) internal view returns (uint256 price) {
+        uint256 tokenPrice = prices[asset];
         if (tokenPrice != 0) {
             price = tokenPrice;
         } else {
-            price = _getChainlinkPrice(token);
+            price = _getChainlinkPrice(asset);
         }
 
-        uint256 decimalDelta = 18 - uint256(decimals);
+        uint256 decimalDelta = 18 - decimals;
         return price * (10 ** decimalDelta);
     }
 
