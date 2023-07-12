@@ -42,7 +42,7 @@ describe("Binance Oracle unit tests", () => {
       binanceOracle,
       [sidRegistry.address, fakeAccessControlManager.address],
       {
-        constructorArgs: [await this.vWBnb.underlying()],
+        constructorArgs: [await this.vWBnb.underlying(), "0x0000000000000000000000000000000000000348"],
       },
     );
 

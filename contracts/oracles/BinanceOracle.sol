@@ -22,7 +22,8 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
     /// @notice Quote address for USD
-    address public constant USD_ADDR = 0x0000000000000000000000000000000000000348;
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable USD_ADDR;
 
     /// @notice Address of WBNB contract
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
@@ -43,9 +44,11 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
 
     /// @notice Constructor for the implementation contract. Sets immutable variables.
     /// @param wBnbAddress The address of the WBNB
+    /// @param usdAddress The address of the USD symbol
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address wBnbAddress) notNullAddress(wBnbAddress) {
+    constructor(address wBnbAddress, address usdAddress) notNullAddress(wBnbAddress) notNullAddress(usdAddress) {
         WBNB = wBnbAddress;
+        USD_ADDR = usdAddress;
         _disableInitializers();
     }
 
@@ -71,7 +74,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
     function initialize(
         address _sidRegistryAddress,
         address _accessControlManager
-    ) external reinitializer(2) notNullAddress(_sidRegistryAddress) {
+    ) external initializer notNullAddress(_sidRegistryAddress) {
         sidRegistryAddress = _sidRegistryAddress;
         __AccessControlled_init(_accessControlManager);
     }
