@@ -1,3 +1,11 @@
+## [1.6.12-dev.7](https://github.com/VenusProtocol/oracle/compare/v1.6.12-dev.6...v1.6.12-dev.7) (2023-07-12)
+
+
+### Bug Fixes
+
+* make usd address immutable ([ff060bb](https://github.com/VenusProtocol/oracle/commit/ff060bb259787f2e9e8f3a82c2a45b1b3a9701c8))
+* remove reinitializer ([07995d0](https://github.com/VenusProtocol/oracle/commit/07995d07982ae2f195084a8900c80197a95fc12b))
+
 ## [1.6.12-dev.6](https://github.com/VenusProtocol/oracle/compare/v1.6.12-dev.5...v1.6.12-dev.6) (2023-07-11)
 
 
