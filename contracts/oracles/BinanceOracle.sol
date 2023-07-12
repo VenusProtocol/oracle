@@ -71,7 +71,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
     function initialize(
         address _sidRegistryAddress,
         address _accessControlManager
-    ) external reinitializer(2) notNullAddress(_sidRegistryAddress) {
+    ) external initializer notNullAddress(_sidRegistryAddress) {
         sidRegistryAddress = _sidRegistryAddress;
         __AccessControlled_init(_accessControlManager);
     }
