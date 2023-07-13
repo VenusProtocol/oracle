@@ -29,7 +29,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
 
     event MaxStalePeriodAdded(string indexed asset, uint256 maxStalePeriod);
 
-    event SymbolOverridden(string indexed symbol, string indexed overriddenSymbol);
+    event SymbolOverridden(string symbol, string indexed overriddenSymbol);
 
     /**
      * @notice Checks whether an address is null or not
@@ -120,7 +120,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         string storage overrideSymbol = symbols[symbol];
 
         if (bytes(overrideSymbol).length != 0) {
-            symbol = symbols[symbol];
+            symbol = overrideSymbol;
         }
 
         return _getPrice(symbol, decimals);
