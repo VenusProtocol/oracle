@@ -4,15 +4,15 @@ pragma solidity 0.8.13;
 import "../../interfaces/FeedRegistryInterface.sol";
 
 contract MockBinanceFeedRegistry is FeedRegistryInterface {
-    mapping(address => uint256) public assetPrices;
+    mapping(string => uint256) public assetPrices;
 
-    function setAssetPrice(address base, uint256 price) external {
+    function setAssetPrice(string memory base, uint256 price) external {
         assetPrices[base] = price;
     }
 
-    function latestRoundData(
-        address base,
-        address quote
+    function latestRoundDataByName(
+        string memory base,
+        string memory quote
     )
         external
         view
@@ -23,7 +23,7 @@ contract MockBinanceFeedRegistry is FeedRegistryInterface {
         return (0, int256(assetPrices[base]), 0, block.timestamp - 10, 0);
     }
 
-    function decimals(address base, address quote) external view override returns (uint8) {
+    function decimalsByName(string memory base, string memory quote) external view override returns (uint8) {
         return 8;
     }
 }

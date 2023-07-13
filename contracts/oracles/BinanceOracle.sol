@@ -21,14 +21,6 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
     /// @notice Set this as asset address for BNB. This is the underlying address for vBNB
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
-    /// @notice Quote address for USD
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable USD_ADDR;
-
-    /// @notice Address of WBNB contract
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable WBNB;
-
     /// @notice Max stale period configuration for assets
     mapping(string => uint256) public maxStalePeriod;
 
@@ -42,13 +34,9 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         _;
     }
 
-    /// @notice Constructor for the implementation contract. Sets immutable variables.
-    /// @param wBnbAddress The address of the WBNB
-    /// @param usdAddress The address of the USD symbol
+    /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address wBnbAddress, address usdAddress) notNullAddress(wBnbAddress) notNullAddress(usdAddress) {
-        WBNB = wBnbAddress;
-        USD_ADDR = usdAddress;
+    constructor() {
         _disableInitializers();
     }
 
@@ -103,22 +91,29 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         uint256 decimals;
 
         if (asset == BNB_ADDR) {
-            symbol = "WBNB";
+            symbol = "BNB";
             decimals = 18;
-            asset = WBNB;
         } else {
             IERC20Metadata token = IERC20Metadata(asset);
             symbol = token.symbol();
             decimals = token.decimals();
         }
 
-        return _getPrice(asset, symbol, decimals);
+        if (compare(symbol, "WBNB")) {
+            symbol = "BNB";
+        }
+
+        if (compare(symbol, "wBETH")) {
+            symbol = "WBETH";
+        }
+
+        return _getPrice(symbol, decimals);
     }
 
-    function _getPrice(address asset, string memory symbol, uint256 decimals) internal view returns (uint256) {
+    function _getPrice(string memory symbol, uint256 decimals) internal view returns (uint256) {
         FeedRegistryInterface feedRegistry = FeedRegistryInterface(getFeedRegistryAddress());
 
-        (, int256 answer, , uint256 updatedAt, ) = feedRegistry.latestRoundData(asset, USD_ADDR);
+        (, int256 answer, , uint256 updatedAt, ) = feedRegistry.latestRoundDataByName(symbol, "USD");
         if (answer <= 0) revert("invalid binance oracle price");
         if (block.timestamp < updatedAt) revert("updatedAt exceeds block time");
 
@@ -128,7 +123,17 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         }
         if (deltaTime > maxStalePeriod[symbol]) revert("binance oracle price expired");
 
-        uint256 decimalDelta = feedRegistry.decimals(asset, USD_ADDR);
+        uint256 decimalDelta = feedRegistry.decimalsByName(symbol, "USD");
         return (uint256(answer) * (10 ** (18 - decimalDelta))) * (10 ** (18 - decimals));
+    }
+
+    /**
+     * @notice Used to compare if two strings are equal or not
+     * @param str1 The first string
+     * @param str2 The second string
+     * @return equal Returns true if both are equal or else false.
+     */
+    function compare(string memory str1, string memory str2) private pure returns (bool) {
+        return keccak256(bytes(str1)) == keccak256(bytes(str2));
     }
 }

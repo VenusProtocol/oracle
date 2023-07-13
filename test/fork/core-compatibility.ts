@@ -90,7 +90,7 @@ async function deployOracleFixture(): Promise<OracleFixture> {
     BinanceOracleFactory,
     [SIDRegistryAddress, accessControlManager.address],
     {
-      constructorArgs: [WBNB],
+      constructorArgs: [],
     },
   );
 
