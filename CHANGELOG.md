@@ -1,3 +1,19 @@
+## [1.7.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.6.12-dev.7...v1.7.0-dev.1) (2023-07-13)
+
+
+### Features
+
+* create mapping for symbols override ([d643450](https://github.com/VenusProtocol/oracle/commit/d643450ebed99d58bbda41b2f20bcbe81f82739b))
+
+
+### Bug Fixes
+
+* change memory to calldata ([032327a](https://github.com/VenusProtocol/oracle/commit/032327ae01d28a03e4fc012a66ccb1cb44a7ef95))
+* change memory to calldata ([37d92f0](https://github.com/VenusProtocol/oracle/commit/37d92f00b20ebf54e21b5d41bf22a5223f9330d0))
+* optimise code ([5558e22](https://github.com/VenusProtocol/oracle/commit/5558e22a1d617b34c3b10170a286ed9179c3d6ad))
+* revert calldata ([5b35b64](https://github.com/VenusProtocol/oracle/commit/5b35b64174002be0ac909950828c69e706e584dd))
+* revert to use symbols ([1bc1912](https://github.com/VenusProtocol/oracle/commit/1bc1912c846e168446042c69e815c796970f5df5))
+
 ## [1.6.12-dev.7](https://github.com/VenusProtocol/oracle/compare/v1.6.12-dev.6...v1.6.12-dev.7) (2023-07-12)
 
 
