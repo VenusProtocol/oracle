@@ -126,7 +126,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         return _getPrice(symbol, decimals);
     }
 
-    function _getPrice(string memory symbol, uint256 decimals) internal view returns (uint256) {
+    function _getPrice(string calldata symbol, uint256 decimals) internal view returns (uint256) {
         FeedRegistryInterface feedRegistry = FeedRegistryInterface(getFeedRegistryAddress());
 
         (, int256 answer, , uint256 updatedAt, ) = feedRegistry.latestRoundDataByName(symbol, "USD");
