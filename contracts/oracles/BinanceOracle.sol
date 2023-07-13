@@ -59,6 +59,11 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         emit MaxStalePeriodAdded(symbol, _maxStalePeriod);
     }
 
+    /**
+     * @notice Used to override a symbol when fetching price
+     * @param symbol The symbol to override
+     * @param overrideSymbol The symbol after override
+     */
     function setSymbolOverride(string memory symbol, string memory overrideSymbol) external {
         _checkAccessAllowed("setSymbolOverride(string,string)");
         if (bytes(symbol).length == 0) revert("symbol cannot be empty");
