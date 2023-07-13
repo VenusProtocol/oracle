@@ -21,18 +21,15 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
     /// @notice Set this as asset address for BNB. This is the underlying address for vBNB
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
-    /// @notice Quote address for USD
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable USD_ADDR;
-
-    /// @notice Address of WBNB contract
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable WBNB;
-
     /// @notice Max stale period configuration for assets
     mapping(string => uint256) public maxStalePeriod;
 
+    /// @notice Override symbols to be compatible with Binance feed registry
+    mapping(string => string) public symbols;
+
     event MaxStalePeriodAdded(string indexed asset, uint256 maxStalePeriod);
+
+    event SymbolOverridden(string symbol, string indexed overriddenSymbol);
 
     /**
      * @notice Checks whether an address is null or not
@@ -42,13 +39,9 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         _;
     }
 
-    /// @notice Constructor for the implementation contract. Sets immutable variables.
-    /// @param wBnbAddress The address of the WBNB
-    /// @param usdAddress The address of the USD symbol
+    /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address wBnbAddress, address usdAddress) notNullAddress(wBnbAddress) notNullAddress(usdAddress) {
-        WBNB = wBnbAddress;
-        USD_ADDR = usdAddress;
+    constructor() {
         _disableInitializers();
     }
 
@@ -64,6 +57,19 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
 
         maxStalePeriod[symbol] = _maxStalePeriod;
         emit MaxStalePeriodAdded(symbol, _maxStalePeriod);
+    }
+
+    /**
+     * @notice Used to override a symbol when fetching price
+     * @param symbol The symbol to override
+     * @param overrideSymbol The symbol after override
+     */
+    function setSymbolOverride(string calldata symbol, string calldata overrideSymbol) external {
+        _checkAccessAllowed("setSymbolOverride(string,string)");
+        if (bytes(symbol).length == 0) revert("symbol cannot be empty");
+
+        symbols[symbol] = overrideSymbol;
+        emit SymbolOverridden(symbol, overrideSymbol);
     }
 
     /**
@@ -103,22 +109,27 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         uint256 decimals;
 
         if (asset == BNB_ADDR) {
-            symbol = "WBNB";
+            symbol = "BNB";
             decimals = 18;
-            asset = WBNB;
         } else {
             IERC20Metadata token = IERC20Metadata(asset);
             symbol = token.symbol();
             decimals = token.decimals();
         }
 
-        return _getPrice(asset, symbol, decimals);
+        string storage overrideSymbol = symbols[symbol];
+
+        if (bytes(overrideSymbol).length != 0) {
+            symbol = overrideSymbol;
+        }
+
+        return _getPrice(symbol, decimals);
     }
 
-    function _getPrice(address asset, string memory symbol, uint256 decimals) internal view returns (uint256) {
+    function _getPrice(string memory symbol, uint256 decimals) internal view returns (uint256) {
         FeedRegistryInterface feedRegistry = FeedRegistryInterface(getFeedRegistryAddress());
 
-        (, int256 answer, , uint256 updatedAt, ) = feedRegistry.latestRoundData(asset, USD_ADDR);
+        (, int256 answer, , uint256 updatedAt, ) = feedRegistry.latestRoundDataByName(symbol, "USD");
         if (answer <= 0) revert("invalid binance oracle price");
         if (block.timestamp < updatedAt) revert("updatedAt exceeds block time");
 
@@ -128,7 +139,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         }
         if (deltaTime > maxStalePeriod[symbol]) revert("binance oracle price expired");
 
-        uint256 decimalDelta = feedRegistry.decimals(asset, USD_ADDR);
+        uint256 decimalDelta = feedRegistry.decimalsByName(symbol, "USD");
         return (uint256(answer) * (10 ** (18 - decimalDelta))) * (10 ** (18 - decimals));
     }
 }
