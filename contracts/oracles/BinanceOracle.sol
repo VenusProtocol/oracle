@@ -24,7 +24,12 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
     /// @notice Max stale period configuration for assets
     mapping(string => uint256) public maxStalePeriod;
 
+    /// @notice Override symbols to be compatible with Binance feed registry
+    mapping(string => string) public symbols;
+
     event MaxStalePeriodAdded(string indexed asset, uint256 maxStalePeriod);
+
+    event SymbolOverridden(string indexed symbol, string indexed overriddenSymbol);
 
     /**
      * @notice Checks whether an address is null or not
@@ -52,6 +57,14 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
 
         maxStalePeriod[symbol] = _maxStalePeriod;
         emit MaxStalePeriodAdded(symbol, _maxStalePeriod);
+    }
+
+    function setSymbolOverride(string memory symbol, string memory overrideSymbol) external {
+        _checkAccessAllowed("setSymbolOverride(string,string)");
+        if (bytes(symbol).length == 0) revert("symbol cannot be empty");
+
+        symbols[symbol] = overrideSymbol;
+        emit SymbolOverridden(symbol, overrideSymbol);
     }
 
     /**
@@ -99,12 +112,10 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
             decimals = token.decimals();
         }
 
-        if (compare(symbol, "WBNB")) {
-            symbol = "BNB";
-        }
+        string storage overrideSymbol = symbols[symbol];
 
-        if (compare(symbol, "wBETH")) {
-            symbol = "WBETH";
+        if (bytes(overrideSymbol).length != 0) {
+            symbol = symbols[symbol];
         }
 
         return _getPrice(symbol, decimals);
@@ -125,15 +136,5 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
 
         uint256 decimalDelta = feedRegistry.decimalsByName(symbol, "USD");
         return (uint256(answer) * (10 ** (18 - decimalDelta))) * (10 ** (18 - decimals));
-    }
-
-    /**
-     * @notice Used to compare if two strings are equal or not
-     * @param str1 The first string
-     * @param str2 The second string
-     * @return equal Returns true if both are equal or else false.
-     */
-    function compare(string memory str1, string memory str2) private pure returns (bool) {
-        return keccak256(bytes(str1)) == keccak256(bytes(str2));
     }
 }
