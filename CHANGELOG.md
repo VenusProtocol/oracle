@@ -1,3 +1,10 @@
+## [1.7.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v1.7.0-dev.1...v1.7.0-dev.2) (2023-07-14)
+
+
+### Bug Fixes
+
+* deployed oracles impl to testnet ([008461d](https://github.com/VenusProtocol/oracle/commit/008461d822bb4a725e636a9378fb173edc0f6cca))
+
 ## [1.7.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.6.12-dev.7...v1.7.0-dev.1) (2023-07-13)
 
 
