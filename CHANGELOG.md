@@ -1,3 +1,10 @@
+## [1.7.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v1.7.0-dev.2...v1.7.0-dev.3) (2023-07-17)
+
+
+### Bug Fixes
+
+* bop-02 ([82c4004](https://github.com/VenusProtocol/oracle/commit/82c4004090d248ad7816813f89093bed6b3c01a8))
+
 ## [1.7.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v1.7.0-dev.1...v1.7.0-dev.2) (2023-07-14)
 
 
