@@ -1,3 +1,10 @@
+## [1.7.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v1.7.0-dev.3...v1.7.0-dev.4) (2023-07-17)
+
+
+### Bug Fixes
+
+* deployment new implementation on mainnet ([03bdb87](https://github.com/VenusProtocol/oracle/commit/03bdb876bf9d8009271862ac4948092438469645))
+
 ## [1.7.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v1.7.0-dev.2...v1.7.0-dev.3) (2023-07-17)
 
 
