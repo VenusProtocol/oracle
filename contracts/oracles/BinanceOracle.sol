@@ -117,7 +117,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
             decimals = token.decimals();
         }
 
-        string storage overrideSymbol = symbols[symbol];
+        string memory overrideSymbol = symbols[symbol];
 
         if (bytes(overrideSymbol).length != 0) {
             symbol = overrideSymbol;
