@@ -1,6 +1,5 @@
 ## [1.7.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v1.7.0-dev.3...v1.7.0-dev.4) (2023-07-17)
 
-
 ### Bug Fixes
 
 * deployment new implementation on mainnet ([03bdb87](https://github.com/VenusProtocol/oracle/commit/03bdb876bf9d8009271862ac4948092438469645))
@@ -34,6 +33,15 @@
 * optimise code ([5558e22](https://github.com/VenusProtocol/oracle/commit/5558e22a1d617b34c3b10170a286ed9179c3d6ad))
 * revert calldata ([5b35b64](https://github.com/VenusProtocol/oracle/commit/5b35b64174002be0ac909950828c69e706e584dd))
 * revert to use symbols ([1bc1912](https://github.com/VenusProtocol/oracle/commit/1bc1912c846e168446042c69e815c796970f5df5))
+
+## [1.6.13](https://github.com/VenusProtocol/oracle/compare/v1.6.12...v1.6.13) (2023-07-17)
+
+### Bug Fixes
+
+* use hardhat 2.16.1 ([4d5e505](https://github.com/VenusProtocol/oracle/commit/4d5e50594cbe5e63e8a79ce2f8c765b673b3b70f))
+* use node 18 ([dc10843](https://github.com/VenusProtocol/oracle/commit/dc10843b6e13b393f7162eab46e108abae0841c6))
+
+## [1.6.12](https://github.com/VenusProtocol/oracle/compare/v1.6.11...v1.6.12) (2023-06-20)
 
 ## [1.6.12-dev.7](https://github.com/VenusProtocol/oracle/compare/v1.6.12-dev.6...v1.6.12-dev.7) (2023-07-12)
 
