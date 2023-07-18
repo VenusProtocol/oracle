@@ -1,3 +1,11 @@
+## [1.7.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v1.7.0-dev.4...v1.7.0-dev.5) (2023-07-18)
+
+
+### Bug Fixes
+
+* use hardhat 2.16.1 ([4d5e505](https://github.com/VenusProtocol/oracle/commit/4d5e50594cbe5e63e8a79ce2f8c765b673b3b70f))
+* use node 18 ([dc10843](https://github.com/VenusProtocol/oracle/commit/dc10843b6e13b393f7162eab46e108abae0841c6))
+
 ## [1.7.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v1.7.0-dev.3...v1.7.0-dev.4) (2023-07-17)
 
 ### Bug Fixes
