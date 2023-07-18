@@ -23,14 +23,6 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         uint256 maxStalePeriod;
     }
 
-    /// @notice vBNB address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vBnb;
-
-    /// @notice VAI address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vai;
-
     /// @notice Set this as asset address for BNB. This is the underlying address for vBNB
     address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
@@ -51,42 +43,18 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         _;
     }
 
-    /// @notice Constructor for the implementation contract. Sets immutable variables.
-    /// @param vBnbAddress The address of the vBNB
-    /// @param vaiAddress The address of the VAI
+    /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress, address vaiAddress) notNullAddress(vBnbAddress) notNullAddress(vaiAddress) {
-        vBnb = vBnbAddress;
-        vai = vaiAddress;
+    constructor() {
         _disableInitializers();
-    }
-
-    /**
-     * @notice Set the forced prices of the underlying token of input vToken
-     * @param vToken vToken address
-     * @param underlyingPriceMantissa price in 18 decimals
-     * @custom:access Only Governance
-     * @custom:error NotNullAddress thrown if address of vToken is null
-     * @custom:event Emits PricePosted event on succesfully setup of underlying price
-     */
-    function setUnderlyingPrice(
-        VBep20Interface vToken,
-        uint256 underlyingPriceMantissa
-    ) external notNullAddress(address(vToken)) {
-        _checkAccessAllowed("setUnderlyingPrice(address,uint256)");
-
-        address asset = address(vToken) == vBnb ? BNB_ADDR : address(vToken.underlying());
-        uint256 previousPriceMantissa = prices[asset];
-        prices[asset] = underlyingPriceMantissa;
-        emit PricePosted(asset, previousPriceMantissa, prices[asset]);
     }
 
     /**
      * @notice Manually set the price of a given asset
      * @param asset Asset address
-     * @param price Underlying price in 18 decimals
+     * @param price Asset price in 18 decimals
      * @custom:access Only Governance
-     * @custom:event Emits PricePosted event on succesfully setup of underlying price
+     * @custom:event Emits PricePosted event on succesfully setup of asset price
      */
     function setDirectPrice(address asset, uint256 price) external notNullAddress(asset) {
         _checkAccessAllowed("setDirectPrice(address,uint256)");
@@ -122,16 +90,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     }
 
     /**
-     * @notice Gets the Chainlink price for the underlying asset of a given vToken, revert when vToken is a null address
-     * @param vToken vToken address
-     * @return price Underlying price in USD
-     */
-    function getUnderlyingPrice(address vToken) external view override returns (uint256) {
-        return _getUnderlyingPriceInternal(VBep20Interface(vToken));
-    }
-
-    /**
-     * @notice Add single token config. vToken & feed cannot be null addresses and maxStalePeriod must be positive
+     * @notice Add single token config. asset & feed cannot be null addresses and maxStalePeriod must be positive
      * @param tokenConfig Token config struct
      * @custom:access Only Governance
      * @custom:error NotNullAddress error is thrown if asset address is null
@@ -150,45 +109,46 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     }
 
     /**
-     * @notice Gets the Chainlink price for the underlying asset of a given vToken
-     * or the manually set price if it's been set
-     * @dev The decimals of the underlying token are considered to ensure the returned price
-     * has 18 decimals of precision
-     * @param vToken vToken address
-     * @return price Underlying price in USD
+     * @notice Gets the price of a asset from the chainlink oracle
+     * @param asset Address of the asset
+     * @return Price in USD from Chainlink or a manually set price for the asset
      */
-    function _getUnderlyingPriceInternal(VBep20Interface vToken) private view returns (uint256 price) {
-        address token;
+    function getPrice(address asset) public view returns (uint256) {
         uint256 decimals;
 
-        // vBNB token doesn't have `underlying` method
-        if (address(vToken) == vBnb) {
-            token = BNB_ADDR;
-            decimals = 18;
-        } else if (address(vToken) == vai) {
-            token = vai;
+        if (asset == BNB_ADDR) {
             decimals = 18;
         } else {
-            token = vToken.underlying();
-            decimals = VBep20Interface(token).decimals();
+            IERC20Metadata token = IERC20Metadata(asset);
+            decimals = token.decimals();
         }
 
-        uint256 tokenPrice = prices[token];
+        return _getPriceInternal(asset, decimals);
+    }
+
+    /**
+     * @notice Gets the Chainlink price for a given asset
+     * @param asset address of the asset
+     * @param decimals decimals of the asset
+     * @return price Asset price in USD or a manually set price of the asset
+     */
+    function _getPriceInternal(address asset, uint256 decimals) internal view returns (uint256 price) {
+        uint256 tokenPrice = prices[asset];
         if (tokenPrice != 0) {
             price = tokenPrice;
         } else {
-            price = _getChainlinkPrice(token);
+            price = _getChainlinkPrice(asset);
         }
 
-        uint256 decimalDelta = 18 - uint256(decimals);
+        uint256 decimalDelta = 18 - decimals;
         return price * (10 ** decimalDelta);
     }
 
     /**
-     * @notice Get the Chainlink price for the underlying asset of a given vToken, revert if token config doesn't exist
+     * @notice Get the Chainlink price for an asset, revert if token config doesn't exist
      * @dev The precision of the price feed is used to ensure the returned price has 18 decimals of precision
-     * @param asset Underlying asset address
-     * @return price Underlying price in USD, with 18 decimals of precision
+     * @param asset Address of the asset
+     * @return price Price in USD, with 18 decimals of precision
      * @custom:error NotNullAddress error is thrown if the asset address is null
      * @custom:error Price error is thrown if the Chainlink price of asset is not greater than zero
      * @custom:error Timing error is thrown if current timestamp is less than the last updatedAt timestamp
