@@ -88,10 +88,13 @@ const config: HardhatUserConfig = {
       },
     },
     bscmainnet: {
-      url: "http://127.0.0.1:1248",
+      url: "https://bsc-dataseed.binance.org/",
       chainId: 56,
       live: true,
       timeout: 1200000,
+      accounts: {
+        mnemonic: process.env.MNEMONIC || "",
+      },
     },
   },
   gasReporter: {

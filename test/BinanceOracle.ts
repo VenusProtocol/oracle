@@ -41,13 +41,16 @@ describe("Binance Oracle unit tests", () => {
       binanceOracle,
       [sidRegistry.address, fakeAccessControlManager.address],
       {
-        constructorArgs: [this.vBnb.address, this.vai],
+        constructorArgs: [],
       },
     );
 
     await this.binanceOracle.setMaxStalePeriod("ETH", 24 * 60 * 60);
     await this.binanceOracle.setMaxStalePeriod("BNB", 24 * 60 * 60);
     await this.binanceOracle.setMaxStalePeriod("WBETH", 24 * 60 * 60);
+
+    await this.binanceOracle.setSymbolOverride("WBNB", "BNB");
+    await this.binanceOracle.setSymbolOverride("wBETH", "WBETH");
   });
 
   it("set price", async function () {
@@ -61,32 +64,32 @@ describe("Binance Oracle unit tests", () => {
   });
 
   it("fetch price", async function () {
-    expect(await this.binanceOracle.getUnderlyingPrice(this.vEth.address)).to.be.equal("1333789241690000000000");
-    expect(await this.binanceOracle.getUnderlyingPrice(this.vBnb.address)).to.be.equal("245980000000000000000");
+    expect(await this.binanceOracle.getPrice(this.vEth.underlying())).to.be.equal("1333789241690000000000");
+    expect(await this.binanceOracle.getPrice(this.vBnb.underlying())).to.be.equal("245980000000000000000");
   });
 
   it("fetch BNB price", async function () {
-    expect(await this.binanceOracle.getUnderlyingPrice(this.vBnb.address)).to.be.equal("245980000000000000000");
+    expect(await this.binanceOracle.getPrice(this.vBnb.underlying())).to.be.equal("245980000000000000000");
   });
 
   it("price expired", async function () {
     await this.binanceOracle.setMaxStalePeriod("ETH", 5);
     await this.binanceOracle.setMaxStalePeriod("BNB", 5);
 
-    await expect(this.binanceOracle.getUnderlyingPrice(this.vEth.address)).to.be.revertedWith(
+    await expect(this.binanceOracle.getPrice(this.vEth.underlying())).to.be.revertedWith(
       "binance oracle price expired",
     );
-    await expect(this.binanceOracle.getUnderlyingPrice(this.vBnb.address)).to.be.revertedWith(
+    await expect(this.binanceOracle.getPrice(this.vBnb.underlying())).to.be.revertedWith(
       "binance oracle price expired",
     );
   });
 
   it("set WBETH price", async function () {
-    this.mockBinanceFeedRegistry.setAssetPrice("WBETH", this.wbethPrice);
+    await this.mockBinanceFeedRegistry.setAssetPrice("WBETH", this.wbethPrice);
     expect(await this.mockBinanceFeedRegistry.assetPrices("WBETH")).to.be.equal(this.wbethPrice);
   });
 
   it("fetch WBETH price", async function () {
-    expect(await this.binanceOracle.getUnderlyingPrice(this.wbeth.address)).to.be.equal("1333789241690000000000");
+    expect(await this.binanceOracle.getPrice(this.wbeth.underlying())).to.be.equal("1333789241690000000000");
   });
 });

@@ -27,29 +27,12 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
     /// @notice validation configs by asset
     mapping(address => ValidateConfig) public validateConfigs;
 
-    /// @notice vBNB address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vBnb;
-
-    /// @notice VAI address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vai;
-
-    /// @notice Set this as asset address for BNB. This is the underlying for vBNB
-    address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
-
     /// @notice Emit this event when new validation configs are added
     event ValidateConfigAdded(address indexed asset, uint256 indexed upperBound, uint256 indexed lowerBound);
 
     /// @notice Constructor for the implementation contract. Sets immutable variables.
-    /// @param vBnbAddress The address of the vBNB
-    /// @param vaiAddress The address of the VAI
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address vBnbAddress, address vaiAddress) {
-        if (vBnbAddress == address(0)) revert("vBNB can't be zero address");
-        if (vaiAddress == address(0)) revert("VAI can't be zero address");
-        vBnb = vBnbAddress;
-        vai = vaiAddress;
+    constructor() {
         _disableInitializers();
     }
 
@@ -80,25 +63,6 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
     }
 
     /**
-     * @notice Test reported asset price against anchor price
-     * @param vToken vToken address
-     * @param reportedPrice The price to be tested
-     * @custom:error Missing error thrown if asset config is not set
-     * @custom:error Price error thrown if anchor price is not valid
-     */
-    function validatePriceWithAnchorPrice(
-        address vToken,
-        uint256 reportedPrice,
-        uint256 anchorPrice
-    ) external view override returns (bool) {
-        address asset = _getUnderlyingAsset(vToken);
-
-        if (validateConfigs[asset].upperBoundRatio == 0) revert("validation config not exist");
-        if (anchorPrice == 0) revert("anchor price is not valid");
-        return _isWithinAnchor(asset, reportedPrice, anchorPrice);
-    }
-
-    /**
      * @notice Add a single validation config
      * @param config Validation config struct
      * @custom:access Only Governance
@@ -118,6 +82,23 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
     }
 
     /**
+     * @notice Test reported asset price against anchor price
+     * @param asset asset address
+     * @param reportedPrice The price to be tested
+     * @custom:error Missing error thrown if asset config is not set
+     * @custom:error Price error thrown if anchor price is not valid
+     */
+    function validatePriceWithAnchorPrice(
+        address asset,
+        uint256 reportedPrice,
+        uint256 anchorPrice
+    ) public view virtual override returns (bool) {
+        if (validateConfigs[asset].upperBoundRatio == 0) revert("validation config not exist");
+        if (anchorPrice == 0) revert("anchor price is not valid");
+        return _isWithinAnchor(asset, reportedPrice, anchorPrice);
+    }
+
+    /**
      * @notice Test whether the reported price is within the valid bounds
      * @param asset Asset address
      * @param reportedPrice The price to be tested
@@ -134,18 +115,8 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
         return false;
     }
 
-    /**
-     * @dev This function returns the underlying asset of a vToken
-     * @param vToken vToken address
-     * @return asset underlying asset address
-     */
-    function _getUnderlyingAsset(address vToken) private view returns (address asset) {
-        if (address(vToken) == vBnb) {
-            asset = BNB_ADDR;
-        } else if (address(vToken) == vai) {
-            asset = vai;
-        } else {
-            asset = VBep20Interface(vToken).underlying();
-        }
-    }
+    // BoundValidator is to get inherited, so it's a good practice to add some storage gaps like
+    // OpenZepplin proposed in their contracts: https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+    // solhint-disable-next-line
+    uint256[49] private __gap;
 }

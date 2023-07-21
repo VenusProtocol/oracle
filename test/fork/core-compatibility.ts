@@ -49,7 +49,7 @@ async function deployOracleFixture(): Promise<OracleFixture> {
     BoundValidatorFactory,
     [accessControlManager.address],
     {
-      constructorArgs: [vBNB, VAI],
+      constructorArgs: [],
     },
   );
 
@@ -67,13 +67,13 @@ async function deployOracleFixture(): Promise<OracleFixture> {
     ChainlinkOracleFactory,
     [accessControlManager.address],
     {
-      constructorArgs: [vBNB, VAI],
+      constructorArgs: [],
     },
   );
 
   const TwapOracleFactory: TwapOracle__factory = await ethers.getContractFactory("TwapOracle");
   const twapOracle = <TwapOracle>await upgrades.deployProxy(TwapOracleFactory, [accessControlManager.address], {
-    constructorArgs: [vBNB, WBNB, VAI],
+    constructorArgs: [WBNB],
   });
 
   const PythOracleFactory: PythOracle__factory = await ethers.getContractFactory("PythOracle");
@@ -81,7 +81,7 @@ async function deployOracleFixture(): Promise<OracleFixture> {
     PythOracleFactory,
     [PythOracleAddress, accessControlManager.address],
     {
-      constructorArgs: [vBNB, VAI],
+      constructorArgs: [],
     },
   );
 
@@ -90,7 +90,7 @@ async function deployOracleFixture(): Promise<OracleFixture> {
     BinanceOracleFactory,
     [SIDRegistryAddress, accessControlManager.address],
     {
-      constructorArgs: [vBNB, VAI],
+      constructorArgs: [],
     },
   );
 

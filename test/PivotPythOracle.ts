@@ -7,12 +7,13 @@ import { artifacts, ethers, upgrades, waffle } from "hardhat";
 import { AccessControlManager, BoundValidator, PythOracle } from "../typechain-types";
 import { MockPyth } from "../typechain-types/contracts/test/MockPyth";
 import { addr0000, addr1111, getBytes32String, getSimpleAddress } from "./utils/data";
-import { makeVToken } from "./utils/makeVToken";
+import { makeToken } from "./utils/makeToken";
 import { getTime, increaseTime } from "./utils/time";
 
 const EXP_SCALE = BigNumber.from(10).pow(18);
+const bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
 
-const getPythOracle = async (account: SignerWithAddress, vBnb: string, vai: string) => {
+const getPythOracle = async (account: SignerWithAddress) => {
   const actualOracleArtifact = await artifacts.readArtifact("MockPyth");
   const actualOracle = await waffle.deployContract(account, actualOracleArtifact, [0, 0]);
   await actualOracle.deployed();
@@ -25,19 +26,19 @@ const getPythOracle = async (account: SignerWithAddress, vBnb: string, vai: stri
     pythOracle,
     [actualOracle.address, fakeAccessControlManager.address],
     {
-      constructorArgs: [vBnb, vai],
+      constructorArgs: [],
     },
   );
   return instance;
 };
 
-const getBoundValidator = async (account: SignerWithAddress, vBnb: string, vai: string) => {
+const getBoundValidator = async (account: SignerWithAddress) => {
   const boundValidator = await ethers.getContractFactory("BoundValidator", account);
   const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
   fakeAccessControlManager.isAllowedToCall.returns(true);
 
   const instance = <BoundValidator>await upgrades.deployProxy(boundValidator, [fakeAccessControlManager.address], {
-    constructorArgs: [vBnb, vai],
+    constructorArgs: [],
   });
   return instance;
 };
@@ -46,12 +47,11 @@ describe("Oracle plugin frame unit tests", () => {
   beforeEach(async function () {
     const signers: SignerWithAddress[] = await ethers.getSigners();
     const admin = signers[0];
-    this.vBnb = signers[5].address;
     this.vai = signers[6].address;
     this.signers = signers;
     this.admin = admin;
-    this.pythOracle = await getPythOracle(admin, this.vBnb, this.vai);
-    this.boundValidator = await getBoundValidator(admin, this.vBnb, this.vai);
+    this.pythOracle = await getPythOracle(admin);
+    this.boundValidator = await getBoundValidator(admin);
   });
 
   describe("admin check", () => {
@@ -72,7 +72,7 @@ describe("Oracle plugin frame unit tests", () => {
 
   describe("token config", () => {
     describe("add single token config", () => {
-      it("vToken can\"t be zero & maxStalePeriod can't be zero", async function () {
+      it("token can\"t be zero & maxStalePeriod can't be zero", async function () {
         await expect(
           this.pythOracle.setTokenConfig({
             pythId: getBytes32String(2),
@@ -165,20 +165,20 @@ describe("Oracle plugin frame unit tests", () => {
         },
       ]);
 
-      this.vETH = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
+      this.eth = await makeToken(this.admin, "ETH", "ETH");
     });
     it("revert when asset not exist", async function () {
-      await expect(this.pythOracle.getUnderlyingPrice(this.vETH.address)).to.be.revertedWith("asset doesn't exist");
+      await expect(this.pythOracle.getPrice(this.eth.address)).to.be.revertedWith("asset doesn't exist");
     });
 
     it("revert when price is expired", async function () {
       await this.pythOracle.setTokenConfig({
-        asset: await this.vETH.underlying(),
+        asset: await this.eth.address,
         pythId: getBytes32String(2),
         maxStalePeriod: 111,
       });
       await increaseTime(120);
-      await expect(this.pythOracle.getUnderlyingPrice(this.vETH.address)).to.be.revertedWith(
+      await expect(this.pythOracle.getPrice(this.eth.address)).to.be.revertedWith(
         "no price available which is recent enough",
       );
     });
@@ -203,50 +203,42 @@ describe("Oracle plugin frame unit tests", () => {
       await this.underlyingPythOracle.updatePriceFeedsHarness([feed]);
 
       await this.pythOracle.setTokenConfig({
-        asset: await this.vETH.underlying(),
+        asset: await this.eth.address,
         pythId: getBytes32String(3),
         maxStalePeriod: 111,
       });
 
       // test negative price
-      await expect(this.pythOracle.getUnderlyingPrice(this.vETH.address)).to.be.revertedWith(
-        "SafeCast: value must be positive",
-      );
+      await expect(this.pythOracle.getPrice(this.eth.address)).to.be.revertedWith("SafeCast: value must be positive");
 
       feed.price.price = BigNumber.from(0);
       await this.underlyingPythOracle.updatePriceFeedsHarness([feed]);
-      await expect(this.pythOracle.getUnderlyingPrice(this.vETH.address)).to.be.revertedWith(
-        "invalid pyth oracle price",
-      );
+      await expect(this.pythOracle.getPrice(this.eth.address)).to.be.revertedWith("invalid pyth oracle price");
     });
 
     it("price should be 18 decimals", async function () {
-      let vToken = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
+      let token = await makeToken(this.admin, "ETH", "ETH");
 
       await this.pythOracle.setTokenConfig({
-        asset: await this.vETH.underlying(),
+        asset: await this.eth.address,
         pythId: getBytes32String(1),
         maxStalePeriod: 111,
       });
 
-      let price = await this.pythOracle.getUnderlyingPrice(this.vETH.address);
+      let price = await this.pythOracle.getPrice(this.eth.address);
       // 10000000 * 10**-6 * 10**18 * 10**0 = 1e19
       expect(price).to.equal(BigNumber.from(10).pow(19));
 
-      vToken = await makeVToken(
-        this.admin,
-        { name: "vBTC", symbol: "vBTC" },
-        { name: "Bitcoin", symbol: "BTC", decimals: 8 },
-      );
+      token = await makeToken(this.admin, "BTC", "BTC", 8);
 
       // test another token
       await this.pythOracle.setTokenConfig({
-        asset: await vToken.underlying(),
+        asset: await token.address,
         pythId: getBytes32String(2),
         maxStalePeriod: 111,
       });
 
-      price = await this.pythOracle.getUnderlyingPrice(vToken.address);
+      price = await this.pythOracle.getPrice(token.address);
       // 1 * 10**2 * 10**18 * 10**10 = 1e30
       expect(price).to.equal(BigNumber.from(10).pow(30));
     });
@@ -254,21 +246,17 @@ describe("Oracle plugin frame unit tests", () => {
 
   describe("validation", () => {
     it("validate price", async function () {
-      const vToken = await makeVToken(
-        this.admin,
-        { name: "vETH", symbol: "vETH" },
-        { name: "Ethereum", symbol: "ETH" },
-      );
+      const token = await makeToken(this.admin, "ETH", "ETH");
 
       const validationConfig = {
-        asset: await vToken.underlying(),
+        asset: await token.address,
         upperBoundRatio: EXP_SCALE.mul(12).div(10),
         lowerBoundRatio: EXP_SCALE.mul(8).div(10),
       };
 
       // set price
       await this.pythOracle.setTokenConfig({
-        asset: await vToken.underlying(),
+        asset: await token.address,
         pythId: getBytes32String(3),
         maxStalePeriod: 111,
       });
@@ -295,7 +283,7 @@ describe("Oracle plugin frame unit tests", () => {
       await underlyingPythOracle.updatePriceFeedsHarness([feed]);
 
       // sanity check
-      await expect(this.boundValidator.validatePriceWithAnchorPrice(vToken.address, 100, 0)).to.be.revertedWith(
+      await expect(this.boundValidator.validatePriceWithAnchorPrice(token.address, 100, 0)).to.be.revertedWith(
         "validation config not exist",
       );
 
@@ -307,26 +295,25 @@ describe("Oracle plugin frame unit tests", () => {
       // ).to.be.revertedWith("anchor price is not valid");
 
       let validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
-        vToken.address,
+        token.address,
         EXP_SCALE,
-        await this.pythOracle.getUnderlyingPrice(vToken.address),
+        await this.pythOracle.getPrice(token.address),
       );
       expect(validateResult).to.equal(true);
       validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
-        vToken.address,
+        token.address,
         EXP_SCALE.mul(100).div(79),
-        await this.pythOracle.getUnderlyingPrice(vToken.address),
+        await this.pythOracle.getPrice(token.address),
       );
       expect(validateResult).to.equal(false);
       validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
-        vToken.address,
+        token.address,
         EXP_SCALE.mul(100).div(121),
-        await this.pythOracle.getUnderlyingPrice(vToken.address),
+        await this.pythOracle.getPrice(token.address),
       );
       expect(validateResult).to.equal(false);
     });
     it("validate BNB price", async function () {
-      const bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
       const validationConfig = {
         asset: bnbAddr,
         upperBoundRatio: EXP_SCALE.mul(12).div(10),
@@ -362,28 +349,28 @@ describe("Oracle plugin frame unit tests", () => {
       await underlyingPythOracle.updatePriceFeedsHarness([feed]);
 
       // sanity check
-      await expect(this.boundValidator.validatePriceWithAnchorPrice(this.vBnb, 100, 0)).to.be.revertedWith(
+      await expect(this.boundValidator.validatePriceWithAnchorPrice(bnbAddr, 100, 0)).to.be.revertedWith(
         "validation config not exist",
       );
 
       await this.boundValidator.setValidateConfigs([validationConfig]);
 
       let validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
-        this.vBnb,
+        bnbAddr,
         EXP_SCALE,
-        await this.pythOracle.getUnderlyingPrice(this.vBnb),
+        await this.pythOracle.getPrice(bnbAddr),
       );
       expect(validateResult).to.equal(true);
       validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
-        this.vBnb,
+        bnbAddr,
         EXP_SCALE.mul(100).div(79),
-        await this.pythOracle.getUnderlyingPrice(this.vBnb),
+        await this.pythOracle.getPrice(bnbAddr),
       );
       expect(validateResult).to.equal(false);
       validateResult = await this.boundValidator.validatePriceWithAnchorPrice(
-        this.vBnb,
+        bnbAddr,
         EXP_SCALE.mul(100).div(121),
-        await this.pythOracle.getUnderlyingPrice(this.vBnb),
+        await this.pythOracle.getPrice(bnbAddr),
       );
       expect(validateResult).to.equal(false);
     });

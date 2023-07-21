@@ -1,8 +1,8 @@
 {
   "name": "@venusprotocol/oracle",
   "description": "Venus Protocol Price Oracle",
-  "version": "1.6.13",
-  "author": "",
+  "version": "1.7.0-dev.6",
+  "author": "Venus",
   "engines": {
     "node": ">=18.x.x"
   },

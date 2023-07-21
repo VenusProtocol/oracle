@@ -23,7 +23,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     struct TokenConfig {
         /// @notice Asset address, which can't be zero address and can be used for existance check
         address asset;
-        /// @notice Decimals of underlying asset represented as 1e{decimals}
+        /// @notice Decimals of asset represented as 1e{decimals}
         uint256 baseUnit;
         /// @notice The address of Pancake pair
         address pancakePool;
@@ -36,17 +36,12 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
         uint256 anchorPeriod;
     }
 
+    /// @notice Set this as asset address for BNB. This is the underlying for vBNB
+    address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
+
     /// @notice WBNB address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable WBNB;
-
-    /// @notice vBNB address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vBnb;
-
-    /// @notice VAI address
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vai;
 
     /// @notice the base unit of WBNB and BUSD, which are the paired tokens for all assets
     uint256 public constant BNB_BASE_UNIT = 1e18;
@@ -85,18 +80,10 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     }
 
     /// @notice Constructor for the implementation contract. Sets immutable variables.
-    /// @param vBnbAddress The address of the VBNB
     /// @param wBnbAddress The address of the WBNB
-    /// @param vaiAddress The address of the WBNB
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(
-        address vBnbAddress,
-        address wBnbAddress,
-        address vaiAddress
-    ) notNullAddress(vBnbAddress) notNullAddress(wBnbAddress) notNullAddress(vaiAddress) {
-        vBnb = vBnbAddress;
+    constructor(address wBnbAddress) notNullAddress(wBnbAddress) {
         WBNB = wBnbAddress;
-        vai = vaiAddress;
         _disableInitializers();
     }
 
@@ -125,38 +112,29 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     }
 
     /**
-     * @notice Updates the current token/BUSD price from PancakeSwap, with 18 decimals of precision.
-     * @return anchorPrice anchor price of the underlying asset of the vToken
-     * @custom:error Missing error is thrown if token config does not exist
-     */
-    function updateTwap(address vToken) external returns (uint256) {
-        address asset = _getUnderlyingAsset(vToken);
-
-        if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
-        // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
-        if (asset != WBNB && tokenConfigs[asset].isBnbBased) {
-            if (tokenConfigs[WBNB].asset == address(0)) revert("WBNB not exist");
-            _updateTwapInternal(tokenConfigs[WBNB]);
-        }
-        return _updateTwapInternal(tokenConfigs[asset]);
-    }
-
-    /**
-     * @notice Get the underlying TWAP price for the given vToken
-     * @param vToken vToken address
-     * @return price Underlying price in USD
+     * @notice Get the TWAP price for the given asset
+     * @param asset asset address
+     * @return price asset price in USD
      * @custom:error Missing error is thrown if the token config does not exist
      * @custom:error Range error is thrown if TWAP price is not greater than zero
      */
-    function getUnderlyingPrice(address vToken) external view override returns (uint256) {
-        address asset = _getUnderlyingAsset(vToken);
+    function getPrice(address asset) external view override returns (uint256) {
+        uint256 decimals;
+
+        if (asset == BNB_ADDR) {
+            decimals = 18;
+            asset = WBNB;
+        } else {
+            IERC20Metadata token = IERC20Metadata(asset);
+            decimals = token.decimals();
+        }
 
         if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
         uint256 price = prices[asset];
 
         // if price is 0, it means the price hasn't been updated yet and it's meaningless, revert
         if (price == 0) revert("TWAP price must be positive");
-        return (price * (10 ** (18 - IERC20Metadata(asset).decimals())));
+        return (price * (10 ** (18 - decimals)));
     }
 
     /**
@@ -189,6 +167,25 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     }
 
     /**
+     * @notice Updates the current token/BUSD price from PancakeSwap, with 18 decimals of precision.
+     * @return anchorPrice anchor price of the asset
+     * @custom:error Missing error is thrown if token config does not exist
+     */
+    function updateTwap(address asset) public returns (uint256) {
+        if (asset == BNB_ADDR) {
+            asset = WBNB;
+        }
+
+        if (tokenConfigs[asset].asset == address(0)) revert("asset not exist");
+        // Update & fetch WBNB price first, so we can calculate the price of WBNB paired token
+        if (asset != WBNB && tokenConfigs[asset].isBnbBased) {
+            if (tokenConfigs[WBNB].asset == address(0)) revert("WBNB not exist");
+            _updateTwapInternal(tokenConfigs[WBNB]);
+        }
+        return _updateTwapInternal(tokenConfigs[asset]);
+    }
+
+    /**
      * @notice Fetches the current token/WBNB and token/BUSD price accumulator from PancakeSwap.
      * @return cumulative price of target token regardless of pair order
      */
@@ -203,7 +200,7 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
 
     /**
      * @notice Fetches the current token/BUSD price from PancakeSwap, with 18 decimals of precision.
-     * @return price Underlying price in USD, with 18 decimals
+     * @return price Asset price in USD, with 18 decimals
      * @custom:error Timing error is thrown if current time is not greater than old observation timestamp
      * @custom:error Zero price error is thrown if token is BNB based and price is zero
      * @custom:error Zero price error is thrown if fetched anchorPriceMantissa is zero
@@ -299,20 +296,5 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
             cumulativePrice
         );
         return (cumulativePrice, startCumulativePrice, startCumulativeTimestamp);
-    }
-
-    /**
-     * @dev This function returns the underlying asset of a vToken
-     * @param vToken vToken address
-     * @return asset underlying asset address
-     */
-    function _getUnderlyingAsset(address vToken) private view returns (address asset) {
-        if (vToken == vBnb) {
-            asset = WBNB;
-        } else if (vToken == vai) {
-            asset = vai;
-        } else {
-            asset = VBep20Interface(vToken).underlying();
-        }
     }
 }
