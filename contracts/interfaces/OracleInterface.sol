@@ -8,6 +8,8 @@ interface OracleInterface {
 interface ResilientOracleInterface is OracleInterface {
     function updatePrice(address vToken) external;
 
+    function updateAssetPrice(address asset) external;
+
     function getUnderlyingPrice(address vToken) external view returns (uint256);
 }
 
