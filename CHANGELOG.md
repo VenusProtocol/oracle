@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/VenusProtocol/oracle/compare/v1.7.0...v1.7.1) (2023-07-25)
+
+
+### Bug Fixes
+
+* add updateAssetPrice(address asset) to ResilientOracleInterface ([37e4ee9](https://github.com/VenusProtocol/oracle/commit/37e4ee9eefeb26525d7d4944402318041a78b483))
+
 ## [1.7.1-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.7.0...v1.7.1-dev.1) (2023-07-25)
 
 
