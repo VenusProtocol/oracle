@@ -1,3 +1,47 @@
+## [1.7.0](https://github.com/VenusProtocol/oracle/compare/v1.6.13...v1.7.0) (2023-07-21)
+
+
+### Features
+
+* create mapping for symbols override ([d643450](https://github.com/VenusProtocol/oracle/commit/d643450ebed99d58bbda41b2f20bcbe81f82739b))
+
+
+### Bug Fixes
+
+* bop-01 ([e9bfdc3](https://github.com/VenusProtocol/oracle/commit/e9bfdc313628169629490d3607f3490610548d2e))
+* bop-01 ([3a7f9e2](https://github.com/VenusProtocol/oracle/commit/3a7f9e2d1e0e7d56dc0642f9b1ef3c43f88d61d6))
+* bop-02 ([82c4004](https://github.com/VenusProtocol/oracle/commit/82c4004090d248ad7816813f89093bed6b3c01a8))
+* change memory to calldata ([032327a](https://github.com/VenusProtocol/oracle/commit/032327ae01d28a03e4fc012a66ccb1cb44a7ef95))
+* change memory to calldata ([37d92f0](https://github.com/VenusProtocol/oracle/commit/37d92f00b20ebf54e21b5d41bf22a5223f9330d0))
+* deployed oracles impl to testnet ([008461d](https://github.com/VenusProtocol/oracle/commit/008461d822bb4a725e636a9378fb173edc0f6cca))
+* deployment new implementation on mainnet ([03bdb87](https://github.com/VenusProtocol/oracle/commit/03bdb876bf9d8009271862ac4948092438469645))
+* fixed binance and bound validator tests ([51bf6a4](https://github.com/VenusProtocol/oracle/commit/51bf6a443fb12f2b032fbf4f7bb9e3bd00141b7c))
+* fixed chainlink tests ([eb68d82](https://github.com/VenusProtocol/oracle/commit/eb68d8253796d6749c31dca71cc46b7e989d47b6))
+* fixed deployment script ([fa795ba](https://github.com/VenusProtocol/oracle/commit/fa795babe9a60e68a2652917a2199aac081d8976))
+* fixed fork tests ([af365c9](https://github.com/VenusProtocol/oracle/commit/af365c905acf9da26a8307c9f008cb73c11e4940))
+* fixed pyth oracle tests ([fbc8391](https://github.com/VenusProtocol/oracle/commit/fbc83913001938895a603f3060d8b11a8a8d324e))
+* fixed resilient oracle tests ([39c82ca](https://github.com/VenusProtocol/oracle/commit/39c82ca33d007c09c49dad94d9683ea7b9a3f53c))
+* fixed twap oracle tests ([44a927b](https://github.com/VenusProtocol/oracle/commit/44a927be0c202fa2e567087ea7f9a4a41cea8983))
+* handle wbeth symbol ([3f771c4](https://github.com/VenusProtocol/oracle/commit/3f771c4b32e41e2c6794d99fe058814c26906558))
+* make usd address immutable ([ff060bb](https://github.com/VenusProtocol/oracle/commit/ff060bb259787f2e9e8f3a82c2a45b1b3a9701c8))
+* n1-1 ([cfab7e4](https://github.com/VenusProtocol/oracle/commit/cfab7e44143513c7381d3ff0db7152f49b2c61e5))
+* n2 ([666f6b2](https://github.com/VenusProtocol/oracle/commit/666f6b2657b98e8d61d2b41f08c68d49bfb97616))
+* n4 ([fe0719d](https://github.com/VenusProtocol/oracle/commit/fe0719dc5e3941751cb88250c06a6a8b82dad717))
+* optimise code ([5558e22](https://github.com/VenusProtocol/oracle/commit/5558e22a1d617b34c3b10170a286ed9179c3d6ad))
+* **refactor:** bov-01: unchecked blocks can optimize contract ([d0035d4](https://github.com/VenusProtocol/oracle/commit/d0035d46725e59a477d4055d1fefac67cb998f44))
+* **refactor:** bov-02: unused function ([ef3b5d7](https://github.com/VenusProtocol/oracle/commit/ef3b5d7904f96a4bc0f12189640224df41e9dc8f))
+* **refactor:** bov-03: missing zero address validation ([ad9cd99](https://github.com/VenusProtocol/oracle/commit/ad9cd99458b9ee30dc4e852d643de2d8c68f4a2e))
+* **refactor:** rov-01: fallbackPrice is tested Against mainPrice ([cd1a2b9](https://github.com/VenusProtocol/oracle/commit/cd1a2b9273bfcc568d2c5e9b59d570d13c51f725))
+* **refactor:** vpb-01: fix-typos-and-inconsistencies ([9677dd6](https://github.com/VenusProtocol/oracle/commit/9677dd613f24fc8ca6fff220301e647657ba4b74))
+* remove reinitializer ([07995d0](https://github.com/VenusProtocol/oracle/commit/07995d07982ae2f195084a8900c80197a95fc12b))
+* resolved conflicts ([7f30a7b](https://github.com/VenusProtocol/oracle/commit/7f30a7b40d9d935994c79557929d586bae8a5355))
+* revert calldata ([5b35b64](https://github.com/VenusProtocol/oracle/commit/5b35b64174002be0ac909950828c69e706e584dd))
+* revert to use symbols ([1bc1912](https://github.com/VenusProtocol/oracle/commit/1bc1912c846e168446042c69e815c796970f5df5))
+* revert visibility modifier ([ef51e60](https://github.com/VenusProtocol/oracle/commit/ef51e60e290d1dd17e34ffc176956e8ab7000890))
+* use hardhat 2.16.1 ([9ed82a1](https://github.com/VenusProtocol/oracle/commit/9ed82a1ae67b0bd27af08943dc3c3bd0dbc5a1f0))
+* use node 18 ([b4c0289](https://github.com/VenusProtocol/oracle/commit/b4c0289e5aabf25470230551dac897eb95397eca))
+* validate sidRegistryAddress ([d71060a](https://github.com/VenusProtocol/oracle/commit/d71060a310b4fc6195a8aa804a86f73b5f4d176e))
+
 ## [1.7.0-dev.6](https://github.com/VenusProtocol/oracle/compare/v1.7.0-dev.5...v1.7.0-dev.6) (2023-07-21)
 
 ## [1.7.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v1.7.0-dev.4...v1.7.0-dev.5) (2023-07-18)
