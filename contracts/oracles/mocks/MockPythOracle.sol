@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "../PythOracle.sol";
-import "../../interfaces/VBep20Interface.sol";
+import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import { IPyth } from "../PythOracle.sol";
+import { OracleInterface } from "../../interfaces/OracleInterface.sol";
 
 contract MockPythOracle is OwnableUpgradeable {
     mapping(address => uint256) public assetPrices;
@@ -25,8 +25,7 @@ contract MockPythOracle is OwnableUpgradeable {
     }
 
     //https://compound.finance/docs/prices
-    function getUnderlyingPrice(address vToken) public view returns (uint256) {
-        address token = VBep20Interface(vToken).underlying();
+    function getPrice(address token) public view returns (uint256) {
         return assetPrices[token];
     }
 }
