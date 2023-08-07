@@ -1,3 +1,10 @@
+## [1.7.2](https://github.com/VenusProtocol/oracle/compare/v1.7.1...v1.7.2) (2023-08-01)
+
+
+### Bug Fixes
+
+* define getPrice from the new OracleInterface in mock contracts ([dc6aa3f](https://github.com/VenusProtocol/oracle/commit/dc6aa3fa664662a65a6866de6cacb1dafef2afc7))
+
 ## [1.7.2-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.7.1...v1.7.2-dev.1) (2023-08-01)
 
 
