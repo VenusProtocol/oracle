@@ -92,6 +92,13 @@ const config: HardhatUserConfig = {
       live: true,
       timeout: 1200000, // 20 minutes
     },
+    sepolia: {
+      url: "https://rpc.notadegen.com/eth/sepolia",
+      chainId: 11155111,
+      live: true,
+      gasPrice: 20000000000,
+      accounts: process.env.PRIVATE_KEY ? [`0x${process.env.PRIVATE_KEY}`] : [],
+    }
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
