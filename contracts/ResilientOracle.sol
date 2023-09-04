@@ -78,7 +78,8 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vai;
 
-    /// @notice Set this as asset address for Native token on each chain. This is the underlying for vBNB (on bsc) and can serve as any underlying asset of a market that supports native tokens
+    /// @notice Set this as asset address for Native token on each chain.This is the underlying for vBNB (on bsc)
+    /// and can serve as any underlying asset of a market that supports native tokens
     address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
     /// @notice Bound validator contract address
@@ -119,9 +120,11 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /// @notice Constructor for the implementation contract. Sets immutable variables.
-    /// @dev nativeMarketAddress can be address(0) if on the chain we do not support native market (e.g vETH on ethereum would not be supported, only vWETH)
+    /// @dev nativeMarketAddress can be address(0) if on the chain we do not support native market
+    ///      (e.g vETH on ethereum would not be supported, only vWETH)
     /// @param nativeMarketAddress The address of a native market (for bsc it would be vBNB address)
-    /// @param vaiAddress The address of the VAI token (if there is VAI on the deployed chain). Set to address(0) of VAI is not existent.
+    /// @param vaiAddress The address of the VAI token (if there is VAI on the deployed chain).
+    ///          Set to address(0) of VAI is not existent.
     /// @param _boundValidator Address of the bound validator contract
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
