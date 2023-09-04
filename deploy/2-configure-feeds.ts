@@ -55,6 +55,11 @@ const chainlinkFeed: Config = {
     BNB: "0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526",
     LTC: "0x9Dcf949BCA2F4A8a62350E0065d18902eE87Dca3",
   },
+  sepolia: {
+    WBTC: "0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43",
+    WETH: "0x694AA1769357215DE4FAC081bf1f309aDC325306",
+    USDC: "0xA2F78ab2355fe2f984D808B5CeE7FD0A93D5270E"
+  },
 };
 
 const pythID: Config = {
@@ -228,13 +233,33 @@ export const assets: Assets = {
       price: "159990000000000000000",
     },
   ],
+  sepolia: [
+    {
+      token: "WBTC",
+      address: "0xbA9c9b6c72ACd08050BBF6e03AeAD1BBbaF21ef7",
+      oracle: "chainlink",
+      price: "25000000000000000000000",
+    },
+    {
+      token: "WETH",
+      address: "0x58ef310046b1b9CFFE304D89104EA5DF2bABee28",
+      oracle: "chainlink",
+      price: "2080000000000000000000",
+    },
+    {
+      token: "USDC",
+      address: "0xA8c06B029d70142F7E7b389a7C4bdFe371d9eDf5",
+      oracle: "chainlink",
+      price: "1000000000000000000",
+    },
+  ]
 };
 
 const addr0000 = "0x0000000000000000000000000000000000000000";
 const DEFAULT_STALE_PERIOD = 24 * 60 * 60; // 24 hrs
 
 const func: DeployFunction = async function ({ network, deployments, getNamedAccounts }: HardhatRuntimeEnvironment) {
-  const networkName: string = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
+  const networkName: string = network.name;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
@@ -331,4 +356,4 @@ const func: DeployFunction = async function ({ network, deployments, getNamedAcc
 };
 
 export default func;
-export const tags = ["configure"];
+func.tags = ["configure"];

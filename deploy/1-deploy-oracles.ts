@@ -171,4 +171,4 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 };
 
 export default func;
-export const tags = ["deploy"];
+func.tags = ["deploy"];
