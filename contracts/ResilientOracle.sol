@@ -70,16 +70,16 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
 
     uint256 public constant INVALID_PRICE = 0;
 
-    /// @notice vBNB address
+    /// @notice Native market address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable vBnb;
+    address public immutable nativeMarket;
 
     /// @notice VAI address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable vai;
 
-    /// @notice Set this as asset address for BNB. This is the underlying for vBNB
-    address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
+    /// @notice Set this as asset address for Native token on each chain. This is the underlying for vBNB (on bsc) and can serve as any underlying asset of a market that supports native tokens
+    address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
     /// @notice Bound validator contract address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
@@ -119,16 +119,17 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /// @notice Constructor for the implementation contract. Sets immutable variables.
-    /// @param vBnbAddress The address of the vBNB
-    /// @param vaiAddress The address of the VAI
+    /// @dev nativeMarketAddress can be address(0) if on the chain we do not support native market (e.g vETH on ethereum would not be supported, only vWETH)
+    /// @param nativeMarketAddress The address of a native market (for bsc it would be vBNB address)
+    /// @param vaiAddress The address of the VAI token (if there is VAI on the deployed chain). Set to address(0) of VAI is not existent.
     /// @param _boundValidator Address of the bound validator contract
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
-        address vBnbAddress,
+        address nativeMarketAddress,
         address vaiAddress,
         BoundValidatorInterface _boundValidator
-    ) notNullAddress(vBnbAddress) notNullAddress(vaiAddress) notNullAddress(address(_boundValidator)) {
-        vBnb = vBnbAddress;
+    ) notNullAddress(address(_boundValidator)) {
+        nativeMarket = nativeMarketAddress;
         vai = vaiAddress;
         boundValidator = _boundValidator;
 
@@ -439,8 +440,10 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @return asset underlying asset address
      */
     function _getUnderlyingAsset(address vToken) private view returns (address asset) {
-        if (address(vToken) == vBnb) {
-            asset = BNB_ADDR;
+        if (address(vToken) == address(0)) {
+            revert("asset price not supported");
+        } else if (address(vToken) == nativeMarket) {
+            asset = NATIVE_TOKEN_ADDR;
         } else if (address(vToken) == vai) {
             asset = vai;
         } else {
