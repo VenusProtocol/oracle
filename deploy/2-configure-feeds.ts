@@ -14,7 +14,7 @@ import {
 } from "../helpers/deploymentConfig";
 
 const func: DeployFunction = async function ({ network, deployments, getNamedAccounts }: HardhatRuntimeEnvironment) {
-  const networkName: string = network.name;
+  const networkName: string = network.name === "hardhat" ? "bsctestnet" : network.name;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
