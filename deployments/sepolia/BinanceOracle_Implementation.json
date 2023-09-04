@@ -381,9 +381,7 @@
         "blockNumber": 4204999,
         "transactionHash": "0xa40e606297b1bfdc82b5a2b8e3b1a6beedf0b0680a8e04008e63cdfdff04c701",
         "address": "0x5b6c86d6111E010aC62cf74E55D489455806B22A",
-        "topics": [
-          "0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"
-        ],
+        "topics": ["0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"],
         "data": "0x00000000000000000000000000000000000000000000000000000000000000ff",
         "logIndex": 0,
         "blockHash": "0x3fbffcbcfc8f74d9398c10bbaf01c32736d049598f2ba86922ca024f2b77273d"

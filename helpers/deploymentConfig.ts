@@ -31,7 +31,6 @@ export interface Oracles {
   [key: string]: Oracle;
 }
 
-
 export const addr0000 = "0x0000000000000000000000000000000000000000";
 export const DEFAULT_STALE_PERIOD = 24 * 60 * 60; // 24 hrs
 
@@ -59,7 +58,7 @@ export const chainlinkFeed: Config = {
   sepolia: {
     WBTC: "0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43",
     WETH: "0x694AA1769357215DE4FAC081bf1f309aDC325306",
-    USDC: "0xA2F78ab2355fe2f984D808B5CeE7FD0A93D5270E"
+    USDC: "0xA2F78ab2355fe2f984D808B5CeE7FD0A93D5270E",
   },
 };
 
@@ -253,5 +252,5 @@ export const assets: Assets = {
       oracle: "chainlink",
       price: "1000000000000000000",
     },
-  ]
+  ],
 };

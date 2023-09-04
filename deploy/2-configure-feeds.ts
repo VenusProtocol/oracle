@@ -2,7 +2,16 @@ import { Contract } from "ethers";
 import hre from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { addr0000, Asset, chainlinkFeed, DEFAULT_STALE_PERIOD, pythID, assets, Oracles } from "helpers/deploymentConfig";
+
+import {
+  Asset,
+  DEFAULT_STALE_PERIOD,
+  Oracles,
+  addr0000,
+  assets,
+  chainlinkFeed,
+  pythID,
+} from "../helpers/deploymentConfig";
 
 const func: DeployFunction = async function ({ network, deployments, getNamedAccounts }: HardhatRuntimeEnvironment) {
   const networkName: string = network.name;
