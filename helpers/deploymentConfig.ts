@@ -1,4 +1,5 @@
 import { Contract } from "ethers";
+import { ethers } from "hardhat";
 
 export interface Feed {
   [key: string]: string;
@@ -253,4 +254,41 @@ export const assets: Assets = {
       price: "1000000000000000000",
     },
   ],
+};
+
+export const getOraclesData = async (): Promise<Oracles> => {
+  const chainlinkOracle = await ethers.getContract("ChainlinkOracle");
+  const binanceOracle = await ethers.getContract("BinanceOracle");
+  const pythOracle = await ethers.getContract("PythOracle");
+
+  const oraclesData: Oracles = {
+    chainlink: {
+      oracles: [chainlinkOracle.address, addr0000, addr0000],
+      enableFlagsForOracles: [true, false, false],
+      underlyingOracle: chainlinkOracle,
+      getTokenConfig: (asset: Asset, name: string) => ({
+        asset: asset.address,
+        feed: chainlinkFeed[name][asset.token],
+        maxStalePeriod: DEFAULT_STALE_PERIOD,
+      }),
+    },
+    binance: {
+      oracles: [binanceOracle.address, addr0000, addr0000],
+      enableFlagsForOracles: [true, false, false],
+      underlyingOracle: binanceOracle,
+      getStalePeriodConfig: (asset: Asset) => [asset.token, DEFAULT_STALE_PERIOD.toString()],
+    },
+    pyth: {
+      oracles: [pythOracle.address, addr0000, addr0000],
+      enableFlagsForOracles: [true, false, false],
+      underlyingOracle: pythOracle,
+      getTokenConfig: (asset: Asset, name: string) => ({
+        pythId: pythID[name][asset.token],
+        asset: asset.address,
+        maxStalePeriod: DEFAULT_STALE_PERIOD,
+      }),
+    },
+  };
+
+  return oraclesData;
 };
