@@ -69,6 +69,26 @@ const hasPermission = async (
   return accessControl.hasRole(role, caller);
 };
 
+const timelockOraclePermissions = (timelock: string): AccessControlEntry[] => {
+  const methods = [
+    "pause()",
+    "unpause()",
+    "setOracle(address,address,uint8)",
+    "enableOracle(address,uint8,bool)",
+    "setTokenConfig(TokenConfig)",
+    "setDirectPrice(address,uint256)",
+    "setValidateConfig(ValidateConfig)",
+    "setMaxStalePeriod(string,uint256)",
+    "setSymbolOverride(string,string)",
+    "setUnderlyingPythOracle(address)",
+  ];
+  return methods.map(method => ({
+    caller: timelock,
+    target: ANY_CONTRACT,
+    method,
+  }));
+};
+
 const configureAccessControls = async (hre: HardhatRuntimeEnvironment): Promise<GovernanceCommand[]> => {
   const networkName = hre.network.name;
   const accessControlManagerAddress = ADDRESSES[networkName].acm;
@@ -96,26 +116,6 @@ const configureAccessControls = async (hre: HardhatRuntimeEnvironment): Promise<
     }),
   );
   return commands.flat();
-};
-
-const timelockOraclePermissions = (timelock: string): AccessControlEntry[] => {
-  const methods = [
-    "pause()",
-    "unpause()",
-    "setOracle(address,address,uint8)",
-    "enableOracle(address,uint8,bool)",
-    "setTokenConfig(TokenConfig)",
-    "setDirectPrice(address,uint256)",
-    "setValidateConfig(ValidateConfig)",
-    "setMaxStalePeriod(string,uint256)",
-    "setSymbolOverride(string,string)",
-    "setUnderlyingPythOracle(address)",
-  ];
-  return methods.map(method => ({
-    caller: timelock,
-    target: ANY_CONTRACT,
-    method,
-  }));
 };
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
