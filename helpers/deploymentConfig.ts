@@ -25,6 +25,7 @@ export interface Oracle {
   enableFlagsForOracles: [boolean, boolean, boolean];
   underlyingOracle: Contract;
   getTokenConfig?: (asset: Asset, networkName: string) => void;
+  getDirectPriceConfig?: (asset: Asset) => void;
   getStalePeriodConfig?: (asset: Asset) => string[];
 }
 
@@ -253,6 +254,12 @@ export const assets: Assets = {
       oracle: "chainlink",
       price: "1000000000000000000",
     },
+    {
+      token: "USDT",
+      address: "0xbEe8E181599bBC04ACaaa24c741a27A32883e872",
+      oracle: "chainlinkFixed",
+      price: "1000000000000000000",
+    },
   ],
 };
 
@@ -270,6 +277,15 @@ export const getOraclesData = async (): Promise<Oracles> => {
         asset: asset.address,
         feed: chainlinkFeed[name][asset.token],
         maxStalePeriod: DEFAULT_STALE_PERIOD,
+      }),
+    },
+    chainlinkFixed: {
+      oracles: [chainlinkOracle.address, addr0000, addr0000],
+      enableFlagsForOracles: [true, false, false],
+      underlyingOracle: chainlinkOracle,
+      getDirectPriceConfig: (asset: Asset) => ({
+        asset: asset.address,
+        price: asset.price,
       }),
     },
     binance: {

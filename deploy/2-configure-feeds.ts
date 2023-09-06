@@ -2,7 +2,7 @@ import hre from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { Oracles, assets, getOraclesData } from "../helpers/deploymentConfig";
+import { Asset, Oracles, assets, getOraclesData } from "../helpers/deploymentConfig";
 
 const func: DeployFunction = async function ({ network, deployments, getNamedAccounts }: HardhatRuntimeEnvironment) {
   const networkName: string = network.name === "hardhat" ? "bsctestnet" : network.name;
@@ -11,6 +11,7 @@ const func: DeployFunction = async function ({ network, deployments, getNamedAcc
 
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
   const binanceOracle = await hre.ethers.getContract("BinanceOracle");
+  const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
 
   const oraclesData: Oracles = await getOraclesData();
 
@@ -21,7 +22,16 @@ const func: DeployFunction = async function ({ network, deployments, getNamedAcc
     if (network.live) {
       console.log(`Configuring ${oracle} oracle for ${asset.token}`);
 
-      const { getTokenConfig } = oraclesData[oracle];
+      const { getTokenConfig, getDirectPriceConfig } = oraclesData[oracle];
+
+      if (
+        oraclesData[oracle].underlyingOracle.address === chainlinkOracle.address &&
+        getDirectPriceConfig !== undefined
+      ) {
+        const assetConfig: any = getDirectPriceConfig(asset);
+        const tx = await oraclesData[oracle].underlyingOracle?.setDirectPrice(assetConfig.asset, assetConfig.price);
+        tx.wait(1);
+      }
 
       if (oraclesData[oracle].underlyingOracle.address !== binanceOracle.address && getTokenConfig !== undefined) {
         const tx = await oraclesData[oracle].underlyingOracle?.setTokenConfig(getTokenConfig(asset, networkName));
