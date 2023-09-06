@@ -2,7 +2,7 @@ import hre from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { Asset, Oracles, assets, getOraclesData } from "../helpers/deploymentConfig";
+import { Oracles, assets, getOraclesData } from "../helpers/deploymentConfig";
 
 const func: DeployFunction = async function ({ network, deployments, getNamedAccounts }: HardhatRuntimeEnvironment) {
   const networkName: string = network.name === "hardhat" ? "bsctestnet" : network.name;

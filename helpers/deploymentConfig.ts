@@ -1,3 +1,5 @@
+import mainnetDeployments from "@venusprotocol/venus-protocol/networks/mainnet.json";
+import testnetDeployments from "@venusprotocol/venus-protocol/networks/testnet.json";
 import { Contract } from "ethers";
 import { ethers } from "hardhat";
 
@@ -20,6 +22,14 @@ export interface Assets {
   [key: string]: Asset[];
 }
 
+export interface NetworkAddress {
+  [key: string]: string;
+}
+
+export interface PreconfiguredAddresses {
+  [key: string]: NetworkAddress;
+}
+
 export interface Oracle {
   oracles: [string, string, string];
   enableFlagsForOracles: [boolean, boolean, boolean];
@@ -35,6 +45,34 @@ export interface Oracles {
 
 export const addr0000 = "0x0000000000000000000000000000000000000000";
 export const DEFAULT_STALE_PERIOD = 24 * 60 * 60; // 24 hrs
+
+export const ADDRESSES: PreconfiguredAddresses = {
+  bsctestnet: {
+    vBNBAddress: testnetDeployments.Contracts.vBNB,
+    WBNBAddress: "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
+    VAIAddress: testnetDeployments.Contracts.VAI,
+    pythOracleAddress: "0xd7308b14BF4008e7C7196eC35610B1427C5702EA",
+    sidRegistryAddress: "0xfFB52185b56603e0fd71De9de4F6f902f05EEA23",
+    acm: "0x45f8a08F534f34A97187626E05d4b6648Eeaa9AA",
+    timelock: testnetDeployments.Contracts.Timelock,
+  },
+  bscmainnet: {
+    vBNBAddress: mainnetDeployments.Contracts.vBNB,
+    WBNBAddress: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+    VAIAddress: mainnetDeployments.Contracts.VAI,
+    pythOracleAddress: "0x4D7E825f80bDf85e913E0DD2A2D54927e9dE1594",
+    sidRegistryAddress: "0x08CEd32a7f3eeC915Ba84415e9C07a7286977956",
+    acm: "0x4788629ABc6cFCA10F9f969efdEAa1cF70c23555",
+    timelock: mainnetDeployments.Contracts.Timelock,
+  },
+  sepolia: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: "0xbf705C00578d43B6147ab4eaE04DBBEd1ccCdc96",
+    timelock: "0x94fa6078b6b8a26f0b6edffbe6501b22a10470fb", // Sepolia Multisig
+  },
+};
 
 export const chainlinkFeed: Config = {
   bsctestnet: {
