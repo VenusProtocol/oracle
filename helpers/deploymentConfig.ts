@@ -30,6 +30,12 @@ export interface PreconfiguredAddresses {
   [key: string]: NetworkAddress;
 }
 
+export interface AccessControlEntry {
+  caller: string;
+  target: string;
+  method: string;
+}
+
 export interface Oracle {
   oracles: [string, string, string];
   enableFlagsForOracles: [boolean, boolean, boolean];
@@ -45,6 +51,7 @@ export interface Oracles {
 
 export const addr0000 = "0x0000000000000000000000000000000000000000";
 export const DEFAULT_STALE_PERIOD = 24 * 60 * 60; // 24 hrs
+export const ANY_CONTRACT = ethers.constants.AddressZero;
 
 export const ADDRESSES: PreconfiguredAddresses = {
   bsctestnet: {
