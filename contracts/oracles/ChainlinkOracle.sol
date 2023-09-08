@@ -54,7 +54,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
      * @param asset Asset address
      * @param price Asset price in 18 decimals
      * @custom:access Only Governance
-     * @custom:event Emits PricePosted event on succesfully setup of asset price
+     * @custom:event Emits PricePosted event on successfully setup of asset price
      */
     function setDirectPrice(address asset, uint256 price) external notNullAddress(asset) {
         _checkAccessAllowed("setDirectPrice(address,uint256)");
@@ -96,7 +96,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
      * @custom:error NotNullAddress error is thrown if asset address is null
      * @custom:error NotNullAddress error is thrown if token feed address is null
      * @custom:error Range error is thrown if maxStale period of token is not greater than zero
-     * @custom:event Emits TokenConfigAdded event on succesfully setting of the token config
+     * @custom:event Emits TokenConfigAdded event on successfully setting of the token config
      */
     function setTokenConfig(
         TokenConfig memory tokenConfig

@@ -11,19 +11,19 @@ import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlle
  * @title ResilientOracle
  * @author Venus
  * @notice The Resilient Oracle is the main contract that the protocol uses to fetch prices of assets.
- * 
+ *
  * DeFi protocols are vulnerable to price oracle failures including oracle manipulation and incorrectly
  * reported prices. If only one oracle is used, this creates a single point of failure and opens a vector
  * for attacking the protocol.
- * 
+ *
  * The Resilient Oracle uses multiple sources and fallback mechanisms to provide accurate prices and protect
  * the protocol from oracle attacks. Currently it includes integrations with Chainlink, Pyth, Binance Oracle
  * and TWAP (Time-Weighted Average Price) oracles. TWAP uses PancakeSwap as the on-chain price source.
- * 
- * For every market (vToken) we configure the main, pivot and fallback oracles. The oracles are configured per 
- * vToken's underlying asset address. The main oracle oracle is the most trustworthy price source, the pivot 
- * oracle is used as a loose sanity checker and the fallback oracle is used as a backup price source. 
- * 
+ *
+ * For every market (vToken) we configure the main, pivot and fallback oracles. The oracles are configured per
+ * vToken's underlying asset address. The main oracle oracle is the most trustworthy price source, the pivot
+ * oracle is used as a loose sanity checker and the fallback oracle is used as a backup price source.
+ *
  * To validate prices returned from two oracles, we use an upper and lower bound ratio that is set for every
  * market. The upper bound ratio represents the deviation between reported price (the price that’s being
  * validated) and the anchor price (the price we are validating against) above which the reported price will
@@ -38,8 +38,8 @@ isValid = anchorRatio <= upperBoundAnchorRatio && anchorRatio >= lowerBoundAncho
 
  * In most cases, Chainlink is used as the main oracle, TWAP or Pyth oracles are used as the pivot oracle depending
  * on which supports the given market and Binance oracle is used as the fallback oracle. For some markets we may
- * use Pyth or TWAP as the main oracle if the token price is not supported by Chainlink or Binance oracles. 
- * 
+ * use Pyth or TWAP as the main oracle if the token price is not supported by Chainlink or Binance oracles.
+ *
  * For a fetched price to be valid it must be positive and not stagnant. If the price is invalid then we consider the
  * oracle to be stagnant and treat it like it's disabled.
  */
@@ -409,7 +409,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @param asset asset address
      * @return price USD price in 18 decimals
      * @return pivotValidated Boolean representing if the validation of fallback oracle price
-     * and pivot oracle price were successfull
+     * and pivot oracle price were successfully
      * @custom:error Invalid price error is thrown if fallback oracle fails to fetch price of the asset
      * @custom:error Invalid price error is thrown if fallback oracle is not enabled or fallback oracle
      * address is null
