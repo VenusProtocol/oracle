@@ -3,16 +3,87 @@ import { ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { ADDRESSES, ANY_CONTRACT, AccessControlEntry } from "../helpers/deploymentConfig";
+import {
+  ADDRESSES,
+  ANY_CONTRACT,
+  AccessControlEntry,
+  Oracles,
+  assets,
+  getOraclesData,
+} from "../helpers/deploymentConfig";
 import { AccessControlManager } from "../typechain-types";
 
 interface GovernanceCommand {
   contract: string;
   signature: string;
-  argTypes: string[];
   parameters: any[];
   value: BigNumberish;
 }
+
+const configurePriceFeeds = async (hre: HardhatRuntimeEnvironment): Promise<GovernanceCommand[]> => {
+  const networkName = hre.network.name;
+
+  const resilientOracle = await hre.ethers.getContract("ResilientOracle");
+  const binanceOracle = await hre.ethers.getContractOrNull("BinanceOracle");
+  const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
+
+  const oraclesData: Oracles = await getOraclesData();
+  const commands: GovernanceCommand[] = [];
+
+  for (const asset of assets[networkName]) {
+    const { oracle } = asset;
+    console.log(`Configuring ${asset.token}`);
+
+    console.log(`Configuring ${oracle} oracle for ${asset.token}`);
+
+    const { getTokenConfig, getDirectPriceConfig } = oraclesData[oracle];
+
+    if (
+      oraclesData[oracle].underlyingOracle.address === chainlinkOracle?.address &&
+      getDirectPriceConfig !== undefined
+    ) {
+      const assetConfig: any = getDirectPriceConfig(asset);
+      commands.push({
+        contract: oraclesData[oracle].underlyingOracle.address,
+        signature: "setDirectPrice(address,uint256)",
+        value: 0,
+        parameters: [assetConfig.asset, assetConfig.price],
+      });
+    }
+
+    if (oraclesData[oracle].underlyingOracle.address !== binanceOracle?.address && getTokenConfig !== undefined) {
+      const tokenConfig: any = getTokenConfig(asset, networkName);
+      commands.push({
+        contract: oraclesData[oracle].underlyingOracle.address,
+        signature: "setTokenConfig((address,address,uint256))",
+        value: 0,
+        parameters: [[tokenConfig.asset, tokenConfig.feed, tokenConfig.maxStalePeriod]],
+      });
+    }
+
+    const { getStalePeriodConfig } = oraclesData[oracle];
+    if (oraclesData[oracle].underlyingOracle.address === binanceOracle?.address && getStalePeriodConfig !== undefined) {
+      const tokenConfig: any = getStalePeriodConfig(asset);
+
+      commands.push({
+        contract: oraclesData[oracle].underlyingOracle.address,
+        signature: "setMaxStalePeriod(string,uint256)",
+        value: 0,
+        parameters: [tokenConfig],
+      });
+    }
+
+    console.log(`Configuring resillient oracle for ${asset.token}`);
+
+    commands.push({
+      contract: resilientOracle.address,
+      signature: "setMaxStalePeriod((address,address[3],bool[3]))",
+      value: 0,
+      parameters: [asset.address, oraclesData[oracle].oracles, oraclesData[oracle].enableFlagsForOracles],
+    });
+  }
+  return commands;
+};
 
 const acceptOwnership = async (
   contractName: string,
@@ -42,7 +113,6 @@ const acceptOwnership = async (
     {
       contract: deployment.address,
       signature: "acceptOwnership()",
-      argTypes: [],
       parameters: [],
       value: 0,
     },
@@ -128,6 +198,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     ...(await acceptOwnership("BoundValidator", owner, hre)),
     ...(await acceptOwnership("BinanceOracle", owner, hre)),
     ...(await acceptOwnership("TwapOracle", owner, hre)),
+    ...(await configurePriceFeeds(hre)),
   ];
 
   if (hre.network.live) {

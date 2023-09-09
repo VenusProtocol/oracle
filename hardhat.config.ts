@@ -93,7 +93,7 @@ const config: HardhatUserConfig = {
       timeout: 1200000, // 20 minutes
     },
     sepolia: {
-      url: "https://rpc.notadegen.com/eth/sepolia",
+      url: "https://ethereum-sepolia.blockpi.network/v1/rpc/public",
       chainId: 11155111,
       live: true,
       gasPrice: 20000000000,
