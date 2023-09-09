@@ -26,7 +26,6 @@ const configurePriceFeeds = async (hre: HardhatRuntimeEnvironment): Promise<Gove
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
   const binanceOracle = await hre.ethers.getContractOrNull("BinanceOracle");
   const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
-
   const oraclesData: Oracles = await getOraclesData();
   const commands: GovernanceCommand[] = [];
 
@@ -77,9 +76,9 @@ const configurePriceFeeds = async (hre: HardhatRuntimeEnvironment): Promise<Gove
 
     commands.push({
       contract: resilientOracle.address,
-      signature: "setMaxStalePeriod((address,address[3],bool[3]))",
+      signature: "setTokenConfig((address,address[3],bool[3]))",
       value: 0,
-      parameters: [asset.address, oraclesData[oracle].oracles, oraclesData[oracle].enableFlagsForOracles],
+      parameters: [[asset.address, oraclesData[oracle].oracles, oraclesData[oracle].enableFlagsForOracles]],
     });
   }
   return commands;
@@ -101,7 +100,6 @@ const acceptOwnership = async (
     if (error.message.includes("No deployment found for")) {
       return [];
     }
-
     throw error;
   }
   const contract = await ethers.getContractAt(abi, deployment.address);
@@ -179,7 +177,7 @@ const configureAccessControls = async (hre: HardhatRuntimeEnvironment): Promise<
           contract: accessControlManagerAddress,
           signature: "giveCallPermission(address,string,address)",
           argTypes: ["address", "string", "address"],
-          parameters: [caller, method, target],
+          parameters: [target, method, caller],
           value: 0,
         },
       ];
@@ -204,9 +202,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   if (hre.network.live) {
     console.log("Please propose a VIP with the following commands:");
     console.log(
-      JSON.stringify(
-        commands.map(c => ({ target: c.contract, signature: c.signature, params: c.parameters, value: c.value })),
-      ),
+      JSON.stringify(commands.map(c => ({ target: c.contract, signature: c.signature, params: c.parameters }))),
     );
   } else {
     throw Error("This script is only used for live networks.");
