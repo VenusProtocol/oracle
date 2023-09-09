@@ -310,8 +310,8 @@ export const assets: Assets = {
 
 export const getOraclesData = async (): Promise<Oracles> => {
   const chainlinkOracle = await ethers.getContract("ChainlinkOracle");
-  const binanceOracle = await ethers.getContract("BinanceOracle");
-  const pythOracle = await ethers.getContract("PythOracle");
+  const binanceOracle = await ethers.getContractOrNull("BinanceOracle");
+  const pythOracle = await ethers.getContractOrNull("PythOracle");
 
   const oraclesData: Oracles = {
     chainlink: {
@@ -333,22 +333,30 @@ export const getOraclesData = async (): Promise<Oracles> => {
         price: asset.price,
       }),
     },
-    binance: {
-      oracles: [binanceOracle.address, addr0000, addr0000],
-      enableFlagsForOracles: [true, false, false],
-      underlyingOracle: binanceOracle,
-      getStalePeriodConfig: (asset: Asset) => [asset.token, DEFAULT_STALE_PERIOD.toString()],
-    },
-    pyth: {
-      oracles: [pythOracle.address, addr0000, addr0000],
-      enableFlagsForOracles: [true, false, false],
-      underlyingOracle: pythOracle,
-      getTokenConfig: (asset: Asset, name: string) => ({
-        pythId: pythID[name][asset.token],
-        asset: asset.address,
-        maxStalePeriod: DEFAULT_STALE_PERIOD,
-      }),
-    },
+    ...(binanceOracle
+      ? {
+          binance: {
+            oracles: [binanceOracle.address, addr0000, addr0000],
+            enableFlagsForOracles: [true, false, false],
+            underlyingOracle: binanceOracle,
+            getStalePeriodConfig: (asset: Asset) => [asset.token, DEFAULT_STALE_PERIOD.toString()],
+          },
+        }
+      : {}),
+    ...(pythOracle
+      ? {
+          pyth: {
+            oracles: [pythOracle.address, addr0000, addr0000],
+            enableFlagsForOracles: [true, false, false],
+            underlyingOracle: pythOracle,
+            getTokenConfig: (asset: Asset, name: string) => ({
+              pythId: pythID[name][asset.token],
+              asset: asset.address,
+              maxStalePeriod: DEFAULT_STALE_PERIOD,
+            }),
+          },
+        }
+      : {}),
   };
 
   return oraclesData;
