@@ -283,25 +283,25 @@ export const assets: Assets = {
   sepolia: [
     {
       token: "WBTC",
-      address: "0xbA9c9b6c72ACd08050BBF6e03AeAD1BBbaF21ef7",
+      address: "0x92A2928f5634BEa89A195e7BeCF0f0FEEDAB885b",
       oracle: "chainlink",
       price: "25000000000000000000000",
     },
     {
       token: "WETH",
-      address: "0x58ef310046b1b9CFFE304D89104EA5DF2bABee28",
+      address: "0x700868CAbb60e90d77B6588ce072d9859ec8E281",
       oracle: "chainlink",
       price: "2080000000000000000000",
     },
     {
       token: "USDC",
-      address: "0xA8c06B029d70142F7E7b389a7C4bdFe371d9eDf5",
+      address: "0x772d68929655ce7234C8C94256526ddA66Ef641E",
       oracle: "chainlink",
       price: "1000000000000000000",
     },
     {
       token: "USDT",
-      address: "0xbEe8E181599bBC04ACaaa24c741a27A32883e872",
+      address: "0x8d412FD0bc5d826615065B931171Eed10F5AF266",
       oracle: "chainlinkFixed",
       price: "1000000000000000000",
     },
