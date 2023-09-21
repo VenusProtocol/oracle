@@ -31,9 +31,8 @@ const configurePriceFeeds = async (hre: HardhatRuntimeEnvironment): Promise<Gove
 
   for (const asset of assets[networkName]) {
     const { oracle } = asset;
-    console.log(`Configuring ${asset.token}`);
-
-    console.log(`Configuring ${oracle} oracle for ${asset.token}`);
+    console.log(`Adding commands for configuring ${asset.token}`);
+    console.log(`Adding a command to configure ${oracle} oracle for ${asset.token}`);
 
     const { getTokenConfig, getDirectPriceConfig } = oraclesData[oracle];
 
@@ -72,8 +71,8 @@ const configurePriceFeeds = async (hre: HardhatRuntimeEnvironment): Promise<Gove
       });
     }
 
-    console.log(`Configuring resillient oracle for ${asset.token}`);
-
+    console.log(``);
+    console.log(`Adding a command to configure resillient oracle for ${asset.token}`);
     commands.push({
       contract: resilientOracle.address,
       signature: "setTokenConfig((address,address[3],bool[3]))",
