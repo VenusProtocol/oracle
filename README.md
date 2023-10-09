@@ -1,3 +1,5 @@
+[![GitHub Actions](https://github.com/VenusProtocol/oracle/actions/workflows/cd.yaml/badge.svg)](https://github.com/VenusProtocol/oracle/actions/workflows/cd.yaml) [![GitHub Actions](https://github.com/VenusProtocol/oracle/actions/workflows/ci.yml/badge.svg)](https://github.com/VenusProtocol/oracle/actions/workflows/ci.yml)
+
 # Resilient Price Feeds
 
 Resilient Price Feeds is a set of smart contracts that uses multiple oracles and a price validation algorithm to fetch asset prices for the [Venus Protocol](https://app.venus.io).
