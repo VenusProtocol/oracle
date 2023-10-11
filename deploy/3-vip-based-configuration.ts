@@ -72,7 +72,7 @@ const configurePriceFeeds = async (hre: HardhatRuntimeEnvironment): Promise<Gove
     }
 
     console.log(``);
-    console.log(`Adding a command to configure resillient oracle for ${asset.token}`);
+    console.log(`Adding a command to configure resilient oracle for ${asset.token}`);
     commands.push({
       contract: resilientOracle.address,
       signature: "setTokenConfig((address,address[3],bool[3]))",

@@ -28,7 +28,7 @@ const func: DeployFunction = async function ({ network, deployments, getNamedAcc
 
     const mock = await hre.ethers.getContract(`Mock${asset.token}`);
 
-    console.log(`Configuring resillient oracle for ${asset.token}`);
+    console.log(`Configuring resilient oracle for ${asset.token}`);
     let tx = await resilientOracle.setTokenConfig({
       asset: mock.address,
       oracles: oraclesData[oracle].oracles,

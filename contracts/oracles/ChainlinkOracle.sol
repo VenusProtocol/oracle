@@ -16,7 +16,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         /// @notice Underlying token address, which can't be a null address
         /// @notice Used to check if a token is supported
         /// @notice 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB address for native tokens
-        ///         (e.g BNB for bsc, ETH for Ethereum network)
+        ///         (e.g BNB for BNB chain, ETH for Ethereum network)
         address asset;
         /// @notice Chainlink feed address
         address feed;
@@ -25,7 +25,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     }
 
     /// @notice Set this as asset address for native token on each chain.
-    /// This is the underlying address for vBNB on bsc or an underlying asset for a native market on any chain.
+    /// This is the underlying address for vBNB on BNB chain or an underlying asset for a native market on any chain.
     address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
     /// @notice Manually set an override price, useful under extenuating conditions such as price feed failure

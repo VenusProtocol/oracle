@@ -56,7 +56,7 @@ export const ANY_CONTRACT = ethers.constants.AddressZero;
 export const ADDRESSES: PreconfiguredAddresses = {
   bsctestnet: {
     vBNBAddress: testnetDeployments.Contracts.vBNB,
-    WBNBAddress: "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
+    WBNBAddress: testnetDeployments.Contracts.WBNB
     VAIAddress: testnetDeployments.Contracts.VAI,
     pythOracleAddress: "0xd7308b14BF4008e7C7196eC35610B1427C5702EA",
     sidRegistryAddress: "0xfFB52185b56603e0fd71De9de4F6f902f05EEA23",
@@ -65,7 +65,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
   },
   bscmainnet: {
     vBNBAddress: mainnetDeployments.Contracts.vBNB,
-    WBNBAddress: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+    WBNBAddress: mainnetDeployments.Contracts.WBNB,
     VAIAddress: mainnetDeployments.Contracts.VAI,
     pythOracleAddress: "0x4D7E825f80bDf85e913E0DD2A2D54927e9dE1594",
     sidRegistryAddress: "0x08CEd32a7f3eeC915Ba84415e9C07a7286977956",
