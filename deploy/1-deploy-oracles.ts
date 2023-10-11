@@ -4,6 +4,8 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
 
+const ARBITRUM_SEQUENCER = "0xFdB631F5EE196F0ed6FAa767959853A9F217697D";
+
 const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
@@ -62,21 +64,39 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
-  await deploy("ChainlinkOracle", {
-    contract: network.live ? "ChainlinkOracle" : "MockChainlinkOracle",
-    from: deployer,
-    log: true,
-    deterministicDeployment: false,
-    args: [],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
-      execute: {
-        methodName: "initialize",
-        args: network.live ? [accessControlManagerAddress] : [],
+  if (network.name === "arbitrum") {
+    await deploy("ArbiChainlinkOracle", {
+      contract: "ArbiChainlinkOracle",
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [ARBITRUM_SEQUENCER],
+      proxy: {
+        owner: proxyOwnerAddress,
+        proxyContract: "OptimizedTransparentProxy",
+        execute: {
+          methodName: "initialize",
+          args: [accessControlManagerAddress],
+        },
       },
-    },
-  });
+    });
+  } else {
+    await deploy("ChainlinkOracle", {
+      contract: network.live ? "ChainlinkOracle" : "MockChainlinkOracle",
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [],
+      proxy: {
+        owner: proxyOwnerAddress,
+        proxyContract: "OptimizedTransparentProxy",
+        execute: {
+          methodName: "initialize",
+          args: network.live ? [accessControlManagerAddress] : [],
+        },
+      },
+    });
+  }
 
   // Skip deployment if chain is not BNB chain
   if (networkName === "bsctetnet" || networkName === "bscmainnet") {
