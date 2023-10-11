@@ -45,4 +45,4 @@ const func: DeployFunction = async function ({ network, deployments, getNamedAcc
 
 export default func;
 func.tags = ["configure"];
-func.skip = async hre => hre.network.live;
+func.skip = async env => env.network.live;
