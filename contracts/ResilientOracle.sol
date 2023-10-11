@@ -442,10 +442,8 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @param vToken vToken address
      * @return asset underlying asset address
      */
-    function _getUnderlyingAsset(address vToken) private view returns (address asset) {
-        if (vToken == address(0)) {
-            revert("asset price not supported");
-        } else if (vToken == nativeMarket) {
+    function _getUnderlyingAsset(address vToken) private view notNullAddress(vToken) returns (address asset) {
+        if (vToken == nativeMarket) {
             asset = NATIVE_TOKEN_ADDR;
         } else if (vToken == vai) {
             asset = vai;
