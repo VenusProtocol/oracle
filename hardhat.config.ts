@@ -83,18 +83,14 @@ const config: HardhatUserConfig = {
       chainId: 97,
       live: true,
       gasPrice: 20000000000,
-      accounts: {
-        mnemonic: process.env.MNEMONIC || "",
-      },
+      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
+    // Mainnet deployments are done through Frame wallet RPC
     bscmainnet: {
-      url: "https://bsc-dataseed.binance.org/",
+      url: "http://127.0.0.1:1248",
       chainId: 56,
       live: true,
-      timeout: 1200000,
-      accounts: {
-        mnemonic: process.env.MNEMONIC || "",
-      },
+      timeout: 1200000, // 20 minutes
     },
   },
   gasReporter: {
