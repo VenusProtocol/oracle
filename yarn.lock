@@ -3079,10 +3079,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@venusprotocol/governance-contracts@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "@venusprotocol/governance-contracts@npm:0.0.2"
-  checksum: 101ade6013fe3963968d37ff839a4c62aeaedd9f26d8c5ae47bdc413e6c61732b4048a1b026e4281ade5676fb1545a49ecac299f6b669a9f0c7e73723666d7e1
+"@venusprotocol/governance-contracts@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@venusprotocol/governance-contracts@npm:1.3.0"
+  checksum: 9cbc44e5fffd2f33e273c96e3f77b2d9afe254b3f8c22533eecb96f79011715afafd72f2a716bab5509164fa4f3e0629b94450f16619bba221d8d5a9e632b610
   languageName: node
   linkType: hard
 
@@ -3116,7 +3116,7 @@ __metadata:
     "@types/sinon-chai": ^3.2.9
     "@typescript-eslint/eslint-plugin": ^5.27.1
     "@typescript-eslint/parser": ^5.27.1
-    "@venusprotocol/governance-contracts": ^0.0.2
+    "@venusprotocol/governance-contracts": ^1.3.0
     "@venusprotocol/venus-protocol": 0.7.0
     chai: ^4.3.6
     cross-env: ^7.0.3

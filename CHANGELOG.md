@@ -1,3 +1,10 @@
+## [1.7.3-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.7.2...v1.7.3-dev.1) (2023-10-09)
+
+
+### Bug Fixes
+
+* add badges to the README file and bump a new release ([180e3b4](https://github.com/VenusProtocol/oracle/commit/180e3b4136571e6e56ef3bcd81ad50e87873ad6d))
+
 ## [1.7.2](https://github.com/VenusProtocol/oracle/compare/v1.7.1...v1.7.2) (2023-08-01)
 
 
