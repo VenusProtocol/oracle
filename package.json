@@ -76,7 +76,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.22.2",
-    "ethereum-waffle": "^3.4.4",
+    "ethereum-waffle": "^4.0.1",
     "hardhat-deploy-ethers": "^0.3.0-beta.13",
     "hardhat-gas-reporter": "^1.0.8",
     "husky": "^8.0.1",
