@@ -22,6 +22,8 @@ jobs:
           cache: "yarn"
 
       - name: Install dependencies
+        env:
+          GITHUB_TOKEN: ${{ secrets.VENUS_TOOLS_TOKEN }}
         # Hack to get around failing "ethereumjs-abi The remote archive doesn't match the expected checksum" error
         run: YARN_CHECKSUM_BEHAVIOR=update yarn
 
