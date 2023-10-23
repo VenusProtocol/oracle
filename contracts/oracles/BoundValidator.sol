@@ -37,6 +37,14 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
     }
 
     /**
+     * @notice Initializes the owner of the contract
+     * @param accessControlManager_ Address of the access control manager contract
+     */
+    function initialize(address accessControlManager_) external initializer {
+        __AccessControlled_init(accessControlManager_);
+    }
+
+    /**
      * @notice Add multiple validation configs at the same time
      * @param configs Array of validation configs
      * @custom:access Only Governance
@@ -52,14 +60,6 @@ contract BoundValidator is AccessControlledV8, BoundValidatorInterface {
                 ++i;
             }
         }
-    }
-
-    /**
-     * @notice Initializes the owner of the contract
-     * @param accessControlManager_ Address of the access control manager contract
-     */
-    function initialize(address accessControlManager_) external initializer {
-        __AccessControlled_init(accessControlManager_);
     }
 
     /**

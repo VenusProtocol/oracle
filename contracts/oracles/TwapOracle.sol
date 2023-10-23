@@ -88,6 +88,14 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
     }
 
     /**
+     * @notice Initializes the owner of the contract
+     * @param accessControlManager_ Address of the access control manager contract
+     */
+    function initialize(address accessControlManager_) external initializer {
+        __AccessControlled_init(accessControlManager_);
+    }
+
+    /**
      * @notice Adds multiple token configs at the same time
      * @param configs Config array
      * @custom:error Zero length error thrown, if length of the config array is 0
@@ -101,14 +109,6 @@ contract TwapOracle is AccessControlledV8, TwapInterface {
                 ++i;
             }
         }
-    }
-
-    /**
-     * @notice Initializes the owner of the contract
-     * @param accessControlManager_ Address of the access control manager contract
-     */
-    function initialize(address accessControlManager_) external initializer {
-        __AccessControlled_init(accessControlManager_);
     }
 
     /**

@@ -50,6 +50,14 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     }
 
     /**
+     * @notice Initializes the owner of the contract
+     * @param accessControlManager_ Address of the access control manager contract
+     */
+    function initialize(address accessControlManager_) external initializer {
+        __AccessControlled_init(accessControlManager_);
+    }
+
+    /**
      * @notice Manually set the price of a given asset
      * @param asset Asset address
      * @param price Asset price in 18 decimals
@@ -79,14 +87,6 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
                 ++i;
             }
         }
-    }
-
-    /**
-     * @notice Initializes the owner of the contract
-     * @param accessControlManager_ Address of the access control manager contract
-     */
-    function initialize(address accessControlManager_) external initializer {
-        __AccessControlled_init(accessControlManager_);
     }
 
     /**

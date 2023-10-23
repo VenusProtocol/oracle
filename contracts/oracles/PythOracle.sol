@@ -57,6 +57,21 @@ contract PythOracle is AccessControlledV8, OracleInterface {
     }
 
     /**
+     * @notice Initializes the owner of the contract and sets required contracts
+     * @param underlyingPythOracle_ Address of the Pyth oracle
+     * @param accessControlManager_ Address of the access control manager contract
+     */
+    function initialize(
+        address underlyingPythOracle_,
+        address accessControlManager_
+    ) external initializer notNullAddress(underlyingPythOracle_) {
+        __AccessControlled_init(accessControlManager_);
+
+        underlyingPythOracle = IPyth(underlyingPythOracle_);
+        emit PythOracleSet(address(0), underlyingPythOracle_);
+    }
+
+    /**
      * @notice Batch set token configs
      * @param tokenConfigs_ Token config array
      * @custom:access Only Governance
@@ -87,21 +102,6 @@ contract PythOracle is AccessControlledV8, OracleInterface {
         IPyth oldUnderlyingPythOracle = underlyingPythOracle;
         underlyingPythOracle = underlyingPythOracle_;
         emit PythOracleSet(address(oldUnderlyingPythOracle), address(underlyingPythOracle_));
-    }
-
-    /**
-     * @notice Initializes the owner of the contract and sets required contracts
-     * @param underlyingPythOracle_ Address of the Pyth oracle
-     * @param accessControlManager_ Address of the access control manager contract
-     */
-    function initialize(
-        address underlyingPythOracle_,
-        address accessControlManager_
-    ) external initializer notNullAddress(underlyingPythOracle_) {
-        __AccessControlled_init(accessControlManager_);
-
-        underlyingPythOracle = IPyth(underlyingPythOracle_);
-        emit PythOracleSet(address(0), underlyingPythOracle_);
     }
 
     /**
