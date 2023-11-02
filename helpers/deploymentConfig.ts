@@ -281,30 +281,30 @@ export const assets: Assets = {
     },
   ],
   sepolia: [
-    // {
-    //   token: "WBTC",
-    //   address: "0x92A2928f5634BEa89A195e7BeCF0f0FEEDAB885b",
-    //   oracle: "chainlink",
-    //   price: "25000000000000000000000",
-    // },
-    // {
-    //   token: "WETH",
-    //   address: "0x700868CAbb60e90d77B6588ce072d9859ec8E281",
-    //   oracle: "chainlink",
-    //   price: "2080000000000000000000",
-    // },
-    // {
-    //   token: "USDC",
-    //   address: "0x772d68929655ce7234C8C94256526ddA66Ef641E",
-    //   oracle: "chainlink",
-    //   price: "1000000000000000000",
-    // },
-    // {
-    //   token: "USDT",
-    //   address: "0x8d412FD0bc5d826615065B931171Eed10F5AF266",
-    //   oracle: "chainlinkFixed",
-    //   price: "1000000000000000000",
-    // },
+    {
+      token: "WBTC",
+      address: "0x92A2928f5634BEa89A195e7BeCF0f0FEEDAB885b",
+      oracle: "chainlink",
+      price: "25000000000000000000000",
+    },
+    {
+      token: "WETH",
+      address: "0x700868CAbb60e90d77B6588ce072d9859ec8E281",
+      oracle: "chainlink",
+      price: "2080000000000000000000",
+    },
+    {
+      token: "USDC",
+      address: "0x772d68929655ce7234C8C94256526ddA66Ef641E",
+      oracle: "chainlink",
+      price: "1000000000000000000",
+    },
+    {
+      token: "USDT",
+      address: "0x8d412FD0bc5d826615065B931171Eed10F5AF266",
+      oracle: "chainlinkFixed",
+      price: "1000000000000000000",
+    },
     {
       token: "XVS",
       address: "0x1be95611FC9A808F8794bc9164223b1Fcf49C8Bd",
