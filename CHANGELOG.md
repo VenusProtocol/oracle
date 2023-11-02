@@ -1,3 +1,5 @@
+## [1.7.4-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.7.3...v1.7.4-dev.1) (2023-11-02)
+
 ## [1.7.3](https://github.com/VenusProtocol/oracle/compare/v1.7.2...v1.7.3) (2023-10-19)
 
 
