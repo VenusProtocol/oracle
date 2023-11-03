@@ -2,7 +2,7 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import { Contract } from "ethers";
 import { ethers, network } from "hardhat";
 
-import { assets } from "../../deploy/2-configure-feeds";
+import { assets } from "../../helpers/deploymentConfig";
 import { forking } from "./utils";
 
 const VALID = "\u2705"; // Unicode character for checkmark
