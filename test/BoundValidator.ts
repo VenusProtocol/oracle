@@ -40,7 +40,7 @@ describe("bound validator", () => {
         upperBoundRatio: 0,
         lowerBoundRatio: 0,
       };
-      await expect(this.boundValidator.setValidateConfigs([config])).to.be.revertedWith("can't be zero address");
+      await expect(this.boundValidator.setValidateConfigs([config])).to.be.revertedWith("asset can't be zero address");
 
       config.asset = addr1111;
       await expect(this.boundValidator.setValidateConfigs([config])).to.be.revertedWith("bound must be positive");

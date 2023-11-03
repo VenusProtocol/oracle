@@ -46,6 +46,19 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
     }
 
     /**
+     * @notice Sets the contracts required to fetch prices
+     * @param _sidRegistryAddress Address of SID registry
+     * @param _accessControlManager Address of the access control manager contract
+     */
+    function initialize(
+        address _sidRegistryAddress,
+        address _accessControlManager
+    ) external initializer notNullAddress(_sidRegistryAddress) {
+        sidRegistryAddress = _sidRegistryAddress;
+        __AccessControlled_init(_accessControlManager);
+    }
+
+    /**
      * @notice Used to set the max stale period of an asset
      * @param symbol The symbol of the asset
      * @param _maxStalePeriod The max stake period
@@ -70,19 +83,6 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
 
         symbols[symbol] = overrideSymbol;
         emit SymbolOverridden(symbol, overrideSymbol);
-    }
-
-    /**
-     * @notice Sets the contracts required to fetch prices
-     * @param _sidRegistryAddress Address of SID registry
-     * @param _accessControlManager Address of the access control manager contract
-     */
-    function initialize(
-        address _sidRegistryAddress,
-        address _accessControlManager
-    ) external initializer notNullAddress(_sidRegistryAddress) {
-        sidRegistryAddress = _sidRegistryAddress;
-        __AccessControlled_init(_accessControlManager);
     }
 
     /**
