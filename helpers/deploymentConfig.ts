@@ -109,6 +109,13 @@ export const chainlinkFeed: Config = {
   },
 };
 
+export const redstoneFeed: Config = {
+  bsctestnet: {},
+  sepolia: {
+    XVS: "0x0d7697a15bce933cE8671Ba3D60ab062dA216C60",
+  },
+};
+
 export const pythID: Config = {
   bsctestnet: {
     AUTO: "0xd954e9a88c7f97b4645b535869aba8a1e50697270a0afb09891accc031f03880",
@@ -308,7 +315,7 @@ export const assets: Assets = {
     {
       token: "XVS",
       address: "0x1be95611FC9A808F8794bc9164223b1Fcf49C8Bd",
-      oracle: "chainlinkFixed",
+      oracle: "redstone",
       price: "5000000000000000000", // $5.00
     },
     {
@@ -328,6 +335,7 @@ export const assets: Assets = {
 
 export const getOraclesData = async (): Promise<Oracles> => {
   const chainlinkOracle = await ethers.getContract("ChainlinkOracle");
+  const redstoneOracle = await ethers.getContract("RedStoneOracle");
   const binanceOracle = await ethers.getContractOrNull("BinanceOracle");
   const pythOracle = await ethers.getContractOrNull("PythOracle");
 
@@ -349,6 +357,16 @@ export const getOraclesData = async (): Promise<Oracles> => {
       getDirectPriceConfig: (asset: Asset) => ({
         asset: asset.address,
         price: asset.price,
+      }),
+    },
+    redstone: {
+      oracles: [redstoneOracle.address, addr0000, addr0000],
+      enableFlagsForOracles: [true, false, false],
+      underlyingOracle: redstoneOracle,
+      getTokenConfig: (asset: Asset, name: string) => ({
+        asset: asset.address,
+        feed: redstoneFeed[name][asset.token],
+        maxStalePeriod: DEFAULT_STALE_PERIOD,
       }),
     },
     ...(binanceOracle

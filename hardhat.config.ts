@@ -97,7 +97,7 @@ const config: HardhatUserConfig = {
       chainId: 11155111,
       live: true,
       gasPrice: 20000000000,
-      accounts: process.env.PRIVATE_KEY ? [`0x${process.env.PRIVATE_KEY}`] : [],
+      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
   },
   gasReporter: {
