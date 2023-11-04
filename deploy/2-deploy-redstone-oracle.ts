@@ -28,7 +28,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const redStoneOracle = await hre.ethers.getContract("RedStoneOracle");
   const redStoneOracleOwner = await redStoneOracle.owner();
 
-  if (redStoneOracleOwner === deployer) {
+  if (redStoneOracleOwner === deployer && network.live) {
     await redStoneOracle.transferOwnership(ADDRESSES[network.name].timelock);
   }
 };
