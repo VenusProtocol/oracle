@@ -314,7 +314,7 @@ export const assets: Assets = {
     },
     {
       token: "XVS",
-      address: "0x1be95611FC9A808F8794bc9164223b1Fcf49C8Bd",
+      address: "0xdb633c11d3f9e6b8d17ac2c972c9e3b05da59bf9",
       oracle: "redstone",
       price: "5000000000000000000", // $5.00
     },
