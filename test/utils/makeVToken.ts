@@ -1,10 +1,8 @@
-import { Signer } from "ethers";
-import { artifacts, waffle } from "hardhat";
+import { deployments, ethers, getNamedAccounts } from "hardhat";
 
 import { VBEP20Harness } from "../../typechain-types";
 
 export const makeVToken = async (
-  admin: Signer,
   opts: { name: string; symbol: string; decimals?: number },
   underlyingOpts?: {
     symbol: string;
@@ -12,26 +10,29 @@ export const makeVToken = async (
     name: string;
   },
 ) => {
+  const { deployer } = await getNamedAccounts();
+  const { deploy } = deployments;
   const underlyingOpts2 = underlyingOpts || {
     symbol: "underlyingSymbol",
     decimals: 18,
     name: "underlyingName",
   };
   // make underlying
-  const tokenArtifact = await artifacts.readArtifact("BEP20Harness");
-  const underlyingToken = await waffle.deployContract(admin, tokenArtifact, [
-    underlyingOpts2.name,
-    underlyingOpts2.symbol,
-    underlyingOpts2.decimals || 18,
-  ]);
-  await underlyingToken.deployed();
-  const vTokenArtifact = await artifacts.readArtifact("VBEP20Harness");
-  const vToken = await waffle.deployContract(admin, vTokenArtifact, [
-    opts.name,
-    opts.symbol,
-    opts.decimals || 8,
-    underlyingToken.address,
-  ]);
-  await vToken.deployed();
-  return <VBEP20Harness>vToken;
+  const underlyingToken = await deploy(`BEP20Harness-${underlyingOpts2.name}`, {
+    from: deployer,
+    contract: "BEP20Harness",
+    args: [underlyingOpts2.name, underlyingOpts2.symbol, underlyingOpts2.decimals || 18],
+    autoMine: true,
+    log: true,
+  });
+
+  const vToken = await deploy(`VBEP20Harness-${opts.name}`, {
+    from: deployer,
+    contract: "VBEP20Harness",
+    args: [opts.name, opts.symbol, opts.decimals || 8, underlyingToken.address],
+    autoMine: true,
+    log: true,
+  });
+  const vTokenContract = await ethers.getContractAt("VBEP20Harness", vToken.address);
+  return <VBEP20Harness>vTokenContract;
 };

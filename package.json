@@ -53,8 +53,9 @@
     "@ethersproject/bignumber": "^5.6.2",
     "@ethersproject/bytes": "^5.6.1",
     "@ethersproject/providers": "^5.6.8",
+    "@nomicfoundation/hardhat-chai-matchers": "^1.0.4",
+    "@nomiclabs/hardhat-ethers": "^2.2.1",
     "@nomiclabs/hardhat-etherscan": "^3.1.0",
-    "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@openzeppelin/hardhat-upgrades": "^1.20.0",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/git": "^10.0.1",
@@ -76,7 +77,6 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.22.2",
-    "ethereum-waffle": "^4.0.1",
     "hardhat-deploy-ethers": "^0.3.0-beta.13",
     "hardhat-gas-reporter": "^1.0.8",
     "husky": "^8.0.1",
@@ -108,7 +108,6 @@
     "provenance": true
   },
   "_moduleAliases": {
-    "@nomiclabs/hardhat-ethers": "node_modules/hardhat-deploy-ethers",
-    "@nomiclabs/hardhat-ethers/types": "hardhat-deploy-ethers/types"
+    "@nomiclabs/hardhat-ethers": "node_modules/hardhat-deploy-ethers"
   }
 }

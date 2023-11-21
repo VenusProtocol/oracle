@@ -37,7 +37,7 @@ describe("Twap Oracle unit tests", () => {
     this.signers = signers;
     this.admin = admin;
     this.vai = signers[5]; // Not your usual vToken
-    this.wBnb = await makeToken(admin, "Wrapped BNB", "WBNB", 18);
+    this.wBnb = await makeToken("Wrapped BNB", "WBNB", 18);
     this.bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
 
     const twapOracle = await ethers.getContractFactory("TwapOracle", admin);
@@ -59,19 +59,19 @@ describe("Twap Oracle unit tests", () => {
     );
     this.boundValidator = boundValidatorInstance;
 
-    const token1 = await makeToken(this.admin, "TOKEN1", "TOKEN1");
-    const tokenBusd = await makeToken(this.admin, "BUSD", "BUSD", 18);
-    const simplePair = await makePairWithTokens(this.admin, await token1.address, tokenBusd.address);
+    const token1 = await makeToken("TOKEN1", "TOKEN1");
+    const tokenBusd = await makeToken("BUSD", "BUSD", 18);
+    const simplePair = await makePairWithTokens(await token1.address, tokenBusd.address);
     this.simplePair = simplePair;
 
     // set up bnb based pair for later test
-    const token3 = await makeToken(this.admin, "TOKEN3", "TOKEN3", 18);
+    const token3 = await makeToken("TOKEN3", "TOKEN3", 18);
     const BEP20HarnessFactory = await ethers.getContractFactory("BEP20Harness");
     const tokenWbnb = BEP20HarnessFactory.attach(await this.twapOracle.WBNB());
-    const bnbBasedPair = await makePairWithTokens(this.admin, token3.address, tokenWbnb.address);
+    const bnbBasedPair = await makePairWithTokens(token3.address, tokenWbnb.address);
     this.bnbBasedPair = bnbBasedPair;
 
-    const bnbPair = await makePairWithTokens(this.admin, tokenBusd.address, tokenWbnb.address);
+    const bnbPair = await makePairWithTokens(tokenBusd.address, tokenWbnb.address);
     this.bnbPair = bnbPair;
     this.token1 = token1;
   });
@@ -110,7 +110,7 @@ describe("Twap Oracle unit tests", () => {
       });
 
       it("reset token config", async function () {
-        const token = await makeToken(this.admin, "Token", "Token");
+        const token = await makeToken("Token", "Token");
 
         const config1 = {
           asset: this.wBnb.address,
@@ -181,8 +181,8 @@ describe("Twap Oracle unit tests", () => {
 
   describe("update twap", () => {
     beforeEach(async function () {
-      const token0 = await makeToken(this.admin, "ETH", "ETH");
-      const token1 = await makeToken(this.admin, "MATIC", "MATIC");
+      const token0 = await makeToken("ETH", "ETH");
+      const token1 = await makeToken("MATIC", "MATIC");
 
       this.tokenConfig = {
         asset: await token0.address,
@@ -462,8 +462,8 @@ describe("Twap Oracle unit tests", () => {
       beforeEach(async function () {
         // add bnb pair config
 
-        const token0 = await makeToken(this.admin, "ETH", "ETH");
-        const token1 = await makeToken(this.admin, "MATIC", "MATIC");
+        const token0 = await makeToken("ETH1", "ETH1");
+        const token1 = await makeToken("MATIC1", "MATIC1");
         this.tokenConfig = {
           asset: await token0.address,
           baseUnit: EXP_SCALE,
@@ -551,7 +551,7 @@ describe("Twap Oracle unit tests", () => {
 
   describe("validation", () => {
     it("validate price", async function () {
-      const token2 = await makeToken(this.admin, "BNB2", "BNB2");
+      const token2 = await makeToken("BNB2", "BNB2");
 
       const validationConfig = {
         asset: await this.token1.address,

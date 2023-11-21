@@ -74,11 +74,7 @@ describe("Oracle plugin frame unit tests", () => {
       });
 
       it("reset token config", async function () {
-        const vToken = await makeVToken(
-          this.admin,
-          { name: "vETH", symbol: "vETH" },
-          { name: "Ethereum", symbol: "ETH" },
-        );
+        const vToken = await makeVToken({ name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
         const asset = await vToken.underlying();
 
         await this.oracleBasement.setTokenConfig({
@@ -96,11 +92,7 @@ describe("Oracle plugin frame unit tests", () => {
       });
 
       it("token config added successfully & events check", async function () {
-        const vToken = await makeVToken(
-          this.admin,
-          { name: "vETH", symbol: "vETH" },
-          { name: "Ethereum", symbol: "ETH" },
-        );
+        const vToken = await makeVToken({ name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
         const asset = await vToken.underlying();
 
         const result = await this.oracleBasement.setTokenConfig({
@@ -120,18 +112,10 @@ describe("Oracle plugin frame unit tests", () => {
       });
 
       it("token config added successfully & data check", async function () {
-        const vToken1 = await makeVToken(
-          this.admin,
-          { name: "vETH", symbol: "vETH" },
-          { name: "Ethereum", symbol: "ETH" },
-        );
+        const vToken1 = await makeVToken({ name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
         const asset1 = await vToken1.underlying();
 
-        const vToken2 = await makeVToken(
-          this.admin,
-          { name: "vBTC", symbol: "vBTC" },
-          { name: "Bitcoin", symbol: "BTC" },
-        );
+        const vToken2 = await makeVToken({ name: "vBTC", symbol: "vBTC" }, { name: "Bitcoin", symbol: "BTC" });
         const asset2 = await vToken2.underlying();
 
         await this.oracleBasement.setTokenConfigs([
@@ -158,11 +142,7 @@ describe("Oracle plugin frame unit tests", () => {
   describe("change oracle", () => {
     describe("set oracle", () => {
       it("null check", async function () {
-        const vToken = await makeVToken(
-          this.admin,
-          { name: "vETH", symbol: "vETH" },
-          { name: "Ethereum", symbol: "ETH" },
-        );
+        const vToken = await makeVToken({ name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
         const asset = await vToken.underlying();
 
         // vToken can't be zero
@@ -183,22 +163,14 @@ describe("Oracle plugin frame unit tests", () => {
       });
 
       it("existance check", async function () {
-        const vToken = await makeVToken(
-          this.admin,
-          { name: "vETH", symbol: "vETH" },
-          { name: "Ethereum", symbol: "ETH" },
-        );
+        const vToken = await makeVToken({ name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
         const asset = await vToken.underlying();
 
         await expect(this.oracleBasement.setOracle(asset, addr1111, 0)).to.be.revertedWith("token config must exist");
       });
 
       it("oracle set successfully & data check", async function () {
-        const vToken = await makeVToken(
-          this.admin,
-          { name: "vETH", symbol: "vETH" },
-          { name: "Ethereum", symbol: "ETH" },
-        );
+        const vToken = await makeVToken({ name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
         const asset = await vToken.underlying();
 
         await this.oracleBasement.setTokenConfig({
@@ -230,11 +202,11 @@ describe("Oracle plugin frame unit tests", () => {
     const token2FallbackPrice = 3333333;
 
     beforeEach(async function () {
-      token1 = await makeVToken(this.admin, { name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
+      token1 = await makeVToken({ name: "vETH", symbol: "vETH" }, { name: "Ethereum", symbol: "ETH" });
       asset1 = await token1.underlying();
       token1 = token1.address;
 
-      token2 = await makeVToken(this.admin, { name: "vBTC", symbol: "vBTC" }, { name: "Bitcoin", symbol: "BTC" });
+      token2 = await makeVToken({ name: "vBTC", symbol: "vBTC" }, { name: "Bitcoin", symbol: "BTC" });
       asset2 = await token2.underlying();
       token2 = token2.address;
 

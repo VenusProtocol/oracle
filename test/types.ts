@@ -1,5 +1,4 @@
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
-import type { Fixture } from "ethereum-waffle";
 
 import { BoundValidator, PythOracle } from "../typechain-types";
 import { ResilientOracle } from "../typechain-types/contracts/ResilientOracle";
@@ -21,8 +20,6 @@ declare module "mocha" {
     bnbPair: PancakePairHarness;
     // bound validator tests
     boundValidator: BoundValidator;
-    // common
-    loadFixture: <T>(fixture: Fixture<T>) => Promise<T>;
     signers: SignerWithAddress[];
     admin: SignerWithAddress;
     // pyth oracle
