@@ -14,12 +14,12 @@ import "solidity-docgen";
 dotenv.config();
 
 function isFork() {
-  return process.env.FORK_MAINNET === "true"
+  return process.env.FORK === "true"
     ? {
         allowUnlimitedContractSize: false,
         loggingEnabled: false,
         forking: {
-          url: process.env.QUICK_NODE_URL || "",
+          url: process.env[`ARCHIVE_NODE_${process.env.FORKED_NETWORK}`],
           blockNumber: 26349263,
         },
         accounts: {
@@ -79,7 +79,7 @@ const config: HardhatUserConfig = {
       live: false,
     },
     bsctestnet: {
-      url: "https://bsc-testnet.public.blastapi.io",
+      url: process.env.ARCHIVE_NODE_bsctestnet || "https://data-seed-prebsc-1-s1.binance.org:8545",
       chainId: 97,
       live: true,
       gasPrice: 20000000000,
@@ -87,16 +87,21 @@ const config: HardhatUserConfig = {
     },
     // Mainnet deployments are done through Frame wallet RPC
     bscmainnet: {
-      url: "http://127.0.0.1:1248",
+      url: process.env.ARCHIVE_NODE_bscmainnet || "https://bsc-dataseed.binance.org/",
       chainId: 56,
       live: true,
       timeout: 1200000, // 20 minutes
     },
     sepolia: {
-      url: "https://ethereum-sepolia.blockpi.network/v1/rpc/public",
+      url: process.env.ARCHIVE_NODE_sepolia || "https://ethereum-sepolia.blockpi.network/v1/rpc/public",
       chainId: 11155111,
       live: true,
       gasPrice: 20000000000,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
+    },
+    ethereum: {
+      url: process.env.ARCHIVE_NODE_ethereum || "https://ethereum.blockpi.network/v1/rpc/public",
+      chainId: 1,
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
   },
@@ -108,6 +113,8 @@ const config: HardhatUserConfig = {
     apiKey: {
       bscmainnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       bsctestnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
+      sepolia: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
+      ethereum: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
     },
     customChains: [
       {
@@ -124,6 +131,22 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://api-testnet.bscscan.com/api",
           browserURL: "https://testnet.bscscan.com",
+        },
+      },
+      {
+        network: "sepolia",
+        chainId: 11155111,
+        urls: {
+          apiURL: "https://api-sepolia.etherscan.io/api",
+          browserURL: "https://sepolia.etherscan.io",
+        },
+      },
+      {
+        network: "ethereum",
+        chainId: 1,
+        urls: {
+          apiURL: "https://api.etherscan.io/api",
+          browserURL: "https://etherscan.io",
         },
       },
     ],

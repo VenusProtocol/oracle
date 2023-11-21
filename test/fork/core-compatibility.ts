@@ -18,7 +18,7 @@ import {
   TwapOracle__factory,
 } from "../../typechain-types";
 
-const FORK_MAINNET = process.env.FORK_MAINNET === "true";
+const FORK_MAINNET = process.env.FORK === "true" && process.env.FORKED_NETWORK === "bscmainnet";
 const vBNB = "0xA07c5b74C9B40447a954e1466938b865b6BBea36";
 const WBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
 const PythOracleAddress = "0x4D7E825f80bDf85e913E0DD2A2D54927e9dE1594";
