@@ -60,8 +60,8 @@ describe("Twap Oracle unit tests", () => {
     this.boundValidator = boundValidatorInstance;
 
     const token1 = await makeToken("TOKEN1", "TOKEN1");
-    const tokenBusd = await makeToken("BUSD", "BUSD", 18);
-    const simplePair = await makePairWithTokens(await token1.address, tokenBusd.address);
+    const tokenBusd = await makeToken("BUSD1", "BUSD1", 18);
+    const simplePair = await makePairWithTokens(token1.address, tokenBusd.address);
     this.simplePair = simplePair;
 
     // set up bnb based pair for later test
@@ -184,6 +184,8 @@ describe("Twap Oracle unit tests", () => {
       const token0 = await makeToken("ETH", "ETH");
       const token1 = await makeToken("MATIC", "MATIC");
 
+      // this. simplePair = await makePairWithTokens(token0.address, token1.address);
+
       this.tokenConfig = {
         asset: await token0.address,
         baseUnit: EXP_SCALE,
@@ -196,12 +198,15 @@ describe("Twap Oracle unit tests", () => {
       this.token1 = token1;
       await this.twapOracle.setTokenConfig(this.tokenConfig);
     });
+
     it("revert if get underlying price of not existing token", async function () {
       await expect(this.twapOracle.getPrice(this.token1.address)).to.be.revertedWith("asset not exist");
     });
+
     it("revert if get underlying price of token has not been updated", async function () {
       await expect(this.twapOracle.getPrice(this.token0.address)).to.be.revertedWith("TWAP price must be positive");
     });
+
     it("twap update after multiple observations", async function () {
       const ts = await getTime();
       const acc = Q112.mul(ts);
@@ -231,6 +236,7 @@ describe("Twap Oracle unit tests", () => {
           acc.add(Q112.mul(timeDelta)),
         );
     });
+
     it("should delete observation which does not fall in current window and add latest observation", async function () {
       const ts = await getTime();
       const acc = Q112.mul(ts);
@@ -245,6 +251,7 @@ describe("Twap Oracle unit tests", () => {
       const lastObservation = await this.twapOracle.observations(this.token0.address, 2);
       expect(lastObservation.timestamp).be.closeTo(BigNumber.from(ts + 903), 1);
     });
+
     it("should pick last available observation if none observations are in window and also delete privious one", async function () {
       const ts = await getTime();
       const acc = Q112.mul(ts);
@@ -269,6 +276,7 @@ describe("Twap Oracle unit tests", () => {
       const firstObservationAfter = await this.twapOracle.observations(this.token0.address, 0);
       expect(firstObservationAfter.timestamp).to.be.equal(0);
     });
+
     it("should add latest observation after delete observations which does not fall in current window", async function () {
       const ts = await getTime();
       const acc = Q112.mul(ts);
@@ -283,6 +291,7 @@ describe("Twap Oracle unit tests", () => {
       const lastObservation = await this.twapOracle.observations(this.token0.address, 2);
       expect(lastObservation.timestamp).be.closeTo(BigNumber.from(ts + 903), 1);
     });
+
     it("should delete multiple observation and pick observation which falling under window", async function () {
       const initialTs = await getTime();
       const acc = Q112.mul(initialTs);
@@ -359,12 +368,16 @@ describe("Twap Oracle unit tests", () => {
       );
       expect(cp).to.equal(acc4);
     });
+
     it("test reversed pair", async function () {
       // choose another token
-      const currentTimestamp = await getTime();
-      const acc = Q112.mul(currentTimestamp);
-      const pairLastTime = (await this.simplePair.getReserves())[2];
-      const pairCp0 = BigNumber.from(pairLastTime).mul(Q112);
+      const reserves = await this.simplePair.getReserves();
+      const lastPrice = await this.simplePair.price1CumulativeLast();
+
+      const time = await getTime();
+      const spread = Q112.mul(reserves[0]).div(Q112.mul(reserves[1]));
+      let acc = spread.mul(Q112.mul(time - reserves[2]));
+
       const config = {
         asset: await this.token1.address,
         baseUnit: EXP_SCALE,
@@ -375,18 +388,28 @@ describe("Twap Oracle unit tests", () => {
       };
       // initial acc
       let cp = await this.twapOracle.currentCumulativePrice(config);
-      expect(cp).to.equal(acc);
+
+      expect(cp).to.equal(acc.add(lastPrice));
 
       await increaseTime(100);
       cp = await this.twapOracle.currentCumulativePrice(config);
-      expect(cp).be.closeTo(acc.add(Q112.mul(100)), 100);
+      acc = spread.mul(Q112.mul(time - reserves[2] + 100));
+      expect(cp).be.closeTo(acc.add(lastPrice), 100);
+
+      const oldPrice = await this.simplePair.price1CumulativeLast();
+
+      const pairLastTime = (await this.simplePair.getReserves())[2];
+      const deltaTime = (await getTime()) - pairLastTime + 1;
 
       // update the pair to update the timestamp, and test again
       await this.simplePair.update(200, 100, 200, 100); // timestamp + 1
+
       cp = await this.twapOracle.currentCumulativePrice(config);
-      const deltaTime = (await getTime()) - pairLastTime;
-      // pair current cumulative price1 + delta cumulative price1
-      expect(cp).to.equal(pairCp0.add(Q112.mul(200).div(100).mul(deltaTime)));
+
+      const newSpread = Q112.mul(200).div(Q112.mul(100));
+      acc = newSpread.mul(Q112.mul(deltaTime));
+
+      expect(cp).to.equal(oldPrice.add(acc));
     });
 
     it("twap calculation for non BNB based token", async function () {
