@@ -1,3 +1,18 @@
+## [1.8.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.7.4-dev.1...v1.8.0-dev.1) (2023-11-24)
+
+
+### Features
+
+* add addresses of deployed contracts in a single file ([50c0933](https://github.com/VenusProtocol/oracle/commit/50c0933cbf2576d1379d2e91fecadffd7f448a14))
+* only commit deployment jsons during export ([aa24aa9](https://github.com/VenusProtocol/oracle/commit/aa24aa91e85e7d5d033c458625e311d9377ceb3a))
+* updating deployment files ([d33ea60](https://github.com/VenusProtocol/oracle/commit/d33ea6003d4eb1762fbefe3d732bea5a24e09757))
+
+
+### Bug Fixes
+
+* fixed yarn lockfile ([05e031a](https://github.com/VenusProtocol/oracle/commit/05e031a80088ab6da55cc5f770df687fb12f5d8e))
+* yarn lock ([c10c53b](https://github.com/VenusProtocol/oracle/commit/c10c53b63d0887be828c80b1c9512108fd2555ff))
+
 ## [1.7.4-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.7.3...v1.7.4-dev.1) (2023-11-02)
 
 ## [1.7.3](https://github.com/VenusProtocol/oracle/compare/v1.7.2...v1.7.3) (2023-10-19)
