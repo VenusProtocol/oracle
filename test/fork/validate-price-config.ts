@@ -2,13 +2,13 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import { Contract } from "ethers";
 import { ethers, network } from "hardhat";
 
-import { assets } from "../../deploy/2-configure-feeds";
+import { assets } from "../../helpers/deploymentConfig";
 import { forking } from "./utils";
 
 const VALID = "\u2705"; // Unicode character for checkmark
 const INVALID = "\u274c"; // Unicode character for X mark
 const networkName: string = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
-const FORK_MAINNET = process.env.FORK_MAINNET === "true";
+const FORK_MAINNET = process.env.FORK === "true" && process.env.FORKED_NETWORK === "bscmainnet";
 const oracleAddress = {
   bsctestnet: "0xb0de3Fce006d3434342383f941bD22720Ff9Fc0C",
   bscmainnet: "0x833c980ADDAa4B9d1f8432EDdA51B89676702759",

@@ -1,40 +1,87 @@
+import mainnetDeployments from "@venusprotocol/venus-protocol/networks/mainnet.json";
+import testnetDeployments from "@venusprotocol/venus-protocol/networks/testnet.json";
 import { Contract } from "ethers";
-import hre from "hardhat";
-import { DeployFunction } from "hardhat-deploy/dist/types";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { ethers } from "hardhat";
 
-interface Feed {
+export interface Feed {
   [key: string]: string;
 }
 
-interface Config {
+export interface Config {
   [key: string]: Feed;
 }
 
-interface Asset {
+export interface Asset {
   token: string;
   address: string;
   oracle: string;
   price: string;
 }
 
-interface Assets {
+export interface Assets {
   [key: string]: Asset[];
 }
 
-interface Oracle {
+export interface NetworkAddress {
+  [key: string]: string;
+}
+
+export interface PreconfiguredAddresses {
+  [key: string]: NetworkAddress;
+}
+
+export interface AccessControlEntry {
+  caller: string;
+  target: string;
+  method: string;
+}
+
+export interface Oracle {
   oracles: [string, string, string];
   enableFlagsForOracles: [boolean, boolean, boolean];
   underlyingOracle: Contract;
   getTokenConfig?: (asset: Asset, networkName: string) => void;
+  getDirectPriceConfig?: (asset: Asset) => void;
   getStalePeriodConfig?: (asset: Asset) => string[];
 }
 
-interface Oracles {
+export interface Oracles {
   [key: string]: Oracle;
 }
 
-const chainlinkFeed: Config = {
+export const addr0000 = "0x0000000000000000000000000000000000000000";
+export const DEFAULT_STALE_PERIOD = 24 * 60 * 60; // 24 hrs
+export const ANY_CONTRACT = ethers.constants.AddressZero;
+
+export const ADDRESSES: PreconfiguredAddresses = {
+  bsctestnet: {
+    vBNBAddress: testnetDeployments.Contracts.vBNB,
+    WBNBAddress: testnetDeployments.Contracts.WBNB,
+    VAIAddress: testnetDeployments.Contracts.VAI,
+    pythOracleAddress: "0xd7308b14BF4008e7C7196eC35610B1427C5702EA",
+    sidRegistryAddress: "0xfFB52185b56603e0fd71De9de4F6f902f05EEA23",
+    acm: "0x45f8a08F534f34A97187626E05d4b6648Eeaa9AA",
+    timelock: testnetDeployments.Contracts.Timelock,
+  },
+  bscmainnet: {
+    vBNBAddress: mainnetDeployments.Contracts.vBNB,
+    WBNBAddress: mainnetDeployments.Contracts.WBNB,
+    VAIAddress: mainnetDeployments.Contracts.VAI,
+    pythOracleAddress: "0x4D7E825f80bDf85e913E0DD2A2D54927e9dE1594",
+    sidRegistryAddress: "0x08CEd32a7f3eeC915Ba84415e9C07a7286977956",
+    acm: "0x4788629ABc6cFCA10F9f969efdEAa1cF70c23555",
+    timelock: mainnetDeployments.Contracts.Timelock,
+  },
+  sepolia: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: "0xbf705C00578d43B6147ab4eaE04DBBEd1ccCdc96",
+    timelock: "0x94fa6078b6b8a26f0b6edffbe6501b22a10470fb", // Sepolia Multisig
+  },
+};
+
+export const chainlinkFeed: Config = {
   bsctestnet: {
     BNX: "0xf51492DeD1308Da8195C3bfcCF4a7c70fDbF9daE",
     BTCB: "0x5741306c21795FdCBb9b265Ea0255F499DFe515C",
@@ -55,9 +102,21 @@ const chainlinkFeed: Config = {
     BNB: "0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526",
     LTC: "0x9Dcf949BCA2F4A8a62350E0065d18902eE87Dca3",
   },
+  sepolia: {
+    WBTC: "0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43",
+    WETH: "0x694AA1769357215DE4FAC081bf1f309aDC325306",
+    USDC: "0xA2F78ab2355fe2f984D808B5CeE7FD0A93D5270E",
+  },
 };
 
-const pythID: Config = {
+export const redstoneFeed: Config = {
+  bsctestnet: {},
+  sepolia: {
+    XVS: "0x0d7697a15bce933cE8671Ba3D60ab062dA216C60",
+  },
+};
+
+export const pythID: Config = {
   bsctestnet: {
     AUTO: "0xd954e9a88c7f97b4645b535869aba8a1e50697270a0afb09891accc031f03880",
   },
@@ -228,20 +287,57 @@ export const assets: Assets = {
       price: "159990000000000000000",
     },
   ],
+  sepolia: [
+    {
+      token: "WBTC",
+      address: "0x92A2928f5634BEa89A195e7BeCF0f0FEEDAB885b",
+      oracle: "chainlink",
+      price: "25000000000000000000000",
+    },
+    {
+      token: "WETH",
+      address: "0x700868CAbb60e90d77B6588ce072d9859ec8E281",
+      oracle: "chainlink",
+      price: "2080000000000000000000",
+    },
+    {
+      token: "USDC",
+      address: "0x772d68929655ce7234C8C94256526ddA66Ef641E",
+      oracle: "chainlink",
+      price: "1000000000000000000",
+    },
+    {
+      token: "USDT",
+      address: "0x8d412FD0bc5d826615065B931171Eed10F5AF266",
+      oracle: "chainlinkFixed",
+      price: "1000000000000000000",
+    },
+    {
+      token: "XVS",
+      address: "0xdb633c11d3f9e6b8d17ac2c972c9e3b05da59bf9",
+      oracle: "redstone",
+      price: "5000000000000000000", // $5.00
+    },
+    {
+      token: "CRV",
+      address: "0x2c78EF7eab67A6e0C9cAa6f2821929351bdDF3d3",
+      oracle: "chainlinkFixed",
+      price: "500000000000000000", // $0.5
+    },
+    {
+      token: "crvUSD",
+      address: "0x36421d873abCa3E2bE6BB3c819C0CF26374F63b6",
+      oracle: "chainlinkFixed",
+      price: "1000000000000000000", // $1.00
+    },
+  ],
 };
 
-const addr0000 = "0x0000000000000000000000000000000000000000";
-const DEFAULT_STALE_PERIOD = 24 * 60 * 60; // 24 hrs
-
-const func: DeployFunction = async function ({ network, deployments, getNamedAccounts }: HardhatRuntimeEnvironment) {
-  const networkName: string = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
-  const { deploy } = deployments;
-  const { deployer } = await getNamedAccounts();
-
-  const resilientOracle = await hre.ethers.getContract("ResilientOracle");
-  const binanceOracle = await hre.ethers.getContract("BinanceOracle");
-  const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
-  const pythOracle = await hre.ethers.getContract("PythOracle");
+export const getOraclesData = async (): Promise<Oracles> => {
+  const chainlinkOracle = await ethers.getContract("ChainlinkOracle");
+  const redstoneOracle = await ethers.getContract("RedStoneOracle");
+  const binanceOracle = await ethers.getContractOrNull("BinanceOracle");
+  const pythOracle = await ethers.getContractOrNull("PythOracle");
 
   const oraclesData: Oracles = {
     chainlink: {
@@ -254,81 +350,50 @@ const func: DeployFunction = async function ({ network, deployments, getNamedAcc
         maxStalePeriod: DEFAULT_STALE_PERIOD,
       }),
     },
-    binance: {
-      oracles: [binanceOracle.address, addr0000, addr0000],
+    chainlinkFixed: {
+      oracles: [chainlinkOracle.address, addr0000, addr0000],
       enableFlagsForOracles: [true, false, false],
-      underlyingOracle: binanceOracle,
-      getStalePeriodConfig: (asset: Asset) => [asset.token, DEFAULT_STALE_PERIOD.toString()],
-    },
-    pyth: {
-      oracles: [pythOracle.address, addr0000, addr0000],
-      enableFlagsForOracles: [true, false, false],
-      underlyingOracle: pythOracle,
-      getTokenConfig: (asset: Asset, name: string) => ({
-        pythId: pythID[name][asset.token],
+      underlyingOracle: chainlinkOracle,
+      getDirectPriceConfig: (asset: Asset) => ({
         asset: asset.address,
+        price: asset.price,
+      }),
+    },
+    redstone: {
+      oracles: [redstoneOracle.address, addr0000, addr0000],
+      enableFlagsForOracles: [true, false, false],
+      underlyingOracle: redstoneOracle,
+      getTokenConfig: (asset: Asset, name: string) => ({
+        asset: asset.address,
+        feed: redstoneFeed[name][asset.token],
         maxStalePeriod: DEFAULT_STALE_PERIOD,
       }),
     },
+    ...(binanceOracle
+      ? {
+          binance: {
+            oracles: [binanceOracle.address, addr0000, addr0000],
+            enableFlagsForOracles: [true, false, false],
+            underlyingOracle: binanceOracle,
+            getStalePeriodConfig: (asset: Asset) => [asset.token, DEFAULT_STALE_PERIOD.toString()],
+          },
+        }
+      : {}),
+    ...(pythOracle
+      ? {
+          pyth: {
+            oracles: [pythOracle.address, addr0000, addr0000],
+            enableFlagsForOracles: [true, false, false],
+            underlyingOracle: pythOracle,
+            getTokenConfig: (asset: Asset, name: string) => ({
+              pythId: pythID[name][asset.token],
+              asset: asset.address,
+              maxStalePeriod: DEFAULT_STALE_PERIOD,
+            }),
+          },
+        }
+      : {}),
   };
 
-  for (const asset of assets[networkName]) {
-    const { oracle } = asset;
-    console.log(`Configuring ${asset.token}`);
-
-    if (network.live) {
-      console.log(`Configuring ${oracle} oracle for ${asset.token}`);
-
-      const { getTokenConfig } = oraclesData[oracle];
-      if (oraclesData[oracle].underlyingOracle.address !== binanceOracle.address && getTokenConfig !== undefined) {
-        const tx = await oraclesData[oracle].underlyingOracle?.setTokenConfig(getTokenConfig(asset, networkName));
-        tx.wait(1);
-      }
-
-      const { getStalePeriodConfig } = oraclesData[oracle];
-      if (
-        oraclesData[oracle].underlyingOracle.address === binanceOracle.address &&
-        getStalePeriodConfig !== undefined
-      ) {
-        const tx = await oraclesData[oracle].underlyingOracle?.setTokenConfig(...getStalePeriodConfig(asset));
-        tx.wait(1);
-      }
-
-      console.log(`Configuring resillient oracle for ${asset.token}`);
-      const tx = await resilientOracle.setTokenConfig({
-        asset: asset.address,
-        oracles: oraclesData[oracle].oracles,
-        enableFlagsForOracles: oraclesData[oracle].enableFlagsForOracles,
-      });
-
-      await tx.wait(1);
-    } else {
-      await deploy(`Mock${asset.token}`, {
-        from: deployer,
-        log: true,
-        deterministicDeployment: false,
-        args: [`Mock${asset.token}`, `Mock${asset.token}`, 18],
-        autoMine: true,
-        contract: "BEP20Harness",
-      });
-
-      const mock = await hre.ethers.getContract(`Mock${asset.token}`);
-
-      console.log(`Configuring resillient oracle for ${asset.token}`);
-      let tx = await resilientOracle.setTokenConfig({
-        asset: mock.address,
-        oracles: oraclesData[oracle].oracles,
-        enableFlagsForOracles: oraclesData[oracle].enableFlagsForOracles,
-      });
-
-      await tx.wait(1);
-
-      console.log(`Configuring ${oracle} oracle for ${asset.token}`);
-      tx = await oraclesData[oracle].underlyingOracle?.setPrice(mock.address, asset.price);
-      await tx.wait(1);
-    }
-  }
+  return oraclesData;
 };
-
-export default func;
-export const tags = ["configure"];
