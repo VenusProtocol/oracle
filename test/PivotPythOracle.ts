@@ -2,7 +2,7 @@ import { smock } from "@defi-wonderland/smock";
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
-import { artifacts, ethers, upgrades, waffle } from "hardhat";
+import { deployments, ethers, upgrades } from "hardhat";
 
 import { AccessControlManager, BoundValidator, PythOracle } from "../typechain-types";
 import { MockPyth } from "../typechain-types/contracts/test/MockPyth";
@@ -13,12 +13,18 @@ import { getTime, increaseTime } from "./utils/time";
 const EXP_SCALE = BigNumber.from(10).pow(18);
 const bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
 
-const getPythOracle = async (account: SignerWithAddress) => {
-  const actualOracleArtifact = await artifacts.readArtifact("MockPyth");
-  const actualOracle = await waffle.deployContract(account, actualOracleArtifact, [0, 0]);
-  await actualOracle.deployed();
+const getPythOracle = deployments.createFixture(async ({ getNamedAccounts }) => {
+  const { deployer } = await getNamedAccounts();
+  const { deploy } = deployments;
+  const actualOracle = await deploy("PoolRegistry", {
+    from: deployer,
+    contract: "MockPyth",
+    args: [0, 0],
+    autoMine: true,
+    log: true,
+  });
 
-  const pythOracle = await ethers.getContractFactory("PythOracle", account);
+  const pythOracle = await ethers.getContractFactory("PythOracle", deployer);
   const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
   fakeAccessControlManager.isAllowedToCall.returns(true);
 
@@ -30,7 +36,7 @@ const getPythOracle = async (account: SignerWithAddress) => {
     },
   );
   return instance;
-};
+});
 
 const getBoundValidator = async (account: SignerWithAddress) => {
   const boundValidator = await ethers.getContractFactory("BoundValidator", account);
@@ -50,7 +56,7 @@ describe("Oracle plugin frame unit tests", () => {
     this.vai = signers[6].address;
     this.signers = signers;
     this.admin = admin;
-    this.pythOracle = await getPythOracle(admin);
+    this.pythOracle = await getPythOracle();
     this.boundValidator = await getBoundValidator(admin);
   });
 
@@ -165,7 +171,7 @@ describe("Oracle plugin frame unit tests", () => {
         },
       ]);
 
-      this.eth = await makeToken(this.admin, "ETH", "ETH");
+      this.eth = await makeToken("ETH", "ETH");
     });
     it("revert when asset not exist", async function () {
       await expect(this.pythOracle.getPrice(this.eth.address)).to.be.revertedWith("asset doesn't exist");
@@ -217,7 +223,7 @@ describe("Oracle plugin frame unit tests", () => {
     });
 
     it("price should be 18 decimals", async function () {
-      let token = await makeToken(this.admin, "ETH", "ETH");
+      let token = await makeToken("ETH", "ETH");
 
       await this.pythOracle.setTokenConfig({
         asset: await this.eth.address,
@@ -229,7 +235,7 @@ describe("Oracle plugin frame unit tests", () => {
       // 10000000 * 10**-6 * 10**18 * 10**0 = 1e19
       expect(price).to.equal(BigNumber.from(10).pow(19));
 
-      token = await makeToken(this.admin, "BTC", "BTC", 8);
+      token = await makeToken("BTC", "BTC", 8);
 
       // test another token
       await this.pythOracle.setTokenConfig({
@@ -246,7 +252,7 @@ describe("Oracle plugin frame unit tests", () => {
 
   describe("validation", () => {
     it("validate price", async function () {
-      const token = await makeToken(this.admin, "ETH", "ETH");
+      const token = await makeToken("ETH", "ETH");
 
       const validationConfig = {
         asset: await token.address,

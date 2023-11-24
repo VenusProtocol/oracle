@@ -21,20 +21,20 @@ describe("Oracle unit tests", () => {
     this.admin = admin;
 
     this.bnbAddr = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
-    this.token = await makeToken(admin, "Token", "Token");
+    this.token = await makeToken("Token", "Token");
     this.vBnb = signers[5]; // Not your standard vToken
-    this.vai = await makeToken(admin, "VAI", "VAI");
-    this.xvs = await makeToken(admin, "XVS", "XVS");
-    this.exampleSet = await makeToken(admin, "ExampleSet", "ExampleSet");
-    this.exampleUnset = await makeToken(admin, "ExampleUnset", "ExampleUnset");
-    this.usdc = await makeToken(admin, "USDC", "USDC", 6);
-    this.usdt = await makeToken(admin, "USDT", "USDT", 6);
-    this.dai = await makeToken(admin, "DAI", "DAI", 18);
+    this.vai = await makeToken("VAI", "VAI");
+    this.xvs = await makeToken("XVS", "XVS");
+    this.exampleSet = await makeToken("ExampleSet", "ExampleSet");
+    this.exampleUnset = await makeToken("ExampleUnset", "ExampleUnset");
+    this.usdc = await makeToken("USDC", "USDC", 6);
+    this.usdt = await makeToken("USDT", "USDT", 6);
+    this.dai = await makeToken("DAI", "DAI", 18);
 
-    this.bnbFeed = await makeChainlinkOracle(admin, 8, 30000000000);
-    this.usdcFeed = await makeChainlinkOracle(admin, 8, 100000000);
-    this.usdtFeed = await makeChainlinkOracle(admin, 8, 100000000);
-    this.daiFeed = await makeChainlinkOracle(admin, 8, 100000000);
+    this.bnbFeed = await makeChainlinkOracle(8, 30000000000);
+    this.usdcFeed = await makeChainlinkOracle(8, 100000000);
+    this.usdtFeed = await makeChainlinkOracle(8, 100000000);
+    this.daiFeed = await makeChainlinkOracle(8, 100000000);
 
     const chainlinkOracle = await ethers.getContractFactory("ChainlinkOracle", admin);
     const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");

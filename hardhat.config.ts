@@ -1,7 +1,7 @@
 import "module-alias/register";
 
+import "@nomicfoundation/hardhat-chai-matchers";
 import "@nomiclabs/hardhat-etherscan";
-import "@nomiclabs/hardhat-waffle";
 import "@openzeppelin/hardhat-upgrades";
 import "@typechain/hardhat";
 import * as dotenv from "dotenv";
