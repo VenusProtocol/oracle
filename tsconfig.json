@@ -23,5 +23,5 @@
   },
   "exclude": ["node_modules"],
   "files": ["./hardhat.config.ts"],
-  "include": ["deploy","typechain-types"]
+  "include": ["deploy", "typechain-types"]
 }
