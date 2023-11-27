@@ -1,3 +1,35 @@
+## [1.8.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.1...v1.8.0-dev.2) (2023-11-27)
+
+
+### Features
+
+* updating deployment files ([2e37401](https://github.com/VenusProtocol/oracle/commit/2e37401a3af966d573fc0f90c168f6714fbf7f7c))
+* updating deployment files ([7ed77d1](https://github.com/VenusProtocol/oracle/commit/7ed77d1ec025815f91c2580886eac8ee41aedeae))
+
+
+### Bug Fixes
+
+* adjust PRIVATE_KEY naming ([c5dba92](https://github.com/VenusProtocol/oracle/commit/c5dba92ae2afe3aef9064ac750e5ae85d2bbd076))
+* config deploy script network name fix ([e3a1a87](https://github.com/VenusProtocol/oracle/commit/e3a1a8737d5b6b03465a192992166b772e829904))
+* deployment order ([dad9b1d](https://github.com/VenusProtocol/oracle/commit/dad9b1d8786f3870c055aafe802dec68dc30de02))
+* lint ([e8a58dc](https://github.com/VenusProtocol/oracle/commit/e8a58dcaf1eaca2db951bc0530a99de46081ba60))
+* lint error ([32c22e6](https://github.com/VenusProtocol/oracle/commit/32c22e6fa54c3858715f61c37555438c7e939482))
+* linting ([8ebd43c](https://github.com/VenusProtocol/oracle/commit/8ebd43c30a61c180a9f8ecbe1003d5b493c03165))
+* local deployment failure ([48b88e1](https://github.com/VenusProtocol/oracle/commit/48b88e1008849521475eff6a5d524f88538a71ac))
+* minor bugs ([c7451f8](https://github.com/VenusProtocol/oracle/commit/c7451f8c505625900c072c65dae4903a848a4dc0))
+* minor fix ([94d6d55](https://github.com/VenusProtocol/oracle/commit/94d6d550b5acf5161efa50de43ddb37ab05455bd))
+* oracleData to handle case when not all oracles are deployed ([cd20739](https://github.com/VenusProtocol/oracle/commit/cd20739787f12c6296ffc2f4a915d93f44e0e1ce))
+* redstone deployment script bug ([e71427a](https://github.com/VenusProtocol/oracle/commit/e71427aee40d7ffc0a25a7cb4b0f319bf6845da9))
+* uncomment necessary lines ([7d5dde5](https://github.com/VenusProtocol/oracle/commit/7d5dde5e9075553e588aad9b20cdedfa48fe47da))
+* yarn lock ([6b8b1fb](https://github.com/VenusProtocol/oracle/commit/6b8b1fbd7750c30d0e1d7cf464ea4b7566239875))
+* yarn lock file ([e865777](https://github.com/VenusProtocol/oracle/commit/e865777276aea95e8882d783c894e1a52712bbcd))
+* yarn.lock checksum ([82562dc](https://github.com/VenusProtocol/oracle/commit/82562dc182025189be963dad94dccb3de70e3b97))
+
+
+### Reverts
+
+* Revert "chore: update deployments" ([c2a702f](https://github.com/VenusProtocol/oracle/commit/c2a702f5770a989858e9cb46450ed58a284b88a9))
+
 ## [1.8.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.7.4-dev.1...v1.8.0-dev.1) (2023-11-24)
 
 
