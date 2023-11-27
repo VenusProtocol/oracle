@@ -19,7 +19,9 @@ function isFork() {
         allowUnlimitedContractSize: false,
         loggingEnabled: false,
         forking: {
-          url: process.env[`ARCHIVE_NODE_${process.env.FORKED_NETWORK}`],
+          url:
+            process.env[`ARCHIVE_NODE_${process.env.FORKED_NETWORK}`] ||
+            "https://data-seed-prebsc-1-s1.binance.org:8545",
           blockNumber: 26349263,
         },
         accounts: {
