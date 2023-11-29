@@ -1,3 +1,10 @@
+## [1.8.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.2...v1.8.0-dev.3) (2023-11-29)
+
+
+### Bug Fixes
+
+* deployment config to have optional oracle config depending on which oracle is deployed on chain ([9822ddb](https://github.com/VenusProtocol/oracle/commit/9822ddb1da8e60a610dbd1016097ef070ecb8bc1))
+
 ## [1.8.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.1...v1.8.0-dev.2) (2023-11-27)
 
 
