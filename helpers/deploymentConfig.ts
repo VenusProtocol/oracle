@@ -334,41 +334,49 @@ export const assets: Assets = {
 };
 
 export const getOraclesData = async (): Promise<Oracles> => {
-  const chainlinkOracle = await ethers.getContract("ChainlinkOracle");
-  const redstoneOracle = await ethers.getContract("RedStoneOracle");
+  const chainlinkOracle = await ethers.getContractOrNull("ChainlinkOracle");
+  const redstoneOracle = await ethers.getContractOrNull("RedStoneOracle");
   const binanceOracle = await ethers.getContractOrNull("BinanceOracle");
   const pythOracle = await ethers.getContractOrNull("PythOracle");
 
   const oraclesData: Oracles = {
-    chainlink: {
-      oracles: [chainlinkOracle.address, addr0000, addr0000],
-      enableFlagsForOracles: [true, false, false],
-      underlyingOracle: chainlinkOracle,
-      getTokenConfig: (asset: Asset, name: string) => ({
-        asset: asset.address,
-        feed: chainlinkFeed[name][asset.token],
-        maxStalePeriod: DEFAULT_STALE_PERIOD,
-      }),
-    },
-    chainlinkFixed: {
-      oracles: [chainlinkOracle.address, addr0000, addr0000],
-      enableFlagsForOracles: [true, false, false],
-      underlyingOracle: chainlinkOracle,
-      getDirectPriceConfig: (asset: Asset) => ({
-        asset: asset.address,
-        price: asset.price,
-      }),
-    },
-    redstone: {
-      oracles: [redstoneOracle.address, addr0000, addr0000],
-      enableFlagsForOracles: [true, false, false],
-      underlyingOracle: redstoneOracle,
-      getTokenConfig: (asset: Asset, name: string) => ({
-        asset: asset.address,
-        feed: redstoneFeed[name][asset.token],
-        maxStalePeriod: DEFAULT_STALE_PERIOD,
-      }),
-    },
+    ...(chainlinkOracle
+      ? {
+          chainlink: {
+            oracles: [chainlinkOracle.address, addr0000, addr0000],
+            enableFlagsForOracles: [true, false, false],
+            underlyingOracle: chainlinkOracle,
+            getTokenConfig: (asset: Asset, name: string) => ({
+              asset: asset.address,
+              feed: chainlinkFeed[name][asset.token],
+              maxStalePeriod: DEFAULT_STALE_PERIOD,
+            }),
+          },
+          chainlinkFixed: {
+            oracles: [chainlinkOracle.address, addr0000, addr0000],
+            enableFlagsForOracles: [true, false, false],
+            underlyingOracle: chainlinkOracle,
+            getDirectPriceConfig: (asset: Asset) => ({
+              asset: asset.address,
+              price: asset.price,
+            }),
+          },
+        }
+      : {}),
+    ...(redstoneOracle
+      ? {
+          redstone: {
+            oracles: [redstoneOracle.address, addr0000, addr0000],
+            enableFlagsForOracles: [true, false, false],
+            underlyingOracle: redstoneOracle,
+            getTokenConfig: (asset: Asset, name: string) => ({
+              asset: asset.address,
+              feed: redstoneFeed[name][asset.token],
+              maxStalePeriod: DEFAULT_STALE_PERIOD,
+            }),
+          },
+        }
+      : {}),
     ...(binanceOracle
       ? {
           binance: {
