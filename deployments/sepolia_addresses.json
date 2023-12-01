@@ -1,0 +1,19 @@
+{
+  "name": "sepolia",
+  "chainId": "11155111",
+  "addresses": {
+    "BoundValidator": "0x60c4Aa92eEb6884a76b309Dd8B3731ad514d6f9B",
+    "BoundValidator_Implementation": "0xcc633492097078Ae590C0d11924e82A23f3Ab3E2",
+    "BoundValidator_Proxy": "0x60c4Aa92eEb6884a76b309Dd8B3731ad514d6f9B",
+    "ChainlinkOracle": "0x102F0b714E5d321187A4b6E5993358448f7261cE",
+    "ChainlinkOracle_Implementation": "0x034Cc5097379B13d3Ed5F6c85c8FAf20F48aE480",
+    "ChainlinkOracle_Proxy": "0x102F0b714E5d321187A4b6E5993358448f7261cE",
+    "DefaultProxyAdmin": "0x01435866babd91311b1355cf3af488cca36db68e",
+    "RedStoneOracle": "0x4e6269Ef406B4CEE6e67BA5B5197c2FfD15099AE",
+    "RedStoneOracle_Implementation": "0x718299912d52c5720c70318B9dF418bc2520fb60",
+    "RedStoneOracle_Proxy": "0x4e6269Ef406B4CEE6e67BA5B5197c2FfD15099AE",
+    "ResilientOracle": "0x8000eca36201dddf5805Aa4BeFD73d1EB4D23264",
+    "ResilientOracle_Implementation": "0x86F82bca79774fc04859966917D2291A68b870A9",
+    "ResilientOracle_Proxy": "0x8000eca36201dddf5805Aa4BeFD73d1EB4D23264"
+  }
+}
