@@ -1,3 +1,11 @@
+## [1.8.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.3...v1.8.0-dev.4) (2023-12-01)
+
+
+### Features
+
+* generate file only with addresses of deployed contracts ([5b2b538](https://github.com/VenusProtocol/oracle/commit/5b2b538c8d06cdd085d366e4899a33fcb3fcb35c))
+* updating deployment files ([5d3294b](https://github.com/VenusProtocol/oracle/commit/5d3294bc117bd74d9ebe544d0375844ad8e4c8c7))
+
 ## [1.8.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.2...v1.8.0-dev.3) (2023-11-29)
 
 
