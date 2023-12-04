@@ -15,7 +15,8 @@ export interface Asset {
   token: string;
   address: string;
   oracle: string;
-  price: string;
+  price?: string;
+  stalePeriod?: number;
 }
 
 export interface Assets {
@@ -82,6 +83,40 @@ export const ADDRESSES: PreconfiguredAddresses = {
 };
 
 export const chainlinkFeed: Config = {
+  bscmainnet: {
+    USDC: "0x51597f405303C4377E36123cBc172b13269EA163",
+    USDT: "0xb97ad0e74fa7d920791e90258a6e2085088b4320",
+    BUSD: "0xcbb98864ef56e9042e7d2efef76141f15731b82f",
+    SXP: "0xe188a9875af525d25334d75f3327863b2b8cd0f1",
+    XVS: "0xbf63f430a79d4036a5900c19818aff1fa710f206",
+    BTCB: "0x264990fbd0a4796a3e3d8e37c4d5f87a3aca5ebf",
+    ETH: "0x9ef1b8c0e4f7dc8bf5719ea496883dc6401d5b2e",
+    LTC: "0x74e72f37a8c415c8f1a98ed42e78ff997435791d",
+    XRP: "0x93a67d414896a280bf8ffb3b389fe3686e014fda",
+    BCH: "0x43d80f616daf0b0b42a928eed32147dc59027d41",
+    DOT: "0xc333eb0086309a16aa7c8308dfd32c8bba0a2592",
+    LINK: "0xca236e327f629f9fc2c30a4e95775ebf0b89fac8",
+    DAI: "0x132d3C0B1D2cEa0BC552588063bdBb210FDeecfA",
+    FIL: "0xe5dbfd9003bff9df5feb2f4f445ca00fb121fb83",
+    BETH: "0x2a3796273d47c4ed363b361d3aefb7f7e2a13782",
+    ADA: "0xa767f745331D267c7751297D982b050c93985627",
+    DOGE: "0x3ab0a0d137d4f946fbb19eecc6e92e64660231c8",
+    MATIC: "0x7ca57b0ca6367191c94c8914d7df09a57655905f",
+    CAKE: "0xb6064ed41d4f67e353768aa239ca86f4f73665a1",
+    AAVE: "0xa8357bf572460fc40f4b0acacbb2a6a61c89f475",
+    TUSD: "0xa3334a9762090e827413a7495afece76f41dfc06",
+    TRX: "0xf4c5e535756d11994fcbb12ba8add0192d9b88be",
+    TRX_OLD: "0xf4c5e535756d11994fcbb12ba8add0192d9b88be",
+    BNB: "0x0567f2323251f0aab15c8dfb1967e4e8a7d42aee",
+    VAI: "0x058316f8Bb13aCD442ee7A216C7b60CFB4Ea1B53",
+    ALPACA: "0xe0073b60833249ffd1bb2af809112c2fbf221DF6",
+    BIFI: "0xaB827b69daCd586A37E80A7d552a4395d576e645",
+    BNBx: "0xc4429B539397a3166eF3ef132c29e34715a3ABb4",
+    BSW: "0x08e70777b982a58d23d05e3d7714f44837c06a21",
+    WBNB: "0x0567f2323251f0aab15c8dfb1967e4e8a7d42aee",
+    WIN: "0x9e7377e194e41d63795907c92c3eb351a2eb0233",
+    WOO: "0x02bfe714e78e2ad1bb1c2bee93ec8dc5423b66d4",
+  },
   bsctestnet: {
     BNX: "0xf51492DeD1308Da8195C3bfcCF4a7c70fDbF9daE",
     BTCB: "0x5741306c21795FdCBb9b265Ea0255F499DFe515C",
@@ -287,6 +322,247 @@ export const assets: Assets = {
       price: "159990000000000000000",
     },
   ],
+  bscmainnet: [
+    {
+      token: "USDC",
+      address: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDT",
+      address: "0x55d398326f99059fF775485246999027B3197955",
+      oracle: "chainlink",
+    },
+    {
+      token: "BUSD",
+      address: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+      oracle: "chainlink",
+    },
+    {
+      token: "SXP",
+      address: "0x47BEAd2563dCBf3bF2c9407fEa4dC236fAbA485A",
+      oracle: "chainlink",
+    },
+    {
+      token: "XVS",
+      address: "0xcF6BB5389c92Bdda8a3747Ddb454cB7a64626C63",
+      oracle: "chainlink",
+    },
+    {
+      token: "BTCB",
+      address: "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c",
+      oracle: "chainlink",
+    },
+    {
+      token: "ETH",
+      address: "0x2170Ed0880ac9A755fd29B2688956BD959F933F8",
+      oracle: "chainlink",
+    },
+    {
+      token: "LTC",
+      address: "0x4338665CBB7B2485A8855A139b75D5e34AB0DB94",
+      oracle: "chainlink",
+    },
+    {
+      token: "XRP",
+      address: "0x1D2F0da169ceB9fC7B3144628dB156f3F6c60dBE",
+      oracle: "chainlink",
+    },
+    {
+      token: "BCH",
+      address: "0x8fF795a6F4D97E7887C79beA79aba5cc76444aDf",
+      oracle: "chainlink",
+    },
+    {
+      token: "DOT",
+      address: "0x7083609fCE4d1d8Dc0C979AAb8c869Ea2C873402",
+      oracle: "chainlink",
+    },
+    {
+      token: "LINK",
+      address: "0xF8A0BF9cF54Bb92F17374d9e9A321E6a111a51bD",
+      oracle: "chainlink",
+    },
+    {
+      token: "DAI",
+      address: "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3",
+      oracle: "chainlink",
+    },
+    {
+      token: "FIL",
+      address: "0x0D8Ce2A99Bb6e3B7Db580eD848240e4a0F9aE153",
+      oracle: "chainlink",
+    },
+    {
+      token: "BETH",
+      address: "0x250632378E573c6Be1AC2f97Fcdf00515d0Aa91B",
+      oracle: "chainlink",
+    },
+    {
+      token: "ADA",
+      address: "0x3EE2200Efb3400fAbB9AacF31297cBdD1d435D47",
+      oracle: "chainlink",
+    },
+    {
+      token: "DOGE",
+      address: "0xbA2aE424d960c26247Dd6c32edC70B295c744C43",
+      oracle: "chainlink",
+    },
+    {
+      token: "MATIC",
+      address: "0xCC42724C6683B7E57334c4E856f4c9965ED682bD",
+      oracle: "chainlink",
+    },
+    {
+      token: "CAKE",
+      address: "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+      oracle: "chainlink",
+    },
+    {
+      token: "AAVE",
+      address: "0xfb6115445Bff7b52FeB98650C87f44907E58f802",
+      oracle: "chainlink",
+    },
+    {
+      token: "TUSD",
+      address: "0x14016E85a25aeb13065688cAFB43044C2ef86784",
+      oracle: "chainlink",
+    },
+    {
+      token: "TRX_OLD",
+      address: "0x85EAC5Ac2F758618dFa09bDbe0cf174e7d574D5B",
+      oracle: "chainlink",
+    },
+    {
+      token: "TRX",
+      address: "0xCE7de646e7208a4Ef112cb6ed5038FA6cC6b12e3",
+      oracle: "chainlink",
+    },
+    {
+      token: "BNB",
+      address: "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
+      oracle: "chainlink",
+    },
+    {
+      token: "VAI",
+      address: "0x4BD17003473389A42DAF6a0a729f6Fdb328BbBd7",
+      oracle: "chainlink",
+    },
+    {
+      token: "ALPACA",
+      address: "0x8f0528ce5ef7b51152a59745befdd91d97091d2f",
+      oracle: "chainlink",
+      stalePeriod: 60 * 60 * 24.5,
+    },
+    {
+      token: "BIFI",
+      address: "0xCa3F508B8e4Dd382eE878A314789373D80A5190A",
+      oracle: "chainlink",
+      stalePeriod: 60 * 60 * 24.5,
+    },
+    {
+      token: "BNBx",
+      address: "0x1bdd3cf7f79cfb8edbb955f20ad99211551ba275",
+      oracle: "chainlink",
+      stalePeriod: 60 * 25,
+    },
+    {
+      token: "BSW",
+      address: "0x965f527d9159dce6288a2219db51fc6eef120dd1",
+      oracle: "chainlink",
+      stalePeriod: 60 * 25,
+    },
+    {
+      token: "WBNB",
+      address: "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      oracle: "chainlink",
+      stalePeriod: 60 * 5,
+    },
+    {
+      token: "WIN",
+      address: "0xaeF0d72a118ce24feE3cD1d43d383897D05B4e99",
+      oracle: "chainlink",
+      stalePeriod: 60 * 25,
+    },
+    {
+      token: "WOO",
+      address: "0x4691937a7508860f876c9c0a2a617e7d9e945d4b",
+      oracle: "chainlink",
+      stalePeriod: 60 * 60 * 24.5,
+    },
+    {
+      token: "LUNA",
+      address: "0x156ab3346823b651294766e23e6cf87254d68962",
+      oracle: "chainlinkFixed",
+      price: "1000000000000000000", // 1$
+    },
+    {
+      token: "UST",
+      address: "0x3d4350cd54aef9f9b2c29435e0fa809957b3f30a",
+      oracle: "chainlinkFixed",
+      price: "1000000000000000000", // 1$
+    },
+    {
+      token: "CAN",
+      address: "0x20bff4bbeda07536ff00e073bd8359e5d80d733d",
+      oracle: "chainlinkFixed",
+      price: "1000000000000000000", // 1$
+    },
+    {
+      token: "ANKR",
+      address: "0xf307910A4c7bbc79691fD374889b36d8531B08e3",
+      oracle: "binance",
+      stalePeriod: 60 * 25,
+    },
+    {
+      token: "ankrBNB",
+      address: "0x52F24a5e03aee338Da5fd9Df68D2b6FAe1178827",
+      oracle: "binance",
+      stalePeriod: 60 * 25,
+    },
+    {
+      token: "BTT",
+      address: "0x352Cb5E19b12FC216548a2677bD0fce83BaE434B",
+      oracle: "binance",
+      stalePeriod: 60 * 25,
+    },
+    {
+      token: "FLOKI",
+      address: "0xfb5B838b6cfEEdC2873aB27866079AC55363D37E",
+      oracle: "binance",
+      stalePeriod: 60 * 25,
+    },
+    {
+      token: "HAY",
+      address: "0x0782b6d8c4551B9760e74c0545a9bCD90bdc41E5",
+      oracle: "binance",
+      stalePeriod: 60 * 25,
+    },
+    {
+      token: "NFT",
+      address: "0x20eE7B720f4E4c4FFcB00C4065cdae55271aECCa",
+      oracle: "binance",
+      stalePeriod: 60 * 25,
+    },
+    {
+      token: "RACA",
+      address: "0x12BB890508c125661E03b09EC06E404bc9289040",
+      oracle: "binance",
+      stalePeriod: 60 * 25,
+    },
+    {
+      token: "stkBNB",
+      address: "0xc2E9d07F66A89c44062459A47a0D2Dc038E4fb16",
+      oracle: "binance",
+      stalePeriod: 60 * 25,
+    },
+    {
+      token: "USDD",
+      address: "0xd17479997F34dd9156Deef8F95A52D81D265be9c",
+      oracle: "binance",
+      stalePeriod: 60 * 25,
+    },
+  ],
   sepolia: [
     {
       token: "WBTC",
@@ -349,7 +625,7 @@ export const getOraclesData = async (): Promise<Oracles> => {
             getTokenConfig: (asset: Asset, name: string) => ({
               asset: asset.address,
               feed: chainlinkFeed[name][asset.token],
-              maxStalePeriod: DEFAULT_STALE_PERIOD,
+              maxStalePeriod: asset.stalePeriod ? asset.stalePeriod : DEFAULT_STALE_PERIOD,
             }),
           },
           chainlinkFixed: {
@@ -372,7 +648,7 @@ export const getOraclesData = async (): Promise<Oracles> => {
             getTokenConfig: (asset: Asset, name: string) => ({
               asset: asset.address,
               feed: redstoneFeed[name][asset.token],
-              maxStalePeriod: DEFAULT_STALE_PERIOD,
+              maxStalePeriod: asset.stalePeriod ? asset.stalePeriod : DEFAULT_STALE_PERIOD,
             }),
           },
         }
@@ -383,7 +659,10 @@ export const getOraclesData = async (): Promise<Oracles> => {
             oracles: [binanceOracle.address, addr0000, addr0000],
             enableFlagsForOracles: [true, false, false],
             underlyingOracle: binanceOracle,
-            getStalePeriodConfig: (asset: Asset) => [asset.token, DEFAULT_STALE_PERIOD.toString()],
+            getStalePeriodConfig: (asset: Asset) => [
+              asset.token,
+              asset.stalePeriod ? asset.stalePeriod.toString() : DEFAULT_STALE_PERIOD.toString(),
+            ],
           },
         }
       : {}),
@@ -396,7 +675,7 @@ export const getOraclesData = async (): Promise<Oracles> => {
             getTokenConfig: (asset: Asset, name: string) => ({
               pythId: pythID[name][asset.token],
               asset: asset.address,
-              maxStalePeriod: DEFAULT_STALE_PERIOD,
+              maxStalePeriod: asset.stalePeriod ? asset.stalePeriod : DEFAULT_STALE_PERIOD,
             }),
           },
         }
@@ -404,4 +683,14 @@ export const getOraclesData = async (): Promise<Oracles> => {
   };
 
   return oraclesData;
+};
+
+export const getOraclesToDeploy = async (network: string): Promise<Record<string, boolean>> => {
+  const oracles: Record<string, boolean> = {};
+
+  assets[network].forEach(asset => {
+    oracles[asset.oracle] = true;
+  });
+
+  return oracles;
 };

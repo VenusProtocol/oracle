@@ -3,6 +3,17 @@ import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
 
 import {
+  ADDRESSES,
+  Asset,
+  DEFAULT_STALE_PERIOD,
+  Feed,
+  assets,
+  chainlinkFeed,
+  getOraclesToDeploy,
+  pythID,
+  redstoneFeed,
+} from "../../helpers/deploymentConfig";
+import {
   AccessControlManager__factory,
   BinanceOracle,
   BinanceOracle__factory,
@@ -18,24 +29,28 @@ import {
   TwapOracle__factory,
 } from "../../typechain-types";
 
-const FORK_MAINNET = process.env.FORK === "true" && process.env.FORKED_NETWORK === "bscmainnet";
-const vBNB = "0xA07c5b74C9B40447a954e1466938b865b6BBea36";
-const WBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
-const PythOracleAddress = "0x4D7E825f80bDf85e913E0DD2A2D54927e9dE1594";
-const SIDRegistryAddress = "0x08CEd32a7f3eeC915Ba84415e9C07a7286977956";
-const BNBAddress = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
-const VAI = "0x4BD17003473389A42DAF6a0a729f6Fdb328BbBd7";
+const DEFAULT_PRICE = "1000000000000000000"; // $1
+const FORK = process.env.FORK === "true";
+const FORKED_NETWORK: string = process.env.FORKED_NETWORK || "";
+
+const networkAddresses = ADDRESSES[FORKED_NETWORK];
+
+if (!FORK) {
+  throw new Error("Forking is not enabled in the config. Please check your .env file.");
+}
 
 interface OracleFixture {
   resilientOracle: ResilientOracle;
   boundValidator: BoundValidator;
-  chainlinkOracle: ChainlinkOracle;
-  twapOracle: TwapOracle;
-  pythOracle: PythOracle;
-  binanceOracle: BinanceOracle;
+  chainlinkOracle: ChainlinkOracle | undefined;
+  redStoneOracle: ChainlinkOracle | undefined;
+  twapOracle: TwapOracle | undefined;
+  pythOracle: PythOracle | undefined;
+  binanceOracle: BinanceOracle | undefined;
 }
 
 async function deployOracleFixture(): Promise<OracleFixture> {
+  const oraclesToDeploy = await getOraclesToDeploy(FORKED_NETWORK);
   const signers = await (ethers as any).getSigners();
   const deployer = signers[0];
 
@@ -58,46 +73,8 @@ async function deployOracleFixture(): Promise<OracleFixture> {
     ResilientOracleFactory,
     [accessControlManager.address],
     {
-      constructorArgs: [vBNB, VAI, boundValidator.address],
+      constructorArgs: [networkAddresses.vBNBAddress, networkAddresses.VAIAddress, boundValidator.address],
     },
-  );
-
-  const ChainlinkOracleFactory: ChainlinkOracle__factory = await ethers.getContractFactory("ChainlinkOracle");
-  const chainlinkOracle = <ChainlinkOracle>await upgrades.deployProxy(
-    ChainlinkOracleFactory,
-    [accessControlManager.address],
-    {
-      constructorArgs: [],
-    },
-  );
-
-  const TwapOracleFactory: TwapOracle__factory = await ethers.getContractFactory("TwapOracle");
-  const twapOracle = <TwapOracle>await upgrades.deployProxy(TwapOracleFactory, [accessControlManager.address], {
-    constructorArgs: [WBNB],
-  });
-
-  const PythOracleFactory: PythOracle__factory = await ethers.getContractFactory("PythOracle");
-  const pythOracle = <PythOracle>await upgrades.deployProxy(
-    PythOracleFactory,
-    [PythOracleAddress, accessControlManager.address],
-    {
-      constructorArgs: [],
-    },
-  );
-
-  const BinanceOracleFactory: BinanceOracle__factory = await ethers.getContractFactory("BinanceOracle");
-  const binanceOracle = <BinanceOracle>await upgrades.deployProxy(
-    BinanceOracleFactory,
-    [SIDRegistryAddress, accessControlManager.address],
-    {
-      constructorArgs: [],
-    },
-  );
-
-  await accessControlManager.giveCallPermission(
-    chainlinkOracle.address,
-    "setTokenConfig(TokenConfig)",
-    deployer.address,
   );
 
   await accessControlManager.giveCallPermission(
@@ -106,121 +83,172 @@ async function deployOracleFixture(): Promise<OracleFixture> {
     deployer.address,
   );
 
-  await accessControlManager.giveCallPermission(
-    binanceOracle.address,
-    "setMaxStalePeriod(string,uint256)",
-    deployer.address,
-  );
+  let chainlinkOracle;
+  if (oraclesToDeploy.chainlink) {
+    const ChainlinkOracleFactory: ChainlinkOracle__factory = await ethers.getContractFactory("ChainlinkOracle");
+    chainlinkOracle = <ChainlinkOracle>await upgrades.deployProxy(
+      ChainlinkOracleFactory,
+      [accessControlManager.address],
+      {
+        constructorArgs: [],
+      },
+    );
 
-  return { resilientOracle, boundValidator, chainlinkOracle, twapOracle, pythOracle, binanceOracle };
-}
+    await accessControlManager.giveCallPermission(
+      chainlinkOracle.address,
+      "setTokenConfig(TokenConfig)",
+      deployer.address,
+    );
 
-describe("Core protocol", async () => {
-  let resilientOracle: ResilientOracle;
-  let chainlinkOracle: ChainlinkOracle;
+    await accessControlManager.giveCallPermission(
+      chainlinkOracle.address,
+      "setDirectPrice(address,uint256)",
+      deployer.address,
+    );
+  }
 
-  if (FORK_MAINNET) {
-    beforeEach("deploy and configure XVSVault contracts", async () => {
-      ({ resilientOracle, chainlinkOracle } = await loadFixture(deployOracleFixture));
-    });
+  let redStoneOracle;
+  if (oraclesToDeploy.redstone) {
+    const ChainlinkOracleFactory: ChainlinkOracle__factory = await ethers.getContractFactory("ChainlinkOracle");
+    redStoneOracle = <ChainlinkOracle>await upgrades.deployProxy(
+      ChainlinkOracleFactory,
+      [accessControlManager.address],
+      {
+        constructorArgs: [],
+      },
+    );
 
-    it("validate vBNB price", async () => {
-      // Configure price feed for vBNB
-      await chainlinkOracle.setTokenConfig({
-        asset: BNBAddress,
-        feed: "0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE",
-        maxStalePeriod: 864000,
-      });
+    await accessControlManager.giveCallPermission(
+      redStoneOracle.address,
+      "setTokenConfig(TokenConfig)",
+      deployer.address,
+    );
 
-      await resilientOracle.setTokenConfig({
-        asset: BNBAddress,
-        oracles: [chainlinkOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
-        enableFlagsForOracles: [true, false, false],
-      });
+    await accessControlManager.giveCallPermission(
+      redStoneOracle.address,
+      "setDirectPrice(address,uint256)",
+      deployer.address,
+    );
+  }
 
-      const price = await resilientOracle.getUnderlyingPrice(vBNB);
-      expect(price).to.be.equal("274310000000000000000");
-    });
-
-    it("validate vLTC price", async () => {
-      const LTCAddress = "0x4338665CBB7B2485A8855A139b75D5e34AB0DB94";
-      const vLTCAddress = "0x57A5297F2cB2c0AaC9D554660acd6D385Ab50c6B";
-
-      // Configure price feed for vLTC
-      await chainlinkOracle.setTokenConfig({
-        asset: LTCAddress,
-        feed: "0x74e72f37a8c415c8f1a98ed42e78ff997435791d",
-        maxStalePeriod: 864000,
-      });
-
-      await resilientOracle.setTokenConfig({
-        asset: LTCAddress,
-        oracles: [chainlinkOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
-        enableFlagsForOracles: [true, false, false],
-      });
-
-      const price = await resilientOracle.getUnderlyingPrice(vLTCAddress);
-      expect(price).to.be.equal("70780000000000000000");
-    });
-
-    it("validate vXVS price", async () => {
-      const XVSAddress = "0xcF6BB5389c92Bdda8a3747Ddb454cB7a64626C63";
-      const vXVSAddress = "0x151B1e2635A717bcDc836ECd6FbB62B674FE3E1D";
-
-      // Configure price feed for vXVS
-      await chainlinkOracle.setTokenConfig({
-        asset: XVSAddress,
-        feed: "0xbf63f430a79d4036a5900c19818aff1fa710f206",
-        maxStalePeriod: 864000,
-      });
-
-      await resilientOracle.setTokenConfig({
-        asset: XVSAddress,
-        oracles: [chainlinkOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
-        enableFlagsForOracles: [true, false, false],
-      });
-
-      const price = await resilientOracle.getUnderlyingPrice(vXVSAddress);
-      expect(price).to.be.equal("4412797480000000000");
-    });
-
-    it("validate VAI price", async () => {
-      // Configure price feed for VAI
-      await chainlinkOracle.setTokenConfig({
-        asset: VAI,
-        feed: "0x058316f8bb13acd442ee7a216c7b60cfb4ea1b53",
-        maxStalePeriod: 864000,
-      });
-
-      await resilientOracle.setTokenConfig({
-        asset: VAI,
-        oracles: [chainlinkOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
-        enableFlagsForOracles: [true, false, false],
-      });
-
-      const price = await resilientOracle.getUnderlyingPrice(VAI);
-      expect(price).to.be.equal("967991030000000000");
-    });
-
-    it("validate USDC price", async () => {
-      const vUSDCAddress = "0xecA88125a5ADbe82614ffC12D0DB554E2e2867C8";
-      const USDCAddress = "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d";
-
-      // Configure price feed for USDC
-      await chainlinkOracle.setTokenConfig({
-        asset: USDCAddress,
-        feed: "0x51597f405303C4377E36123cBc172b13269EA163",
-        maxStalePeriod: 864000,
-      });
-
-      await resilientOracle.setTokenConfig({
-        asset: USDCAddress,
-        oracles: [chainlinkOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
-        enableFlagsForOracles: [true, false, false],
-      });
-
-      const price = await resilientOracle.getUnderlyingPrice(vUSDCAddress);
-      expect(price).to.be.equal("1000054860000000000");
+  let twapOracle;
+  if (oraclesToDeploy.twap) {
+    const TwapOracleFactory: TwapOracle__factory = await ethers.getContractFactory("TwapOracle");
+    twapOracle = <TwapOracle>await upgrades.deployProxy(TwapOracleFactory, [accessControlManager.address], {
+      constructorArgs: [networkAddresses.WBNBAddress],
     });
   }
+
+  let pythOracle;
+  if (oraclesToDeploy.pyth) {
+    const PythOracleFactory: PythOracle__factory = await ethers.getContractFactory("PythOracle");
+    pythOracle = <PythOracle>await upgrades.deployProxy(
+      PythOracleFactory,
+      [networkAddresses.pythOracleAddress, accessControlManager.address],
+      {
+        constructorArgs: [],
+      },
+    );
+  }
+
+  let binanceOracle;
+  if (oraclesToDeploy.pyth) {
+    const BinanceOracleFactory: BinanceOracle__factory = await ethers.getContractFactory("BinanceOracle");
+    binanceOracle = <BinanceOracle>await upgrades.deployProxy(
+      BinanceOracleFactory,
+      [networkAddresses.sidRegistryAddress, accessControlManager.address],
+      {
+        constructorArgs: [],
+      },
+    );
+
+    await accessControlManager.giveCallPermission(pythOracle.address, "setTokenConfig(TokenConfig)", deployer.address);
+
+    await accessControlManager.giveCallPermission(
+      binanceOracle.address,
+      "setMaxStalePeriod(string,uint256)",
+      deployer.address,
+    );
+  }
+
+  return { resilientOracle, boundValidator, chainlinkOracle, redStoneOracle, twapOracle, pythOracle, binanceOracle };
+}
+
+describe(`Oracle Compatibility on ${FORKED_NETWORK}`, () => {
+  let resilientOracle: ResilientOracle;
+  let chainlinkOracle: ChainlinkOracle | undefined;
+  let redStoneOracle: ChainlinkOracle | undefined;
+  let pythOracle: PythOracle | undefined;
+
+  // remove binance oracle
+  const assetsConfig: Asset[] = assets[FORKED_NETWORK].filter(asset => asset.oracle !== "binance");
+
+  const chainlinkFeeds: Feed = chainlinkFeed[FORKED_NETWORK];
+  const redStoneFeeds: Feed = redstoneFeed[FORKED_NETWORK];
+  const pythIDs: Feed = pythID[FORKED_NETWORK];
+  before(async () => {
+    // Load the fixture for oracle deployment
+    ({ resilientOracle, chainlinkOracle, redStoneOracle, pythOracle } = await loadFixture(deployOracleFixture));
+  });
+
+  // Iterate over each asset and create a test
+  assetsConfig.forEach(asset => {
+    describe(`Validate ${asset.token} config`, () => {
+      // eslint-disable-next-line prefer-arrow-callback, func-names
+      it(`${asset.token} `, async function () {
+        // Configure the oracle based on the asset's details
+        const assetName = asset.token;
+        const stalePeriod = asset.stalePeriod ? asset.stalePeriod : DEFAULT_STALE_PERIOD;
+        const directPrice = asset.price ? asset.price : DEFAULT_PRICE;
+        if (chainlinkOracle && (asset.oracle === "chainlink" || asset.oracle === "chainlinkFixed")) {
+          if (asset.oracle === "chainlink") {
+            await chainlinkOracle.setTokenConfig({
+              asset: asset.address,
+              feed: chainlinkFeeds[assetName],
+              maxStalePeriod: stalePeriod,
+            });
+          } else {
+            await chainlinkOracle.setDirectPrice(asset.address, directPrice);
+          }
+          await resilientOracle.setTokenConfig({
+            asset: asset.address,
+            oracles: [chainlinkOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
+            enableFlagsForOracles: [true, false, false],
+          });
+        } else if (redStoneOracle && asset.oracle === "redstone") {
+          await redStoneOracle.setTokenConfig({
+            asset: asset.address,
+            feed: redStoneFeeds[assetName],
+            maxStalePeriod: stalePeriod,
+          });
+          await resilientOracle.setTokenConfig({
+            asset: asset.address,
+            oracles: [redStoneOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
+            enableFlagsForOracles: [true, false, false],
+          });
+        } else if (pythOracle && asset.oracle === "pyth") {
+          await pythOracle.setTokenConfig({
+            pythId: pythIDs[asset.token],
+            asset: asset.address,
+            maxStalePeriod: stalePeriod,
+          });
+          await resilientOracle.setTokenConfig({
+            asset: asset.address,
+            oracles: [pythOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
+            enableFlagsForOracles: [true, false, false],
+          });
+        }
+        let price;
+        try {
+          price = await resilientOracle.getPrice(asset.address);
+        } catch (error) {
+          expect.fail(error);
+        }
+        expect(price).to.be.instanceOf(ethers.BigNumber);
+
+        // Print the price in the it test title
+        this.test.title += `(Price: ${price.toString()})`;
+      });
+    });
+  });
 });
