@@ -8,9 +8,9 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  console.log(deployer);
-
   const networkName: string = network.name === "hardhat" ? "bsctestnet" : network.name;
+
+  console.log(`Timelock: ${ADDRESSES[networkName].timelock}`);
 
   const { vBNBAddress } = ADDRESSES[networkName];
   const { VAIAddress } = ADDRESSES[networkName];
@@ -101,6 +101,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
     if (twapOracleOwner === deployer) {
       await twapOracle.transferOwnership(ADDRESSES[networkName].timelock);
+      console.log(`Ownership of TwapOracle transfered from deployer to Timelock (${ADDRESSES[networkName].timelock})`);
     }
   }
 
@@ -130,6 +131,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
     if (pythOracleOwner === deployer) {
       await pythOracle.transferOwnership(ADDRESSES[networkName].timelock);
+      console.log(`Ownership of PythOracle transfered from deployer to Timelock (${ADDRESSES[networkName].timelock})`);
     }
   }
 
@@ -156,6 +158,9 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
     if (binanceOracleOwner === deployer) {
       await binanceOracle.transferOwnership(ADDRESSES[networkName].timelock);
+      console.log(
+        `Ownership of BinanceOracle transfered from deployer to Timelock (${ADDRESSES[networkName].timelock})`,
+      );
     }
   }
 
@@ -171,14 +176,23 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
   if (resilientOracleOwner === deployer) {
     await resilientOracle.transferOwnership(ADDRESSES[networkName].timelock);
+    console.log(
+      `Ownership of ResilientOracle transfered from deployer to Timelock (${ADDRESSES[networkName].timelock})`,
+    );
   }
 
   if (chainlinkOracleOwner === deployer) {
     await chainlinkOracle.transferOwnership(ADDRESSES[networkName].timelock);
+    console.log(
+      `Ownership of ChainlinkOracle transfered from deployer to Timelock (${ADDRESSES[networkName].timelock})`,
+    );
   }
 
   if (boundValidatorOwner === deployer) {
     await boundValidator.transferOwnership(ADDRESSES[networkName].timelock);
+    console.log(
+      `Ownership of BoundValidator transfered from deployer to Timelock (${ADDRESSES[networkName].timelock})`,
+    );
   }
 };
 

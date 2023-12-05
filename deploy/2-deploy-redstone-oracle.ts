@@ -9,6 +9,8 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const { deployer } = await getNamedAccounts();
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
+  console.log(`Timelock (${proxyOwnerAddress})`);
+
   await deploy("RedStoneOracle", {
     contract: network.live ? "ChainlinkOracle" : "MockChainlinkOracle",
     from: deployer,
@@ -29,7 +31,8 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const redStoneOracleOwner = await redStoneOracle.owner();
 
   if (redStoneOracleOwner === deployer && network.live) {
-    await redStoneOracle.transferOwnership(ADDRESSES[network.name].timelock);
+    await redStoneOracle.transferOwnership(proxyOwnerAddress);
+    console.log(`Ownership of RedstoneOracle transfered from deployer to Timelock (${proxyOwnerAddress})`);
   }
 };
 
