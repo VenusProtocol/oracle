@@ -110,12 +110,10 @@ export const chainlinkFeed: Config = {
     BNB: "0x0567f2323251f0aab15c8dfb1967e4e8a7d42aee",
     VAI: "0x058316f8Bb13aCD442ee7A216C7b60CFB4Ea1B53",
     ALPACA: "0xe0073b60833249ffd1bb2af809112c2fbf221DF6",
-    BIFI: "0xaB827b69daCd586A37E80A7d552a4395d576e645",
     BNBx: "0xc4429B539397a3166eF3ef132c29e34715a3ABb4",
     BSW: "0x08e70777b982a58d23d05e3d7714f44837c06a21",
     WBNB: "0x0567f2323251f0aab15c8dfb1967e4e8a7d42aee",
     WIN: "0x9e7377e194e41d63795907c92c3eb351a2eb0233",
-    WOO: "0x02bfe714e78e2ad1bb1c2bee93ec8dc5423b66d4",
   },
   bsctestnet: {
     BNX: "0xf51492DeD1308Da8195C3bfcCF4a7c70fDbF9daE",
@@ -455,12 +453,6 @@ export const assets: Assets = {
       stalePeriod: 60 * 60 * 24.5,
     },
     {
-      token: "BIFI",
-      address: "0xCa3F508B8e4Dd382eE878A314789373D80A5190A",
-      oracle: "chainlink",
-      stalePeriod: 60 * 60 * 24.5,
-    },
-    {
       token: "BNBx",
       address: "0x1bdd3cf7f79cfb8edbb955f20ad99211551ba275",
       oracle: "chainlink",
@@ -485,28 +477,22 @@ export const assets: Assets = {
       stalePeriod: 60 * 25,
     },
     {
-      token: "WOO",
-      address: "0x4691937a7508860f876c9c0a2a617e7d9e945d4b",
-      oracle: "chainlink",
-      stalePeriod: 60 * 60 * 24.5,
-    },
-    {
       token: "LUNA",
       address: "0x156ab3346823b651294766e23e6cf87254d68962",
       oracle: "chainlinkFixed",
-      price: "1000000000000000000", // 1$
+      price: "1000000000000", // 1 atom of USD
     },
     {
       token: "UST",
       address: "0x3d4350cd54aef9f9b2c29435e0fa809957b3f30a",
       oracle: "chainlinkFixed",
-      price: "1000000000000000000", // 1$
+      price: "1000000000000", // 1 atom of USD
     },
     {
       token: "CAN",
       address: "0x20bff4bbeda07536ff00e073bd8359e5d80d733d",
       oracle: "chainlinkFixed",
-      price: "1000000000000000000", // 1$
+      price: "1", // 0 USD
     },
     {
       token: "ANKR",
