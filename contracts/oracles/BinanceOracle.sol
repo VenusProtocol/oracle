@@ -16,6 +16,7 @@ import "../interfaces/OracleInterface.sol";
  * @notice This oracle fetches price of assets from Binance.
  */
 contract BinanceOracle is AccessControlledV8, OracleInterface {
+    /// @notice Used to fetch feed registry address.
     address public sidRegistryAddress;
 
     /// @notice Set this as asset address for BNB. This is the underlying address for vBNB
@@ -27,9 +28,17 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
     /// @notice Override symbols to be compatible with Binance feed registry
     mapping(string => string) public symbols;
 
+    /// @notice Used to fetch price of assets used directly when space ID is not supported by current chain.
+    address public feedRegistryAddress;
+
+    /// @notice Emits when asset stale period is updated.
     event MaxStalePeriodAdded(string indexed asset, uint256 maxStalePeriod);
 
+    /// @notice Emits when symbol of the asset is updated.
     event SymbolOverridden(string indexed symbol, string overriddenSymbol);
+
+    /// @notice Emits when address of feed registry is updated.
+    event FeedRegistryUpdated(address indexed oldFeedRegistry, address indexed newFeedRegistry);
 
     /**
      * @notice Checks whether an address is null or not
@@ -50,10 +59,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
      * @param _sidRegistryAddress Address of SID registry
      * @param _accessControlManager Address of the access control manager contract
      */
-    function initialize(
-        address _sidRegistryAddress,
-        address _accessControlManager
-    ) external initializer notNullAddress(_sidRegistryAddress) {
+    function initialize(address _sidRegistryAddress, address _accessControlManager) external initializer {
         sidRegistryAddress = _sidRegistryAddress;
         __AccessControlled_init(_accessControlManager);
     }
@@ -83,6 +89,19 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
 
         symbols[symbol] = overrideSymbol;
         emit SymbolOverridden(symbol, overrideSymbol);
+    }
+
+    /**
+     * @notice Used to set feed registry address when current chain does not support space ID.
+     * @param newfeedRegistryAddress Address of new feed registry.
+     */
+    function setFeedRegistryAddress(
+        address newfeedRegistryAddress
+    ) external notNullAddress(newfeedRegistryAddress) onlyOwner {
+        if (sidRegistryAddress != address(0)) revert("sidRegistryAddress must be zero");
+        address oldFeedRegistry = feedRegistryAddress;
+        feedRegistryAddress = newfeedRegistryAddress;
+        emit FeedRegistryUpdated(oldFeedRegistry, newfeedRegistryAddress);
     }
 
     /**
@@ -127,7 +146,15 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
     }
 
     function _getPrice(string memory symbol, uint256 decimals) internal view returns (uint256) {
-        FeedRegistryInterface feedRegistry = FeedRegistryInterface(getFeedRegistryAddress());
+        FeedRegistryInterface feedRegistry;
+
+        if (sidRegistryAddress != address(0)) {
+            // If sidRegistryAddress is available, fetch feedRegistryAddress from sidRegistry
+            feedRegistry = FeedRegistryInterface(getFeedRegistryAddress());
+        } else {
+            // Use feedRegistry directly if sidRegistryAddress is not available
+            feedRegistry = FeedRegistryInterface(feedRegistryAddress);
+        }
 
         (, int256 answer, , uint256 updatedAt, ) = feedRegistry.latestRoundDataByName(symbol, "USD");
         if (answer <= 0) revert("invalid binance oracle price");
