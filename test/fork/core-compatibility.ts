@@ -35,10 +35,6 @@ const FORKED_NETWORK: string = process.env.FORKED_NETWORK || "";
 
 const networkAddresses = ADDRESSES[FORKED_NETWORK];
 
-if (!FORK) {
-  throw new Error("Forking is not enabled in the config. Please check your .env file.");
-}
-
 interface OracleFixture {
   resilientOracle: ResilientOracle;
   boundValidator: BoundValidator;
@@ -174,81 +170,83 @@ async function deployOracleFixture(): Promise<OracleFixture> {
   return { resilientOracle, boundValidator, chainlinkOracle, redStoneOracle, twapOracle, pythOracle, binanceOracle };
 }
 
-describe(`Oracle Compatibility on ${FORKED_NETWORK}`, () => {
-  let resilientOracle: ResilientOracle;
-  let chainlinkOracle: ChainlinkOracle | undefined;
-  let redStoneOracle: ChainlinkOracle | undefined;
-  let pythOracle: PythOracle | undefined;
+if (FORK) {
+  describe(`Oracle Compatibility on ${FORKED_NETWORK}`, () => {
+    let resilientOracle: ResilientOracle;
+    let chainlinkOracle: ChainlinkOracle | undefined;
+    let redStoneOracle: ChainlinkOracle | undefined;
+    let pythOracle: PythOracle | undefined;
 
-  // remove binance oracle
-  const assetsConfig: Asset[] = assets[FORKED_NETWORK].filter(asset => asset.oracle !== "binance");
+    // remove binance oracle
+    const assetsConfig: Asset[] = assets[FORKED_NETWORK].filter(asset => asset.oracle !== "binance");
 
-  const chainlinkFeeds: Feed = chainlinkFeed[FORKED_NETWORK];
-  const redStoneFeeds: Feed = redstoneFeed[FORKED_NETWORK];
-  const pythIDs: Feed = pythID[FORKED_NETWORK];
-  before(async () => {
-    // Load the fixture for oracle deployment
-    ({ resilientOracle, chainlinkOracle, redStoneOracle, pythOracle } = await loadFixture(deployOracleFixture));
-  });
+    const chainlinkFeeds: Feed = chainlinkFeed[FORKED_NETWORK];
+    const redStoneFeeds: Feed = redstoneFeed[FORKED_NETWORK];
+    const pythIDs: Feed = pythID[FORKED_NETWORK];
+    before(async () => {
+      // Load the fixture for oracle deployment
+      ({ resilientOracle, chainlinkOracle, redStoneOracle, pythOracle } = await loadFixture(deployOracleFixture));
+    });
 
-  // Iterate over each asset and create a test
-  assetsConfig.forEach(asset => {
-    describe(`Validate ${asset.token} config`, () => {
-      // eslint-disable-next-line prefer-arrow-callback, func-names
-      it(`${asset.token} `, async function () {
-        // Configure the oracle based on the asset's details
-        const assetName = asset.token;
-        const stalePeriod = asset.stalePeriod ? asset.stalePeriod : DEFAULT_STALE_PERIOD;
-        const directPrice = asset.price ? asset.price : DEFAULT_PRICE;
-        if (chainlinkOracle && (asset.oracle === "chainlink" || asset.oracle === "chainlinkFixed")) {
-          if (asset.oracle === "chainlink") {
-            await chainlinkOracle.setTokenConfig({
+    // Iterate over each asset and create a test
+    assetsConfig.forEach(asset => {
+      describe(`Validate ${asset.token} config`, () => {
+        // eslint-disable-next-line prefer-arrow-callback, func-names
+        it(`${asset.token} `, async function () {
+          // Configure the oracle based on the asset's details
+          const assetName = asset.token;
+          const stalePeriod = asset.stalePeriod ? asset.stalePeriod : DEFAULT_STALE_PERIOD;
+          const directPrice = asset.price ? asset.price : DEFAULT_PRICE;
+          if (chainlinkOracle && (asset.oracle === "chainlink" || asset.oracle === "chainlinkFixed")) {
+            if (asset.oracle === "chainlink") {
+              await chainlinkOracle.setTokenConfig({
+                asset: asset.address,
+                feed: chainlinkFeeds[assetName],
+                maxStalePeriod: stalePeriod,
+              });
+            } else {
+              await chainlinkOracle.setDirectPrice(asset.address, directPrice);
+            }
+            await resilientOracle.setTokenConfig({
               asset: asset.address,
-              feed: chainlinkFeeds[assetName],
+              oracles: [chainlinkOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
+              enableFlagsForOracles: [true, false, false],
+            });
+          } else if (redStoneOracle && asset.oracle === "redstone") {
+            await redStoneOracle.setTokenConfig({
+              asset: asset.address,
+              feed: redStoneFeeds[assetName],
               maxStalePeriod: stalePeriod,
             });
-          } else {
-            await chainlinkOracle.setDirectPrice(asset.address, directPrice);
+            await resilientOracle.setTokenConfig({
+              asset: asset.address,
+              oracles: [redStoneOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
+              enableFlagsForOracles: [true, false, false],
+            });
+          } else if (pythOracle && asset.oracle === "pyth") {
+            await pythOracle.setTokenConfig({
+              pythId: pythIDs[asset.token],
+              asset: asset.address,
+              maxStalePeriod: stalePeriod,
+            });
+            await resilientOracle.setTokenConfig({
+              asset: asset.address,
+              oracles: [pythOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
+              enableFlagsForOracles: [true, false, false],
+            });
           }
-          await resilientOracle.setTokenConfig({
-            asset: asset.address,
-            oracles: [chainlinkOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
-            enableFlagsForOracles: [true, false, false],
-          });
-        } else if (redStoneOracle && asset.oracle === "redstone") {
-          await redStoneOracle.setTokenConfig({
-            asset: asset.address,
-            feed: redStoneFeeds[assetName],
-            maxStalePeriod: stalePeriod,
-          });
-          await resilientOracle.setTokenConfig({
-            asset: asset.address,
-            oracles: [redStoneOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
-            enableFlagsForOracles: [true, false, false],
-          });
-        } else if (pythOracle && asset.oracle === "pyth") {
-          await pythOracle.setTokenConfig({
-            pythId: pythIDs[asset.token],
-            asset: asset.address,
-            maxStalePeriod: stalePeriod,
-          });
-          await resilientOracle.setTokenConfig({
-            asset: asset.address,
-            oracles: [pythOracle.address, ethers.constants.AddressZero, ethers.constants.AddressZero],
-            enableFlagsForOracles: [true, false, false],
-          });
-        }
-        let price;
-        try {
-          price = await resilientOracle.getPrice(asset.address);
-        } catch (error) {
-          expect.fail(error);
-        }
-        expect(price).to.be.instanceOf(ethers.BigNumber);
+          let price;
+          try {
+            price = await resilientOracle.getPrice(asset.address);
+          } catch (error) {
+            expect.fail(error);
+          }
+          expect(price).to.be.instanceOf(ethers.BigNumber);
 
-        // Print the price in the it test title
-        this.test.title += `(Price: ${price.toString()})`;
+          // Print the price in the it test title
+          this.test.title += `(Price: ${price.toString()})`;
+        });
       });
     });
   });
-});
+}
