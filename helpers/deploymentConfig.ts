@@ -79,6 +79,15 @@ export const ADDRESSES: PreconfiguredAddresses = {
     acm: "0xbf705C00578d43B6147ab4eaE04DBBEd1ccCdc96",
     timelock: "0x94fa6078b6b8a26f0b6edffbe6501b22a10470fb", // Sepolia Multisig
   },
+  opbnbtestnet: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    sidRegistryAddress: ethers.constants.AddressZero,
+    feedRegistryAddress: "0x338b3D0E75bc4B3127813A79C8ECBBa96A7DB70a",
+    acm: "0x049f77F7046266d27C3bC96376f53C17Ef09c986",
+    timelock: "0xb15f6EfEbC276A3b9805df81b5FB3D50C2A62BDf", // opBNB Multisig
+  },
 };
 
 export const chainlinkFeed: Config = {
@@ -329,6 +338,38 @@ export const assets: Assets = {
       address: "0x36421d873abCa3E2bE6BB3c819C0CF26374F63b6",
       oracle: "chainlinkFixed",
       price: "1000000000000000000", // $1.00
+    },
+  ],
+  opbnbtestnet: [
+    {
+      token: "BTCB",
+      address: "0x7Af23F9eA698E9b953D2BD70671173AaD0347f19",
+      oracle: "binance",
+      price: "35000000000000000000000",
+    },
+    {
+      token: "ETH",
+      address: "0x94680e003861D43C6c0cf18333972312B6956FF1",
+      oracle: "binance",
+      price: "2000000000000000000000",
+    },
+    {
+      token: "USDT",
+      address: "0x8ac9B3801D0a8f5055428ae0bF301CA1Da976855",
+      oracle: "binance",
+      price: "1000000000000000000",
+    },
+    {
+      token: "WBNB",
+      address: "0xF9ce72611a1BE9797FdD2c995dB6fB61FD20E4eB",
+      oracle: "binance",
+      price: "230000000000000000000",
+    },
+    {
+      token: "XVS",
+      address: "0x3d0e20D4caD958bc848B045e1da19Fe378f86f03",
+      oracle: "binance",
+      price: "7000000000000000000",
     },
   ],
 };
