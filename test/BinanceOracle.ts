@@ -34,6 +34,7 @@ describe("Binance Oracle unit tests", () => {
 
     const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
     fakeAccessControlManager.isAllowedToCall.returns(true);
+    this.fakeAccessControlManager = fakeAccessControlManager;
 
     const binanceOracle = await ethers.getContractFactory("BinanceOracle", admin);
     this.binanceOracle = <BinanceOracle>await upgrades.deployProxy(
@@ -92,6 +93,37 @@ describe("Binance Oracle unit tests", () => {
 
   it("fetch WBETH price", async function () {
     expect((await this.binanceOracle.getPrice(this.wbeth.underlying())).toString()).to.be.equal(
+      "1333789241690000000000",
+    );
+  });
+
+  it("revert when setting feed registry address and sid already available", async function () {
+    await expect(this.binanceOracle.setFeedRegistryAddress(this.mockBinanceFeedRegistry.address)).to.be.revertedWith(
+      "sidRegistryAddress must be zero",
+    );
+  });
+
+  it("revert when feed registry address is zero", async function () {
+    const binanceOracle = await ethers.getContractFactory("BinanceOracle", this.admin);
+    this.binanceOracle = <BinanceOracle>await upgrades.deployProxy(
+      binanceOracle,
+      [ethers.constants.AddressZero, this.fakeAccessControlManager.address],
+      {
+        constructorArgs: [],
+      },
+    );
+
+    await expect(this.binanceOracle.setFeedRegistryAddress(ethers.constants.AddressZero)).to.be.revertedWith(
+      "can't be zero address",
+    );
+  });
+
+  it("fetch price from direct feed registry ", async function () {
+    await this.binanceOracle.setMaxStalePeriod("ETH", 24 * 60 * 60);
+    await this.binanceOracle.setFeedRegistryAddress(this.mockBinanceFeedRegistry.address);
+    this.mockBinanceFeedRegistry.setAssetPrice("ETH", this.ethPrice);
+    expect((await this.mockBinanceFeedRegistry.assetPrices("ETH")).toString()).to.be.equal(this.ethPrice);
+    expect((await this.binanceOracle.getPrice(this.vEth.underlying())).toString()).to.be.equal(
       "1333789241690000000000",
     );
   });
