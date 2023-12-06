@@ -1,3 +1,10 @@
+## [1.8.0-dev.6](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.5...v1.8.0-dev.6) (2023-12-06)
+
+
+### Features
+
+* support direct feed registry in binanace oracle ([5e9d40b](https://github.com/VenusProtocol/oracle/commit/5e9d40b0ae6badc1966fc60fa31fb24da23818bc))
+
 ## [1.8.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.4...v1.8.0-dev.5) (2023-12-05)
 
 ## [1.8.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.3...v1.8.0-dev.4) (2023-12-01)
