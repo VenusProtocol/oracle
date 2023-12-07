@@ -80,6 +80,13 @@ export const ADDRESSES: PreconfiguredAddresses = {
     acm: "0xbf705C00578d43B6147ab4eaE04DBBEd1ccCdc96",
     timelock: "0x94fa6078b6b8a26f0b6edffbe6501b22a10470fb", // Sepolia Multisig
   },
+  ethereum: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: "0x4788629abc6cfca10f9f969efdeaa1cf70c23555",
+    timelock: "0x285960C5B22fD66A736C7136967A3eB15e93CC67", // Ethereum Multisig
+  },
 };
 
 export const chainlinkFeed: Config = {
@@ -139,6 +146,15 @@ export const chainlinkFeed: Config = {
     WBTC: "0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43",
     WETH: "0x694AA1769357215DE4FAC081bf1f309aDC325306",
     USDC: "0xA2F78ab2355fe2f984D808B5CeE7FD0A93D5270E",
+  },
+  ethereum: {
+    WBTC: "0xF4030086522a5bEEa4988F8cA5B36dbC97BeE88c",
+    WETH: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419",
+    USDT: "0x3E7d1eAB13ad0104d2750B8863b489D65364e32D",
+    USDC: "0x8fFfFfd4AfB6115b954Bd326cbe7B4BA576818f6",
+    XVS: "0xa2a8507DEb233ceE4F5594044C259DD0582339CC",
+    CRV: "0xCd627aA160A6fA45Eb793D19Ef54f5062F20f33f",
+    crvUSD: "0xEEf0C605546958c1f899b6fB336C20671f9cD49F",
   },
 };
 
@@ -591,6 +607,43 @@ export const assets: Assets = {
       address: "0x36421d873abCa3E2bE6BB3c819C0CF26374F63b6",
       oracle: "chainlinkFixed",
       price: "1000000000000000000", // $1.00
+    },
+  ],
+  ethereum: [
+    {
+      token: "WBTC",
+      address: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
+      oracle: "chainlink",
+    },
+    {
+      token: "WETH",
+      address: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDC",
+      address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDT",
+      address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+      oracle: "chainlink",
+    },
+    // {
+    //   token: "XVS",
+    //   address: "", // TODO: add redstone address when we get it
+    //   oracle: "redstone",
+    // },
+    {
+      token: "CRV",
+      address: "0xD533a949740bb3306d119CC777fa900bA034cd52",
+      oracle: "chainlink",
+    },
+    {
+      token: "crvUSD",
+      address: "0xf939e0a03fb07f59a73314e73794be0e57ac1b4e",
+      oracle: "chainlink",
     },
   ],
 };
