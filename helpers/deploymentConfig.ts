@@ -1,3 +1,4 @@
+import governanceTestnetDeployments from "@venusprotocol/governance-contracts/deployments/opbnbtestnet.json";
 import mainnetDeployments from "@venusprotocol/venus-protocol/networks/mainnet.json";
 import testnetDeployments from "@venusprotocol/venus-protocol/networks/testnet.json";
 import { Contract } from "ethers";
@@ -85,7 +86,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     sidRegistryAddress: ethers.constants.AddressZero,
     feedRegistryAddress: "0x338b3D0E75bc4B3127813A79C8ECBBa96A7DB70a",
-    acm: "0x049f77F7046266d27C3bC96376f53C17Ef09c986",
+    acm: governanceTestnetDeployments.contracts.AccessControlManager.address,
     timelock: "0xb15f6EfEbC276A3b9805df81b5FB3D50C2A62BDf", // opBNB Multisig
   },
 };
