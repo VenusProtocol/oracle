@@ -84,7 +84,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
-    acm: "0x4788629abc6cfca10f9f969efdeaa1cf70c23555",
+    acm: "0x230058da2D23eb8836EC5DB7037ef7250c56E25E",
     timelock: "0x285960C5B22fD66A736C7136967A3eB15e93CC67", // Ethereum Multisig
   },
 };
