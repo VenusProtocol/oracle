@@ -52,6 +52,8 @@ export interface Oracles {
 
 export const addr0000 = "0x0000000000000000000000000000000000000000";
 export const DEFAULT_STALE_PERIOD = 24 * 60 * 60; // 24 hrs
+const STALE_PERIOD_100M = 60 * 100; // 100 minutes (for pricefeeds with heartbeat of 1 hr)
+const STALE_PERIOD_26H = 60 * 60 * 26; // 26 hours (pricefeeds with heartbeat of 24 hr)
 export const ANY_CONTRACT = ethers.constants.AddressZero;
 
 export const ADDRESSES: PreconfiguredAddresses = {
@@ -614,36 +616,43 @@ export const assets: Assets = {
       token: "WBTC",
       address: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
       oracle: "chainlink",
+      stalePeriod: STALE_PERIOD_100M,
     },
     {
       token: "WETH",
       address: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
       oracle: "chainlink",
+      stalePeriod: STALE_PERIOD_100M,
     },
     {
       token: "USDC",
       address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
       oracle: "chainlink",
+      stalePeriod: STALE_PERIOD_26H,
     },
     {
       token: "USDT",
       address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
       oracle: "chainlink",
+      stalePeriod: STALE_PERIOD_26H,
     },
     // {
     //   token: "XVS",
     //   address: "", // TODO: add redstone address when we get it
     //   oracle: "redstone",
+    //   stalePeriod: STALE_PERIOD_26H
     // },
     {
       token: "CRV",
       address: "0xD533a949740bb3306d119CC777fa900bA034cd52",
       oracle: "chainlink",
+      stalePeriod: STALE_PERIOD_26H,
     },
     {
       token: "crvUSD",
       address: "0xf939e0a03fb07f59a73314e73794be0e57ac1b4e",
       oracle: "chainlink",
+      stalePeriod: STALE_PERIOD_26H,
     },
   ],
 };
