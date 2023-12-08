@@ -1,3 +1,11 @@
+## [1.8.0-dev.7](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.6...v1.8.0-dev.7) (2023-12-08)
+
+
+### Features
+
+* add oracles deployment ([cbfc4ce](https://github.com/VenusProtocol/oracle/commit/cbfc4cee3ba7252ef41883d6703a1808576e2525))
+* use address from packages ([23fe765](https://github.com/VenusProtocol/oracle/commit/23fe765e8b98e0eaa0b98a1569027e27941f0ba2))
+
 ## [1.8.0-dev.6](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.5...v1.8.0-dev.6) (2023-12-06)
 
 
