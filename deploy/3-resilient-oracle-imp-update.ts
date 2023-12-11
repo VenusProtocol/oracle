@@ -1,27 +1,14 @@
-import mainnetDeployments from "@venusprotocol/venus-protocol/networks/mainnet.json";
-import testnetDeployments from "@venusprotocol/venus-protocol/networks/testnet.json";
 import hre from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-const ADDRESSES = {
-  bsctestnet: {
-    vBNBAddress: testnetDeployments.Contracts.vBNB,
-    VAIAddress: testnetDeployments.Contracts.VAI,
-    timelock: testnetDeployments.Contracts.Timelock,
-  },
-  bscmainnet: {
-    vBNBAddress: mainnetDeployments.Contracts.vBNB,
-    VAIAddress: mainnetDeployments.Contracts.VAI,
-    timelock: mainnetDeployments.Contracts.Timelock,
-  },
-};
+import { ADDRESSES } from "../helpers/deploymentConfig";
 
 const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy, catchUnknownSigner } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const networkName = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
+  const networkName: string = network.name === "hardhat" ? "bsctestnet" : network.name;
 
   const { vBNBAddress } = ADDRESSES[networkName];
   const { VAIAddress } = ADDRESSES[networkName];

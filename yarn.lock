@@ -1831,7 +1831,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nomiclabs/hardhat-ethers@npm:^2.2.1":
+"@nomiclabs/hardhat-ethers@npm:^2.2.1, @nomiclabs/hardhat-ethers@npm:^2.2.3":
   version: 2.2.3
   resolution: "@nomiclabs/hardhat-ethers@npm:2.2.3"
   peerDependencies:
@@ -2226,6 +2226,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@openzeppelin/contracts-upgradeable@npm:^4.8.3":
+  version: 4.9.5
+  resolution: "@openzeppelin/contracts-upgradeable@npm:4.9.5"
+  checksum: d5d9bad93fe2a88a8336060901d45f185ebfe1fed9844b1fe50e8641d946588c6e69a5a8f1694f0bd073c913b4b9a5c34316acfc17d8f75228adecbcb635ea62
+  languageName: node
+  linkType: hard
+
 "@openzeppelin/contracts-v0.7@npm:@openzeppelin/contracts@v3.4.2":
   version: 3.4.2
   resolution: "@openzeppelin/contracts@npm:3.4.2"
@@ -2233,10 +2240,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts@npm:^4.3.3, @openzeppelin/contracts@npm:^4.6.0":
+"@openzeppelin/contracts@npm:4.9.3, @openzeppelin/contracts@npm:^4.3.3, @openzeppelin/contracts@npm:^4.6.0":
   version: 4.9.3
   resolution: "@openzeppelin/contracts@npm:4.9.3"
   checksum: 4932063e733b35fa7669b9fe2053f69b062366c5c208b0c6cfa1ac451712100c78acff98120c3a4b88d94154c802be05d160d71f37e7d74cadbe150964458838
+  languageName: node
+  linkType: hard
+
+"@openzeppelin/contracts@npm:^4.8.3":
+  version: 4.9.5
+  resolution: "@openzeppelin/contracts@npm:4.9.5"
+  checksum: 2cddeb08c006a8f99c5cc40cc80aecb449fd941cd1a92ebda315d77f48c4b4d487798a1254bffbc3ec811b390365d14665e92dbb2dd8f45aacef479d69d94574
   languageName: node
   linkType: hard
 
@@ -2253,7 +2267,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/hardhat-upgrades@npm:^1.20.0":
+"@openzeppelin/hardhat-upgrades@npm:^1.20.0, @openzeppelin/hardhat-upgrades@npm:^1.21.0":
   version: 1.28.0
   resolution: "@openzeppelin/hardhat-upgrades@npm:1.28.0"
   dependencies:
@@ -2605,6 +2619,15 @@ __metadata:
   dependencies:
     tslib: ^2.5.0
   checksum: 9233d1e6e414a8b807f9fe7a7c30064626f77b0242d8634b9b1c192f77b27a997a3caf90ecf7f4361d5926c9e9cc761991eecfb47bbfa6ce2be21c5533a3bea6
+  languageName: node
+  linkType: hard
+
+"@solidity-parser/parser@npm:^0.13.2":
+  version: 0.13.2
+  resolution: "@solidity-parser/parser@npm:0.13.2"
+  dependencies:
+    antlr4ts: ^0.5.0-alpha.4
+  checksum: bfdd8ec7f7b88f3cc75e333e03202cde5e5dacbec7f00612f22dec5e22b0995713637872ce202064d182bae56a274fcb2ca8715ad5482af5e8b38728a0216cf7
   languageName: node
   linkType: hard
 
@@ -3112,14 +3135,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@venusprotocol/governance-contracts@npm:^1.4.0-dev.8":
-  version: 1.4.0-dev.8
-  resolution: "@venusprotocol/governance-contracts@npm:1.4.0-dev.8"
+"@venusprotocol/governance-contracts@npm:^1.4.0-dev.1, @venusprotocol/governance-contracts@npm:^1.4.0-dev.9":
+  version: 1.4.0-dev.9
+  resolution: "@venusprotocol/governance-contracts@npm:1.4.0-dev.9"
   dependencies:
     "@venusprotocol/solidity-utilities": ^1.1.0
     hardhat-deploy-ethers: ^0.3.0-beta.13
     module-alias: ^2.2.2
-  checksum: 0a9a1540574f6f63ce97afe9263f21ca984f7e3caa1e316ba65597fdb553658ac0cf53b09f8814cf89f3e00b1e0dec603c04294e638d4cf740dba37c0f5a6328
+  checksum: 25583a20738973d2ade4a1fdf84dcacf0caec42004f5bf755fdfa29b3602f2b9184638f2d828359195bf8baa3b082797cad941874be1a91a61900b343420cead
   languageName: node
   linkType: hard
 
@@ -3154,8 +3177,8 @@ __metadata:
     "@types/sinon-chai": ^3.2.9
     "@typescript-eslint/eslint-plugin": ^5.27.1
     "@typescript-eslint/parser": ^5.27.1
-    "@venusprotocol/governance-contracts": ^1.4.0-dev.8
-    "@venusprotocol/venus-protocol": 0.7.0
+    "@venusprotocol/governance-contracts": ^1.4.0-dev.9
+    "@venusprotocol/venus-protocol": ^6.0.0
     chai: ^4.3.6
     cross-env: ^7.0.3
     cz-conventional-changelog: ^3.3.0
@@ -3189,22 +3212,42 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@venusprotocol/solidity-utilities@npm:^1.1.0":
+"@venusprotocol/protocol-reserve@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@venusprotocol/protocol-reserve@npm:1.1.0"
+  dependencies:
+    "@nomiclabs/hardhat-ethers": ^2.2.3
+    "@openzeppelin/contracts": ^4.8.3
+    "@openzeppelin/contracts-upgradeable": ^4.8.3
+    "@openzeppelin/hardhat-upgrades": ^1.21.0
+    "@solidity-parser/parser": ^0.13.2
+    "@venusprotocol/solidity-utilities": ^1.0.1
+    ethers: ^5.7.0
+    hardhat-deploy: ^0.11.14
+    module-alias: ^2.2.2
+  checksum: 86e2da20ddb3824603c1f5e0931cc4715cd442624a03cc0fed7633ecbb5f2cab9a04ca5dcec805a4d9b0e04904799286210299f39935034f9fe85155f7b56da3
+  languageName: node
+  linkType: hard
+
+"@venusprotocol/solidity-utilities@npm:^1.0.1, @venusprotocol/solidity-utilities@npm:^1.1.0":
   version: 1.1.0
   resolution: "@venusprotocol/solidity-utilities@npm:1.1.0"
   checksum: 3b17ec451cd0ba5aaea76686c7bef35757fb158709214be094f73ebd0d643c79817159f7aa162cc694e1a5ee1f02b20e26211a65929113b985827959aae99fa7
   languageName: node
   linkType: hard
 
-"@venusprotocol/venus-protocol@npm:0.7.0":
-  version: 0.7.0
-  resolution: "@venusprotocol/venus-protocol@npm:0.7.0"
+"@venusprotocol/venus-protocol@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@venusprotocol/venus-protocol@npm:6.0.0"
   dependencies:
+    "@openzeppelin/contracts": 4.9.3
     "@openzeppelin/contracts-upgradeable": ^4.8.0
+    "@venusprotocol/governance-contracts": ^1.4.0-dev.1
+    "@venusprotocol/protocol-reserve": ^1.1.0
+    bignumber.js: ^9.1.2
     dotenv: ^16.0.1
-  peerDependencies:
-    hardhat: ^2.10.1
-  checksum: 9b3c4403799dd41ea282daf0333c46bc2e5ec6221a3616026eef3c715075ad013318624dae72f4bc6c635c954b1b0225eaf2b1cf066109d94ddb585f98e9f4aa
+    module-alias: ^2.2.2
+  checksum: 2e819a464626233c24e566be21438f120378b617289e9646024b47859dc6fc7cb785c3af5e6b04fc1fe9a78aac73b98cb51014c48910db93ba6e4b9ff397c17e
   languageName: node
   linkType: hard
 
@@ -3901,6 +3944,13 @@ __metadata:
   version: 3.3.0
   resolution: "bigint-crypto-utils@npm:3.3.0"
   checksum: 9598ce57b23f776c8936d44114c9f051e62b5fa654915b664784cbcbacc5aa0485f4479571c51ff58008abb1210c0d6a234853742f07cf84bda890f2a1e01000
+  languageName: node
+  linkType: hard
+
+"bignumber.js@npm:^9.1.2":
+  version: 9.1.2
+  resolution: "bignumber.js@npm:9.1.2"
+  checksum: 582c03af77ec9cb0ebd682a373ee6c66475db94a4325f92299621d544aa4bd45cb45fd60001610e94aef8ae98a0905fa538241d9638d4422d57abbeeac6fadaf
   languageName: node
   linkType: hard
 
