@@ -7,11 +7,24 @@ import "@typechain/hardhat";
 import * as dotenv from "dotenv";
 import "hardhat-deploy";
 import "hardhat-gas-reporter";
-import { HardhatUserConfig } from "hardhat/config";
+import { HardhatUserConfig, extendConfig } from "hardhat/config";
+import { HardhatConfig } from "hardhat/types";
 import "solidity-coverage";
 import "solidity-docgen";
 
 dotenv.config();
+
+extendConfig((config: HardhatConfig) => {
+  if (process.env.EXPORT !== "true") {
+    // eslint-disable-next-line no-param-reassign
+    config.external = {
+      ...config.external,
+      deployments: {
+        // Define external deployments here
+      },
+    };
+  }
+});
 
 function isFork() {
   return process.env.FORK === "true"
