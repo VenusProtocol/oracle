@@ -1,3 +1,10 @@
+## [1.8.0-dev.9](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.8...v1.8.0-dev.9) (2023-12-12)
+
+
+### Bug Fixes
+
+* exclude external deployments when exporting ([0286860](https://github.com/VenusProtocol/oracle/commit/02868609b31193ee9691192a0803acfaa9e0b0ad))
+
 ## [1.8.0-dev.8](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.7...v1.8.0-dev.8) (2023-12-11)
 
 ## [1.8.0-dev.7](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.6...v1.8.0-dev.7) (2023-12-08)
