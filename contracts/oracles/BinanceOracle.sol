@@ -99,9 +99,8 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
         address newfeedRegistryAddress
     ) external notNullAddress(newfeedRegistryAddress) onlyOwner {
         if (sidRegistryAddress != address(0)) revert("sidRegistryAddress must be zero");
-        address oldFeedRegistry = feedRegistryAddress;
+        emit FeedRegistryUpdated(feedRegistryAddress, newfeedRegistryAddress);
         feedRegistryAddress = newfeedRegistryAddress;
-        emit FeedRegistryUpdated(oldFeedRegistry, newfeedRegistryAddress);
     }
 
     /**
