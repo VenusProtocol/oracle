@@ -1,3 +1,11 @@
+## [1.8.0-dev.10](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.9...v1.8.0-dev.10) (2023-12-15)
+
+
+### Bug Fixes
+
+* BOV-02 ([59c86ae](https://github.com/VenusProtocol/oracle/commit/59c86ae6a1320d7caa7e6e814fe80930ec25ea04))
+* mainnet verify endpoint ([4426cd6](https://github.com/VenusProtocol/oracle/commit/4426cd69410ea19853dacc53b77c7558a5bda538))
+
 ## [1.8.0-dev.9](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.8...v1.8.0-dev.9) (2023-12-12)
 
 
