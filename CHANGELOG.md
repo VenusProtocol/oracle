@@ -1,3 +1,10 @@
+## [1.8.0-dev.11](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.10...v1.8.0-dev.11) (2023-12-18)
+
+
+### Features
+
+* updating deployment files ([66492ff](https://github.com/VenusProtocol/oracle/commit/66492fff92fa2bf5a3fd23fd2003b1e64771e5d0))
+
 ## [1.8.0-dev.10](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.9...v1.8.0-dev.10) (2023-12-15)
 
 
