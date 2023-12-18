@@ -92,6 +92,15 @@ export const ADDRESSES: PreconfiguredAddresses = {
     acm: governanceTestnetDeployments.contracts.AccessControlManager.address,
     timelock: "0xb15f6EfEbC276A3b9805df81b5FB3D50C2A62BDf", // opBNB Multisig
   },
+  opbnbmainnet: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    sidRegistryAddress: ethers.constants.AddressZero,
+    feedRegistryAddress: "0x72d55658242377AF22907b6E7350148288f88033",
+    acm: "0xA60Deae5344F1152426cA440fb6552eA0e3005D6",
+    timelock: "0xC46796a21a3A9FAB6546aF3434F2eBfFd0604207", // opBNB Multisig
+  },
 };
 
 export const chainlinkFeed: Config = {
