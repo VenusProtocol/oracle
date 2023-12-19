@@ -3135,7 +3135,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@venusprotocol/governance-contracts@npm:^1.4.0-dev.1, @venusprotocol/governance-contracts@npm:^1.4.0-dev.9":
+"@venusprotocol/governance-contracts@npm:^1.4.0-dev.1":
   version: 1.4.0-dev.9
   resolution: "@venusprotocol/governance-contracts@npm:1.4.0-dev.9"
   dependencies:
@@ -3143,6 +3143,17 @@ __metadata:
     hardhat-deploy-ethers: ^0.3.0-beta.13
     module-alias: ^2.2.2
   checksum: 25583a20738973d2ade4a1fdf84dcacf0caec42004f5bf755fdfa29b3602f2b9184638f2d828359195bf8baa3b082797cad941874be1a91a61900b343420cead
+  languageName: node
+  linkType: hard
+
+"@venusprotocol/governance-contracts@npm:^1.4.0-dev.13":
+  version: 1.4.0-dev.13
+  resolution: "@venusprotocol/governance-contracts@npm:1.4.0-dev.13"
+  dependencies:
+    "@venusprotocol/solidity-utilities": ^1.1.0
+    hardhat-deploy-ethers: ^0.3.0-beta.13
+    module-alias: ^2.2.2
+  checksum: bbeb8d4e0ed8235a82d282aa0e20f507a72d936eb6a5aed6cd84c37295ae34346fde97c7c9a247648d0954a2ad5246e750b596231adb61df2be02d87f9dcf644
   languageName: node
   linkType: hard
 
@@ -3177,7 +3188,7 @@ __metadata:
     "@types/sinon-chai": ^3.2.9
     "@typescript-eslint/eslint-plugin": ^5.27.1
     "@typescript-eslint/parser": ^5.27.1
-    "@venusprotocol/governance-contracts": ^1.4.0-dev.9
+    "@venusprotocol/governance-contracts": ^1.4.0-dev.13
     "@venusprotocol/venus-protocol": ^6.0.0
     chai: ^4.3.6
     cross-env: ^7.0.3
