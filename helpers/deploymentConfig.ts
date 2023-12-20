@@ -331,6 +331,12 @@ export const assets: Assets = {
       oracle: "chainlink",
       price: "159990000000000000000",
     },
+    {
+      token: "FDUSD",
+      address: "0xcF27439fA231af9931ee40c4f27Bb77B83826F3C",
+      oracle: "chainlinkFixed",
+      price: "1000000000000000000", // 1$
+    },
   ],
   bscmainnet: [
     {
