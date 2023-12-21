@@ -126,6 +126,7 @@ export const chainlinkFeed: Config = {
     BSW: "0x08e70777b982a58d23d05e3d7714f44837c06a21",
     WBNB: "0x0567f2323251f0aab15c8dfb1967e4e8a7d42aee",
     WIN: "0x9e7377e194e41d63795907c92c3eb351a2eb0233",
+    FDUSD: "0x390180e80058a8499930f0c13963ad3e0d86bfc9",
   },
   bsctestnet: {
     BNX: "0xf51492DeD1308Da8195C3bfcCF4a7c70fDbF9daE",
@@ -564,6 +565,18 @@ export const assets: Assets = {
       token: "USDD",
       address: "0xd17479997F34dd9156Deef8F95A52D81D265be9c",
       oracle: "binance",
+      stalePeriod: 60 * 25,
+    },
+    {
+      token: "FDUSD",
+      address: "0xc5f0f7b66764F6ec8C8Dff7BA683102295E16409",
+      oracle: "chainlink", // main oracle
+      stalePeriod: 60 * 60 * 24.5,
+    },
+    {
+      token: "FDUSD",
+      address: "0xc5f0f7b66764F6ec8C8Dff7BA683102295E16409",
+      oracle: "binance", // pivot oracle
       stalePeriod: 60 * 25,
     },
   ],
