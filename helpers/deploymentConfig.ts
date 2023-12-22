@@ -1,5 +1,10 @@
-import mainnetDeployments from "@venusprotocol/venus-protocol/networks/mainnet.json";
-import testnetDeployments from "@venusprotocol/venus-protocol/networks/testnet.json";
+import bscmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bscmainnet.json";
+import bsctestnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bsctestnet.json";
+import ethereumGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/ethereum.json";
+import opbnbtestnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/opbnbtestnet.json";
+import sepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/sepolia.json";
+import mainnetDeployments from "@venusprotocol/venus-protocol/deployments/bscmainnet.json";
+import testnetDeployments from "@venusprotocol/venus-protocol/deployments/bsctestnet.json";
 import { Contract } from "ethers";
 import { ethers } from "hardhat";
 
@@ -58,36 +63,45 @@ export const ANY_CONTRACT = ethers.constants.AddressZero;
 
 export const ADDRESSES: PreconfiguredAddresses = {
   bsctestnet: {
-    vBNBAddress: testnetDeployments.Contracts.vBNB,
-    WBNBAddress: testnetDeployments.Contracts.WBNB,
-    VAIAddress: testnetDeployments.Contracts.VAI,
+    vBNBAddress: testnetDeployments.contracts.vBNB.address,
+    WBNBAddress: testnetDeployments.contracts.WBNB.address,
+    VAIAddress: testnetDeployments.contracts.VAI.address,
     pythOracleAddress: "0xd7308b14BF4008e7C7196eC35610B1427C5702EA",
     sidRegistryAddress: "0xfFB52185b56603e0fd71De9de4F6f902f05EEA23",
-    acm: "0x45f8a08F534f34A97187626E05d4b6648Eeaa9AA",
-    timelock: testnetDeployments.Contracts.Timelock,
+    acm: bsctestnetGovernanceDeployments.contracts.AccessControlManager.address,
+    timelock: bsctestnetGovernanceDeployments.contracts.NormalTimelock.address,
   },
   bscmainnet: {
-    vBNBAddress: mainnetDeployments.Contracts.vBNB,
-    WBNBAddress: mainnetDeployments.Contracts.WBNB,
-    VAIAddress: mainnetDeployments.Contracts.VAI,
+    vBNBAddress: mainnetDeployments.contracts.vBNB.address,
+    WBNBAddress: mainnetDeployments.contracts.WBNB.address,
+    VAIAddress: mainnetDeployments.contracts.VAI.address,
     pythOracleAddress: "0x4D7E825f80bDf85e913E0DD2A2D54927e9dE1594",
     sidRegistryAddress: "0x08CEd32a7f3eeC915Ba84415e9C07a7286977956",
-    acm: "0x4788629ABc6cFCA10F9f969efdEAa1cF70c23555",
-    timelock: mainnetDeployments.Contracts.Timelock,
+    acm: bscmainnetGovernanceDeployments.contracts.AccessControlManager.address,
+    timelock: bscmainnetGovernanceDeployments.contracts.NormalTimelock.address,
   },
   sepolia: {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
-    acm: "0xbf705C00578d43B6147ab4eaE04DBBEd1ccCdc96",
+    acm: sepoliaGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x94fa6078b6b8a26f0b6edffbe6501b22a10470fb", // Sepolia Multisig
   },
   ethereum: {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
-    acm: "0x230058da2D23eb8836EC5DB7037ef7250c56E25E",
+    acm: ethereumGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x285960C5B22fD66A736C7136967A3eB15e93CC67", // Ethereum Multisig
+  },
+  opbnbtestnet: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    sidRegistryAddress: ethers.constants.AddressZero,
+    feedRegistryAddress: "0x338b3D0E75bc4B3127813A79C8ECBBa96A7DB70a",
+    acm: opbnbtestnetGovernanceDeployments.contracts.AccessControlManager.address,
+    timelock: "0xb15f6EfEbC276A3b9805df81b5FB3D50C2A62BDf", // opBNB Multisig
   },
 };
 
@@ -123,6 +137,7 @@ export const chainlinkFeed: Config = {
     BSW: "0x08e70777b982a58d23d05e3d7714f44837c06a21",
     WBNB: "0x0567f2323251f0aab15c8dfb1967e4e8a7d42aee",
     WIN: "0x9e7377e194e41d63795907c92c3eb351a2eb0233",
+    FDUSD: "0x390180e80058a8499930f0c13963ad3e0d86bfc9",
   },
   bsctestnet: {
     BNX: "0xf51492DeD1308Da8195C3bfcCF4a7c70fDbF9daE",
@@ -336,6 +351,12 @@ export const assets: Assets = {
       address: "0x2E7222e51c0f6e98610A1543Aa3836E092CDe62c",
       oracle: "chainlink",
       price: "159990000000000000000",
+    },
+    {
+      token: "FDUSD",
+      address: "0xcF27439fA231af9931ee40c4f27Bb77B83826F3C",
+      oracle: "chainlinkFixed",
+      price: "1000000000000000000", // 1$
     },
   ],
   bscmainnet: [
@@ -566,6 +587,18 @@ export const assets: Assets = {
       oracle: "binance",
       stalePeriod: 60 * 25,
     },
+    {
+      token: "FDUSD",
+      address: "0xc5f0f7b66764F6ec8C8Dff7BA683102295E16409",
+      oracle: "chainlink", // main oracle
+      stalePeriod: 60 * 60 * 24.5,
+    },
+    {
+      token: "FDUSD",
+      address: "0xc5f0f7b66764F6ec8C8Dff7BA683102295E16409",
+      oracle: "binance", // pivot oracle
+      stalePeriod: 60 * 25,
+    },
   ],
   sepolia: [
     {
@@ -653,6 +686,38 @@ export const assets: Assets = {
       address: "0xf939e0a03fb07f59a73314e73794be0e57ac1b4e",
       oracle: "chainlink",
       stalePeriod: STALE_PERIOD_26H,
+    },
+  ],
+  opbnbtestnet: [
+    {
+      token: "BTCB",
+      address: "0x7Af23F9eA698E9b953D2BD70671173AaD0347f19",
+      oracle: "binance",
+      price: "35000000000000000000000",
+    },
+    {
+      token: "ETH",
+      address: "0x94680e003861D43C6c0cf18333972312B6956FF1",
+      oracle: "binance",
+      price: "2000000000000000000000",
+    },
+    {
+      token: "USDT",
+      address: "0x8ac9B3801D0a8f5055428ae0bF301CA1Da976855",
+      oracle: "binance",
+      price: "1000000000000000000",
+    },
+    {
+      token: "WBNB",
+      address: "0xF9ce72611a1BE9797FdD2c995dB6fB61FD20E4eB",
+      oracle: "binance",
+      price: "230000000000000000000",
+    },
+    {
+      token: "XVS",
+      address: "0x3d0e20D4caD958bc848B045e1da19Fe378f86f03",
+      oracle: "binance",
+      price: "7000000000000000000",
     },
   ],
 };

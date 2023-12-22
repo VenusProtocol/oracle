@@ -135,7 +135,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     }
   }
 
-  const { sidRegistryAddress } = ADDRESSES[networkName];
+  const { sidRegistryAddress, feedRegistryAddress } = ADDRESSES[networkName];
   // Skip if no sidRegistryAddress address in config
   if (sidRegistryAddress) {
     await deploy("BinanceOracle", {
@@ -155,6 +155,10 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     });
     const binanceOracle = await hre.ethers.getContract("BinanceOracle");
     const binanceOracleOwner = await binanceOracle.owner();
+
+    if (network.live && sidRegistryAddress === "0x0000000000000000000000000000000000000000") {
+      await binanceOracle.setFeedRegistryAddress(feedRegistryAddress);
+    }
 
     if (binanceOracleOwner === deployer) {
       await binanceOracle.transferOwnership(ADDRESSES[networkName].timelock);

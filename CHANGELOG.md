@@ -1,3 +1,49 @@
+## [1.8.0-dev.12](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.11...v1.8.0-dev.12) (2023-12-19)
+
+
+### Features
+
+* updating deployment files ([164ca39](https://github.com/VenusProtocol/oracle/commit/164ca3901fe136bfb8231b8f223aa1a0f54d32d3))
+
+## [1.8.0-dev.11](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.10...v1.8.0-dev.11) (2023-12-18)
+
+
+### Features
+
+* updating deployment files ([66492ff](https://github.com/VenusProtocol/oracle/commit/66492fff92fa2bf5a3fd23fd2003b1e64771e5d0))
+
+## [1.8.0-dev.10](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.9...v1.8.0-dev.10) (2023-12-15)
+
+
+### Bug Fixes
+
+* BOV-02 ([59c86ae](https://github.com/VenusProtocol/oracle/commit/59c86ae6a1320d7caa7e6e814fe80930ec25ea04))
+* mainnet verify endpoint ([4426cd6](https://github.com/VenusProtocol/oracle/commit/4426cd69410ea19853dacc53b77c7558a5bda538))
+
+## [1.8.0-dev.9](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.8...v1.8.0-dev.9) (2023-12-12)
+
+
+### Bug Fixes
+
+* exclude external deployments when exporting ([0286860](https://github.com/VenusProtocol/oracle/commit/02868609b31193ee9691192a0803acfaa9e0b0ad))
+
+## [1.8.0-dev.8](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.7...v1.8.0-dev.8) (2023-12-11)
+
+## [1.8.0-dev.7](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.6...v1.8.0-dev.7) (2023-12-08)
+
+
+### Features
+
+* add oracles deployment ([cbfc4ce](https://github.com/VenusProtocol/oracle/commit/cbfc4cee3ba7252ef41883d6703a1808576e2525))
+* use address from packages ([23fe765](https://github.com/VenusProtocol/oracle/commit/23fe765e8b98e0eaa0b98a1569027e27941f0ba2))
+
+## [1.8.0-dev.6](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.5...v1.8.0-dev.6) (2023-12-06)
+
+
+### Features
+
+* support direct feed registry in binanace oracle ([5e9d40b](https://github.com/VenusProtocol/oracle/commit/5e9d40b0ae6badc1966fc60fa31fb24da23818bc))
+
 ## [1.8.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.4...v1.8.0-dev.5) (2023-12-05)
 
 ## [1.8.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.3...v1.8.0-dev.4) (2023-12-01)

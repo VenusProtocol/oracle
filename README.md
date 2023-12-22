@@ -6,7 +6,7 @@ Resilient Price Feeds is a set of smart contracts that uses multiple oracles and
 
 DeFi protocols are vulnerable to incorrectly reported prices which can lead to lost money. A price oracle can be manipulated,fail, or suffer other attacks depending on the type of price oracle. It creates a single point of failure, opening attack vectors to the protocol if not mitigated.
 
-The Resilient Price Feeds uses multiple oracle sources and fallback mechanisms to return accurate prices and protect from oracle failures. Currently, it includes integrations with Chainlink, Pyth, Binance Oracle and TWAP (Time-Weighted Average Price) oracles. TWAP uses PancakeSwap as the on-chain price source.
+The Resilient Price Feeds uses multiple oracle sources and fallback mechanisms to return accurate prices and protect from oracle failures. Currently, it includes integrations with Chainlink, RedStone, Pyth, Binance Oracle and TWAP (Time-Weighted Average Price) oracles. TWAP uses PancakeSwap as the on-chain price source.
 
 ## Details
 
@@ -21,7 +21,7 @@ anchorRatio = anchorPrice/reporterPrice
 isValid = anchorRatio <= upperBoundAnchorRatio && anchorRatio >= lowerBoundAnchorRatio
 ```
 
-The default configuration uses Chainlink as the main oracle, TWAP or Pyth oracle as pivot oracle depending on which supports the given market and Binance oracle as the fallback oracle. For some markets we may use Pyth as the main oracle if the token price is not supported by Chainlink or Binance oracles.
+The default configuration uses Chainlink as the main oracle, TWAP, RedStone or Pyth oracle as the pivot oracle depending on which supports the given market and Binance oracle as the fallback oracle. For some markets we may use RedStone or Pyth as the main oracle if the token price is not supported by Chainlink or Binance oracles.
 
 When fetching an oracle price, for the price to be valid it must be positive and not stagnant. If the price is invalid or stagnant it is ignored and a fallback oracle is used.
 
