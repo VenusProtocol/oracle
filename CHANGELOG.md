@@ -1,3 +1,15 @@
+## [1.8.0-dev.13](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.12...v1.8.0-dev.13) (2023-12-26)
+
+
+### Features
+
+* updating deployment files ([3ee7763](https://github.com/VenusProtocol/oracle/commit/3ee776362ecf958034754df154e403a6b9a7abad))
+
+
+### Bug Fixes
+
+* wrong acm address ([7987c7b](https://github.com/VenusProtocol/oracle/commit/7987c7bb84e7183f25cf5da9138f393b9c995ff2))
+
 ## [1.8.0-dev.12](https://github.com/VenusProtocol/oracle/compare/v1.8.0-dev.11...v1.8.0-dev.12) (2023-12-19)
 
 
