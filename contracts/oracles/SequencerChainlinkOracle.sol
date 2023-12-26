@@ -5,10 +5,10 @@ import { ChainlinkOracle } from "./ChainlinkOracle.sol";
 import { AggregatorV3Interface } from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 /**
-    @title Arbitrum Chain Link Oracle
-    @notice Oracle to fetch price using chainlink oracles on arbitrum
+    @title Sequencer Chain Link Oracle
+    @notice Oracle to fetch price using chainlink oracles on L2s with sequencer
 */
-contract ArbiChainlinkOracle is ChainlinkOracle {
+contract SequencerChainlinkOracle is ChainlinkOracle {
     /// @notice L2 Sequencer feed
     AggregatorV3Interface public immutable sequencer;
 
