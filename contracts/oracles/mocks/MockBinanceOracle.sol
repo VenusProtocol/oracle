@@ -9,11 +9,11 @@ contract MockBinanceOracle is OwnableUpgradeable, OracleInterface {
 
     constructor() {}
 
+    function initialize() public initializer {}
+
     function setPrice(address asset, uint256 price) external {
         assetPrices[asset] = price;
     }
-
-    function initialize() public initializer {}
 
     function getPrice(address token) public view returns (uint256) {
         return assetPrices[token];

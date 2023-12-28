@@ -28,7 +28,7 @@ describe("bound validator", () => {
     this.signers = signers;
     this.admin = admin;
     this.boundValidator = <BoundValidator>(<unknown>await getBoundValidator(admin));
-    this.token = await makeToken(admin, "Token", "Token");
+    this.token = await makeToken("Token", "Token");
   });
   describe("add validation config", () => {
     it("length check", async function () {
@@ -40,7 +40,7 @@ describe("bound validator", () => {
         upperBoundRatio: 0,
         lowerBoundRatio: 0,
       };
-      await expect(this.boundValidator.setValidateConfigs([config])).to.be.revertedWith("can't be zero address");
+      await expect(this.boundValidator.setValidateConfigs([config])).to.be.revertedWith("asset can't be zero address");
 
       config.asset = addr1111;
       await expect(this.boundValidator.setValidateConfigs([config])).to.be.revertedWith("bound must be positive");
@@ -70,9 +70,9 @@ describe("bound validator", () => {
 
   describe("validate price", () => {
     it("validate price", async function () {
-      const token0 = await makeToken(this.admin, "Token1", "Token1");
+      const token0 = await makeToken("Token1", "Token1");
 
-      const token1 = await makeToken(this.admin, "Token2", "Token2");
+      const token1 = await makeToken("Token2", "Token2");
       const validationConfig = {
         asset: token0.address,
         upperBoundRatio: EXP_SCALE.mul(12).div(10),

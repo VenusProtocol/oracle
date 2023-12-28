@@ -1,17 +1,23 @@
+/* eslint-disable no-restricted-syntax */
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { Contract } from "ethers";
-import { ethers, network } from "hardhat";
+import { ethers } from "hardhat";
 
-import { assets } from "../../deploy/2-configure-feeds";
+import { contracts as bscmainnet } from "../../deployments/bscmainnet.json";
+import { contracts as bsctestnet } from "../../deployments/bsctestnet.json";
+import { contracts as sepolia } from "../../deployments/sepolia.json";
+import { assets } from "../../helpers/deploymentConfig";
 import { forking } from "./utils";
 
 const VALID = "\u2705"; // Unicode character for checkmark
 const INVALID = "\u274c"; // Unicode character for X mark
-const networkName: string = network.name === "bscmainnet" ? "bscmainnet" : "bsctestnet";
-const FORK_MAINNET = process.env.FORK_MAINNET === "true";
+const FORK: boolean = process.env.FORK === "true";
+const FORKED_NETWORK: string = process.env.FORKED_NETWORK || "";
+
 const oracleAddress = {
-  bsctestnet: "0xb0de3Fce006d3434342383f941bD22720Ff9Fc0C",
-  bscmainnet: "0x833c980ADDAa4B9d1f8432EDdA51B89676702759",
+  bsctestnet: bsctestnet.ResilientOracle.address,
+  sepolia: sepolia.ResilientOracle.address,
+  bscmainnet: bscmainnet.ResilientOracle.address,
 };
 
 type FakeVtokenInfo = {
@@ -25,21 +31,32 @@ type PriceResult = {
   errorReason: string;
 };
 
+type BlockConfig = {
+  [key: string]: number;
+};
+
+const blockNumberPerNetwork: BlockConfig = {
+  bscmainnet: 27541139,
+  bsctestnet: 29044518,
+  sepolia: 4744320,
+};
+
+const blockNumer = blockNumberPerNetwork[FORKED_NETWORK];
+
 // NOTE: in order to test the configuration, the blockNumber should be after the configuration transaction took place
-if (FORK_MAINNET) {
-  const blockNumer = 27541139;
+if (FORK) {
   forking(blockNumer, () => {
     let oracle: Contract;
     let admin: SignerWithAddress;
     let VBep20HarnessFactory;
     let fakeVTokens: Array<FakeVtokenInfo>;
-    describe(`Price configuration validation for network ${networkName}`, () => {
+    describe(`Price configuration validation for network ${FORKED_NETWORK}`, () => {
       before(async () => {
         fakeVTokens = [];
         [admin] = await ethers.getSigners();
-        oracle = await ethers.getContractAt("ResilientOracle", oracleAddress[networkName]);
+        oracle = await ethers.getContractAt("ResilientOracle", oracleAddress[FORKED_NETWORK]);
         VBep20HarnessFactory = await ethers.getContractFactory("VBEP20Harness", admin);
-        for (const asset of assets[networkName]) {
+        for (const asset of assets[FORKED_NETWORK]) {
           console.log(`Deploying mock vToken for asset ${asset.token}`);
           const vBep20 = await VBep20HarnessFactory.deploy(asset.token, asset.token, 18, asset.address);
           const tokenInfo: FakeVtokenInfo = {

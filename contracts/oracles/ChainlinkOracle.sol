@@ -15,7 +15,8 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     struct TokenConfig {
         /// @notice Underlying token address, which can't be a null address
         /// @notice Used to check if a token is supported
-        /// @notice 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB for BNB
+        /// @notice 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB address for native tokens
+        ///         (e.g BNB for BNB chain, ETH for Ethereum network)
         address asset;
         /// @notice Chainlink feed address
         address feed;
@@ -23,8 +24,9 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
         uint256 maxStalePeriod;
     }
 
-    /// @notice Set this as asset address for BNB. This is the underlying address for vBNB
-    address public constant BNB_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
+    /// @notice Set this as asset address for native token on each chain.
+    /// This is the underlying address for vBNB on BNB chain or an underlying asset for a native market on any chain.
+    address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
     /// @notice Manually set an override price, useful under extenuating conditions such as price feed failure
     mapping(address => uint256) public prices;
@@ -47,6 +49,14 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
+    }
+
+    /**
+     * @notice Initializes the owner of the contract
+     * @param accessControlManager_ Address of the access control manager contract
+     */
+    function initialize(address accessControlManager_) external initializer {
+        __AccessControlled_init(accessControlManager_);
     }
 
     /**
@@ -82,14 +92,6 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     }
 
     /**
-     * @notice Initializes the owner of the contract
-     * @param accessControlManager_ Address of the access control manager contract
-     */
-    function initialize(address accessControlManager_) external initializer {
-        __AccessControlled_init(accessControlManager_);
-    }
-
-    /**
      * @notice Add single token config. asset & feed cannot be null addresses and maxStalePeriod must be positive
      * @param tokenConfig Token config struct
      * @custom:access Only Governance
@@ -116,7 +118,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     function getPrice(address asset) public view returns (uint256) {
         uint256 decimals;
 
-        if (asset == BNB_ADDR) {
+        if (asset == NATIVE_TOKEN_ADDR) {
             decimals = 18;
         } else {
             IERC20Metadata token = IERC20Metadata(asset);

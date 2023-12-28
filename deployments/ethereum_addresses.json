@@ -1,0 +1,19 @@
+{
+  "name": "ethereum",
+  "chainId": "1",
+  "addresses": {
+    "BoundValidator": "0x1Cd5f336A1d28Dff445619CC63d3A0329B4d8a58",
+    "BoundValidator_Implementation": "0xCabC8Ee255c968f10ca40E2d9b1F441F34bBFfD5",
+    "BoundValidator_Proxy": "0x1Cd5f336A1d28Dff445619CC63d3A0329B4d8a58",
+    "ChainlinkOracle": "0x94c3A2d6B7B2c051aDa041282aec5B0752F8A1F2",
+    "ChainlinkOracle_Implementation": "0x858606fDABccE22FF692D1b670626643C2EdDbaB",
+    "ChainlinkOracle_Proxy": "0x94c3A2d6B7B2c051aDa041282aec5B0752F8A1F2",
+    "DefaultProxyAdmin": "0x567e4cc5e085d09f66f836fa8279f38b4e5866b9",
+    "RedStoneOracle": "0x0FC8001B2c9Ec90352A46093130e284de5889C86",
+    "RedStoneOracle_Implementation": "0x9AF18734e116CEa591AEbc6B0ed0228D15c23e8D",
+    "RedStoneOracle_Proxy": "0x0FC8001B2c9Ec90352A46093130e284de5889C86",
+    "ResilientOracle": "0xd2ce3fb018805ef92b8C5976cb31F84b4E295F94",
+    "ResilientOracle_Implementation": "0x1616BaC3e4C2222B438B3410b5196604bC557bce",
+    "ResilientOracle_Proxy": "0xd2ce3fb018805ef92b8C5976cb31F84b4E295F94"
+  }
+}
