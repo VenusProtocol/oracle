@@ -31,7 +31,7 @@ contract WstETHOracle is OracleInterface {
     OracleInterface public immutable RESILIENT_ORACLE;
 
     modifier notNullAddress(address someone) {
-        if (someone == address(0)) revert("cannnot be zero address");
+        if (someone == address(0)) revert("cannot be zero address");
         _;
     }
 
