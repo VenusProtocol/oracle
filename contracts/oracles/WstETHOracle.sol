@@ -12,7 +12,7 @@ import "../interfaces/IStETH.sol";
 contract WstETHOracle is OracleInterface {
     /// @notice Price denominator of WETH/USD price returned from Resilient Oracle
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    uint256 public constant WETH_USD_PRICE_DENOMINATOR = 10e18;
+    uint256 public constant WETH_USD_PRICE_DENOMINATOR = 1e18;
 
     /// @notice Address of stETH
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
