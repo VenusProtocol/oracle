@@ -37,21 +37,21 @@ describe("WstETHOracle unit tests", () => {
     it("revert if wstETH address is 0", async () => {
       await expect(
         WsETHOracleFactory.deploy(addr0000, WETH, stETHMock.address, resilientOracleMock.address),
-      ).to.be.revertedWith("can't be zero address");
+      ).to.be.revertedWith("cannnot be zero address");
     });
     it("revert if WETH address is 0", async () => {
       await expect(
         WsETHOracleFactory.deploy(WSTETH, addr0000, stETHMock.address, resilientOracleMock.address),
-      ).to.be.revertedWith("can't be zero address");
+      ).to.be.revertedWith("cannnot be zero address");
     });
     it("revert if stETH address is 0", async () => {
       await expect(WsETHOracleFactory.deploy(WSTETH, WETH, addr0000, resilientOracleMock.address)).to.be.revertedWith(
-        "can't be zero address",
+        "cannnot be zero address",
       );
     });
     it("revert if ResilientOracle address is 0", async () => {
       await expect(WsETHOracleFactory.deploy(WSTETH, WETH, stETHMock.address, addr0000)).to.be.revertedWith(
-        "can't be zero address",
+        "cannnot be zero address",
       );
     });
     it("should deploy contract", async () => {
