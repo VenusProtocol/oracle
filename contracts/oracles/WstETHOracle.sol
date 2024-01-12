@@ -35,8 +35,10 @@ contract WstETHOracle is OracleInterface {
         _;
     }
 
-    /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
+    /**
+     * @notice Constructor for the implementation contract.
+     * @custom:oz-upgrades-unsafe-allow constructor
+     **/
     constructor(
         address wstETHAddress,
         address wETHAddress,
