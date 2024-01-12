@@ -9,7 +9,6 @@ import { addr0000 } from "./utils/data";
 const { expect } = chai;
 chai.use(smock.matchers);
 
-const MAX_STALE_PERIOD = 60 * 15; // 15min
 const WSTETH = "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0";
 const WETH = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
 
