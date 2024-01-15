@@ -17,13 +17,13 @@ const WETH_USD_PRICE_DENOMINATOR = parseUnits("1", 18);
 const STETH_AMOUNT_FOR_ONE_WSTETH = parseUnits("1.15", 18); // 1.5 stETH for 1 wETH
 
 describe("WstETHOracle unit tests", () => {
-  let signers: SignerWithAddress[];
   let stETHMock;
   let resilientOracleMock;
   let wstETHOracle;
   let WsETHOracleFactory;
   before(async () => {
-    signers = await ethers.getSigners();
+    //  To initialize the provider we need to hit the node with any request
+    await ethers.getSigners();
     resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
     resilientOracleMock.getPrice.returns(WETH_USD_PRICE);
 
