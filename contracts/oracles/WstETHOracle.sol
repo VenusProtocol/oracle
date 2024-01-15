@@ -3,6 +3,8 @@ pragma solidity 0.8.13;
 
 import "../interfaces/OracleInterface.sol";
 import "../interfaces/IStETH.sol";
+import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
+import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 
 /**
  * @title WstETHOracle
@@ -10,10 +12,6 @@ import "../interfaces/IStETH.sol";
  * @notice This oracle fetches the price of wstETH asset
  */
 contract WstETHOracle is OracleInterface {
-    /// @notice Price denominator of WETH/USD price returned from Resilient Oracle
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    uint256 public constant WETH_USD_PRICE_DENOMINATOR = 1e18;
-
     /// @notice Address of stETH
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IStETH public immutable STETH;
@@ -30,24 +28,13 @@ contract WstETHOracle is OracleInterface {
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     OracleInterface public immutable RESILIENT_ORACLE;
 
-    modifier notNullAddress(address someone) {
-        if (someone == address(0)) revert("cannot be zero address");
-        _;
-    }
-
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(
-        address wstETHAddress,
-        address wETHAddress,
-        address stETHAddress,
-        address resilientOracleAddress
-    )
-        notNullAddress(wstETHAddress)
-        notNullAddress(wETHAddress)
-        notNullAddress(stETHAddress)
-        notNullAddress(resilientOracleAddress)
-    {
+    constructor(address wstETHAddress, address wETHAddress, address stETHAddress, address resilientOracleAddress) {
+        ensureNonzeroAddress(wstETHAddress);
+        ensureNonzeroAddress(wETHAddress);
+        ensureNonzeroAddress(stETHAddress);
+        ensureNonzeroAddress(resilientOracleAddress);
         WSTETH_ADDRESS = wstETHAddress;
         WETH_ADDRESS = wETHAddress;
         STETH = IStETH(stETHAddress);
@@ -69,6 +56,6 @@ contract WstETHOracle is OracleInterface {
         uint256 wethUSDPrice = RESILIENT_ORACLE.getPrice(WETH_ADDRESS);
 
         // stETHAmount (for 1 wsETH) * wethUSDPrice (assuming 1stETH = 1 WETH) / 1e18
-        return (stETHAmount * wethUSDPrice) / WETH_USD_PRICE_DENOMINATOR;
+        return (stETHAmount * wethUSDPrice) / EXP_SCALE;
     }
 }
