@@ -55,7 +55,7 @@ contract WstETHOracle is OracleInterface {
         // price is scaled 1e18 (oracle returns 36 - asset decimal scale)
         uint256 wethUSDPrice = RESILIENT_ORACLE.getPrice(WETH_ADDRESS);
 
-        // stETHAmount (for 1 wsETH) * wethUSDPrice (assuming 1stETH = 1 WETH) / 1e18
+        // stETHAmount (for 1 wstETH) * wethUSDPrice (assuming 1stETH = 1 WETH) / 1e18
         return (stETHAmount * wethUSDPrice) / EXP_SCALE;
     }
 }
