@@ -1,7 +1,9 @@
-import mainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bscmainnet.json";
-import testnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bsctestnet.json";
-import governanceMainnetDeployments from "@venusprotocol/governance-contracts/deployments/opbnbmainnet.json";
-import governanceTestnetDeployments from "@venusprotocol/governance-contracts/deployments/opbnbtestnet.json";
+import bscmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bscmainnet.json";
+import bsctestnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bsctestnet.json";
+import ethereumGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/ethereum.json";
+import opbnbmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/opbnbmainnet.json";
+import opbnbtestnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/opbnbtestnet.json";
+import sepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/sepolia.json";
 import mainnetDeployments from "@venusprotocol/venus-protocol/deployments/bscmainnet.json";
 import testnetDeployments from "@venusprotocol/venus-protocol/deployments/bsctestnet.json";
 import { Contract } from "ethers";
@@ -56,6 +58,8 @@ export interface Oracles {
 
 export const addr0000 = "0x0000000000000000000000000000000000000000";
 export const DEFAULT_STALE_PERIOD = 24 * 60 * 60; // 24 hrs
+const STALE_PERIOD_100M = 60 * 100; // 100 minutes (for pricefeeds with heartbeat of 1 hr)
+const STALE_PERIOD_26H = 60 * 60 * 26; // 26 hours (pricefeeds with heartbeat of 24 hr)
 export const ANY_CONTRACT = ethers.constants.AddressZero;
 
 export const ADDRESSES: PreconfiguredAddresses = {
@@ -65,8 +69,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: testnetDeployments.contracts.VAI.address,
     pythOracleAddress: "0xd7308b14BF4008e7C7196eC35610B1427C5702EA",
     sidRegistryAddress: "0xfFB52185b56603e0fd71De9de4F6f902f05EEA23",
-    acm: "0x45f8a08F534f34A97187626E05d4b6648Eeaa9AA",
-    timelock: testnetGovernanceDeployments.contracts.NormalTimelock.address,
+    acm: bsctestnetGovernanceDeployments.contracts.AccessControlManager.address,
+    timelock: bsctestnetGovernanceDeployments.contracts.NormalTimelock.address,
   },
   bscmainnet: {
     vBNBAddress: mainnetDeployments.contracts.vBNB.address,
@@ -74,15 +78,22 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: mainnetDeployments.contracts.VAI.address,
     pythOracleAddress: "0x4D7E825f80bDf85e913E0DD2A2D54927e9dE1594",
     sidRegistryAddress: "0x08CEd32a7f3eeC915Ba84415e9C07a7286977956",
-    acm: "0x4788629ABc6cFCA10F9f969efdEAa1cF70c23555",
-    timelock: mainnetGovernanceDeployments.contracts.NormalTimelock.address,
+    acm: bscmainnetGovernanceDeployments.contracts.AccessControlManager.address,
+    timelock: bscmainnetGovernanceDeployments.contracts.NormalTimelock.address,
   },
   sepolia: {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
-    acm: "0xbf705C00578d43B6147ab4eaE04DBBEd1ccCdc96",
+    acm: sepoliaGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x94fa6078b6b8a26f0b6edffbe6501b22a10470fb", // Sepolia Multisig
+  },
+  ethereum: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: ethereumGovernanceDeployments.contracts.AccessControlManager.address,
+    timelock: "0x285960C5B22fD66A736C7136967A3eB15e93CC67", // Ethereum Multisig
   },
   opbnbtestnet: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -90,7 +101,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     sidRegistryAddress: ethers.constants.AddressZero,
     feedRegistryAddress: "0x338b3D0E75bc4B3127813A79C8ECBBa96A7DB70a",
-    acm: governanceTestnetDeployments.contracts.AccessControlManager.address,
+    acm: opbnbtestnetGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0xb15f6EfEbC276A3b9805df81b5FB3D50C2A62BDf", // opBNB Multisig
   },
   opbnbmainnet: {
@@ -99,7 +110,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     sidRegistryAddress: ethers.constants.AddressZero,
     feedRegistryAddress: "0x72d55658242377AF22907b6E7350148288f88033",
-    acm: governanceMainnetDeployments.contracts.AccessControlManager.address,
+    acm: opbnbmainnetGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0xC46796a21a3A9FAB6546aF3434F2eBfFd0604207", // opBNB Multisig
   },
 };
@@ -136,6 +147,7 @@ export const chainlinkFeed: Config = {
     BSW: "0x08e70777b982a58d23d05e3d7714f44837c06a21",
     WBNB: "0x0567f2323251f0aab15c8dfb1967e4e8a7d42aee",
     WIN: "0x9e7377e194e41d63795907c92c3eb351a2eb0233",
+    FDUSD: "0x390180e80058a8499930f0c13963ad3e0d86bfc9",
   },
   bsctestnet: {
     BNX: "0xf51492DeD1308Da8195C3bfcCF4a7c70fDbF9daE",
@@ -161,6 +173,15 @@ export const chainlinkFeed: Config = {
     WBTC: "0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43",
     WETH: "0x694AA1769357215DE4FAC081bf1f309aDC325306",
     USDC: "0xA2F78ab2355fe2f984D808B5CeE7FD0A93D5270E",
+  },
+  ethereum: {
+    WBTC: "0xF4030086522a5bEEa4988F8cA5B36dbC97BeE88c",
+    WETH: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419",
+    USDT: "0x3E7d1eAB13ad0104d2750B8863b489D65364e32D",
+    USDC: "0x8fFfFfd4AfB6115b954Bd326cbe7B4BA576818f6",
+    XVS: "0xa2a8507DEb233ceE4F5594044C259DD0582339CC",
+    CRV: "0xCd627aA160A6fA45Eb793D19Ef54f5062F20f33f",
+    crvUSD: "0xEEf0C605546958c1f899b6fB336C20671f9cD49F",
   },
 };
 
@@ -340,6 +361,12 @@ export const assets: Assets = {
       address: "0x2E7222e51c0f6e98610A1543Aa3836E092CDe62c",
       oracle: "chainlink",
       price: "159990000000000000000",
+    },
+    {
+      token: "FDUSD",
+      address: "0xcF27439fA231af9931ee40c4f27Bb77B83826F3C",
+      oracle: "chainlinkFixed",
+      price: "1000000000000000000", // 1$
     },
   ],
   bscmainnet: [
@@ -570,6 +597,18 @@ export const assets: Assets = {
       oracle: "binance",
       stalePeriod: 60 * 25,
     },
+    {
+      token: "FDUSD",
+      address: "0xc5f0f7b66764F6ec8C8Dff7BA683102295E16409",
+      oracle: "chainlink", // main oracle
+      stalePeriod: 60 * 60 * 24.5,
+    },
+    {
+      token: "FDUSD",
+      address: "0xc5f0f7b66764F6ec8C8Dff7BA683102295E16409",
+      oracle: "binance", // pivot oracle
+      stalePeriod: 60 * 25,
+    },
   ],
   sepolia: [
     {
@@ -613,6 +652,50 @@ export const assets: Assets = {
       address: "0x36421d873abCa3E2bE6BB3c819C0CF26374F63b6",
       oracle: "chainlinkFixed",
       price: "1000000000000000000", // $1.00
+    },
+  ],
+  ethereum: [
+    {
+      token: "WBTC",
+      address: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
+      oracle: "chainlink",
+      stalePeriod: STALE_PERIOD_100M,
+    },
+    {
+      token: "WETH",
+      address: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      oracle: "chainlink",
+      stalePeriod: STALE_PERIOD_100M,
+    },
+    {
+      token: "USDC",
+      address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      oracle: "chainlink",
+      stalePeriod: STALE_PERIOD_26H,
+    },
+    {
+      token: "USDT",
+      address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+      oracle: "chainlink",
+      stalePeriod: STALE_PERIOD_26H,
+    },
+    // {
+    //   token: "XVS",
+    //   address: "", // TODO: add redstone address when we get it
+    //   oracle: "redstone",
+    //   stalePeriod: STALE_PERIOD_26H
+    // },
+    {
+      token: "CRV",
+      address: "0xD533a949740bb3306d119CC777fa900bA034cd52",
+      oracle: "chainlink",
+      stalePeriod: STALE_PERIOD_26H,
+    },
+    {
+      token: "crvUSD",
+      address: "0xf939e0a03fb07f59a73314e73794be0e57ac1b4e",
+      oracle: "chainlink",
+      stalePeriod: STALE_PERIOD_26H,
     },
   ],
   opbnbtestnet: [

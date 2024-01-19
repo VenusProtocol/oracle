@@ -3,7 +3,7 @@
   "chainId": "5611",
   "addresses": {
     "BinanceOracle": "0x496B6b03469472572C47bdB407d5549b244a74F2",
-    "BinanceOracle_Implementation": "0x05Ab3afE8e9643e21E4C0Bcea41a8F556e8e429f",
+    "BinanceOracle_Implementation": "0x74E708A7F5486ed73CCCAe54B63e71B1988F1383",
     "BinanceOracle_Proxy": "0x496B6b03469472572C47bdB407d5549b244a74F2",
     "BoundValidator": "0x049537Bb065e6253e9D8D08B45Bf6b753657A746",
     "BoundValidator_Implementation": "0x95d1C5f11C7d84fb60bf0cd4dfCCdDE664cb0Af0",
