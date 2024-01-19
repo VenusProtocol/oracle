@@ -26,25 +26,24 @@ const FORK: boolean = process.env.FORK === "true";
 const FORKED_NETWORK: string = process.env.FORKED_NETWORK || "";
 const WETH_USD_PRICE_DENOMINATOR = parseUnits("1", 18);
 
-const oracleAddress = {
-  ethereum: ethereum.ResilientOracle.address,
-  sepolia: sepolia.ResilientOracle.address,
-};
-
-const { stETHAddress, wstETHAddress, timelock } = ADDRESSES[FORKED_NETWORK];
-
-const WETHAsset = assets[FORKED_NETWORK].find(asset => asset.token === "WETH");
-const WETHAddress = WETHAsset?.address ?? addr0000;
-
-const blockNumberPerNetwork: BlockConfig = {
-  ethereum: 19000000,
-  sepolia: 5000000,
-};
-
-const blockNumer = blockNumberPerNetwork[FORKED_NETWORK];
-
 // NOTE: in order to test the configuration, the blockNumber should be after the configuration transaction took place
 if (FORK && (FORKED_NETWORK === "ethereum" || FORKED_NETWORK === "sepolia")) {
+  const oracleAddress = {
+    ethereum: ethereum.ResilientOracle.address,
+    sepolia: sepolia.ResilientOracle.address,
+  };
+
+  const { stETHAddress, wstETHAddress, timelock } = ADDRESSES[FORKED_NETWORK];
+
+  const WETHAsset = assets[FORKED_NETWORK].find(asset => asset.token === "WETH");
+  const WETHAddress = WETHAsset?.address ?? addr0000;
+
+  const blockNumberPerNetwork: BlockConfig = {
+    ethereum: 19000000,
+    sepolia: 5000000,
+  };
+
+  const blockNumer = blockNumberPerNetwork[FORKED_NETWORK];
   forking(blockNumer, () => {
     let oracle: ResilientOracle;
     let wstETHOracle: WstETHOracle;
