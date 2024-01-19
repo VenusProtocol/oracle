@@ -3,13 +3,14 @@ import chai from "chai";
 import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
+import { ADDRESSES } from "../helpers/deploymentConfig";
 import { IStETH, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
 chai.use(smock.matchers);
 
-const WSTETH = "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0";
+const WSTETH = ADDRESSES.ethereum.wstETHAddress;
 const WETH = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
 
 const WETH_USD_PRICE = parseUnits("2500", 18); // 2500 USD for 1 WETH
