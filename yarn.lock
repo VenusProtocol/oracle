@@ -3178,6 +3178,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.27.1
     "@typescript-eslint/parser": ^5.27.1
     "@venusprotocol/governance-contracts": ^1.4.0-dev.9
+    "@venusprotocol/solidity-utilities": 1.3.0
     "@venusprotocol/venus-protocol": ^6.0.0
     chai: ^4.3.6
     cross-env: ^7.0.3
@@ -3226,6 +3227,13 @@ __metadata:
     hardhat-deploy: ^0.11.14
     module-alias: ^2.2.2
   checksum: 86e2da20ddb3824603c1f5e0931cc4715cd442624a03cc0fed7633ecbb5f2cab9a04ca5dcec805a4d9b0e04904799286210299f39935034f9fe85155f7b56da3
+  languageName: node
+  linkType: hard
+
+"@venusprotocol/solidity-utilities@npm:1.3.0":
+  version: 1.3.0
+  resolution: "@venusprotocol/solidity-utilities@npm:1.3.0"
+  checksum: d1109365a5e01959c47b25fb129373db93792e60bf1bc0ed324b63c2a64f6e4a7878ebf016cfade94bc41a2c1245d3e861fdc6b8c5844ac210ed1d73e7307e72
   languageName: node
   linkType: hard
 
