@@ -1,3 +1,27 @@
+## [1.9.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.8.0...v1.9.0-dev.1) (2024-01-22)
+
+
+### Features
+
+* add implementation of new wstETH oracle ([ee78b61](https://github.com/VenusProtocol/oracle/commit/ee78b61504f09f3f6e732c9b54862a17f15d6b13))
+* add unit tests for wstETH oracle ([8ee95dc](https://github.com/VenusProtocol/oracle/commit/8ee95dcb43a478ef29e9d58114bcd07b43747506))
+* fork test for wstETH oracle ([373d192](https://github.com/VenusProtocol/oracle/commit/373d1920251ec5abe58c711cb56161361e0e83b1))
+
+
+### Bug Fixes
+
+* CI test failing ([68e8bfe](https://github.com/VenusProtocol/oracle/commit/68e8bfe47dd0a74bb8172f95a6ab01a53b695714))
+* lint ([e1b730d](https://github.com/VenusProtocol/oracle/commit/e1b730d67997cfe186e209e601c6236ee0ece846))
+* remove hardcoded gas price for sepolia ([5a83647](https://github.com/VenusProtocol/oracle/commit/5a836478266b5799fe3e2335f25f864c94c3a3f9))
+* try fix sol parsing in github ([c909088](https://github.com/VenusProtocol/oracle/commit/c909088eedb7816b82282fa46ca4a55526b254e0))
+* typo ([25921ac](https://github.com/VenusProtocol/oracle/commit/25921ac407151d1ed658540eb35385eec609d3b1))
+* wrong denominator value ([a1c037e](https://github.com/VenusProtocol/oracle/commit/a1c037e1fad829b291c09eb3a635fbe6cce74491))
+
+
+### Reverts
+
+* Revert "fix: comment format of constructor" ([889fb21](https://github.com/VenusProtocol/oracle/commit/889fb21c20b539678cdd83d0077fe5928feb6522))
+
 ## [1.8.0](https://github.com/VenusProtocol/oracle/compare/v1.7.3...v1.8.0) (2023-12-28)
 
 
