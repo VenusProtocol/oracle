@@ -128,7 +128,6 @@ const config: HardhatUserConfig = {
       url: process.env.ARCHIVE_NODE_opbnbmainnet || "https://opbnb-mainnet-rpc.bnbchain.org",
       chainId: 204,
       live: true,
-      gasPrice: 10000000000,
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
   },
