@@ -1,4 +1,5 @@
-import { network } from "hardhat";
+import { impersonateAccount, setBalance } from "@nomicfoundation/hardhat-network-helpers";
+import { ethers, network } from "hardhat";
 
 async function setForkBlock(blockNumber: number) {
   await network.provider.request({
@@ -21,4 +22,10 @@ export const forking = (blockNumber: number, fn: () => void) => {
     });
     fn();
   });
+};
+
+export const initMainnetUser = async (user: string, balance: NumberLike) => {
+  await impersonateAccount(user);
+  await setBalance(user, balance);
+  return ethers.getSigner(user);
 };

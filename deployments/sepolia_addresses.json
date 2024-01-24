@@ -14,6 +14,9 @@
     "RedStoneOracle_Proxy": "0x4e6269Ef406B4CEE6e67BA5B5197c2FfD15099AE",
     "ResilientOracle": "0x8000eca36201dddf5805Aa4BeFD73d1EB4D23264",
     "ResilientOracle_Implementation": "0x86F82bca79774fc04859966917D2291A68b870A9",
-    "ResilientOracle_Proxy": "0x8000eca36201dddf5805Aa4BeFD73d1EB4D23264"
+    "ResilientOracle_Proxy": "0x8000eca36201dddf5805Aa4BeFD73d1EB4D23264",
+    "WstETHOracle": "0x92E7F73B0d57902fDC453E8aef990EdEe827b0BF",
+    "WstETHOracle_Implementation": "0xEf0F74FaBC69f32F9b73419726eeFa70F4E8d10F",
+    "WstETHOracle_Proxy": "0x92E7F73B0d57902fDC453E8aef990EdEe827b0BF"
   }
 }

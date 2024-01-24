@@ -84,6 +84,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
   sepolia: {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
+    stETHAddress: "0xF5465B70Af90AEb26Aa13b1000a8CbEA53a5f4cf",
+    wstETHAddress: "0x9b87ea90fdb55e1a0f17fbeddcf7eb0ac4d50493",
     VAIAddress: ethers.constants.AddressZero,
     acm: sepoliaGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x94fa6078b6b8a26f0b6edffbe6501b22a10470fb", // Sepolia Multisig
@@ -91,6 +93,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
   ethereum: {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
+    stETHAddress: "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
+    wstETHAddress: "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
     VAIAddress: ethers.constants.AddressZero,
     acm: ethereumGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x285960C5B22fD66A736C7136967A3eB15e93CC67", // Ethereum Multisig
