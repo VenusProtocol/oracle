@@ -1,3 +1,16 @@
+## [1.10.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.9.0...v1.10.0-dev.1) (2024-01-26)
+
+
+### Features
+
+* add oracle deployments for opbnbmainnet ([f6655e7](https://github.com/VenusProtocol/oracle/commit/f6655e744b64236c65e1099bab1caf237d56eb16))
+* updating deployment files ([5d813b2](https://github.com/VenusProtocol/oracle/commit/5d813b2f9fdd82418f2f888a2f19e2822268a631))
+
+
+### Bug Fixes
+
+* hardcoded gas input ([ef80913](https://github.com/VenusProtocol/oracle/commit/ef809133e3cef279495435c6c7fa4062cf41de41))
+
 ## [1.9.0](https://github.com/VenusProtocol/oracle/compare/v1.8.0...v1.9.0) (2024-01-23)
 
 
