@@ -79,7 +79,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   });
 
   // Skip deployment if chain is not BNB chain
-  if (networkName === "bsctetnet" || networkName === "bscmainnet") {
+  if (networkName === "bsctestnet" || networkName === "bscmainnet") {
     await deploy("TwapOracle", {
       contract: network.live ? "TwapOracle" : "MockTwapOracle",
       from: deployer,
