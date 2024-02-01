@@ -1,3 +1,11 @@
+## [1.10.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v1.10.0-dev.1...v1.10.0-dev.2) (2024-02-01)
+
+
+### Features
+
+* add wstETH oracle deployment on Ethereum ([505c721](https://github.com/VenusProtocol/oracle/commit/505c721d43f4dd02c2ae987dd3412a883b7f9bbb))
+* updating deployment files ([0acebd5](https://github.com/VenusProtocol/oracle/commit/0acebd566b0c0bab97bfd37b81ec561a3a493d4c))
+
 ## [1.10.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.9.0...v1.10.0-dev.1) (2024-01-26)
 
 
