@@ -42,7 +42,7 @@ module.exports = async ({ getNamedAccounts, deployments, network }: HardhatRunti
   });
 
   const binanceOracle: BinanceOracle = await hre.ethers.getContract("BinanceOracle_HAY_SnBNB");
-  await binanceOracle.transferOwnership(ADDRESSES[networkName].timelock);
+  await binanceOracle.transferOwnership(ADDRESSES[networkName].criticalTimeLock);
 };
 
 module.exports.tags = ["binanceOracle_HAY_SnBNB"];
