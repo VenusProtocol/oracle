@@ -3,6 +3,9 @@
   "chainId": "56",
   "addresses": {
     "BinanceOracle": "0x594810b741d136f1960141C0d8Fb4a91bE78A820",
+    "BinanceOracle_HAY_SnBNB": "0x1AD1A94550308f9f85871c8b68ac8442C39EE60b",
+    "BinanceOracle_HAY_SnBNB_Implementation": "0xD481411EBC26CCc20554Ea705E228B9DC41339B0",
+    "BinanceOracle_HAY_SnBNB_Proxy": "0x1AD1A94550308f9f85871c8b68ac8442C39EE60b",
     "BinanceOracle_Implementation": "0x8bf46792022126aE7f3ac8F4914Ed66e7DEb7388",
     "BinanceOracle_Proxy": "0x594810b741d136f1960141C0d8Fb4a91bE78A820",
     "BoundValidator": "0x6E332fF0bB52475304494E4AE5063c1051c7d735",
