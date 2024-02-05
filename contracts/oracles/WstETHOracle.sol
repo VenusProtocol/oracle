@@ -9,7 +9,8 @@ import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants
 /**
  * @title WstETHOracle
  * @author Venus
- * @notice This oracle fetches the price of wstETH asset
+ * @notice This oracle returns the USD price of wstETH asset.
+ *         Price is based on assumption that 1 stETH = 1 ETH
  */
 contract WstETHOracle is OracleInterface {
     /// @notice Address of stETH
@@ -42,7 +43,8 @@ contract WstETHOracle is OracleInterface {
     }
 
     /**
-     * @notice Gets the price of wstETH asset
+     * @notice Gets the USD price of wstETH asset
+     * @dev Price is based on assumption that 1 stETH = 1 ETH
      * @param asset Address of wstETH
      * @return wstETH Price in USD scaled by 1e18
      */
