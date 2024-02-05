@@ -69,8 +69,7 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
      * @param symbol The symbol of the asset
      * @param _maxStalePeriod The max stake period
      */
-    function setMaxStalePeriod(string memory symbol, uint256 _maxStalePeriod) external {
-        _checkAccessAllowed("setMaxStalePeriod(string,uint256)");
+    function setMaxStalePeriod(string memory symbol, uint256 _maxStalePeriod) external onlyOwner {
         if (_maxStalePeriod == 0) revert("stale period can't be zero");
         if (bytes(symbol).length == 0) revert("symbol cannot be empty");
 

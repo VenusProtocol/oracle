@@ -80,6 +80,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     sidRegistryAddress: "0x08CEd32a7f3eeC915Ba84415e9C07a7286977956",
     acm: bscmainnetGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: bscmainnetGovernanceDeployments.contracts.NormalTimelock.address,
+    criticalTimeLock: bscmainnetGovernanceDeployments.contracts.CriticalTimelock.address,
   },
   sepolia: {
     vBNBAddress: ethers.constants.AddressZero,
