@@ -2,23 +2,23 @@
 pragma solidity 0.8.13;
 
 import { OracleInterface } from "../interfaces/OracleInterface.sol";
-import { IStaderStakerManager } from "../interfaces/IStaderStakeManager.sol";
+import { IPStakePool } from "../interfaces/IPStakePool.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 
 /**
- * @title BNBxOracle
+ * @title StkBNBOracle
  * @author Venus
  * @notice This oracle fetches the price of BNBx asset
  */
-contract BNBxOracle is OracleInterface {
-    /// @notice Address of StakeManager
+contract StkBNBOracle is OracleInterface {
+    /// @notice Address of StakePool
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    IStaderStakerManager public immutable STAKE_MANAGER;
+    IPStakePool public immutable STAKE_POOL;
 
-    /// @notice Address of BNBx
+    /// @notice Address of stkBNB
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable BNBx;
+    address public immutable stkBNB;
 
     /// @notice Address of Resilient Oracle
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
@@ -29,30 +29,30 @@ contract BNBxOracle is OracleInterface {
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address stakeManager, address bnbx, address resilientOracleAddress) {
-        ensureNonzeroAddress(stakeManager);
-        ensureNonzeroAddress(bnbx);
+    constructor(address stakePool, address _stkBNB, address resilientOracleAddress) {
+        ensureNonzeroAddress(stakePool);
+        ensureNonzeroAddress(_stkBNB);
         ensureNonzeroAddress(resilientOracleAddress);
-        STAKE_MANAGER = IStaderStakerManager(stakeManager);
-        BNBx = bnbx;
+        STAKE_POOL = IPStakePool(stakePool);
+        stkBNB = _stkBNB;
         RESILIENT_ORACLE = OracleInterface(resilientOracleAddress);
     }
 
     /**
-     * @notice Gets the price of BNBx asset
-     * @param asset Address of BNBx
+     * @notice Gets the price of stkBNB asset
+     * @param asset Address of stkBNB
      * @return price Price in USD scaled by 1e18
      */
     function getPrice(address asset) public view returns (uint256) {
-        if (asset != BNBx) revert("wrong BNBx address");
+        if (asset != stkBNB) revert("wrong stkBNB address");
 
-        // get BNB amount for 1 BNBx scaled by 1e18
-        uint256 BNBAmount = STAKE_MANAGER.convertBnbXToBnb(1 ether);
+        // get BNB amount for 1 stkBNB scaled by 1e18
+        IPStakePool.Data memory BNBAmount = STAKE_POOL.exchangeRate();
 
         // price is scaled 1e18 (oracle returns 36 - asset decimal scale)
         uint256 bnbUSDPrice = RESILIENT_ORACLE.getPrice(NATIVE_TOKEN_ADDR);
 
-        // BNBAmount (for 1 BNBx) * bnbUSDPrice / 1e18
-        return (BNBAmount * bnbUSDPrice) / EXP_SCALE;
+        // BNBAmount (for 1 stkBNB) * bnbUSDPrice / 1e18
+        return (BNBAmount.totalWei * bnbUSDPrice) / EXP_SCALE;
     }
 }
