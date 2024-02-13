@@ -2,7 +2,7 @@
 pragma solidity 0.8.13;
 
 import { OracleInterface } from "../interfaces/OracleInterface.sol";
-import { IStaderStakerManager } from "../interfaces/IStaderStakeManager.sol";
+import { IStaderStakeManager } from "../interfaces/IStaderStakeManager.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 
@@ -14,7 +14,7 @@ import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants
 contract BNBxOracle is OracleInterface {
     /// @notice Address of StakeManager
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    IStaderStakerManager public immutable STAKE_MANAGER;
+    IStaderStakeManager public immutable STAKE_MANAGER;
 
     /// @notice Address of BNBx
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
@@ -33,7 +33,7 @@ contract BNBxOracle is OracleInterface {
         ensureNonzeroAddress(stakeManager);
         ensureNonzeroAddress(bnbx);
         ensureNonzeroAddress(resilientOracleAddress);
-        STAKE_MANAGER = IStaderStakerManager(stakeManager);
+        STAKE_MANAGER = IStaderStakeManager(stakeManager);
         BNBx = bnbx;
         RESILIENT_ORACLE = OracleInterface(resilientOracleAddress);
     }

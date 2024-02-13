@@ -2,7 +2,7 @@
 pragma solidity 0.8.13;
 
 import { OracleInterface } from "../interfaces/OracleInterface.sol";
-import { ISynclubStakerManager } from "../interfaces/ISynclubStakeManager.sol";
+import { ISynclubStakeManager } from "../interfaces/ISynclubStakeManager.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 
@@ -14,7 +14,7 @@ import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants
 contract SlisBNBOracle is OracleInterface {
     /// @notice Address of StakeManager
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    ISynclubStakerManager public immutable STAKE_MANAGER;
+    ISynclubStakeManager public immutable STAKE_MANAGER;
 
     /// @notice Address of slisBNB
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
@@ -33,7 +33,7 @@ contract SlisBNBOracle is OracleInterface {
         ensureNonzeroAddress(stakeManager);
         ensureNonzeroAddress(_slisBNB);
         ensureNonzeroAddress(resilientOracleAddress);
-        STAKE_MANAGER = ISynclubStakerManager(stakeManager);
+        STAKE_MANAGER = ISynclubStakeManager(stakeManager);
         slisBNB = _slisBNB;
         RESILIENT_ORACLE = OracleInterface(resilientOracleAddress);
     }
