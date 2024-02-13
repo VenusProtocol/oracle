@@ -79,6 +79,14 @@ export const ADDRESSES: PreconfiguredAddresses = {
     sidRegistryAddress: "0x08CEd32a7f3eeC915Ba84415e9C07a7286977956",
     acm: bscmainnetGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: bscmainnetGovernanceDeployments.contracts.NormalTimelock.address,
+    BNBxStakeManager: "0x7276241a669489e4bbb76f63d2a43bfe63080f2f",
+    BNBx: "0x1bdd3cf7f79cfb8edbb955f20ad99211551ba275",
+    stkBNBStakePool: "0xC228CefDF841dEfDbD5B3a18dFD414cC0dbfa0D8",
+    stkBNB: "0xc2E9d07F66A89c44062459A47a0D2Dc038E4fb16",
+    slisBNBStakeManager: "0x1adB950d8bB3dA4bE104211D5AB038628e477fE6",
+    slisBNB: "0xB0b84D294e0C75A6abe60171b70edEb2EFd14A1B",
+    wBETH: "0xa2e3356610840701bdf5611a53974510ae27e2e1",
+    ankrBNB: "0x52f24a5e03aee338da5fd9df68d2b6fae1178827"
   },
   sepolia: {
     vBNBAddress: ethers.constants.AddressZero,
