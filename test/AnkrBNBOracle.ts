@@ -3,7 +3,6 @@ import chai from "chai";
 import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
-import { ADDRESSES } from "../helpers/deploymentConfig";
 import { IAnkrBNB, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
