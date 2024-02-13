@@ -4,13 +4,13 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { IStaderStakeManager, ISynclubStakeManager, ResilientOracleInterface } from "../typechain-types";
+import { ISynclubStakeManager, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
 chai.use(smock.matchers);
 
-const slisBNB = ADDRESSES.bscmainnet.slisBNB;
+const { slisBNB } = ADDRESSES.bscmainnet;
 const EXP_SCALE = parseUnits("1", 18);
 const BNB_USD_PRICE = parseUnits("300", 18); // 300 USD for 1 BNB
 const BNB_FOR_ONE_SLISBNB = parseUnits("1.014061147834812261", 18);
@@ -33,19 +33,21 @@ describe("SlisBNBOracle unit tests", () => {
 
   describe("deployment", () => {
     it("revert if SynclubManager address is 0", async () => {
-      await expect(SlisBNBOracleFactory.deploy(addr0000, slisBNB, resilientOracleMock.address)).to.be
-        .reverted;
+      await expect(SlisBNBOracleFactory.deploy(addr0000, slisBNB, resilientOracleMock.address)).to.be.reverted;
     });
     it("revert if slisBNB address is 0", async () => {
       await expect(SlisBNBOracleFactory.deploy(SynclubManagerMock.address, addr0000, resilientOracleMock.address)).to.be
         .reverted;
     });
     it("revert if resilientOracle address is 0", async () => {
-      await expect(SlisBNBOracleFactory.deploy(SynclubManagerMock.address, slisBNB, addr0000)).to.be
-        .reverted;
+      await expect(SlisBNBOracleFactory.deploy(SynclubManagerMock.address, slisBNB, addr0000)).to.be.reverted;
     });
     it("should deploy contract", async () => {
-      SlisBNBOracle = await SlisBNBOracleFactory.deploy(SynclubManagerMock.address, slisBNB, resilientOracleMock.address);
+      SlisBNBOracle = await SlisBNBOracleFactory.deploy(
+        SynclubManagerMock.address,
+        slisBNB,
+        resilientOracleMock.address,
+      );
     });
   });
 

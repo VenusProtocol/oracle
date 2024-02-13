@@ -10,7 +10,7 @@ import { addr0000 } from "./utils/data";
 const { expect } = chai;
 chai.use(smock.matchers);
 
-const stkBNB = ADDRESSES.bscmainnet.stkBNB;
+const stkBNB = ADDRESSES.bscmainnet;
 const EXP_SCALE = parseUnits("1", 18);
 const BNB_USD_PRICE = parseUnits("300", 18); // 300 USD for 1 BNB
 const TOTAL_WEI = parseUnits("17173.956674843638040397", 18);
@@ -37,16 +37,14 @@ describe("StkBNBOracle unit tests", () => {
 
   describe("deployment", () => {
     it("revert if stakePool address is 0", async () => {
-      await expect(StkBNBOracleFactory.deploy(addr0000, stkBNB, resilientOracleMock.address)).to.be
-        .reverted;
+      await expect(StkBNBOracleFactory.deploy(addr0000, stkBNB, resilientOracleMock.address)).to.be.reverted;
     });
     it("revert if stkBNB address is 0", async () => {
       await expect(StkBNBOracleFactory.deploy(stkBNBStakePoolMock.address, addr0000, resilientOracleMock.address)).to.be
         .reverted;
     });
     it("revert if resilientOracle address is 0", async () => {
-      await expect(StkBNBOracleFactory.deploy(stkBNBStakePoolMock.address, stkBNB, addr0000)).to.be
-        .reverted;
+      await expect(StkBNBOracleFactory.deploy(stkBNBStakePoolMock.address, stkBNB, addr0000)).to.be.reverted;
     });
     it("should deploy contract", async () => {
       StkBNBOracle = await StkBNBOracleFactory.deploy(stkBNBStakePoolMock.address, stkBNB, resilientOracleMock.address);

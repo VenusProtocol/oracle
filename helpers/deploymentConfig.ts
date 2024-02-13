@@ -86,7 +86,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     slisBNBStakeManager: "0x1adB950d8bB3dA4bE104211D5AB038628e477fE6",
     slisBNB: "0xB0b84D294e0C75A6abe60171b70edEb2EFd14A1B",
     wBETH: "0xa2e3356610840701bdf5611a53974510ae27e2e1",
-    ankrBNB: "0x52f24a5e03aee338da5fd9df68d2b6fae1178827"
+    ankrBNB: "0x52f24a5e03aee338da5fd9df68d2b6fae1178827",
   },
   sepolia: {
     vBNBAddress: ethers.constants.AddressZero,
