@@ -1,0 +1,194 @@
+{
+  "address": "0x8eD8CAd5b2b877d9eC1C5c058410cd6E92b7Ca54",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "stakeManager",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "bnbx",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "resilientOracleAddress",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "ZeroAddressNotAllowed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "BNBx",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "NATIVE_TOKEN_ADDR",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "RESILIENT_ORACLE",
+      "outputs": [
+        {
+          "internalType": "contract OracleInterface",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "STAKE_MANAGER",
+      "outputs": [
+        {
+          "internalType": "contract IStaderStakeManager",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        }
+      ],
+      "name": "getPrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xa394af390ce42efca9b83f5f5e935d7fa0bb6018cab1efceeba986bd1075e2f2",
+  "receipt": {
+    "to": null,
+    "from": "0x464779C41C5f1Be598853C1F87bCC7087Ea75f28",
+    "contractAddress": "0x8eD8CAd5b2b877d9eC1C5c058410cd6E92b7Ca54",
+    "transactionIndex": 0,
+    "gasUsed": "267762",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x18f4ed2481ba1fc2435672f4b375077483036cd4882216cf6703486ee52f0e3a",
+    "transactionHash": "0xa394af390ce42efca9b83f5f5e935d7fa0bb6018cab1efceeba986bd1075e2f2",
+    "logs": [],
+    "blockNumber": 37709628,
+    "cumulativeGasUsed": "267762",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xDAdcae6bF110c0e70E5624bCdcCBe206f92A2Df9",
+    "0x327d6E6FAC0228070884e913263CFF9eFed4a2C8",
+    "0x3cD69251D04A28d887Ac14cbe2E14c52F3D57823"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "db924d66df71fb6ae2ea4f32b71c36a5",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.13+commit.abaa5c0e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"stakeManager\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"bnbx\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"resilientOracleAddress\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"ZeroAddressNotAllowed\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"BNBx\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"NATIVE_TOKEN_ADDR\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"RESILIENT_ORACLE\",\"outputs\":[{\"internalType\":\"contract OracleInterface\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"STAKE_MANAGER\",\"outputs\":[{\"internalType\":\"contract IStaderStakeManager\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"}],\"name\":\"getPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"Venus\",\"kind\":\"dev\",\"methods\":{\"constructor\":{\"custom:oz-upgrades-unsafe-allow\":\"constructor\"},\"getPrice(address)\":{\"params\":{\"asset\":\"Address of BNBx\"},\"returns\":{\"_0\":\"price Price in USD scaled by 1e18\"}}},\"stateVariables\":{\"BNBx\":{\"custom:oz-upgrades-unsafe-allow\":\"state-variable-immutable\"},\"RESILIENT_ORACLE\":{\"custom:oz-upgrades-unsafe-allow\":\"state-variable-immutable\"},\"STAKE_MANAGER\":{\"custom:oz-upgrades-unsafe-allow\":\"state-variable-immutable\"}},\"title\":\"BNBxOracle\",\"version\":1},\"userdoc\":{\"errors\":{\"ZeroAddressNotAllowed()\":[{\"notice\":\"Thrown if the supplied address is a zero address where it is not allowed\"}]},\"kind\":\"user\",\"methods\":{\"BNBx()\":{\"notice\":\"Address of BNBx\"},\"NATIVE_TOKEN_ADDR()\":{\"notice\":\"Set this as asset address for native token on each chain.\"},\"RESILIENT_ORACLE()\":{\"notice\":\"Address of Resilient Oracle\"},\"STAKE_MANAGER()\":{\"notice\":\"Address of StakeManager\"},\"constructor\":{\"notice\":\"Constructor for the implementation contract.\"},\"getPrice(address)\":{\"notice\":\"Gets the price of BNBx asset\"}},\"notice\":\"This oracle fetches the price of BNBx asset\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/oracles/BNBxOracle.sol\":\"BNBxOracle\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@venusprotocol/solidity-utilities/contracts/constants.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity 0.8.13;\\n\\n/// @dev Base unit for computations, usually used in scaling (multiplications, divisions)\\nuint256 constant EXP_SCALE = 1e18;\\n\\n/// @dev A unit (literal one) in EXP_SCALE, usually used in additions/subtractions\\nuint256 constant MANTISSA_ONE = EXP_SCALE;\\n\\n/// @dev The approximate number of seconds per year\\nuint256 constant SECONDS_PER_YEAR = 31_536_000;\\n\",\"keccak256\":\"0x0464dd1b882ea2925e06e967c025a232c824e9e4c7aee7b97cc255d040594a59\",\"license\":\"BSD-3-Clause\"},\"@venusprotocol/solidity-utilities/contracts/validators.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity 0.8.13;\\n\\n/// @notice Thrown if the supplied address is a zero address where it is not allowed\\nerror ZeroAddressNotAllowed();\\n\\n/// @notice Thrown if the supplied value is 0 where it is not allowed\\nerror ZeroValueNotAllowed();\\n\\n/// @notice Checks if the provided address is nonzero, reverts otherwise\\n/// @param address_ Address to check\\n/// @custom:error ZeroAddressNotAllowed is thrown if the provided address is a zero address\\nfunction ensureNonzeroAddress(address address_) pure {\\n    if (address_ == address(0)) {\\n        revert ZeroAddressNotAllowed();\\n    }\\n}\\n\\n/// @notice Checks if the provided value is nonzero, reverts otherwise\\n/// @param value_ Value to check\\n/// @custom:error ZeroValueNotAllowed is thrown if the provided value is 0\\nfunction ensureNonzeroValue(uint256 value_) pure {\\n    if (value_ == 0) {\\n        revert ZeroValueNotAllowed();\\n    }\\n}\\n\",\"keccak256\":\"0xd55726634a83a862a9cef9d34c41694d3d0fea86cdbc57d6674af066792194b1\",\"license\":\"BSD-3-Clause\"},\"contracts/interfaces/IStaderStakeManager.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity 0.8.13;\\n\\ninterface IStaderStakeManager {\\n    function convertBnbXToBnb(uint256 _amount) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0x822cee07346371b10482045a10b7b614b72b6b946ba7e45d63a9030f0e46991d\",\"license\":\"BSD-3-Clause\"},\"contracts/interfaces/OracleInterface.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity 0.8.13;\\n\\ninterface OracleInterface {\\n    function getPrice(address asset) external view returns (uint256);\\n}\\n\\ninterface ResilientOracleInterface is OracleInterface {\\n    function updatePrice(address vToken) external;\\n\\n    function updateAssetPrice(address asset) external;\\n\\n    function getUnderlyingPrice(address vToken) external view returns (uint256);\\n}\\n\\ninterface TwapInterface is OracleInterface {\\n    function updateTwap(address asset) external returns (uint256);\\n}\\n\\ninterface BoundValidatorInterface {\\n    function validatePriceWithAnchorPrice(\\n        address asset,\\n        uint256 reporterPrice,\\n        uint256 anchorPrice\\n    ) external view returns (bool);\\n}\\n\",\"keccak256\":\"0x40031b19684ca0c912e794d08c2c0b0d8be77d3c1bdc937830a0658eff899650\",\"license\":\"BSD-3-Clause\"},\"contracts/oracles/BNBxOracle.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity 0.8.13;\\n\\nimport { OracleInterface } from \\\"../interfaces/OracleInterface.sol\\\";\\nimport { IStaderStakeManager } from \\\"../interfaces/IStaderStakeManager.sol\\\";\\nimport { ensureNonzeroAddress } from \\\"@venusprotocol/solidity-utilities/contracts/validators.sol\\\";\\nimport { EXP_SCALE } from \\\"@venusprotocol/solidity-utilities/contracts/constants.sol\\\";\\n\\n/**\\n * @title BNBxOracle\\n * @author Venus\\n * @notice This oracle fetches the price of BNBx asset\\n */\\ncontract BNBxOracle is OracleInterface {\\n    /// @notice Address of StakeManager\\n    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable\\n    IStaderStakeManager public immutable STAKE_MANAGER;\\n\\n    /// @notice Address of BNBx\\n    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable\\n    address public immutable BNBx;\\n\\n    /// @notice Address of Resilient Oracle\\n    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable\\n    OracleInterface public immutable RESILIENT_ORACLE;\\n\\n    /// @notice Set this as asset address for native token on each chain.\\n    address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;\\n\\n    /// @notice Constructor for the implementation contract.\\n    /// @custom:oz-upgrades-unsafe-allow constructor\\n    constructor(address stakeManager, address bnbx, address resilientOracleAddress) {\\n        ensureNonzeroAddress(stakeManager);\\n        ensureNonzeroAddress(bnbx);\\n        ensureNonzeroAddress(resilientOracleAddress);\\n        STAKE_MANAGER = IStaderStakeManager(stakeManager);\\n        BNBx = bnbx;\\n        RESILIENT_ORACLE = OracleInterface(resilientOracleAddress);\\n    }\\n\\n    /**\\n     * @notice Gets the price of BNBx asset\\n     * @param asset Address of BNBx\\n     * @return price Price in USD scaled by 1e18\\n     */\\n    function getPrice(address asset) public view returns (uint256) {\\n        if (asset != BNBx) revert(\\\"wrong BNBx address\\\");\\n\\n        // get BNB amount for 1 BNBx scaled by 1e18\\n        uint256 BNBAmount = STAKE_MANAGER.convertBnbXToBnb(1 ether);\\n\\n        // price is scaled 1e18 (oracle returns 36 - asset decimal scale)\\n        uint256 bnbUSDPrice = RESILIENT_ORACLE.getPrice(NATIVE_TOKEN_ADDR);\\n\\n        // BNBAmount (for 1 BNBx) * bnbUSDPrice / 1e18\\n        return (BNBAmount * bnbUSDPrice) / EXP_SCALE;\\n    }\\n}\\n\",\"keccak256\":\"0x0ed26103817352a978361146d13fb43109b89d1bbfaffc1403f240234f335bf2\",\"license\":\"BSD-3-Clause\"}},\"version\":1}",
+  "bytecode": "0x60e060405234801561001057600080fd5b5060405161050238038061050283398101604081905261002f916100ad565b61003883610067565b61004182610067565b61004a81610067565b6001600160a01b0392831660805290821660a0521660c0526100f0565b6001600160a01b03811661008e576040516342bcdf7f60e11b815260040160405180910390fd5b50565b80516001600160a01b03811681146100a857600080fd5b919050565b6000806000606084860312156100c257600080fd5b6100cb84610091565b92506100d960208501610091565b91506100e760408501610091565b90509250925092565b60805160a05160c0516103d06101326000396000818160c60152610270015260008181610108015261012e015260008181608701526101c601526103d06000f3fe608060405234801561001057600080fd5b50600436106100575760003560e01c806341976e091461005c5780637353847a14610082578063a4edcd4c146100c1578063a9534f8a146100e8578063f3ff4d9214610103575b600080fd5b61006f61006a366004610302565b61012a565b6040519081526020015b60405180910390f35b6100a97f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b039091168152602001610079565b6100a97f000000000000000000000000000000000000000000000000000000000000000081565b6100a973bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb81565b6100a97f000000000000000000000000000000000000000000000000000000000000000081565b60007f00000000000000000000000000000000000000000000000000000000000000006001600160a01b0316826001600160a01b0316146101a65760405162461bcd60e51b815260206004820152601260248201527177726f6e6720424e4278206164647265737360701b604482015260640160405180910390fd5b604051631940a0dd60e31b8152670de0b6b3a764000060048201526000907f00000000000000000000000000000000000000000000000000000000000000006001600160a01b03169063ca0506e890602401602060405180830381865afa158015610215573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102399190610332565b6040516341976e0960e01b815273bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb60048201529091506000906001600160a01b037f000000000000000000000000000000000000000000000000000000000000000016906341976e0990602401602060405180830381865afa1580156102b7573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102db9190610332565b9050670de0b6b3a76400006102f0828461034b565b6102fa9190610378565b949350505050565b60006020828403121561031457600080fd5b81356001600160a01b038116811461032b57600080fd5b9392505050565b60006020828403121561034457600080fd5b5051919050565b600081600019048311821515161561037357634e487b7160e01b600052601160045260246000fd5b500290565b60008261039557634e487b7160e01b600052601260045260246000fd5b50049056fea2646970667358221220d09e1a210eed7cba1e1cbd889d10bb78f56f500725dfb283e67dd2804dfe971c64736f6c634300080d0033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100575760003560e01c806341976e091461005c5780637353847a14610082578063a4edcd4c146100c1578063a9534f8a146100e8578063f3ff4d9214610103575b600080fd5b61006f61006a366004610302565b61012a565b6040519081526020015b60405180910390f35b6100a97f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b039091168152602001610079565b6100a97f000000000000000000000000000000000000000000000000000000000000000081565b6100a973bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb81565b6100a97f000000000000000000000000000000000000000000000000000000000000000081565b60007f00000000000000000000000000000000000000000000000000000000000000006001600160a01b0316826001600160a01b0316146101a65760405162461bcd60e51b815260206004820152601260248201527177726f6e6720424e4278206164647265737360701b604482015260640160405180910390fd5b604051631940a0dd60e31b8152670de0b6b3a764000060048201526000907f00000000000000000000000000000000000000000000000000000000000000006001600160a01b03169063ca0506e890602401602060405180830381865afa158015610215573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102399190610332565b6040516341976e0960e01b815273bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb60048201529091506000906001600160a01b037f000000000000000000000000000000000000000000000000000000000000000016906341976e0990602401602060405180830381865afa1580156102b7573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102db9190610332565b9050670de0b6b3a76400006102f0828461034b565b6102fa9190610378565b949350505050565b60006020828403121561031457600080fd5b81356001600160a01b038116811461032b57600080fd5b9392505050565b60006020828403121561034457600080fd5b5051919050565b600081600019048311821515161561037357634e487b7160e01b600052601160045260246000fd5b500290565b60008261039557634e487b7160e01b600052601260045260246000fd5b50049056fea2646970667358221220d09e1a210eed7cba1e1cbd889d10bb78f56f500725dfb283e67dd2804dfe971c64736f6c634300080d0033",
+  "devdoc": {
+    "author": "Venus",
+    "kind": "dev",
+    "methods": {
+      "constructor": {
+        "custom:oz-upgrades-unsafe-allow": "constructor"
+      },
+      "getPrice(address)": {
+        "params": {
+          "asset": "Address of BNBx"
+        },
+        "returns": {
+          "_0": "price Price in USD scaled by 1e18"
+        }
+      }
+    },
+    "stateVariables": {
+      "BNBx": {
+        "custom:oz-upgrades-unsafe-allow": "state-variable-immutable"
+      },
+      "RESILIENT_ORACLE": {
+        "custom:oz-upgrades-unsafe-allow": "state-variable-immutable"
+      },
+      "STAKE_MANAGER": {
+        "custom:oz-upgrades-unsafe-allow": "state-variable-immutable"
+      }
+    },
+    "title": "BNBxOracle",
+    "version": 1
+  },
+  "userdoc": {
+    "errors": {
+      "ZeroAddressNotAllowed()": [
+        {
+          "notice": "Thrown if the supplied address is a zero address where it is not allowed"
+        }
+      ]
+    },
+    "kind": "user",
+    "methods": {
+      "BNBx()": {
+        "notice": "Address of BNBx"
+      },
+      "NATIVE_TOKEN_ADDR()": {
+        "notice": "Set this as asset address for native token on each chain."
+      },
+      "RESILIENT_ORACLE()": {
+        "notice": "Address of Resilient Oracle"
+      },
+      "STAKE_MANAGER()": {
+        "notice": "Address of StakeManager"
+      },
+      "constructor": {
+        "notice": "Constructor for the implementation contract."
+      },
+      "getPrice(address)": {
+        "notice": "Gets the price of BNBx asset"
+      }
+    },
+    "notice": "This oracle fetches the price of BNBx asset",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}
