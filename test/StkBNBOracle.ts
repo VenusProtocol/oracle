@@ -10,7 +10,7 @@ import { addr0000 } from "./utils/data";
 const { expect } = chai;
 chai.use(smock.matchers);
 
-const stkBNB = ADDRESSES.bscmainnet;
+const { stkBNB } = ADDRESSES.bscmainnet;
 const EXP_SCALE = parseUnits("1", 18);
 const BNB_USD_PRICE = parseUnits("300", 18); // 300 USD for 1 BNB
 const TOTAL_WEI = parseUnits("17173.956674843638040397", 18);
