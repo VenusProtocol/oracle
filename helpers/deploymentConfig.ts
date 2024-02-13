@@ -75,7 +75,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     BNBxStakeManager: "0xDAdcae6bF110c0e70E5624bCdcCBe206f92A2Df9",
     BNBx: "0x327d6E6FAC0228070884e913263CFF9eFed4a2C8",
     slisBNBStakeManager: "0xbF0Db0d1340fdd5DF245613E280856aEAFbF54d1",
-    slisBNB: "0xB0b84D294e0C75A6abe60171b70edEb2EFd14A1B",
+    slisBNB: "0xd2aF6A916Bc77764dc63742BC30f71AF4cF423F4",
   },
   bscmainnet: {
     vBNBAddress: mainnetDeployments.contracts.vBNB.address,

@@ -14,12 +14,8 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
   if (network.name === "bscmainnet" || network.name === "bsctestnet") {
-    const { BNBx, BNBxStakeManager, slisBNBStakeManager, stkBNBStakePool } = ADDRESSES[network.name];
+    const { BNBx, BNBxStakeManager, slisBNBStakeManager, stkBNBStakePool, slisBNB } = ADDRESSES[network.name];
     const stkBNB = assets[network.name].find(asset => asset.token === "stkBNB");
-    const slisBNB =
-      network.name === "bscmainnet"
-        ? "0xB0b84D294e0C75A6abe60171b70edEb2EFd14A1B"
-        : "0xd2aF6A916Bc77764dc63742BC30f71AF4cF423F4";
 
     await deploy("BNBxOracle", {
       from: deployer,
