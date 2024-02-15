@@ -19,11 +19,26 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const oracle = await ethers.getContract("ResilientOracle");
 
-  await deploy("WstETHOracle", {
+  // Equivalence and NonEquivalence is related to if the oracle will
+  // assume 1/1 price ration between stETH/ETH or
+  // will get stETH/USD price from secondary market
+
+  await deploy("WstETHOracle_Equivalence", {
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [wstETHAddress, WETHAddress, stETHAddress, oracle.address],
+    args: [wstETHAddress, WETHAddress, stETHAddress, oracle.address, true],
+    proxy: {
+      owner: proxyOwnerAddress,
+      proxyContract: "OptimizedTransparentProxy",
+    },
+  });
+
+  await deploy("WstETHOracle_NonEquivalence", {
+    from: deployer,
+    log: true,
+    deterministicDeployment: false,
+    args: [wstETHAddress, WETHAddress, stETHAddress, oracle.address, false],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
