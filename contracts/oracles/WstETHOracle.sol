@@ -9,8 +9,8 @@ import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants
 /**
  * @title WstETHOracle
  * @author Venus
- * @notice This oracle returns the USD price of wstETH asset.
- *         Price is based on assumption that 1 stETH = 1 ETH
+ * @notice Depending on the equivalence flag price is either based on assumption that 1 stETH = 1 ETH
+ *         or the price of stETH/USD (secondary market price) is obtained from the oracle.
  */
 contract WstETHOracle is OracleInterface {
     /// @notice A flag assuming 1:1 price equivalence between stETH/ETH
