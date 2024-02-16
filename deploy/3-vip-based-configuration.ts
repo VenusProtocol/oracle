@@ -195,7 +195,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     ...(await acceptOwnership("RedStoneOracle", owner, hre)),
     ...(await acceptOwnership("BoundValidator", owner, hre)),
     ...(await acceptOwnership("BinanceOracle", owner, hre)),
-    ...(await acceptOwnership("TwapOracle", owner, hre)),
     ...(await configurePriceFeeds(hre)),
   ];
 

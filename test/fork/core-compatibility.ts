@@ -25,8 +25,6 @@ import {
   PythOracle__factory,
   ResilientOracle,
   ResilientOracle__factory,
-  TwapOracle,
-  TwapOracle__factory,
 } from "../../typechain-types";
 
 const DEFAULT_PRICE = "1000000000000000000"; // $1
@@ -40,7 +38,6 @@ interface OracleFixture {
   boundValidator: BoundValidator;
   chainlinkOracle: ChainlinkOracle | undefined;
   redStoneOracle: ChainlinkOracle | undefined;
-  twapOracle: TwapOracle | undefined;
   pythOracle: PythOracle | undefined;
   binanceOracle: BinanceOracle | undefined;
 }
@@ -127,14 +124,6 @@ async function deployOracleFixture(): Promise<OracleFixture> {
     );
   }
 
-  let twapOracle;
-  if (oraclesToDeploy.twap) {
-    const TwapOracleFactory: TwapOracle__factory = await ethers.getContractFactory("TwapOracle");
-    twapOracle = <TwapOracle>await upgrades.deployProxy(TwapOracleFactory, [accessControlManager.address], {
-      constructorArgs: [networkAddresses.WBNBAddress],
-    });
-  }
-
   let pythOracle;
   if (oraclesToDeploy.pyth) {
     const PythOracleFactory: PythOracle__factory = await ethers.getContractFactory("PythOracle");
@@ -167,7 +156,7 @@ async function deployOracleFixture(): Promise<OracleFixture> {
     );
   }
 
-  return { resilientOracle, boundValidator, chainlinkOracle, redStoneOracle, twapOracle, pythOracle, binanceOracle };
+  return { resilientOracle, boundValidator, chainlinkOracle, redStoneOracle, pythOracle, binanceOracle };
 }
 
 if (FORK) {
