@@ -1,3 +1,10 @@
+## [1.10.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v1.10.0-dev.4...v1.10.0-dev.5) (2024-02-20)
+
+
+### Bug Fixes
+
+* remove twap oracle ([85b1021](https://github.com/VenusProtocol/oracle/commit/85b1021928d1faaacf8d9263cf6c3916e1142f43))
+
 ## [1.10.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v1.10.0-dev.3...v1.10.0-dev.4) (2024-02-07)
 
 ## [1.10.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v1.10.0-dev.2...v1.10.0-dev.3) (2024-02-05)
