@@ -47,12 +47,12 @@ contract SlisBNBOracle is OracleInterface {
         if (asset != slisBNB) revert("wrong slisBNB address");
 
         // get BNB amount for 1 slisBNB scaled by 1e18
-        uint256 BNBAmount = STAKE_MANAGER.convertSnBnbToBnb(1 ether);
+        uint256 bnbAmount = STAKE_MANAGER.convertSnBnbToBnb(1 ether);
 
         // price is scaled 1e18 (oracle returns 36 - asset decimal scale)
         uint256 bnbUSDPrice = RESILIENT_ORACLE.getPrice(NATIVE_TOKEN_ADDR);
 
-        // BNBAmount (for 1 slisBNB) * bnbUSDPrice / 1e18
-        return (BNBAmount * bnbUSDPrice) / EXP_SCALE;
+        // bnbAmount (for 1 slisBNB) * bnbUSDPrice / 1e18
+        return (bnbAmount * bnbUSDPrice) / EXP_SCALE;
     }
 }

@@ -48,12 +48,12 @@ contract StkBNBOracle is OracleInterface {
 
         // get BNB amount for 1 stkBNB scaled by 1e18
         IPStakePool.Data memory exchangeRateData = STAKE_POOL.exchangeRate();
-        uint256 BNBAmount = (exchangeRateData.totalWei * EXP_SCALE) / exchangeRateData.poolTokenSupply;
+        uint256 bnbAmount = (exchangeRateData.totalWei * EXP_SCALE) / exchangeRateData.poolTokenSupply;
 
         // price is scaled 1e18 (oracle returns 36 - asset decimal scale)
         uint256 bnbUSDPrice = RESILIENT_ORACLE.getPrice(NATIVE_TOKEN_ADDR);
 
-        // BNBAmount (for 1 stkBNB) * bnbUSDPrice / 1e18
-        return (BNBAmount * bnbUSDPrice) / EXP_SCALE;
+        // bnbAmount (for 1 stkBNB) * bnbUSDPrice / 1e18
+        return (bnbAmount * bnbUSDPrice) / EXP_SCALE;
     }
 }

@@ -41,12 +41,12 @@ contract AnkrBNBOracle is OracleInterface {
         if (asset != ankrBNB) revert("wrong ankrBNB address");
 
         // get BNB amount for 1 ankrBNB scaled by 1e18
-        uint256 BNBAmount = IAnkrBNB(ankrBNB).sharesToBonds(1 ether);
+        uint256 bnbAmount = IAnkrBNB(ankrBNB).sharesToBonds(1 ether);
 
         // price is scaled 1e18 (oracle returns 36 - asset decimal scale)
         uint256 bnbUSDPrice = RESILIENT_ORACLE.getPrice(NATIVE_TOKEN_ADDR);
 
-        // ETHAmount (for 1 ankrBNB) * ethUSDPrice / 1e18
-        return (BNBAmount * bnbUSDPrice) / EXP_SCALE;
+        // bnbAmount (for 1 ankrBNB) * bnbUSDPrice / 1e18
+        return (bnbAmount * bnbUSDPrice) / EXP_SCALE;
     }
 }

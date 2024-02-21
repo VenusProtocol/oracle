@@ -47,12 +47,12 @@ contract BNBxOracle is OracleInterface {
         if (asset != BNBx) revert("wrong BNBx address");
 
         // get BNB amount for 1 BNBx scaled by 1e18
-        uint256 BNBAmount = STAKE_MANAGER.convertBnbXToBnb(1 ether);
+        uint256 bnbAmount = STAKE_MANAGER.convertBnbXToBnb(1 ether);
 
         // price is scaled 1e18 (oracle returns 36 - asset decimal scale)
         uint256 bnbUSDPrice = RESILIENT_ORACLE.getPrice(NATIVE_TOKEN_ADDR);
 
-        // BNBAmount (for 1 BNBx) * bnbUSDPrice / 1e18
-        return (BNBAmount * bnbUSDPrice) / EXP_SCALE;
+        // bnbAmount (for 1 BNBx) * bnbUSDPrice / 1e18
+        return (bnbAmount * bnbUSDPrice) / EXP_SCALE;
     }
 }

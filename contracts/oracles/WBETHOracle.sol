@@ -44,12 +44,12 @@ contract WBETHOracle is OracleInterface {
         if (asset != wBETH) revert("wrong wBETH address");
 
         // get ETH amount for 1 wBETH scaled by 1e18
-        uint256 ETHAmount = IWBETH(wBETH).exchangeRate();
+        uint256 ethAmount = IWBETH(wBETH).exchangeRate();
 
         // price is scaled 1e18 (oracle returns 36 - asset decimal scale)
         uint256 ethUSDPrice = RESILIENT_ORACLE.getPrice(ETH);
 
-        // ETHAmount (for 1 wBETH) * ethUSDPrice / 1e18
-        return (ETHAmount * ethUSDPrice) / EXP_SCALE;
+        // ethAmount (for 1 wBETH) * ethUSDPrice / 1e18
+        return (ethAmount * ethUSDPrice) / EXP_SCALE;
     }
 }
