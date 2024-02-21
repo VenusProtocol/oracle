@@ -623,7 +623,7 @@ export const assets: Assets = {
     },
     {
       token: "WETH",
-      address: "0x700868CAbb60e90d77B6588ce072d9859ec8E281",
+      address: "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9",
       oracle: "chainlink",
       price: "2080000000000000000000",
     },
