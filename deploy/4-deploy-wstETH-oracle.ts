@@ -24,6 +24,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   // will get stETH/USD price from secondary market
 
   await deploy("WstETHOracle_Equivalence", {
+    contract: "WstETHOracle",
     from: deployer,
     log: true,
     deterministicDeployment: false,
@@ -35,6 +36,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   });
 
   await deploy("WstETHOracle_NonEquivalence", {
+    contract: "WstETHOracle",
     from: deployer,
     log: true,
     deterministicDeployment: false,
