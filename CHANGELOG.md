@@ -1,3 +1,35 @@
+## [1.10.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v1.10.0-dev.4...v1.10.0-dev.5) (2024-02-20)
+
+
+### Bug Fixes
+
+* remove twap oracle ([85b1021](https://github.com/VenusProtocol/oracle/commit/85b1021928d1faaacf8d9263cf6c3916e1142f43))
+
+## [1.10.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v1.10.0-dev.3...v1.10.0-dev.4) (2024-02-07)
+
+## [1.10.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v1.10.0-dev.2...v1.10.0-dev.3) (2024-02-05)
+
+## [1.10.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v1.10.0-dev.1...v1.10.0-dev.2) (2024-02-01)
+
+
+### Features
+
+* add wstETH oracle deployment on Ethereum ([505c721](https://github.com/VenusProtocol/oracle/commit/505c721d43f4dd02c2ae987dd3412a883b7f9bbb))
+* updating deployment files ([0acebd5](https://github.com/VenusProtocol/oracle/commit/0acebd566b0c0bab97bfd37b81ec561a3a493d4c))
+
+## [1.10.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.9.0...v1.10.0-dev.1) (2024-01-26)
+
+
+### Features
+
+* add oracle deployments for opbnbmainnet ([f6655e7](https://github.com/VenusProtocol/oracle/commit/f6655e744b64236c65e1099bab1caf237d56eb16))
+* updating deployment files ([5d813b2](https://github.com/VenusProtocol/oracle/commit/5d813b2f9fdd82418f2f888a2f19e2822268a631))
+
+
+### Bug Fixes
+
+* hardcoded gas input ([ef80913](https://github.com/VenusProtocol/oracle/commit/ef809133e3cef279495435c6c7fa4062cf41de41))
+
 ## [1.9.0](https://github.com/VenusProtocol/oracle/compare/v1.8.0...v1.9.0) (2024-01-23)
 
 

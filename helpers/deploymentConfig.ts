@@ -1,6 +1,7 @@
 import bscmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bscmainnet.json";
 import bsctestnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bsctestnet.json";
 import ethereumGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/ethereum.json";
+import opbnbmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/opbnbmainnet.json";
 import opbnbtestnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/opbnbtestnet.json";
 import sepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/sepolia.json";
 import mainnetDeployments from "@venusprotocol/venus-protocol/deployments/bscmainnet.json";
@@ -120,6 +121,15 @@ export const ADDRESSES: PreconfiguredAddresses = {
     feedRegistryAddress: "0x338b3D0E75bc4B3127813A79C8ECBBa96A7DB70a",
     acm: opbnbtestnetGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0xb15f6EfEbC276A3b9805df81b5FB3D50C2A62BDf", // opBNB Multisig
+  },
+  opbnbmainnet: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    sidRegistryAddress: ethers.constants.AddressZero,
+    feedRegistryAddress: "0x72d55658242377AF22907b6E7350148288f88033",
+    acm: opbnbmainnetGovernanceDeployments.contracts.AccessControlManager.address,
+    timelock: "0xC46796a21a3A9FAB6546aF3434F2eBfFd0604207", // opBNB Multisig
   },
 };
 
