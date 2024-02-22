@@ -1,3 +1,16 @@
+## [1.10.0-dev.7](https://github.com/VenusProtocol/oracle/compare/v1.10.0-dev.6...v1.10.0-dev.7) (2024-02-22)
+
+
+### Features
+
+* updating deployment files ([a322225](https://github.com/VenusProtocol/oracle/commit/a322225092f349e315dbfe483dd679e6bf698125))
+* updating deployment files ([3e9a5ce](https://github.com/VenusProtocol/oracle/commit/3e9a5cea393ec971271a348896f8818652839593))
+
+
+### Bug Fixes
+
+* deploy script ([0a17889](https://github.com/VenusProtocol/oracle/commit/0a17889c6b5c9d43fc119e5ca4514111628d1a81))
+
 ## [1.10.0-dev.6](https://github.com/VenusProtocol/oracle/compare/v1.10.0-dev.5...v1.10.0-dev.6) (2024-02-21)
 
 ## [1.10.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v1.10.0-dev.4...v1.10.0-dev.5) (2024-02-20)
