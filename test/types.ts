@@ -3,7 +3,6 @@ import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signe
 import { BoundValidator, PythOracle } from "../typechain-types";
 import { ResilientOracle } from "../typechain-types/contracts/ResilientOracle";
 import { ChainlinkOracle } from "../typechain-types/contracts/oracles/ChainlinkOracle";
-import { TwapOracle } from "../typechain-types/contracts/oracles/TwapOracle";
 import { MockPyth } from "../typechain-types/contracts/test/MockPyth";
 import { PancakePairHarness } from "../typechain-types/contracts/test/PancakePairHarness";
 
@@ -14,7 +13,6 @@ declare module "mocha" {
     // chainlink oracle tests
     chainlinkOracle: ChainlinkOracle;
     // twap oracle tests
-    twapOracle: TwapOracle;
     simplePair: PancakePairHarness;
     bnbBasedPair: PancakePairHarness;
     bnbPair: PancakePairHarness;

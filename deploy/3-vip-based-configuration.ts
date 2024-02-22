@@ -25,7 +25,7 @@ const configurePriceFeeds = async (hre: HardhatRuntimeEnvironment): Promise<Gove
 
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
   const binanceOracle = await hre.ethers.getContractOrNull("BinanceOracle");
-  const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
+  const chainlinkOracle = await hre.ethers.getContractOrNull("ChainlinkOracle");
   const oraclesData: Oracles = await getOraclesData();
   const commands: GovernanceCommand[] = [];
 
@@ -195,7 +195,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     ...(await acceptOwnership("RedStoneOracle", owner, hre)),
     ...(await acceptOwnership("BoundValidator", owner, hre)),
     ...(await acceptOwnership("BinanceOracle", owner, hre)),
-    ...(await acceptOwnership("TwapOracle", owner, hre)),
     ...(await configurePriceFeeds(hre)),
   ];
 

@@ -1,6 +1,7 @@
 import bscmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bscmainnet.json";
 import bsctestnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bsctestnet.json";
 import ethereumGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/ethereum.json";
+import opbnbmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/opbnbmainnet.json";
 import opbnbtestnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/opbnbtestnet.json";
 import sepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/sepolia.json";
 import mainnetDeployments from "@venusprotocol/venus-protocol/deployments/bscmainnet.json";
@@ -107,6 +108,15 @@ export const ADDRESSES: PreconfiguredAddresses = {
     acm: opbnbtestnetGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0xb15f6EfEbC276A3b9805df81b5FB3D50C2A62BDf", // opBNB Multisig
   },
+  opbnbmainnet: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    sidRegistryAddress: ethers.constants.AddressZero,
+    feedRegistryAddress: "0x72d55658242377AF22907b6E7350148288f88033",
+    acm: opbnbmainnetGovernanceDeployments.contracts.AccessControlManager.address,
+    timelock: "0xC46796a21a3A9FAB6546aF3434F2eBfFd0604207", // opBNB Multisig
+  },
 };
 
 export const chainlinkFeed: Config = {
@@ -176,6 +186,7 @@ export const chainlinkFeed: Config = {
     XVS: "0xa2a8507DEb233ceE4F5594044C259DD0582339CC",
     CRV: "0xCd627aA160A6fA45Eb793D19Ef54f5062F20f33f",
     crvUSD: "0xEEf0C605546958c1f899b6fB336C20671f9cD49F",
+    stETH: "0xCfE54B5cD566aB89272946F602D76Ea879CAb4a8",
   },
 };
 
@@ -613,7 +624,7 @@ export const assets: Assets = {
     },
     {
       token: "WETH",
-      address: "0x700868CAbb60e90d77B6588ce072d9859ec8E281",
+      address: "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9",
       oracle: "chainlink",
       price: "2080000000000000000000",
     },
@@ -658,6 +669,12 @@ export const assets: Assets = {
     {
       token: "WETH",
       address: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      oracle: "chainlink",
+      stalePeriod: STALE_PERIOD_100M,
+    },
+    {
+      token: "stETH",
+      address: "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
       oracle: "chainlink",
       stalePeriod: STALE_PERIOD_100M,
     },
@@ -722,6 +739,38 @@ export const assets: Assets = {
       address: "0x3d0e20D4caD958bc848B045e1da19Fe378f86f03",
       oracle: "binance",
       price: "7000000000000000000",
+    },
+  ],
+  opbnbmainnet: [
+    {
+      token: "BTCB",
+      address: "0x7c6b91d9be155a6db01f749217d76ff02a7227f2",
+      oracle: "binance",
+    },
+    {
+      token: "ETH",
+      address: "0xe7798f023fc62146e8aa1b36da45fb70855a77ea",
+      oracle: "binance",
+    },
+    {
+      token: "USDT",
+      address: "0x9e5aac1ba1a2e6aed6b32689dfcf62a509ca96f3",
+      oracle: "binance",
+    },
+    {
+      token: "WBNB",
+      address: "0x4200000000000000000000000000000000000006",
+      oracle: "binance",
+    },
+    {
+      token: "XVS",
+      address: "0x3E2e61F1c075881F3fB8dd568043d8c221fd5c61",
+      oracle: "binance",
+    },
+    {
+      token: "FDUSD",
+      address: "0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb",
+      oracle: "binance",
     },
   ],
 };

@@ -14,7 +14,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
   const { vBNBAddress } = ADDRESSES[networkName];
   const { VAIAddress } = ADDRESSES[networkName];
-  const { WBNBAddress } = ADDRESSES[networkName];
 
   let accessControlManager;
   if (!network.live) {
@@ -77,33 +76,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       },
     },
   });
-
-  // Skip deployment if chain is not BNB chain
-  if (networkName === "bsctetnet" || networkName === "bscmainnet") {
-    await deploy("TwapOracle", {
-      contract: network.live ? "TwapOracle" : "MockTwapOracle",
-      from: deployer,
-      log: true,
-      deterministicDeployment: false,
-      args: network.live ? [WBNBAddress] : [],
-      proxy: {
-        owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
-        execute: {
-          methodName: "initialize",
-          args: network.live ? [accessControlManagerAddress] : [vBNBAddress],
-        },
-      },
-    });
-
-    const twapOracle = await hre.ethers.getContract("TwapOracle");
-    const twapOracleOwner = await twapOracle.owner();
-
-    if (twapOracleOwner === deployer) {
-      await twapOracle.transferOwnership(ADDRESSES[networkName].timelock);
-      console.log(`Ownership of TwapOracle transfered from deployer to Timelock (${ADDRESSES[networkName].timelock})`);
-    }
-  }
 
   const { pythOracleAddress } = ADDRESSES[networkName];
 
