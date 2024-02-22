@@ -186,6 +186,7 @@ export const chainlinkFeed: Config = {
     XVS: "0xa2a8507DEb233ceE4F5594044C259DD0582339CC",
     CRV: "0xCd627aA160A6fA45Eb793D19Ef54f5062F20f33f",
     crvUSD: "0xEEf0C605546958c1f899b6fB336C20671f9cD49F",
+    stETH: "0xCfE54B5cD566aB89272946F602D76Ea879CAb4a8",
   },
 };
 
@@ -668,6 +669,12 @@ export const assets: Assets = {
     {
       token: "WETH",
       address: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      oracle: "chainlink",
+      stalePeriod: STALE_PERIOD_100M,
+    },
+    {
+      token: "stETH",
+      address: "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
       oracle: "chainlink",
       stalePeriod: STALE_PERIOD_100M,
     },

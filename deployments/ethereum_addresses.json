@@ -15,8 +15,11 @@
     "ResilientOracle": "0xd2ce3fb018805ef92b8C5976cb31F84b4E295F94",
     "ResilientOracle_Implementation": "0x1616BaC3e4C2222B438B3410b5196604bC557bce",
     "ResilientOracle_Proxy": "0xd2ce3fb018805ef92b8C5976cb31F84b4E295F94",
-    "WstETHOracle": "0x987F64F99cA9441D9BD141a34E195818961cCBa6",
-    "WstETHOracle_Implementation": "0xC473E5c2bcB6A354389BB7cbC3912A71eF590c6f",
-    "WstETHOracle_Proxy": "0x987F64F99cA9441D9BD141a34E195818961cCBa6"
+    "WstETHOracle_Equivalence": "0xd8B43165a6cdA057DBd3Fcd4745E88FC475398c5",
+    "WstETHOracle_Equivalence_Implementation": "0x4e70615332550CE81e12891772eB950411Bb05A2",
+    "WstETHOracle_Equivalence_Proxy": "0xd8B43165a6cdA057DBd3Fcd4745E88FC475398c5",
+    "WstETHOracle_NonEquivalence": "0xd082B50b3EeB012605598bB45Fc2Be853b9AFEEf",
+    "WstETHOracle_NonEquivalence_Implementation": "0x24D3D52332834ddE93692D9ede4679FE920d2afC",
+    "WstETHOracle_NonEquivalence_Proxy": "0xd082B50b3EeB012605598bB45Fc2Be853b9AFEEf"
   }
 }
