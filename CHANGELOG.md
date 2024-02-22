@@ -1,3 +1,10 @@
+## [1.10.0-dev.8](https://github.com/VenusProtocol/oracle/compare/v1.10.0-dev.7...v1.10.0-dev.8) (2024-02-22)
+
+
+### Bug Fixes
+
+* chainlink oracle deployment might not be available on some networks ([4868926](https://github.com/VenusProtocol/oracle/commit/4868926be37b57600301587bad4b81bfcc9c41d0))
+
 ## [1.10.0-dev.7](https://github.com/VenusProtocol/oracle/compare/v1.10.0-dev.6...v1.10.0-dev.7) (2024-02-22)
 
 
