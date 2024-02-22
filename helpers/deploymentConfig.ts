@@ -741,6 +741,38 @@ export const assets: Assets = {
       price: "7000000000000000000",
     },
   ],
+  opbnbmainnet: [
+    {
+      token: "BTCB",
+      address: "0x7c6b91d9be155a6db01f749217d76ff02a7227f2",
+      oracle: "binance",
+    },
+    {
+      token: "ETH",
+      address: "0xe7798f023fc62146e8aa1b36da45fb70855a77ea",
+      oracle: "binance",
+    },
+    {
+      token: "USDT",
+      address: "0x9e5aac1ba1a2e6aed6b32689dfcf62a509ca96f3",
+      oracle: "binance",
+    },
+    {
+      token: "WBNB",
+      address: "0x4200000000000000000000000000000000000006",
+      oracle: "binance",
+    },
+    {
+      token: "XVS",
+      address: "0x3E2e61F1c075881F3fB8dd568043d8c221fd5c61",
+      oracle: "binance",
+    },
+    {
+      token: "FDUSD",
+      address: "0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb",
+      oracle: "binance",
+    },
+  ],
 };
 
 export const getOraclesData = async (): Promise<Oracles> => {
