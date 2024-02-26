@@ -112,6 +112,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: ethereumGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x285960C5B22fD66A736C7136967A3eB15e93CC67", // Ethereum Multisig
+    sFRAX: "0xA663B02CF0a4b149d2aD41910CB81e23e1c41c32",
+    sfraxETH: "0xac3e018457b222d93114458476f3e3416abbe38f",
+    FRAX: "0x853d955aCEf822Db058eb8505911ED77F175b99e",
   },
   opbnbtestnet: {
     vBNBAddress: ethers.constants.AddressZero,

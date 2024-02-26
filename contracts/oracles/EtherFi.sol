@@ -12,7 +12,7 @@ import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants
  * @author Venus
  * @notice This oracle fetches the price of eETH and weETH assets
  */
-contract FraxOracle is OracleInterface {
+contract EtherFiOracle is OracleInterface {
     /// @notice Address of weETH
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IWeETH public immutable weETH;
