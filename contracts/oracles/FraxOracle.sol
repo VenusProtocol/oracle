@@ -2,7 +2,7 @@
 pragma solidity 0.8.13;
 
 import { OracleInterface } from "../interfaces/OracleInterface.sol";
-import { IStakedFrax } from "../interfaces/IStakedFrax.sol";
+import { ISFrax } from "../interfaces/ISFrax.sol";
 import { ISfraxETH } from "../interfaces/ISfraxETH.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
@@ -13,10 +13,6 @@ import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants
  * @notice This oracle fetches the price of sFrax and sfrxETH assets
  */
 contract FraxOracle is OracleInterface {
-    /// @notice Address of StakedFrax
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    IStakedFrax public immutable STAKED_FRAX;
-
     /// @notice Address of sfraxETH
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     ISfraxETH public immutable sfraxETH;
@@ -27,7 +23,7 @@ contract FraxOracle is OracleInterface {
 
     /// @notice Address of sFrax
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable sFRAX;
+    ISFrax public immutable sFRAX;
 
     /// @notice Address of Resilient Oracle
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
@@ -38,16 +34,14 @@ contract FraxOracle is OracleInterface {
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address stakedFrax, address frax, address sFrax, address eth, address _sfraxETH, address resilientOracleAddress) {
-        ensureNonzeroAddress(stakedFrax);
+    constructor(address frax, address sFrax, address eth, address _sfraxETH, address resilientOracleAddress) {
         ensureNonzeroAddress(frax);
         ensureNonzeroAddress(sFrax);
         ensureNonzeroAddress(eth);
         ensureNonzeroAddress(_sfraxETH);
         ensureNonzeroAddress(resilientOracleAddress);
-        STAKED_FRAX = IStakedFrax(stakedFrax);
         FRAX = frax;
-        sFRAX = sFrax;
+        sFRAX = ISFrax(sFrax);
         ETH = eth;
         sfraxETH = ISfraxETH(_sfraxETH);
         RESILIENT_ORACLE = OracleInterface(resilientOracleAddress);
@@ -59,10 +53,10 @@ contract FraxOracle is OracleInterface {
      * @return price Price in USD scaled by 1e18
      */
     function getPrice(address asset) public view returns (uint256) {
-        if (asset != sFRAX && asset != address(sfraxETH)) revert("wrong sFRAX or sfraxETH asset address");
+        if (asset != address(sFRAX) && asset != address(sfraxETH)) revert("wrong sFRAX or sfraxETH asset address");
 
         uint256 assetPriceInUSD;
-        if (asset == sFRAX) {
+        if (asset == address(sFRAX)) {
             assetPriceInUSD = RESILIENT_ORACLE.getPrice(FRAX);
         } else {
             assetPriceInUSD = RESILIENT_ORACLE.getPrice(ETH);
@@ -70,8 +64,8 @@ contract FraxOracle is OracleInterface {
 
         // get FRAX or ETH amount for 1 sFrax or sfraxETH scaled by 1e18
         uint256 amount;
-        if (asset == sFRAX) {
-            amount = STAKED_FRAX.convertToAssets(EXP_SCALE);
+        if (asset == address(sFRAX)) {
+            amount = sFRAX.convertToAssets(EXP_SCALE);
         } else {
             amount = sfraxETH.convertToAssets(EXP_SCALE);
         }
