@@ -19,7 +19,7 @@ contract FraxOracle is OracleInterface {
 
     /// @notice Address of sfraxETH
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    IStakedFrax public immutable sfraxETH;
+    ISfraxETH public immutable sfraxETH;
 
     /// @notice Address of FRAX
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
@@ -49,7 +49,7 @@ contract FraxOracle is OracleInterface {
         FRAX = frax;
         sFRAX = sFrax;
         ETH = eth;
-        sfraxETH = IStakedFrax(_sfraxETH);
+        sfraxETH = ISfraxETH(_sfraxETH);
         RESILIENT_ORACLE = OracleInterface(resilientOracleAddress);
     }
 
