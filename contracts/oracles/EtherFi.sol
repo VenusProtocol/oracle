@@ -56,7 +56,7 @@ contract EtherFiOracle is OracleInterface {
         }
 
         // Calculate ETH amount for 1 eETH or weETH scaled by 1e18
-        uint256 ethAmount = (eETH.totalShares() / EXP_SCALE) * eETH.totalSupply();
+        uint256 ethAmount = (eETH.totalShares() * EXP_SCALE) / eETH.totalSupply();
         ethAmount = (ethAmount * eETHAmount) / EXP_SCALE;
 
         uint256 ethUSDPrice = RESILIENT_ORACLE.getPrice(NATIVE_TOKEN_ADDR);
