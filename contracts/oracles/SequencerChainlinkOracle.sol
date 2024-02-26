@@ -32,6 +32,10 @@ contract SequencerChainlinkOracle is ChainlinkOracle {
     }
 
     function isSequencerActive() internal view returns (bool) {
+        // answer from oracle is a variable with a value of either 1 or 0
+        //  0: The sequencer is up
+        //  1: The sequencer is down
+        // startedAt: This timestamp indicates when the sequencer changed status
         (, int256 answer, uint256 startedAt, , ) = sequencer.latestRoundData();
         if (block.timestamp - startedAt <= GRACE_PERIOD_TIME || answer == 1) return false;
         return true;
