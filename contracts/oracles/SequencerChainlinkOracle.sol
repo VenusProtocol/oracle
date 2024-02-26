@@ -10,6 +10,7 @@ import { AggregatorV3Interface } from "@chainlink/contracts/src/v0.8/interfaces/
 */
 contract SequencerChainlinkOracle is ChainlinkOracle {
     /// @notice L2 Sequencer feed
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     AggregatorV3Interface public immutable sequencer;
 
     /// @notice L2 Sequencer grace period
@@ -18,6 +19,7 @@ contract SequencerChainlinkOracle is ChainlinkOracle {
     /**
         @notice Contract constructor
         @param _sequencer L2 sequencer
+        @custom:oz-upgrades-unsafe-allow constructor
     */
     constructor(AggregatorV3Interface _sequencer) ChainlinkOracle() {
         sequencer = _sequencer;
