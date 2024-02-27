@@ -13,6 +13,10 @@ import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants
  * @notice This oracle fetches the price of sFrax and sfrxETH assets
  */
 contract FraxOracle is OracleInterface {
+    /// @notice A flag assuming 1:1 price equivalence between frxETH/ETH
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    bool public immutable ASSUME_FRXETH_ETH_EQUIVALENCE;
+
     /// @notice Address of sfraxETH
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     ISfraxETH public immutable sfraxETH;
@@ -25,6 +29,10 @@ contract FraxOracle is OracleInterface {
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     ISFrax public immutable sFRAX;
 
+    /// @notice Address of fraxETH
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable fraxETH;
+
     /// @notice Address of Resilient Oracle
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     OracleInterface public immutable RESILIENT_ORACLE;
@@ -34,17 +42,28 @@ contract FraxOracle is OracleInterface {
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address _frax, address _sFrax, address _eth, address _sfraxETH, address _resilientOracleAddress) {
+    constructor(
+        address _frax,
+        address _sFrax,
+        address _eth,
+        address _sfraxETH,
+        address _fraxETH,
+        address _resilientOracleAddress,
+        bool _assumeEquivalence
+    ) {
         ensureNonzeroAddress(_frax);
         ensureNonzeroAddress(_sFrax);
         ensureNonzeroAddress(_eth);
         ensureNonzeroAddress(_sfraxETH);
+        ensureNonzeroAddress(_fraxETH);
         ensureNonzeroAddress(_resilientOracleAddress);
         FRAX = _frax;
         sFRAX = ISFrax(_sFrax);
         ETH = _eth;
         sfraxETH = ISfraxETH(_sfraxETH);
+        fraxETH = _fraxETH;
         RESILIENT_ORACLE = OracleInterface(_resilientOracleAddress);
+        ASSUME_FRXETH_ETH_EQUIVALENCE = _assumeEquivalence;
     }
 
     /**
@@ -59,7 +78,7 @@ contract FraxOracle is OracleInterface {
         if (asset == address(sFRAX)) {
             assetPriceInUSD = RESILIENT_ORACLE.getPrice(FRAX);
         } else {
-            assetPriceInUSD = RESILIENT_ORACLE.getPrice(ETH);
+            assetPriceInUSD = RESILIENT_ORACLE.getPrice(ASSUME_FRXETH_ETH_EQUIVALENCE ? ETH : address(fraxETH));
         }
 
         // get FRAX or ETH amount for 1 sFrax or sfraxETH scaled by 1e18

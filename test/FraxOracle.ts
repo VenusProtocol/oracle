@@ -10,7 +10,7 @@ import { addr0000 } from "./utils/data";
 const { expect } = chai;
 chai.use(smock.matchers);
 
-const { FRAX, sFRAX, sfraxETH } = ADDRESSES.ethereum;
+const { FRAX, sFRAX, sfraxETH, fraxETH } = ADDRESSES.ethereum;
 const WETH = assets.ethereum.find(asset => asset.token === "WETH")?.address;
 const FRAX_USD_PRICE = parseUnits("0.9979", 18); // 0.99 USD for 1 FRAX
 const ETH_USD_PRICE = parseUnits("3100", 18); // 3100 USD for 1 ETH
@@ -33,28 +33,65 @@ describe("FraxOracle unit tests", () => {
     sFraxETHMock.convertToAssets.returns(parseUnits("1.076546447254363344", 18));
 
     FraxOracleFactory = await ethers.getContractFactory("FraxOracle");
-
-    console.log(FRAX, sFRAX, WETH, sfraxETH);
   });
 
   describe("deployment", () => {
     it("revert if FRAX address is 0", async () => {
       await expect(
-        FraxOracleFactory.deploy(addr0000, sFraxMock.address, WETH, sFraxETHMock.address, resilientOracleMock.address),
+        FraxOracleFactory.deploy(
+          addr0000,
+          sFraxMock.address,
+          WETH,
+          sFraxETHMock.address,
+          fraxETH,
+          resilientOracleMock.address,
+          true,
+        ),
       ).to.be.reverted;
     });
     it("revert if sFRAX address is 0", async () => {
-      await expect(FraxOracleFactory.deploy(FRAX, addr0000, WETH, sFraxETHMock.address, resilientOracleMock.address)).to
-        .be.reverted;
+      await expect(
+        FraxOracleFactory.deploy(
+          FRAX,
+          addr0000,
+          WETH,
+          sFraxETHMock.address,
+          fraxETH,
+          resilientOracleMock.address,
+          true,
+        ),
+      ).to.be.reverted;
     });
     it("revert if ETH address is 0", async () => {
       await expect(
-        FraxOracleFactory.deploy(FRAX, sFraxMock.address, addr0000, sFraxETHMock.address, resilientOracleMock.address),
+        FraxOracleFactory.deploy(
+          FRAX,
+          sFraxMock.address,
+          addr0000,
+          sFraxETHMock.address,
+          fraxETH,
+          resilientOracleMock.address,
+          true,
+        ),
       ).to.be.reverted;
     });
     it("revert if sfraxETH address is 0", async () => {
-      await expect(FraxOracleFactory.deploy(FRAX, sFraxMock.address, WETH, addr0000, resilientOracleMock.address)).to.be
-        .reverted;
+      await expect(
+        FraxOracleFactory.deploy(FRAX, sFraxMock.address, WETH, addr0000, fraxETH, resilientOracleMock.address, true),
+      ).to.be.reverted;
+    });
+    it("revert if sfraxETH address is 0", async () => {
+      await expect(
+        FraxOracleFactory.deploy(
+          FRAX,
+          sFraxMock.address,
+          WETH,
+          sFraxETHMock.address,
+          addr0000,
+          resilientOracleMock.address,
+          true,
+        ),
+      ).to.be.reverted;
     });
     it("should deploy contract", async () => {
       FraxOracle = await FraxOracleFactory.deploy(
@@ -62,7 +99,9 @@ describe("FraxOracle unit tests", () => {
         sFraxMock.address,
         WETH,
         sFraxETHMock.address,
+        fraxETH,
         resilientOracleMock.address,
+        true,
       );
     });
   });

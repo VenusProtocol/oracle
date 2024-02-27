@@ -56,7 +56,9 @@ contract EtherFiOracle is OracleInterface {
         uint256 eETHAmount = asset == address(eETH) ? EXP_SCALE : weETH.getEETHByWeETH(EXP_SCALE);
 
         // Calculate price of 1 eETH scaled by 1e18
-        uint256 eETHUSDPrice = RESILIENT_ORACLE.getPrice(ASSUME_EETH_ETH_EQUIVALENCE ? NATIVE_TOKEN_ADDR : address(eETH));
+        uint256 eETHUSDPrice = RESILIENT_ORACLE.getPrice(
+            ASSUME_EETH_ETH_EQUIVALENCE ? NATIVE_TOKEN_ADDR : address(eETH)
+        );
 
         // eETH amount (for 1 weETH or eETH) * usdPrice (of eETH) / 1e18
         return (eETHAmount * eETHUSDPrice) / EXP_SCALE;

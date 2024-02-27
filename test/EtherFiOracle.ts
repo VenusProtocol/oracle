@@ -37,7 +37,8 @@ describe("EtherFiOracle unit tests", () => {
 
   describe("deployment", () => {
     it("revert if weETH address is 0", async () => {
-      await expect(EtherFiOracleFactory.deploy(addr0000, eETHMock.address, resilientOracleMock.address, true)).to.be.reverted;
+      await expect(EtherFiOracleFactory.deploy(addr0000, eETHMock.address, resilientOracleMock.address, true)).to.be
+        .reverted;
     });
     it("revert if eETH address is 0", async () => {
       await expect(EtherFiOracleFactory.deploy(weETHMock.address, addr0000, resilientOracleMock.address, true)).to.be
@@ -51,7 +52,7 @@ describe("EtherFiOracle unit tests", () => {
         weETHMock.address,
         eETHMock.address,
         resilientOracleMock.address,
-        true
+        true,
       );
     });
   });
