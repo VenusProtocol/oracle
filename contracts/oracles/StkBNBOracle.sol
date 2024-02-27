@@ -29,13 +29,13 @@ contract StkBNBOracle is OracleInterface {
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address stakePool, address _stkBNB, address resilientOracleAddress) {
-        ensureNonzeroAddress(stakePool);
+    constructor(address _stakePool, address _stkBNB, address _resilientOracleAddress) {
+        ensureNonzeroAddress(_stakePool);
         ensureNonzeroAddress(_stkBNB);
-        ensureNonzeroAddress(resilientOracleAddress);
-        STAKE_POOL = IPStakePool(stakePool);
+        ensureNonzeroAddress(_resilientOracleAddress);
+        STAKE_POOL = IPStakePool(_stakePool);
         stkBNB = _stkBNB;
-        RESILIENT_ORACLE = OracleInterface(resilientOracleAddress);
+        RESILIENT_ORACLE = OracleInterface(_resilientOracleAddress);
     }
 
     /**

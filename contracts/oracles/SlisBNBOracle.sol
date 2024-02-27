@@ -29,13 +29,13 @@ contract SlisBNBOracle is OracleInterface {
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address stakeManager, address _slisBNB, address resilientOracleAddress) {
-        ensureNonzeroAddress(stakeManager);
+    constructor(address _stakeManager, address _slisBNB, address _resilientOracleAddress) {
+        ensureNonzeroAddress(_stakeManager);
         ensureNonzeroAddress(_slisBNB);
-        ensureNonzeroAddress(resilientOracleAddress);
-        STAKE_MANAGER = ISynclubStakeManager(stakeManager);
+        ensureNonzeroAddress(_resilientOracleAddress);
+        STAKE_MANAGER = ISynclubStakeManager(_stakeManager);
         slisBNB = _slisBNB;
-        RESILIENT_ORACLE = OracleInterface(resilientOracleAddress);
+        RESILIENT_ORACLE = OracleInterface(_resilientOracleAddress);
     }
 
     /**
