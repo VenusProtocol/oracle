@@ -37,20 +37,21 @@ describe("EtherFiOracle unit tests", () => {
 
   describe("deployment", () => {
     it("revert if weETH address is 0", async () => {
-      await expect(EtherFiOracleFactory.deploy(addr0000, eETHMock.address, resilientOracleMock.address)).to.be.reverted;
+      await expect(EtherFiOracleFactory.deploy(addr0000, eETHMock.address, resilientOracleMock.address, true)).to.be.reverted;
     });
     it("revert if eETH address is 0", async () => {
-      await expect(EtherFiOracleFactory.deploy(weETHMock.address, addr0000, resilientOracleMock.address)).to.be
+      await expect(EtherFiOracleFactory.deploy(weETHMock.address, addr0000, resilientOracleMock.address, true)).to.be
         .reverted;
     });
     it("revert if resilient oracle address is 0", async () => {
-      await expect(EtherFiOracleFactory.deploy(weETHMock.address, eETHMock.address, addr0000)).to.be.reverted;
+      await expect(EtherFiOracleFactory.deploy(weETHMock.address, eETHMock.address, addr0000, true)).to.be.reverted;
     });
     it("should deploy contract", async () => {
       EtherFiOracle = await EtherFiOracleFactory.deploy(
         weETHMock.address,
         eETHMock.address,
         resilientOracleMock.address,
+        true
       );
     });
   });
@@ -62,12 +63,12 @@ describe("EtherFiOracle unit tests", () => {
 
     it("should get correct price of eETH", async () => {
       const price = await EtherFiOracle.getPrice(eETHMock.address);
-      expect(price).to.equal(parseUnits("3003.2157049848910035", 18));
+      expect(price).to.equal(parseUnits("3100", 18));
     });
 
     it("should get correct price of weETH", async () => {
       const price = await EtherFiOracle.getPrice(weETHMock.address);
-      expect(price).to.equal(parseUnits("3099.9999999999999969", 18));
+      expect(price).to.equal(parseUnits("3199.9033516136821482", 18));
     });
   });
 });
