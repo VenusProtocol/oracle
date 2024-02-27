@@ -34,17 +34,17 @@ contract FraxOracle is OracleInterface {
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address frax, address sFrax, address eth, address _sfraxETH, address resilientOracleAddress) {
-        ensureNonzeroAddress(frax);
-        ensureNonzeroAddress(sFrax);
-        ensureNonzeroAddress(eth);
+    constructor(address _frax, address _sFrax, address _eth, address _sfraxETH, address _resilientOracleAddress) {
+        ensureNonzeroAddress(_frax);
+        ensureNonzeroAddress(_sFrax);
+        ensureNonzeroAddress(_eth);
         ensureNonzeroAddress(_sfraxETH);
-        ensureNonzeroAddress(resilientOracleAddress);
-        FRAX = frax;
-        sFRAX = ISFrax(sFrax);
-        ETH = eth;
+        ensureNonzeroAddress(_resilientOracleAddress);
+        FRAX = _frax;
+        sFRAX = ISFrax(_sFrax);
+        ETH = _eth;
         sfraxETH = ISfraxETH(_sfraxETH);
-        RESILIENT_ORACLE = OracleInterface(resilientOracleAddress);
+        RESILIENT_ORACLE = OracleInterface(_resilientOracleAddress);
     }
 
     /**

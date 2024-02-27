@@ -25,11 +25,11 @@ contract AnkrBNBOracle is OracleInterface {
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address _ankrBNB, address resilientOracleAddress) {
+    constructor(address _ankrBNB, address _resilientOracleAddress) {
         ensureNonzeroAddress(_ankrBNB);
-        ensureNonzeroAddress(resilientOracleAddress);
+        ensureNonzeroAddress(_resilientOracleAddress);
         ankrBNB = _ankrBNB;
-        RESILIENT_ORACLE = OracleInterface(resilientOracleAddress);
+        RESILIENT_ORACLE = OracleInterface(_resilientOracleAddress);
     }
 
     /**

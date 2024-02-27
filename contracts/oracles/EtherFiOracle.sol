@@ -30,13 +30,13 @@ contract EtherFiOracle is OracleInterface {
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address _weETH, address _eETH, address resilientOracleAddress) {
+    constructor(address _weETH, address _eETH, address _resilientOracleAddress) {
         ensureNonzeroAddress(_weETH);
         ensureNonzeroAddress(_eETH);
-        ensureNonzeroAddress(resilientOracleAddress);
+        ensureNonzeroAddress(_resilientOracleAddress);
         weETH = IWeETH(_weETH);
         eETH = IEETH(_eETH);
-        RESILIENT_ORACLE = OracleInterface(resilientOracleAddress);
+        RESILIENT_ORACLE = OracleInterface(_resilientOracleAddress);
     }
 
     /**
