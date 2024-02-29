@@ -46,7 +46,7 @@ abstract contract LiquidStakedTokenOracle is OracleInterface {
         if (asset != LIQUID_STAKED_TOKEN) revert("wrong token address");
 
         // get underlying token amount for 1 liquid staked token scaled by 1e18
-        uint256 underlyingAmount = getUnderlyingAmount(1 ether);
+        uint256 underlyingAmount = getUnderlyingAmount();
 
         // price is scaled 1e18 (oracle returns 36 - asset decimal scale)
         uint256 underlyingUSDPrice = RESILIENT_ORACLE.getPrice(UNDERLYING_TOKEN);
@@ -57,8 +57,7 @@ abstract contract LiquidStakedTokenOracle is OracleInterface {
 
     /**
      * @notice Gets the underlying amount for liquid staked token
-     * @param liquidStakedAmount Amount of liquid staked token
      * @return underlyingAmount Amount of underlying token
      */
-    function getUnderlyingAmount(uint256 liquidStakedAmount) internal virtual view returns (uint256);
+    function getUnderlyingAmount() internal virtual view returns (uint256);
 }

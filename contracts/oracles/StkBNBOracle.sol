@@ -5,55 +5,36 @@ import { OracleInterface } from "../interfaces/OracleInterface.sol";
 import { IPStakePool } from "../interfaces/IPStakePool.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
+import { LiquidStakedTokenOracle } from "./common/LiquidStakedTokenOracle.sol";
 
 /**
  * @title StkBNBOracle
  * @author Venus
  * @notice This oracle fetches the price of stkBNB asset
  */
-contract StkBNBOracle is OracleInterface {
+contract StkBNBOracle is LiquidStakedTokenOracle {
     /// @notice Address of StakePool
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IPStakePool public immutable STAKE_POOL;
 
-    /// @notice Address of stkBNB
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable stkBNB;
-
-    /// @notice Address of Resilient Oracle
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    OracleInterface public immutable RESILIENT_ORACLE;
-
-    /// @notice Set this as asset address for native token on each chain.
-    address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
-
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address _stakePool, address _stkBNB, address _resilientOracleAddress) {
+    constructor(
+        address _stakePool, 
+        address _stkBNB, 
+        address _bnb,
+        address _resilientOracle
+    ) LiquidStakedTokenOracle(_stkBNB, _bnb, _resilientOracle) {
         ensureNonzeroAddress(_stakePool);
-        ensureNonzeroAddress(_stkBNB);
-        ensureNonzeroAddress(_resilientOracleAddress);
         STAKE_POOL = IPStakePool(_stakePool);
-        stkBNB = _stkBNB;
-        RESILIENT_ORACLE = OracleInterface(_resilientOracleAddress);
     }
 
     /**
-     * @notice Gets the price of stkBNB asset
-     * @param asset Address of stkBNB
-     * @return price Price in USD scaled by 1e18
+     * @notice Fetches the amount of BNB for 1 stkBNB
+     * @return price The amount of BNB for stkBNB
      */
-    function getPrice(address asset) public view returns (uint256) {
-        if (asset != stkBNB) revert("wrong stkBNB address");
-
-        // get BNB amount for 1 stkBNB scaled by 1e18
+    function getUnderlyingAmount() internal view override returns (uint256) {
         IPStakePool.Data memory exchangeRateData = STAKE_POOL.exchangeRate();
-        uint256 bnbAmount = (exchangeRateData.totalWei * EXP_SCALE) / exchangeRateData.poolTokenSupply;
-
-        // price is scaled 1e18 (oracle returns 36 - asset decimal scale)
-        uint256 bnbUSDPrice = RESILIENT_ORACLE.getPrice(NATIVE_TOKEN_ADDR);
-
-        // bnbAmount (for 1 stkBNB) * bnbUSDPrice / 1e18
-        return (bnbAmount * bnbUSDPrice) / EXP_SCALE;
+        return (exchangeRateData.totalWei * EXP_SCALE) / exchangeRateData.poolTokenSupply;
     }
 }

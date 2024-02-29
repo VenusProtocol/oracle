@@ -5,51 +5,27 @@ import { OracleInterface } from "../interfaces/OracleInterface.sol";
 import { IWBETH } from "../interfaces/IWBETH.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
+import { LiquidStakedTokenOracle } from "./common/LiquidStakedTokenOracle.sol";
 
 /**
  * @title WBETHOracle
  * @author Venus
  * @notice This oracle fetches the price of wBETH asset
  */
-contract WBETHOracle is OracleInterface {
-    /// @notice Address of wBETH
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable wBETH;
-
-    /// @notice Address of Resilient Oracle
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    OracleInterface public immutable RESILIENT_ORACLE;
-
-    /// @notice Address of ETH
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable ETH;
-
+contract WBETHOracle is LiquidStakedTokenOracle {
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address wbeth, address eth, address resilientOracleAddress) {
-        ensureNonzeroAddress(wbeth);
-        ensureNonzeroAddress(resilientOracleAddress);
-        ensureNonzeroAddress(eth);
-        wBETH = wbeth;
-        ETH = eth;
-        RESILIENT_ORACLE = OracleInterface(resilientOracleAddress);
-    }
+    constructor(
+        address wbeth, 
+        address eth, 
+        address resilientOracle
+    ) LiquidStakedTokenOracle(wbeth, eth, resilientOracle) {}
 
     /**
-     * @notice Gets the price of wBETH asset
-     * @param asset Address of wBETH
-     * @return price Price in USD scaled by 1e18
+     * @notice Fetches the amount of ETH for 1 wBETH
+     * @return amount The amount of ETH for wBETH 
      */
-    function getPrice(address asset) public view returns (uint256) {
-        if (asset != wBETH) revert("wrong wBETH address");
-
-        // get ETH amount for 1 wBETH scaled by 1e18
-        uint256 ethAmount = IWBETH(wBETH).exchangeRate();
-
-        // price is scaled 1e18 (oracle returns 36 - asset decimal scale)
-        uint256 ethUSDPrice = RESILIENT_ORACLE.getPrice(ETH);
-
-        // ethAmount (for 1 wBETH) * ethUSDPrice / 1e18
-        return (ethAmount * ethUSDPrice) / EXP_SCALE;
+    function getUnderlyingAmount() internal view override returns (uint256) {
+        return  IWBETH(LIQUID_STAKED_TOKEN).exchangeRate();
     }
 }

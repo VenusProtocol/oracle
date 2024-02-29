@@ -2,31 +2,30 @@
 pragma solidity 0.8.13;
 
 import { OracleInterface } from "../interfaces/OracleInterface.sol";
-import { IAnkrBNB } from "../interfaces/IAnkrBNB.sol";
+import { ISFrax } from "../interfaces/ISFrax.sol";
+import { ISfraxETH } from "../interfaces/ISfraxETH.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
-import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 import { LiquidStakedTokenOracle } from "./common/LiquidStakedTokenOracle.sol";
 
 /**
- * @title AnkrBNBOracle
+ * @title SFraxOracle
  * @author Venus
- * @notice This oracle fetches the price of ankrBNB asset
+ * @notice This oracle fetches the price of sFrax
  */
-contract AnkrBNBOracle is LiquidStakedTokenOracle {
-
+contract SFraxOracle is LiquidStakedTokenOracle {
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
-        address _ankrBNB, 
-        address _bnb,
+        address _frax,
+        address _sFrax,
         address _resilientOracle
-    ) LiquidStakedTokenOracle(_ankrBNB, _bnb, _resilientOracle) {}
+    ) LiquidStakedTokenOracle(_sFrax, _frax, _resilientOracle) {}
 
     /**
-     * @notice Fetches the amount of BNB for 1 ankrBNB
-     * @return amount The amount of BNB for ankrBNB 
+     * @notice Fetches the amount of FRAX for 1 sFrax
+     * @return amount The amount of FRAX for sFrax
      */
     function getUnderlyingAmount() internal view override returns (uint256) {
-        return IAnkrBNB(LIQUID_STAKED_TOKEN).sharesToBonds(1 ether);
+        return ISFrax(LIQUID_STAKED_TOKEN).convertToAssets(1 ether);
     }
 }

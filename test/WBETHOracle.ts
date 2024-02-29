@@ -47,7 +47,7 @@ describe("WBETHOracle unit tests", () => {
 
   describe("getPrice", () => {
     it("revert if WBETH address is wrong", async () => {
-      await expect(WBETHOracle.getPrice(addr0000)).to.be.revertedWith("wrong wBETH address");
+      await expect(WBETHOracle.getPrice(addr0000)).to.be.revertedWith("wrong token address");
     });
 
     it("should get correct price", async () => {

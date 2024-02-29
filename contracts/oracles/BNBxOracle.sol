@@ -23,18 +23,17 @@ contract BNBxOracle is LiquidStakedTokenOracle {
         address stakeManager, 
         address bnbx, 
         address bnb, 
-        address resilientOracleAddress
-    )  LiquidStakedTokenOracle (bnbx, bnb, resilientOracleAddress) {
+        address resilientOracle
+    )  LiquidStakedTokenOracle (bnbx, bnb, resilientOracle) {
         ensureNonzeroAddress(stakeManager);
         STAKE_MANAGER = IStaderStakeManager(stakeManager);
     }
 
     /**
-     * @notice Fetches the amount of BNB for BNBx
-     * @param liquidStakedAmount Amount of BNBx
+     * @notice Fetches the amount of BNB for 1 BNBx
      * @return price The amount of BNB for BNBx
      */
-    function getUnderlyingAmount(uint256 liquidStakedAmount) internal view override returns (uint256) {
-        return STAKE_MANAGER.convertBnbXToBnb(liquidStakedAmount);
+    function getUnderlyingAmount() internal view override returns (uint256) {
+        return STAKE_MANAGER.convertBnbXToBnb(1 ether);
     }
 }
