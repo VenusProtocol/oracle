@@ -35,8 +35,8 @@ describe("SFraxETHOracle unit tests", () => {
       await expect(
         SFraxETHOracleFactory.deploy(
           addr0000,
-          sFraxETHMock.address,
           fraxETH,
+          sFraxETHMock.address,
           resilientOracleMock.address,
           true,
         ),
@@ -44,15 +44,15 @@ describe("SFraxETHOracle unit tests", () => {
     });
     it("revert if sfraxETH address is 0", async () => {
       await expect(
-        SFraxETHOracleFactory.deploy(WETH, addr0000, fraxETH, resilientOracleMock.address, true),
+        SFraxETHOracleFactory.deploy(WETH, fraxETH, addr0000, resilientOracleMock.address, true),
       ).to.be.reverted;
     });
     it("revert if sfraxETH address is 0", async () => {
       await expect(
         SFraxETHOracleFactory.deploy(
           WETH,
-          sFraxETHMock.address,
           addr0000,
+          sFraxETHMock.address,
           resilientOracleMock.address,
           true,
         ),
@@ -61,8 +61,8 @@ describe("SFraxETHOracle unit tests", () => {
     it("should deploy contract", async () => {
       SFraxETHOracle = await SFraxETHOracleFactory.deploy(
         WETH,
-        sFraxETHMock.address,
         fraxETH,
+        sFraxETHMock.address,
         resilientOracleMock.address,
         true,
       );
@@ -71,7 +71,7 @@ describe("SFraxETHOracle unit tests", () => {
 
   describe("getPrice", () => {
     it("revert if address is not valid sfraxETH address", async () => {
-      await expect(SFraxETHOracle.getPrice(addr0000)).to.be.revertedWith("wrong sFRAX or sfraxETH asset address");
+      await expect(SFraxETHOracle.getPrice(addr0000)).to.be.revertedWith("wrong token address");
     });
 
     it("should get correct price of sfraxETH", async () => {
