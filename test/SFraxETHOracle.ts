@@ -4,7 +4,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES, assets } from "../helpers/deploymentConfig";
-import { ISFrax, ISfraxETH, ResilientOracleInterface } from "../typechain-types";
+import { ISfraxETH, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -33,29 +33,16 @@ describe("SFraxETHOracle unit tests", () => {
   describe("deployment", () => {
     it("revert if ETH address is 0", async () => {
       await expect(
-        SFraxETHOracleFactory.deploy(
-          addr0000,
-          fraxETH,
-          sFraxETHMock.address,
-          resilientOracleMock.address,
-          true,
-        ),
+        SFraxETHOracleFactory.deploy(addr0000, fraxETH, sFraxETHMock.address, resilientOracleMock.address, true),
       ).to.be.reverted;
     });
     it("revert if sfraxETH address is 0", async () => {
-      await expect(
-        SFraxETHOracleFactory.deploy(WETH, fraxETH, addr0000, resilientOracleMock.address, true),
-      ).to.be.reverted;
+      await expect(SFraxETHOracleFactory.deploy(WETH, fraxETH, addr0000, resilientOracleMock.address, true)).to.be
+        .reverted;
     });
     it("revert if sfraxETH address is 0", async () => {
       await expect(
-        SFraxETHOracleFactory.deploy(
-          WETH,
-          addr0000,
-          sFraxETHMock.address,
-          resilientOracleMock.address,
-          true,
-        ),
+        SFraxETHOracleFactory.deploy(WETH, addr0000, sFraxETHMock.address, resilientOracleMock.address, true),
       ).to.be.reverted;
     });
     it("should deploy contract", async () => {

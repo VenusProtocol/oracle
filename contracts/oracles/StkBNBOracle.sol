@@ -20,8 +20,8 @@ contract StkBNBOracle is LiquidStakedTokenOracle {
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
-        address _stakePool, 
-        address _stkBNB, 
+        address _stakePool,
+        address _stkBNB,
         address _bnb,
         address _resilientOracle
     ) LiquidStakedTokenOracle(_stkBNB, _bnb, _resilientOracle) {

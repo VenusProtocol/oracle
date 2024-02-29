@@ -41,14 +41,19 @@ describe("StkBNBOracle unit tests", () => {
       await expect(StkBNBOracleFactory.deploy(addr0000, stkBNB, BNB, resilientOracleMock.address)).to.be.reverted;
     });
     it("revert if stkBNB address is 0", async () => {
-      await expect(StkBNBOracleFactory.deploy(stkBNBStakePoolMock.address, addr0000, BNB, resilientOracleMock.address)).to.be
-        .reverted;
+      await expect(StkBNBOracleFactory.deploy(stkBNBStakePoolMock.address, addr0000, BNB, resilientOracleMock.address))
+        .to.be.reverted;
     });
     it("revert if resilientOracle address is 0", async () => {
       await expect(StkBNBOracleFactory.deploy(stkBNBStakePoolMock.address, stkBNB, BNB, addr0000)).to.be.reverted;
     });
     it("should deploy contract", async () => {
-      StkBNBOracle = await StkBNBOracleFactory.deploy(stkBNBStakePoolMock.address, stkBNB, BNB, resilientOracleMock.address);
+      StkBNBOracle = await StkBNBOracleFactory.deploy(
+        stkBNBStakePoolMock.address,
+        stkBNB,
+        BNB,
+        resilientOracleMock.address,
+      );
     });
   });
 

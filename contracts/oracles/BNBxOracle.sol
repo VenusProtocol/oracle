@@ -20,11 +20,11 @@ contract BNBxOracle is LiquidStakedTokenOracle {
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
-        address stakeManager, 
-        address bnbx, 
-        address bnb, 
+        address stakeManager,
+        address bnbx,
+        address bnb,
         address resilientOracle
-    )  LiquidStakedTokenOracle (bnbx, bnb, resilientOracle) {
+    ) LiquidStakedTokenOracle(bnbx, bnb, resilientOracle) {
         ensureNonzeroAddress(stakeManager);
         STAKE_MANAGER = IStaderStakeManager(stakeManager);
     }

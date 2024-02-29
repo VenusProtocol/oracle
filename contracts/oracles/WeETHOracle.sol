@@ -6,7 +6,7 @@ import { IWeETH } from "../interfaces/IWeETH.sol";
 import { IEETH } from "../interfaces/IEETH.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
-import {WrappedLiquidStakedTokenOracle} from "./common/WrappedLiquidStakedTokenOracle.sol";
+import { WrappedLiquidStakedTokenOracle } from "./common/WrappedLiquidStakedTokenOracle.sol";
 
 /**
  * @title WeETHOracle
@@ -18,23 +18,17 @@ contract WeETHOracle is WrappedLiquidStakedTokenOracle {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address _ETH,
-        address _eETH, 
-        address _weETH, 
-        address _resilientOracle, 
+        address _eETH,
+        address _weETH,
+        address _resilientOracle,
         bool _assumeEquivalence
-    ) WrappedLiquidStakedTokenOracle(
-        _ETH,
-        _eETH,
-        _weETH,
-        _resilientOracle,
-        _assumeEquivalence
-    ) {}
+    ) WrappedLiquidStakedTokenOracle(_ETH, _eETH, _weETH, _resilientOracle, _assumeEquivalence) {}
 
     /**
      * @notice Gets the eETH for 1 weETH
      * @return amount Amount of eETH
      */
-    function getRebaseTokenAmount() internal override view returns (uint256) {
+    function getRebaseTokenAmount() internal view override returns (uint256) {
         return IWeETH(WRAPPED_TOKEN).getEETHByWeETH(1 ether);
     }
 }

@@ -37,12 +37,12 @@ describe("BNBxOracle unit tests", () => {
       await expect(BNBxOracleFactory.deploy(addr0000, BNBx, BNB, resilientOracleMock.address)).to.be.reverted;
     });
     it("revert if BNBx address is 0", async () => {
-      await expect(BNBxOracleFactory.deploy(BNBxStakeManagerMock.address, addr0000, BNB, resilientOracleMock.address)).to.be
-        .reverted;
+      await expect(BNBxOracleFactory.deploy(BNBxStakeManagerMock.address, addr0000, BNB, resilientOracleMock.address))
+        .to.be.reverted;
     });
     it("revert if BNB address is 0", async () => {
-      await expect(BNBxOracleFactory.deploy(BNBxStakeManagerMock.address, BNBx, addr0000, resilientOracleMock.address)).to.be
-        .reverted;
+      await expect(BNBxOracleFactory.deploy(BNBxStakeManagerMock.address, BNBx, addr0000, resilientOracleMock.address))
+        .to.be.reverted;
     });
     it("revert if resilientOracle address is 0", async () => {
       await expect(BNBxOracleFactory.deploy(BNBxStakeManagerMock.address, BNBx, BNB, addr0000)).to.be.reverted;

@@ -16,16 +16,16 @@ contract WBETHOracle is LiquidStakedTokenOracle {
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
-        address wbeth, 
-        address eth, 
+        address wbeth,
+        address eth,
         address resilientOracle
     ) LiquidStakedTokenOracle(wbeth, eth, resilientOracle) {}
 
     /**
      * @notice Fetches the amount of ETH for 1 wBETH
-     * @return amount The amount of ETH for wBETH 
+     * @return amount The amount of ETH for wBETH
      */
     function getUnderlyingAmount() internal view override returns (uint256) {
-        return  IWBETH(LIQUID_STAKED_TOKEN).exchangeRate();
+        return IWBETH(LIQUID_STAKED_TOKEN).exchangeRate();
     }
 }

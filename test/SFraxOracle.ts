@@ -31,29 +31,13 @@ describe("SFraxOracle unit tests", () => {
 
   describe("deployment", () => {
     it("revert if FRAX address is 0", async () => {
-      await expect(
-        SFraxOracleFactory.deploy(
-          addr0000,
-          sFraxMock.address,
-          resilientOracleMock.address,
-        ),
-      ).to.be.reverted;
+      await expect(SFraxOracleFactory.deploy(addr0000, sFraxMock.address, resilientOracleMock.address)).to.be.reverted;
     });
     it("revert if sFRAX address is 0", async () => {
-      await expect(
-        SFraxOracleFactory.deploy(
-          FRAX,
-          addr0000,
-          resilientOracleMock.address,
-        ),
-      ).to.be.reverted;
+      await expect(SFraxOracleFactory.deploy(FRAX, addr0000, resilientOracleMock.address)).to.be.reverted;
     });
     it("should deploy contract", async () => {
-      SFraxOracle = await SFraxOracleFactory.deploy(
-        FRAX,
-        sFraxMock.address,
-        resilientOracleMock.address,
-      );
+      SFraxOracle = await SFraxOracleFactory.deploy(FRAX, sFraxMock.address, resilientOracleMock.address);
     });
   });
 

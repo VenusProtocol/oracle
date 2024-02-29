@@ -35,7 +35,8 @@ describe("AnkrBNBOracle unit tests", () => {
       await expect(ankrBNBOracleFactory.deploy(addr0000, BNB, resilientOracleMock.address)).to.be.reverted;
     });
     it("revert if BNB address is 0", async () => {
-      await expect(ankrBNBOracleFactory.deploy(ankrBNBMock.address, addr0000, resilientOracleMock.address)).to.be.reverted;
+      await expect(ankrBNBOracleFactory.deploy(ankrBNBMock.address, addr0000, resilientOracleMock.address)).to.be
+        .reverted;
     });
     it("revert if ResilientOracle address is 0", async () => {
       await expect(ankrBNBOracleFactory.deploy(ankrBNBMock.address, BNB, addr0000)).to.be.reverted;

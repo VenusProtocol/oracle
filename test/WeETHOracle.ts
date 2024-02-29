@@ -3,7 +3,7 @@ import chai from "chai";
 import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
-import { ADDRESSES, assets} from "../helpers/deploymentConfig";
+import { ADDRESSES, assets } from "../helpers/deploymentConfig";
 import { IEETH, IWeETH, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
@@ -35,8 +35,9 @@ describe("WeETHOracle unit tests", () => {
 
   describe("deployment", () => {
     it("revert if WETH address is 0", async () => {
-      await expect(WeETHOracleFactory.deploy(addr0000, eETHMock.address, weETHMock.address, resilientOracleMock.address, true)).to.be
-        .reverted;
+      await expect(
+        WeETHOracleFactory.deploy(addr0000, eETHMock.address, weETHMock.address, resilientOracleMock.address, true),
+      ).to.be.reverted;
     });
 
     it("revert if weETH address is 0", async () => {
@@ -44,8 +45,8 @@ describe("WeETHOracle unit tests", () => {
         .reverted;
     });
     it("revert if eETH address is 0", async () => {
-      await expect(WeETHOracleFactory.deploy(WETH, addr0000, weETHMock.address, resilientOracleMock.address, true)).to.be
-        .reverted;
+      await expect(WeETHOracleFactory.deploy(WETH, addr0000, weETHMock.address, resilientOracleMock.address, true)).to
+        .be.reverted;
     });
     it("revert if resilient oracle address is 0", async () => {
       await expect(WeETHOracleFactory.deploy(WETH, eETHMock.address, weETHMock.address, addr0000, true)).to.be.reverted;

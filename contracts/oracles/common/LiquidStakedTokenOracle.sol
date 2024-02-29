@@ -24,11 +24,7 @@ abstract contract LiquidStakedTokenOracle is OracleInterface {
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(
-        address _liquidStakedToken,
-        address _underlyingToken,
-        address _resilientOracle
-    ) {
+    constructor(address _liquidStakedToken, address _underlyingToken, address _resilientOracle) {
         ensureNonzeroAddress(_liquidStakedToken);
         ensureNonzeroAddress(_underlyingToken);
         ensureNonzeroAddress(_resilientOracle);
@@ -59,5 +55,5 @@ abstract contract LiquidStakedTokenOracle is OracleInterface {
      * @notice Gets the underlying amount for liquid staked token
      * @return underlyingAmount Amount of underlying token
      */
-    function getUnderlyingAmount() internal virtual view returns (uint256);
+    function getUnderlyingAmount() internal view virtual returns (uint256);
 }

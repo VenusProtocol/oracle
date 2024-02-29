@@ -73,5 +73,5 @@ abstract contract WrappedLiquidStakedTokenOracle is OracleInterface {
      * @notice Gets the reabse token amount for wrapped liquid staked token
      * @return amount Amount of rebase token
      */
-    function getRebaseTokenAmount() internal virtual view returns (uint256);
+    function getRebaseTokenAmount() internal view virtual returns (uint256);
 }
