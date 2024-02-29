@@ -25,7 +25,7 @@ contract AnkrBNBOracle is LiquidStakedTokenOracle {
     /**
      * @notice Fetches the amount of BNB for ankrBNB
      * @param liquidStakedAmount Amount of ankrBNB
-     * @return price The amount of BNB for ankrBNB scaled by 1e18
+     * @return price The amount of BNB for ankrBNB 
      */
     function getUnderlyingAmount(uint256 liquidStakedAmount) internal view override returns (uint256) {
         return IAnkrBNB(LIQUID_STAKED_TOKEN).sharesToBonds(liquidStakedAmount);

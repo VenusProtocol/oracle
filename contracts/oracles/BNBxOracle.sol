@@ -5,54 +5,36 @@ import { OracleInterface } from "../interfaces/OracleInterface.sol";
 import { IStaderStakeManager } from "../interfaces/IStaderStakeManager.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
+import { LiquidStakedTokenOracle } from "./common/LiquidStakedTokenOracle.sol";
 
 /**
  * @title BNBxOracle
  * @author Venus
  * @notice This oracle fetches the price of BNBx asset
  */
-contract BNBxOracle is OracleInterface {
+contract BNBxOracle is LiquidStakedTokenOracle {
     /// @notice Address of StakeManager
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IStaderStakeManager public immutable STAKE_MANAGER;
 
-    /// @notice Address of BNBx
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable BNBx;
-
-    /// @notice Address of Resilient Oracle
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    OracleInterface public immutable RESILIENT_ORACLE;
-
-    /// @notice Set this as asset address for native token on each chain.
-    address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
-
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address stakeManager, address bnbx, address resilientOracleAddress) {
+    constructor(
+        address stakeManager, 
+        address bnbx, 
+        address bnb, 
+        address resilientOracleAddress
+    )  LiquidStakedTokenOracle (bnbx, bnb, resilientOracleAddress) {
         ensureNonzeroAddress(stakeManager);
-        ensureNonzeroAddress(bnbx);
-        ensureNonzeroAddress(resilientOracleAddress);
         STAKE_MANAGER = IStaderStakeManager(stakeManager);
-        BNBx = bnbx;
-        RESILIENT_ORACLE = OracleInterface(resilientOracleAddress);
     }
 
     /**
-     * @notice Gets the price of BNBx asset
-     * @param asset Address of BNBx
-     * @return price Price in USD scaled by 1e18
+     * @notice Fetches the amount of BNB for BNBx
+     * @param liquidStakedAmount Amount of BNBx
+     * @return price The amount of BNB for BNBx
      */
-    function getPrice(address asset) public view returns (uint256) {
-        if (asset != BNBx) revert("wrong BNBx address");
-
-        // get BNB amount for 1 BNBx scaled by 1e18
-        uint256 bnbAmount = STAKE_MANAGER.convertBnbXToBnb(1 ether);
-
-        // price is scaled 1e18 (oracle returns 36 - asset decimal scale)
-        uint256 bnbUSDPrice = RESILIENT_ORACLE.getPrice(NATIVE_TOKEN_ADDR);
-
-        // bnbAmount (for 1 BNBx) * bnbUSDPrice / 1e18
-        return (bnbAmount * bnbUSDPrice) / EXP_SCALE;
+    function getUnderlyingAmount(uint256 liquidStakedAmount) internal view override returns (uint256) {
+        return STAKE_MANAGER.convertBnbXToBnb(liquidStakedAmount);
     }
 }
