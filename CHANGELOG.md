@@ -1,3 +1,45 @@
+## [1.10.0](https://github.com/VenusProtocol/oracle/compare/v1.9.0...v1.10.0) (2024-02-22)
+
+
+### Features
+
+* add oracle deployments for opbnbmainnet ([f6655e7](https://github.com/VenusProtocol/oracle/commit/f6655e744b64236c65e1099bab1caf237d56eb16))
+* add wstETH oracle deployment on Ethereum ([505c721](https://github.com/VenusProtocol/oracle/commit/505c721d43f4dd02c2ae987dd3412a883b7f9bbb))
+* updating deployment files ([a322225](https://github.com/VenusProtocol/oracle/commit/a322225092f349e315dbfe483dd679e6bf698125))
+* updating deployment files ([3e9a5ce](https://github.com/VenusProtocol/oracle/commit/3e9a5cea393ec971271a348896f8818652839593))
+* updating deployment files ([0acebd5](https://github.com/VenusProtocol/oracle/commit/0acebd566b0c0bab97bfd37b81ec561a3a493d4c))
+* updating deployment files ([5d813b2](https://github.com/VenusProtocol/oracle/commit/5d813b2f9fdd82418f2f888a2f19e2822268a631))
+
+
+### Bug Fixes
+
+* chainlink oracle deployment might not be available on some networks ([4868926](https://github.com/VenusProtocol/oracle/commit/4868926be37b57600301587bad4b81bfcc9c41d0))
+* deploy script ([0a17889](https://github.com/VenusProtocol/oracle/commit/0a17889c6b5c9d43fc119e5ca4514111628d1a81))
+* hardcoded gas input ([ef80913](https://github.com/VenusProtocol/oracle/commit/ef809133e3cef279495435c6c7fa4062cf41de41))
+* remove twap oracle ([85b1021](https://github.com/VenusProtocol/oracle/commit/85b1021928d1faaacf8d9263cf6c3916e1142f43))
+
+## [1.10.0-dev.8](https://github.com/VenusProtocol/oracle/compare/v1.10.0-dev.7...v1.10.0-dev.8) (2024-02-22)
+
+
+### Bug Fixes
+
+* chainlink oracle deployment might not be available on some networks ([4868926](https://github.com/VenusProtocol/oracle/commit/4868926be37b57600301587bad4b81bfcc9c41d0))
+
+## [1.10.0-dev.7](https://github.com/VenusProtocol/oracle/compare/v1.10.0-dev.6...v1.10.0-dev.7) (2024-02-22)
+
+
+### Features
+
+* updating deployment files ([a322225](https://github.com/VenusProtocol/oracle/commit/a322225092f349e315dbfe483dd679e6bf698125))
+* updating deployment files ([3e9a5ce](https://github.com/VenusProtocol/oracle/commit/3e9a5cea393ec971271a348896f8818652839593))
+
+
+### Bug Fixes
+
+* deploy script ([0a17889](https://github.com/VenusProtocol/oracle/commit/0a17889c6b5c9d43fc119e5ca4514111628d1a81))
+
+## [1.10.0-dev.6](https://github.com/VenusProtocol/oracle/compare/v1.10.0-dev.5...v1.10.0-dev.6) (2024-02-21)
+
 ## [1.10.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v1.10.0-dev.4...v1.10.0-dev.5) (2024-02-20)
 
 
