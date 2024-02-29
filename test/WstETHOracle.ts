@@ -39,31 +39,31 @@ describe("WstETHOracle unit tests", () => {
 
   describe("deployment", () => {
     it("revert if wstETH address is 0", async () => {
-      await expect(WsETHOracleFactory.deploy(addr0000, WETH, stETHMock.address, resilientOracleMock.address, true)).to
+      await expect(WsETHOracleFactory.deploy(WETH, stETHMock.address, addr0000, resilientOracleMock.address, true)).to
         .be.reverted;
     });
     it("revert if WETH address is 0", async () => {
-      await expect(WsETHOracleFactory.deploy(WSTETH, addr0000, stETHMock.address, resilientOracleMock.address, true)).to
+      await expect(WsETHOracleFactory.deploy(addr0000, stETHMock.address, WSTETH, resilientOracleMock.address, true)).to
         .be.reverted;
     });
     it("revert if stETH address is 0", async () => {
-      await expect(WsETHOracleFactory.deploy(WSTETH, WETH, addr0000, resilientOracleMock.address, true)).to.be.reverted;
+      await expect(WsETHOracleFactory.deploy(WETH, addr0000, WSTETH, resilientOracleMock.address, true)).to.be.reverted;
     });
     it("revert if ResilientOracle address is 0", async () => {
-      await expect(WsETHOracleFactory.deploy(WSTETH, WETH, stETHMock.address, addr0000, true)).to.be.reverted;
+      await expect(WsETHOracleFactory.deploy(WETH, stETHMock.address, WSTETH, addr0000, true)).to.be.reverted;
     });
     it("should deploy contract", async () => {
       wstETHOracleEquivalentRatio = await WsETHOracleFactory.deploy(
-        WSTETH,
         WETH,
         stETHMock.address,
+        WSTETH,
         resilientOracleMock.address,
         true,
       );
       wstETHOracleNonEquivalentRatio = await WsETHOracleFactory.deploy(
-        WSTETH,
         WETH,
         stETHMock.address,
+        WSTETH,
         resilientOracleMock.address,
         false,
       );
@@ -72,7 +72,7 @@ describe("WstETHOracle unit tests", () => {
 
   describe("getPrice", () => {
     it("revert if wstETH address is wrong", async () => {
-      await expect(wstETHOracleEquivalentRatio.getPrice(addr0000)).to.be.revertedWith("wrong wstETH address");
+      await expect(wstETHOracleEquivalentRatio.getPrice(addr0000)).to.be.revertedWith("wrong token address");
     });
 
     it("should get correct price assuming 1/1 ratio", async () => {
