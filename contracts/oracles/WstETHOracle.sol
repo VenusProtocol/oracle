@@ -2,38 +2,27 @@
 pragma solidity 0.8.13;
 
 import { IStETH } from "../interfaces/IStETH.sol";
-import { WrappedLiquidStakedTokenOracle } from "./common/WrappedLiquidStakedTokenOracle.sol";
+import { LiquidStakedTokenOracle } from "./common/LiquidStakedTokenOracle.sol";
 
 /**
  * @title WstETHOracle
  * @author Venus
- * @notice Depending on the equivalence flag price is either based on assumption that 1 stETH = 1 ETH
- *         or the price of stETH/USD (secondary market price) is obtained from the oracle.
+ * @notice This oracle fetches the price of wstETH
  */
-contract WstETHOracle is WrappedLiquidStakedTokenOracle {
+contract WstETHOracle is LiquidStakedTokenOracle {
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
-        address wETHAddress,
-        address stETHAddress,
-        address wstETHAddress,
-        address resilientOracleAddress,
-        bool assumeEquivalence
-    )
-        WrappedLiquidStakedTokenOracle(
-            wETHAddress,
-            stETHAddress,
-            wstETHAddress,
-            resilientOracleAddress,
-            assumeEquivalence
-        )
-    {}
+        address wstETH,
+        address stETH,
+        address resilientOracle
+    ) LiquidStakedTokenOracle(wstETH, stETH, resilientOracle) {}
 
     /**
      * @notice Gets the stETH for 1 wstETH
      * @return amount Amount of stETH
      */
-    function getRebaseTokenAmount() internal view override returns (uint256) {
-        return IStETH(REBASE_TOKEN).getPooledEthByShares(1 ether);
+    function getUnderlyingAmount() internal view override returns (uint256) {
+        return IStETH(UNDERLYING_TOKEN).getPooledEthByShares(1 ether);
     }
 }
