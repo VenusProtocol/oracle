@@ -5,54 +5,35 @@ import { OracleInterface } from "../interfaces/OracleInterface.sol";
 import { ISynclubStakeManager } from "../interfaces/ISynclubStakeManager.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
+import { LiquidStakedTokenOracle } from "./common/LiquidStakedTokenOracle.sol";
 
 /**
  * @title SlisBNBOracle
  * @author Venus
  * @notice This oracle fetches the price of slisBNB asset
  */
-contract SlisBNBOracle is OracleInterface {
+contract SlisBNBOracle is LiquidStakedTokenOracle {
     /// @notice Address of StakeManager
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     ISynclubStakeManager public immutable STAKE_MANAGER;
 
-    /// @notice Address of slisBNB
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable slisBNB;
-
-    /// @notice Address of Resilient Oracle
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    OracleInterface public immutable RESILIENT_ORACLE;
-
-    /// @notice Set this as asset address for native token on each chain.
-    address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
-
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address _stakeManager, address _slisBNB, address _resilientOracleAddress) {
+    constructor(
+        address _stakeManager, 
+        address _slisBNB, 
+        address _bnb,
+        address _resilientOracle
+    ) LiquidStakedTokenOracle(_slisBNB, _bnb, _resilientOracle) {
         ensureNonzeroAddress(_stakeManager);
-        ensureNonzeroAddress(_slisBNB);
-        ensureNonzeroAddress(_resilientOracleAddress);
         STAKE_MANAGER = ISynclubStakeManager(_stakeManager);
-        slisBNB = _slisBNB;
-        RESILIENT_ORACLE = OracleInterface(_resilientOracleAddress);
     }
 
     /**
-     * @notice Gets the price of slisBNB asset
-     * @param asset Address of slisBNB
-     * @return price Price in USD scaled by 1e18
+     * @notice Fetches the amount of BNB for 1 slisBNB
+     * @return amount The amount of BNB for slisBNB
      */
-    function getPrice(address asset) public view returns (uint256) {
-        if (asset != slisBNB) revert("wrong slisBNB address");
-
-        // get BNB amount for 1 slisBNB scaled by 1e18
-        uint256 bnbAmount = STAKE_MANAGER.convertSnBnbToBnb(1 ether);
-
-        // price is scaled 1e18 (oracle returns 36 - asset decimal scale)
-        uint256 bnbUSDPrice = RESILIENT_ORACLE.getPrice(NATIVE_TOKEN_ADDR);
-
-        // bnbAmount (for 1 slisBNB) * bnbUSDPrice / 1e18
-        return (bnbAmount * bnbUSDPrice) / EXP_SCALE;
+    function getUnderlyingAmount() internal view override returns (uint256) {
+        return STAKE_MANAGER.convertSnBnbToBnb(1 ether);
     }
 }
