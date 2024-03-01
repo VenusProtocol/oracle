@@ -2,8 +2,6 @@
 pragma solidity 0.8.13;
 
 import { OracleInterface } from "../../interfaces/OracleInterface.sol";
-import { ISFrax } from "../../interfaces/ISFrax.sol";
-import { ISfraxETH } from "../../interfaces/ISfraxETH.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 

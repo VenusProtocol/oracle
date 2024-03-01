@@ -1,11 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.13;
 
-import { OracleInterface } from "../interfaces/OracleInterface.sol";
 import { IWeETH } from "../interfaces/IWeETH.sol";
-import { IEETH } from "../interfaces/IEETH.sol";
-import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
-import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 import { WrappedLiquidStakedTokenOracle } from "./common/WrappedLiquidStakedTokenOracle.sol";
 
 /**
