@@ -3,14 +3,14 @@ pragma solidity 0.8.13;
 
 import { ISynclubStakeManager } from "../interfaces/ISynclubStakeManager.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
-import { LiquidStakedTokenOracle } from "./common/LiquidStakedTokenOracle.sol";
+import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
 
 /**
  * @title SlisBNBOracle
  * @author Venus
  * @notice This oracle fetches the price of slisBNB asset
  */
-contract SlisBNBOracle is LiquidStakedTokenOracle {
+contract SlisBNBOracle is CorrelatedTokenOracle {
     /// @notice Address of StakeManager
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     ISynclubStakeManager public immutable STAKE_MANAGER;
@@ -22,7 +22,7 @@ contract SlisBNBOracle is LiquidStakedTokenOracle {
         address _slisBNB,
         address _bnb,
         address _resilientOracle
-    ) LiquidStakedTokenOracle(_slisBNB, _bnb, _resilientOracle) {
+    ) CorrelatedTokenOracle(_slisBNB, _bnb, _resilientOracle) {
         ensureNonzeroAddress(_stakeManager);
         STAKE_MANAGER = ISynclubStakeManager(_stakeManager);
     }

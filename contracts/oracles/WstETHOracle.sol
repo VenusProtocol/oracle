@@ -2,21 +2,21 @@
 pragma solidity 0.8.13;
 
 import { IStETH } from "../interfaces/IStETH.sol";
-import { LiquidStakedTokenOracle } from "./common/LiquidStakedTokenOracle.sol";
+import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
 
 /**
  * @title WstETHOracle
  * @author Venus
  * @notice This oracle fetches the price of wstETH
  */
-contract WstETHOracle is LiquidStakedTokenOracle {
+contract WstETHOracle is CorrelatedTokenOracle {
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address wstETH,
         address stETH,
         address resilientOracle
-    ) LiquidStakedTokenOracle(wstETH, stETH, resilientOracle) {}
+    ) CorrelatedTokenOracle(wstETH, stETH, resilientOracle) {}
 
     /**
      * @notice Gets the stETH for 1 wstETH

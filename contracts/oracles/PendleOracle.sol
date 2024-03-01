@@ -2,7 +2,7 @@
 pragma solidity 0.8.13;
 
 import { IPendlePtOracle } from "../interfaces/IPendlePtOracle.sol";
-import { LiquidStakedTokenOracle } from "./common/LiquidStakedTokenOracle.sol";
+import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
 import { ensureNonzeroAddress, ensureNonzeroValue } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 
 /**
@@ -10,7 +10,7 @@ import { ensureNonzeroAddress, ensureNonzeroValue } from "@venusprotocol/solidit
  * @author Venus
  * @notice This oracle fetches the price of an pendle token
  */
-contract PendleOracle is LiquidStakedTokenOracle {
+contract PendleOracle is CorrelatedTokenOracle {
     /// @notice Address of the PT oracle
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IPendlePtOracle public immutable PT_ORACLE;
@@ -32,7 +32,7 @@ contract PendleOracle is LiquidStakedTokenOracle {
         address underlyingToken,
         address resilientOracle,
         uint32 twapDuration
-    ) LiquidStakedTokenOracle(ptToken, underlyingToken, resilientOracle) {
+    ) CorrelatedTokenOracle(ptToken, underlyingToken, resilientOracle) {
         ensureNonzeroAddress(market);
         ensureNonzeroAddress(ptOracle);
         ensureNonzeroValue(twapDuration);

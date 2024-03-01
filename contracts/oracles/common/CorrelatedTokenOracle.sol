@@ -6,13 +6,13 @@ import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contract
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
 /**
- * @title LiquidStakedTokenOracle
+ * @title CorrelatedTokenOracle
  * @notice This oracle fetches the price of no rebasing liquid-staked tokens
  */
-abstract contract LiquidStakedTokenOracle is OracleInterface {
-    /// @notice Address of the liquid staked token
+abstract contract CorrelatedTokenOracle is OracleInterface {
+    /// @notice Address of the correlated token
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable LIQUID_STAKED_TOKEN;
+    address public immutable CORRELATED_TOKEN;
 
     /// @notice Address of the underlying token
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
@@ -27,11 +27,11 @@ abstract contract LiquidStakedTokenOracle is OracleInterface {
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address _liquidStakedToken, address _underlyingToken, address _resilientOracle) {
-        ensureNonzeroAddress(_liquidStakedToken);
+    constructor(address _correlatedToken, address _underlyingToken, address _resilientOracle) {
+        ensureNonzeroAddress(_correlatedToken);
         ensureNonzeroAddress(_underlyingToken);
         ensureNonzeroAddress(_resilientOracle);
-        LIQUID_STAKED_TOKEN = _liquidStakedToken;
+        CORRELATED_TOKEN = _correlatedToken;
         UNDERLYING_TOKEN = _underlyingToken;
         RESILIENT_ORACLE = OracleInterface(_resilientOracle);
     }
@@ -42,7 +42,7 @@ abstract contract LiquidStakedTokenOracle is OracleInterface {
      * @return price The price of the liquid staked token scalked by 1e18
      */
     function getPrice(address asset) external view override returns (uint256) {
-        if (asset != LIQUID_STAKED_TOKEN) revert("wrong token address");
+        if (asset != CORRELATED_TOKEN) revert("wrong token address");
 
         // get underlying token amount for 1 liquid staked token scaled by underlying token decimals
         uint256 underlyingAmount = getUnderlyingAmount();

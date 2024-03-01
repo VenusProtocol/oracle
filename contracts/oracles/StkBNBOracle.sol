@@ -5,14 +5,14 @@ import { OracleInterface } from "../interfaces/OracleInterface.sol";
 import { IPStakePool } from "../interfaces/IPStakePool.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
-import { LiquidStakedTokenOracle } from "./common/LiquidStakedTokenOracle.sol";
+import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
 
 /**
  * @title StkBNBOracle
  * @author Venus
  * @notice This oracle fetches the price of stkBNB asset
  */
-contract StkBNBOracle is LiquidStakedTokenOracle {
+contract StkBNBOracle is CorrelatedTokenOracle {
     /// @notice Address of StakePool
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IPStakePool public immutable STAKE_POOL;
@@ -24,7 +24,7 @@ contract StkBNBOracle is LiquidStakedTokenOracle {
         address _stkBNB,
         address _bnb,
         address _resilientOracle
-    ) LiquidStakedTokenOracle(_stkBNB, _bnb, _resilientOracle) {
+    ) CorrelatedTokenOracle(_stkBNB, _bnb, _resilientOracle) {
         ensureNonzeroAddress(_stakePool);
         STAKE_POOL = IPStakePool(_stakePool);
     }

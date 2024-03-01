@@ -4,14 +4,14 @@ pragma solidity 0.8.13;
 import { IStaderStakeManager } from "../interfaces/IStaderStakeManager.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
-import { LiquidStakedTokenOracle } from "./common/LiquidStakedTokenOracle.sol";
+import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
 
 /**
  * @title BNBxOracle
  * @author Venus
  * @notice This oracle fetches the price of BNBx asset
  */
-contract BNBxOracle is LiquidStakedTokenOracle {
+contract BNBxOracle is CorrelatedTokenOracle {
     /// @notice Address of StakeManager
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IStaderStakeManager public immutable STAKE_MANAGER;
@@ -23,7 +23,7 @@ contract BNBxOracle is LiquidStakedTokenOracle {
         address bnbx,
         address bnb,
         address resilientOracle
-    ) LiquidStakedTokenOracle(bnbx, bnb, resilientOracle) {
+    ) CorrelatedTokenOracle(bnbx, bnb, resilientOracle) {
         ensureNonzeroAddress(stakeManager);
         STAKE_MANAGER = IStaderStakeManager(stakeManager);
     }

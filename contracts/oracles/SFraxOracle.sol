@@ -2,27 +2,27 @@
 pragma solidity 0.8.13;
 
 import { ISFrax } from "../interfaces/ISFrax.sol";
-import { LiquidStakedTokenOracle } from "./common/LiquidStakedTokenOracle.sol";
+import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
 
 /**
  * @title SFraxOracle
  * @author Venus
  * @notice This oracle fetches the price of sFrax
  */
-contract SFraxOracle is LiquidStakedTokenOracle {
+contract SFraxOracle is CorrelatedTokenOracle {
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address _frax,
         address _sFrax,
         address _resilientOracle
-    ) LiquidStakedTokenOracle(_sFrax, _frax, _resilientOracle) {}
+    ) CorrelatedTokenOracle(_sFrax, _frax, _resilientOracle) {}
 
     /**
      * @notice Fetches the amount of FRAX for 1 sFrax
      * @return amount The amount of FRAX for sFrax
      */
     function getUnderlyingAmount() internal view override returns (uint256) {
-        return ISFrax(LIQUID_STAKED_TOKEN).convertToAssets(1 ether);
+        return ISFrax(CORRELATED_TOKEN).convertToAssets(1 ether);
     }
 }
