@@ -63,7 +63,7 @@ abstract contract WrappedLiquidStakedTokenOracle is OracleInterface {
 
         uint256 assetPriceInUSD = RESILIENT_ORACLE.getPrice(ASSUME_EQUIVALENCE ? UNDERLYING_TOKEN : REBASE_TOKEN);
 
-        // FRAX or ETH amount (for 1 sFRAX or 1sfraxETH) * usdPrice (of FRAX or ETH) / 1e18
+        // FRAX or ETH amount (for 1 sFRAX or 1sfrxETH) * usdPrice (of FRAX or ETH) / 1e18
         return (amount * assetPriceInUSD) / EXP_SCALE;
     }
 

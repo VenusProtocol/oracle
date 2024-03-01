@@ -18,8 +18,8 @@ contract SlisBNBOracle is LiquidStakedTokenOracle {
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
-        address _stakeManager, 
-        address _slisBNB, 
+        address _stakeManager,
+        address _slisBNB,
         address _bnb,
         address _resilientOracle
     ) LiquidStakedTokenOracle(_slisBNB, _bnb, _resilientOracle) {

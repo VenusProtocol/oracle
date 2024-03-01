@@ -37,8 +37,8 @@ describe("SlisBNBOracle unit tests", () => {
       await expect(SlisBNBOracleFactory.deploy(addr0000, slisBNB, BNB, resilientOracleMock.address)).to.be.reverted;
     });
     it("revert if slisBNB address is 0", async () => {
-      await expect(SlisBNBOracleFactory.deploy(SynclubManagerMock.address, addr0000, BNB, resilientOracleMock.address)).to.be
-        .reverted;
+      await expect(SlisBNBOracleFactory.deploy(SynclubManagerMock.address, addr0000, BNB, resilientOracleMock.address))
+        .to.be.reverted;
     });
     it("revert if resilientOracle address is 0", async () => {
       await expect(SlisBNBOracleFactory.deploy(SynclubManagerMock.address, slisBNB, BNB, addr0000)).to.be.reverted;

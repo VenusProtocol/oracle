@@ -113,14 +113,14 @@ export const ADDRESSES: PreconfiguredAddresses = {
     acm: ethereumGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x285960C5B22fD66A736C7136967A3eB15e93CC67", // Ethereum Multisig
     sFRAX: "0xA663B02CF0a4b149d2aD41910CB81e23e1c41c32",
-    sfraxETH: "0xac3e018457b222d93114458476f3e3416abbe38f",
+    sfrxETH: "0xac3e018457b222d93114458476f3e3416abbe38f",
     FRAX: "0x853d955aCEf822Db058eb8505911ED77F175b99e",
-    fraxETH: "0x5e8422345238f34275888049021821e8e08caa1f",
+    frxETH: "0x5e8422345238f34275888049021821e8e08caa1f",
     weETH: "0xCd5fE23C85820F7B72D0926FC9b05b43E359b7ee",
     eETH: "0x35fA164735182de50811E8e2E824cFb9B6118ac2",
     PTeETH: "0xc69Ad9baB1dEE23F4605a82b3354F8E40d1E5966",
     PTweETHMarket: "0xF32e58F92e60f4b0A37A69b95d642A471365EAe8",
-    PTOracle: "0xbbd487268A295531d299c125F3e5f749884A3e30"
+    PTOracle: "0xbbd487268A295531d299c125F3e5f749884A3e30",
   },
   opbnbtestnet: {
     vBNBAddress: ethers.constants.AddressZero,
