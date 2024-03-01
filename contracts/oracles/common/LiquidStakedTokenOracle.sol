@@ -7,7 +7,7 @@ import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants
 
 /**
  * @title LiquidStakedTokenOracle
- * @notice This oracle fetches the price of liquid staked tokens
+ * @notice This oracle fetches the price of no rebasing liquid-staked tokens
  */
 abstract contract LiquidStakedTokenOracle is OracleInterface {
     /// @notice Address of the liquid staked token
