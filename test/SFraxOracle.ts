@@ -4,7 +4,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { ISFrax, ResilientOracleInterface } from "../typechain-types";
+import { BEP20Harness, ISFrax, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -18,6 +18,7 @@ describe("SFraxOracle unit tests", () => {
   let resilientOracleMock;
   let SFraxOracleFactory;
   let SFraxOracle;
+  let fraxMock;
   before(async () => {
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
@@ -25,6 +26,9 @@ describe("SFraxOracle unit tests", () => {
 
     sFraxMock = await smock.fake<ISFrax>("ISFrax", { address: sFRAX });
     sFraxMock.convertToAssets.returns(parseUnits("1.019194969966192602", 18));
+
+    fraxMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: FRAX });
+    fraxMock.decimals.returns(18);
 
     SFraxOracleFactory = await ethers.getContractFactory("SFraxOracle");
   });
@@ -34,10 +38,10 @@ describe("SFraxOracle unit tests", () => {
       await expect(SFraxOracleFactory.deploy(addr0000, sFraxMock.address, resilientOracleMock.address)).to.be.reverted;
     });
     it("revert if sFRAX address is 0", async () => {
-      await expect(SFraxOracleFactory.deploy(FRAX, addr0000, resilientOracleMock.address)).to.be.reverted;
+      await expect(SFraxOracleFactory.deploy(fraxMock.address, addr0000, resilientOracleMock.address)).to.be.reverted;
     });
     it("should deploy contract", async () => {
-      SFraxOracle = await SFraxOracleFactory.deploy(FRAX, sFraxMock.address, resilientOracleMock.address);
+      SFraxOracle = await SFraxOracleFactory.deploy(fraxMock.address, sFraxMock.address, resilientOracleMock.address);
     });
   });
 

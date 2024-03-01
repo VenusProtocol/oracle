@@ -4,7 +4,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES, assets } from "../helpers/deploymentConfig";
-import { ISfrxETH, ResilientOracleInterface } from "../typechain-types";
+import { BEP20Harness, ISfrxETH, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -19,6 +19,7 @@ describe("SFrxETHOracle unit tests", () => {
   let sfrxETHMock;
   let SFrxETHOracleFactory;
   let SFrxETHOracle;
+  let wethMock;
   before(async () => {
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
@@ -26,6 +27,9 @@ describe("SFrxETHOracle unit tests", () => {
 
     sfrxETHMock = await smock.fake<ISfrxETH>("ISfrxETH", { address: sfrxETH });
     sfrxETHMock.convertToAssets.returns(parseUnits("1.076546447254363344", 18));
+
+    wethMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: WETH });
+    wethMock.decimals.returns(18);
 
     SFrxETHOracleFactory = await ethers.getContractFactory("SFrxETHOracle");
   });
@@ -37,16 +41,17 @@ describe("SFrxETHOracle unit tests", () => {
       ).to.be.reverted;
     });
     it("revert if sfrxETH address is 0", async () => {
-      await expect(SFrxETHOracleFactory.deploy(WETH, frxETH, addr0000, resilientOracleMock.address, true)).to.be
-        .reverted;
+      await expect(SFrxETHOracleFactory.deploy(wethMock.address, frxETH, addr0000, resilientOracleMock.address, true))
+        .to.be.reverted;
     });
     it("revert if sfrxETH address is 0", async () => {
-      await expect(SFrxETHOracleFactory.deploy(WETH, addr0000, sfrxETHMock.address, resilientOracleMock.address, true))
-        .to.be.reverted;
+      await expect(
+        SFrxETHOracleFactory.deploy(wethMock.address, addr0000, sfrxETHMock.address, resilientOracleMock.address, true),
+      ).to.be.reverted;
     });
     it("should deploy contract", async () => {
       SFrxETHOracle = await SFrxETHOracleFactory.deploy(
-        WETH,
+        wethMock.address,
         frxETH,
         sfrxETHMock.address,
         resilientOracleMock.address,
