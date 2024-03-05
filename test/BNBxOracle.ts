@@ -4,7 +4,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { IStaderStakeManager, ResilientOracleInterface } from "../typechain-types";
+import { BEP20Harness, IStaderStakeManager, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -21,11 +21,15 @@ describe("BNBxOracle unit tests", () => {
   let resilientOracleMock;
   let BNBxOracle;
   let BNBxOracleFactory;
+  let bnbxMock;
   before(async () => {
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
     resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
     resilientOracleMock.getPrice.returns(BNB_USD_PRICE);
+
+    bnbxMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: BNBx });
+    bnbxMock.decimals.returns(18);
 
     BNBxStakeManagerMock = await smock.fake<IStaderStakeManager>("IStaderStakeManager");
     BNBxStakeManagerMock.convertBnbXToBnb.returns(BNB_FOR_ONE_BNBX);

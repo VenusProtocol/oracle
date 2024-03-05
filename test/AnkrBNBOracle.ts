@@ -27,6 +27,8 @@ describe("AnkrBNBOracle unit tests", () => {
 
     ankrBNBMock = await smock.fake<IAnkrBNB>("IAnkrBNB");
     ankrBNBMock.sharesToBonds.returns(BNB_AMOUNT_FOR_ONE_ANKRBNB);
+    ankrBNBMock.decimals.returns(18);
+
     ankrBNBOracleFactory = await ethers.getContractFactory("AnkrBNBOracle");
   });
 
