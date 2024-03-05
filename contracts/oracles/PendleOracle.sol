@@ -43,8 +43,8 @@ contract PendleOracle is CorrelatedTokenOracle {
     }
 
     /**
-     * @notice Fetches the amount of FRAX for 1 sFrax
-     * @return amount The amount of FRAX for sFrax
+     * @notice Fetches the amount of underlying token for 1 pendle token
+     * @return amount The amount of underlying token for pendle token
      */
     function getUnderlyingAmount() internal view override returns (uint256) {
         return PT_ORACLE.getPtToAssetRate(MARKET, TWAP_DURATION);
