@@ -22,9 +22,6 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     OracleInterface public immutable RESILIENT_ORACLE;
 
-    /// @notice Asset address for native token on each chain.
-    address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
-
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address _correlatedToken, address _underlyingToken, address _resilientOracle) {
