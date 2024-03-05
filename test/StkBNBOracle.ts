@@ -4,7 +4,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { IPStakePool, ResilientOracleInterface } from "../typechain-types";
+import { BEP20Harness, IPStakePool, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -22,11 +22,15 @@ describe("StkBNBOracle unit tests", () => {
   let resilientOracleMock;
   let StkBNBOracle;
   let StkBNBOracleFactory;
+  let stkBNBMock;
   before(async () => {
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
     resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
     resilientOracleMock.getPrice.returns(BNB_USD_PRICE);
+
+    stkBNBMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: stkBNB });
+    stkBNBMock.decimals.returns(18);
 
     stkBNBStakePoolMock = await smock.fake<IPStakePool>("IPStakePool");
     stkBNBStakePoolMock.exchangeRate.returns({

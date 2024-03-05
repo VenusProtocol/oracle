@@ -7,7 +7,7 @@ import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/I
 
 /**
  * @title CorrelatedTokenOracle
- * @notice This oracle fetches the price of no rebasing liquid-staked tokens
+ * @notice This oracle fetches the price of a token that is correlated to another token.
  */
 abstract contract CorrelatedTokenOracle is OracleInterface {
     /// @notice Address of the correlated token
@@ -50,28 +50,11 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
         // oracle returns (36 - asset decimal) scaled price
         uint256 underlyingUSDPrice = RESILIENT_ORACLE.getPrice(UNDERLYING_TOKEN);
 
-        uint256 decimals = getDecimals(UNDERLYING_TOKEN);
+        IERC20Metadata token = IERC20Metadata(CORRELATED_TOKEN);
+        uint256 decimals = token.decimals();
 
         // underlyingAmount (for 1 liquid staked token) * underlyingUSDPrice / 1e18
         return (underlyingAmount * underlyingUSDPrice) / (10 ** decimals);
-    }
-
-    /**
-     * @notice Gets the decimals for the asset
-     * @param asset Address of the asset
-     * @return decimals Decimals of the asset
-     */
-    function getDecimals(address asset) public view returns (uint256) {
-        uint256 decimals;
-
-        if (asset == NATIVE_TOKEN_ADDR) {
-            decimals = 18;
-        } else {
-            IERC20Metadata token = IERC20Metadata(asset);
-            decimals = token.decimals();
-        }
-
-        return decimals;
     }
 
     /**

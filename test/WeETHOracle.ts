@@ -30,6 +30,7 @@ describe("WeETHOracle unit tests", () => {
     eETHMock.decimals.returns(18);
 
     weETHMock.getEETHByWeETH.returns(parseUnits("1.032226887617316822", 18));
+    weETHMock.decimals.returns(18);
     WeETHOracleFactory = await ethers.getContractFactory("WeETHOracle");
   });
 

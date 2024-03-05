@@ -4,7 +4,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { ISynclubStakeManager, ResilientOracleInterface } from "../typechain-types";
+import { BEP20Harness, ISynclubStakeManager, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -21,11 +21,15 @@ describe("SlisBNBOracle unit tests", () => {
   let resilientOracleMock;
   let SlisBNBOracle;
   let SlisBNBOracleFactory;
+  let slisBNBMock;
   before(async () => {
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
     resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
     resilientOracleMock.getPrice.returns(BNB_USD_PRICE);
+
+    slisBNBMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: slisBNB });
+    slisBNBMock.decimals.returns(18);
 
     SynclubManagerMock = await smock.fake<ISynclubStakeManager>("ISynclubStakeManager");
     SynclubManagerMock.convertSnBnbToBnb.returns(BNB_FOR_ONE_SLISBNB);

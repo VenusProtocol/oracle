@@ -32,6 +32,7 @@ describe("WBETHOracle unit tests", () => {
 
     wBETH = await smock.fake<IWBETH>("IWBETH");
     wBETH.exchangeRate.returns(ETH_FOR_ONE_WBETH);
+    wBETH.decimals.returns(18);
     WBETHOracleFactory = await ethers.getContractFactory("WBETHOracle");
   });
 

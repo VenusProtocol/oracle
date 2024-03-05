@@ -4,7 +4,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { IStETH, ResilientOracleInterface } from "../typechain-types";
+import { BEP20Harness, IStETH, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -20,10 +20,14 @@ describe("WstETHOracle unit tests", () => {
   let resilientOracleMock;
   let wstETHOracle;
   let WsETHOracleFactory;
+  let wstETHMock;
   before(async () => {
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
     resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
+
+    wstETHMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: WSTETH });
+    wstETHMock.decimals.returns(18);
 
     stETHMock = await smock.fake<IStETH>("IStETH");
     stETHMock.getPooledEthByShares.returns(STETH_AMOUNT_FOR_ONE_WSTETH);

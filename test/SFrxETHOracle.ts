@@ -26,6 +26,7 @@ describe("SFrxETHOracle unit tests", () => {
 
     sfrxETHMock = await smock.fake<ISfrxETH>("ISfrxETH", { address: sfrxETH });
     sfrxETHMock.convertToAssets.returns(parseUnits("1.076546447254363344", 18));
+    sfrxETHMock.decimals.returns(18);
 
     frxETHMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: frxETH });
     frxETHMock.decimals.returns(18);

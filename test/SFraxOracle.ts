@@ -26,6 +26,7 @@ describe("SFraxOracle unit tests", () => {
 
     sFraxMock = await smock.fake<ISFrax>("ISFrax", { address: sFRAX });
     sFraxMock.convertToAssets.returns(parseUnits("1.019194969966192602", 18));
+    sFraxMock.decimals.returns(18);
 
     fraxMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: FRAX });
     fraxMock.decimals.returns(18);
