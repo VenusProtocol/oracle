@@ -24,13 +24,13 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address _correlatedToken, address _underlyingToken, address _resilientOracle) {
-        ensureNonzeroAddress(_correlatedToken);
-        ensureNonzeroAddress(_underlyingToken);
-        ensureNonzeroAddress(_resilientOracle);
-        CORRELATED_TOKEN = _correlatedToken;
-        UNDERLYING_TOKEN = _underlyingToken;
-        RESILIENT_ORACLE = OracleInterface(_resilientOracle);
+    constructor(address correlatedToken, address underlyingToken, address resilientOracle) {
+        ensureNonzeroAddress(correlatedToken);
+        ensureNonzeroAddress(underlyingToken);
+        ensureNonzeroAddress(resilientOracle);
+        CORRELATED_TOKEN = correlatedToken;
+        UNDERLYING_TOKEN = underlyingToken;
+        RESILIENT_ORACLE = OracleInterface(resilientOracle);
     }
 
     /**

@@ -21,12 +21,12 @@ contract SlisBNBOracle is CorrelatedTokenOracle {
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
-        address _stakeManager,
-        address _slisBNB,
-        address _resilientOracle
-    ) CorrelatedTokenOracle(_slisBNB, NATIVE_TOKEN_ADDR, _resilientOracle) {
-        ensureNonzeroAddress(_stakeManager);
-        STAKE_MANAGER = ISynclubStakeManager(_stakeManager);
+        address stakeManager,
+        address slisBNB,
+        address resilientOracle
+    ) CorrelatedTokenOracle(slisBNB, NATIVE_TOKEN_ADDR, resilientOracle) {
+        ensureNonzeroAddress(stakeManager);
+        STAKE_MANAGER = ISynclubStakeManager(stakeManager);
     }
 
     /**

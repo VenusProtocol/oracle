@@ -26,12 +26,12 @@ contract StkBNBOracle is CorrelatedTokenOracle {
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
-        address _stakePool,
-        address _stkBNB,
-        address _resilientOracle
-    ) CorrelatedTokenOracle(_stkBNB, NATIVE_TOKEN_ADDR, _resilientOracle) {
-        ensureNonzeroAddress(_stakePool);
-        STAKE_POOL = IPStakePool(_stakePool);
+        address stakePool,
+        address stkBNB,
+        address resilientOracle
+    ) CorrelatedTokenOracle(stkBNB, NATIVE_TOKEN_ADDR, resilientOracle) {
+        ensureNonzeroAddress(stakePool);
+        STAKE_POOL = IPStakePool(stakePool);
     }
 
     /**

@@ -13,10 +13,10 @@ contract SFraxOracle is CorrelatedTokenOracle {
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
-        address _sFrax,
-        address _frax,
-        address _resilientOracle
-    ) CorrelatedTokenOracle(_sFrax, _frax, _resilientOracle) {}
+        address sFrax,
+        address frax,
+        address resilientOracle
+    ) CorrelatedTokenOracle(sFrax, frax, resilientOracle) {}
 
     /**
      * @notice Fetches the amount of FRAX for 1 sFrax
