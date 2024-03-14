@@ -3,6 +3,7 @@ pragma solidity 0.8.13;
 
 import { IStETH } from "../interfaces/IStETH.sol";
 import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
+import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 
 /**
  * @title WstETHOracle
@@ -23,6 +24,6 @@ contract WstETHOracle is CorrelatedTokenOracle {
      * @return amount Amount of stETH
      */
     function getUnderlyingAmount() internal view override returns (uint256) {
-        return IStETH(UNDERLYING_TOKEN).getPooledEthByShares(1 ether);
+        return IStETH(UNDERLYING_TOKEN).getPooledEthByShares(EXP_SCALE);
     }
 }

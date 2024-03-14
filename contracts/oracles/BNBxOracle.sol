@@ -35,6 +35,6 @@ contract BNBxOracle is CorrelatedTokenOracle {
      * @return price The amount of BNB for BNBx
      */
     function getUnderlyingAmount() internal view override returns (uint256) {
-        return STAKE_MANAGER.convertBnbXToBnb(1 ether);
+        return STAKE_MANAGER.convertBnbXToBnb(EXP_SCALE);
     }
 }

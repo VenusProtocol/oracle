@@ -3,6 +3,7 @@ pragma solidity 0.8.13;
 
 import { IAnkrBNB } from "../interfaces/IAnkrBNB.sol";
 import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
+import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 
 /**
  * @title AnkrBNBOracle
@@ -25,6 +26,6 @@ contract AnkrBNBOracle is CorrelatedTokenOracle {
      * @return amount The amount of BNB for ankrBNB
      */
     function getUnderlyingAmount() internal view override returns (uint256) {
-        return IAnkrBNB(CORRELATED_TOKEN).sharesToBonds(1 ether);
+        return IAnkrBNB(CORRELATED_TOKEN).sharesToBonds(EXP_SCALE);
     }
 }

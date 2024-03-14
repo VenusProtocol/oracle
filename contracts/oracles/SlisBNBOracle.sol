@@ -4,6 +4,7 @@ pragma solidity 0.8.13;
 import { ISynclubStakeManager } from "../interfaces/ISynclubStakeManager.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
+import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 
 /**
  * @title SlisBNBOracle
@@ -34,6 +35,6 @@ contract SlisBNBOracle is CorrelatedTokenOracle {
      * @return amount The amount of BNB for slisBNB
      */
     function getUnderlyingAmount() internal view override returns (uint256) {
-        return STAKE_MANAGER.convertSnBnbToBnb(1 ether);
+        return STAKE_MANAGER.convertSnBnbToBnb(EXP_SCALE);
     }
 }
