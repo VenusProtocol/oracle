@@ -17,6 +17,9 @@ contract StkBNBOracle is CorrelatedTokenOracle {
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IPStakePool public immutable STAKE_POOL;
 
+    /// @notice Thrown if the pool token supply is zero
+    error PoolTokenSupplyIsZero();
+
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
@@ -35,6 +38,11 @@ contract StkBNBOracle is CorrelatedTokenOracle {
      */
     function getUnderlyingAmount() internal view override returns (uint256) {
         IPStakePool.Data memory exchangeRateData = STAKE_POOL.exchangeRate();
+
+        if (exchangeRateData.poolTokenSupply == 0) {
+            revert PoolTokenSupplyIsZero();
+        }
+
         return (exchangeRateData.totalWei * EXP_SCALE) / exchangeRateData.poolTokenSupply;
     }
 }
