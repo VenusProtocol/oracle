@@ -57,7 +57,7 @@ describe("StkBNBOracle unit tests", () => {
 
   describe("getPrice", () => {
     it("revert if ankrBNB address is wrong", async () => {
-      await expect(StkBNBOracle.getPrice(addr0000)).to.be.revertedWith("wrong token address");
+      await expect(StkBNBOracle.getPrice(addr0000)).to.be.revertedWithCustomError(StkBNBOracle, "InvalidTokenAddress");
     });
 
     it("should get correct price", async () => {

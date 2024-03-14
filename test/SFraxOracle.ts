@@ -48,7 +48,7 @@ describe("SFraxOracle unit tests", () => {
 
   describe("getPrice", () => {
     it("revert if address is not valid sFrax address", async () => {
-      await expect(SFraxOracle.getPrice(addr0000)).to.be.revertedWith("wrong token address");
+      await expect(SFraxOracle.getPrice(addr0000)).to.be.revertedWithCustomError(SFraxOracle, "InvalidTokenAddress");
     });
 
     it("should get correct price of sFrax", async () => {

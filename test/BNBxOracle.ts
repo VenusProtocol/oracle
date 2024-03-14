@@ -53,7 +53,7 @@ describe("BNBxOracle unit tests", () => {
 
   describe("getPrice", () => {
     it("revert if BNBx address is wrong", async () => {
-      await expect(BNBxOracle.getPrice(addr0000)).to.be.revertedWith("wrong token address");
+      await expect(BNBxOracle.getPrice(addr0000)).to.be.revertedWithCustomError(BNBxOracle, "InvalidTokenAddress");
     });
 
     it("should get correct price", async () => {

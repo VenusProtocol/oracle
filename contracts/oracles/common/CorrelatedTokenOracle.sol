@@ -22,6 +22,9 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     OracleInterface public immutable RESILIENT_ORACLE;
 
+    /// @notice Thrown if the token address is invalid
+    error InvalidTokenAddress();
+
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address correlatedToken, address underlyingToken, address resilientOracle) {
@@ -39,7 +42,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
      * @return price The price of the correlated token in scaled decimal places
      */
     function getPrice(address asset) external view override returns (uint256) {
-        if (asset != CORRELATED_TOKEN) revert("wrong token address");
+        if (asset != CORRELATED_TOKEN) revert InvalidTokenAddress();
 
         // get underlying token amount for 1 correlated token scaled by underlying token decimals
         uint256 underlyingAmount = getUnderlyingAmount();

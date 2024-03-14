@@ -57,7 +57,10 @@ describe("SlisBNBOracle unit tests", () => {
 
   describe("getPrice", () => {
     it("revert if slisBNB address is wrong", async () => {
-      await expect(SlisBNBOracle.getPrice(addr0000)).to.be.revertedWith("wrong token address");
+      await expect(SlisBNBOracle.getPrice(addr0000)).to.be.revertedWithCustomError(
+        SlisBNBOracle,
+        "InvalidTokenAddress",
+      );
     });
 
     it("should get correct price", async () => {

@@ -51,7 +51,7 @@ describe("WeETHOracle unit tests", () => {
 
   describe("getPrice", () => {
     it("revert if address is not valid weETH address", async () => {
-      await expect(WeETHOracle.getPrice(addr0000)).to.be.revertedWith("wrong token address");
+      await expect(WeETHOracle.getPrice(addr0000)).to.be.revertedWithCustomError(WeETHOracle, "InvalidTokenAddress");
     });
 
     it("should get correct price of weETH", async () => {
