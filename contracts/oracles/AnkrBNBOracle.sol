@@ -10,13 +10,15 @@ import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
  * @notice This oracle fetches the price of ankrBNB asset
  */
 contract AnkrBNBOracle is CorrelatedTokenOracle {
+    /// @notice This is used as token address of BNB on BSC
+    address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
+
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address _ankrBNB,
-        address _bnb,
         address _resilientOracle
-    ) CorrelatedTokenOracle(_ankrBNB, _bnb, _resilientOracle) {}
+    ) CorrelatedTokenOracle(_ankrBNB, NATIVE_TOKEN_ADDR, _resilientOracle) {}
 
     /**
      * @notice Fetches the amount of BNB for 1 ankrBNB

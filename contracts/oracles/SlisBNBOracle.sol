@@ -11,6 +11,9 @@ import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
  * @notice This oracle fetches the price of slisBNB asset
  */
 contract SlisBNBOracle is CorrelatedTokenOracle {
+    /// @notice This is used as token address of BNB on BSC
+    address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
+
     /// @notice Address of StakeManager
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     ISynclubStakeManager public immutable STAKE_MANAGER;
@@ -20,9 +23,8 @@ contract SlisBNBOracle is CorrelatedTokenOracle {
     constructor(
         address _stakeManager,
         address _slisBNB,
-        address _bnb,
         address _resilientOracle
-    ) CorrelatedTokenOracle(_slisBNB, _bnb, _resilientOracle) {
+    ) CorrelatedTokenOracle(_slisBNB, NATIVE_TOKEN_ADDR, _resilientOracle) {
         ensureNonzeroAddress(_stakeManager);
         STAKE_MANAGER = ISynclubStakeManager(_stakeManager);
     }

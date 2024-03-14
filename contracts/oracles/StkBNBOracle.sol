@@ -13,6 +13,9 @@ import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
  * @notice This oracle fetches the price of stkBNB asset
  */
 contract StkBNBOracle is CorrelatedTokenOracle {
+    /// @notice This is used as token address of BNB on BSC
+    address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
+
     /// @notice Address of StakePool
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IPStakePool public immutable STAKE_POOL;
@@ -25,9 +28,8 @@ contract StkBNBOracle is CorrelatedTokenOracle {
     constructor(
         address _stakePool,
         address _stkBNB,
-        address _bnb,
         address _resilientOracle
-    ) CorrelatedTokenOracle(_stkBNB, _bnb, _resilientOracle) {
+    ) CorrelatedTokenOracle(_stkBNB, NATIVE_TOKEN_ADDR, _resilientOracle) {
         ensureNonzeroAddress(_stakePool);
         STAKE_POOL = IPStakePool(_stakePool);
     }

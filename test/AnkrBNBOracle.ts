@@ -12,7 +12,6 @@ chai.use(smock.matchers);
 const BNB_AMOUNT_FOR_ONE_ANKRBNB = parseUnits("1.075370795716558975", 18);
 const ANKRBNB_USD_PRICE_DENOMINATOR = parseUnits("1", 18);
 const BNB_USD_PRICE = parseUnits("300", 18); // 300 USD for 1 BNB
-const BNB = "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB";
 
 describe("AnkrBNBOracle unit tests", () => {
   let ankrBNBMock;
@@ -34,17 +33,13 @@ describe("AnkrBNBOracle unit tests", () => {
 
   describe("deployment", () => {
     it("revert if ankrBNB address is 0", async () => {
-      await expect(ankrBNBOracleFactory.deploy(addr0000, BNB, resilientOracleMock.address)).to.be.reverted;
-    });
-    it("revert if BNB address is 0", async () => {
-      await expect(ankrBNBOracleFactory.deploy(ankrBNBMock.address, addr0000, resilientOracleMock.address)).to.be
-        .reverted;
+      await expect(ankrBNBOracleFactory.deploy(addr0000, resilientOracleMock.address)).to.be.reverted;
     });
     it("revert if ResilientOracle address is 0", async () => {
-      await expect(ankrBNBOracleFactory.deploy(ankrBNBMock.address, BNB, addr0000)).to.be.reverted;
+      await expect(ankrBNBOracleFactory.deploy(ankrBNBMock.address, addr0000)).to.be.reverted;
     });
     it("should deploy contract", async () => {
-      ankrBNBOracle = await ankrBNBOracleFactory.deploy(ankrBNBMock.address, BNB, resilientOracleMock.address);
+      ankrBNBOracle = await ankrBNBOracleFactory.deploy(ankrBNBMock.address, resilientOracleMock.address);
     });
   });
 
