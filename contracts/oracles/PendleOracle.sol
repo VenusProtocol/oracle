@@ -8,7 +8,7 @@ import { ensureNonzeroAddress, ensureNonzeroValue } from "@venusprotocol/solidit
 /**
  * @title PendleOracle
  * @author Venus
- * @notice This oracle fetches the price of an pendle token
+ * @notice This oracle fetches the price of a pendle token
  */
 contract PendleOracle is CorrelatedTokenOracle {
     /// @notice Address of the PT oracle

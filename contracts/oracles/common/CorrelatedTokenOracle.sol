@@ -34,14 +34,14 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
     }
 
     /**
-     * @notice Fetches the price of the liquid staked token
-     * @param asset Address of the liquid staked token
-     * @return price The price of the liquid staked token scalked by 1e18
+     * @notice Fetches the price of the correlated token
+     * @param asset Address of the correlated token
+     * @return price The price of the correlated token in scaled decimal places
      */
     function getPrice(address asset) external view override returns (uint256) {
         if (asset != CORRELATED_TOKEN) revert("wrong token address");
 
-        // get underlying token amount for 1 liquid staked token scaled by underlying token decimals
+        // get underlying token amount for 1 correlated token scaled by underlying token decimals
         uint256 underlyingAmount = getUnderlyingAmount();
 
         // oracle returns (36 - asset decimal) scaled price
@@ -50,12 +50,12 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
         IERC20Metadata token = IERC20Metadata(CORRELATED_TOKEN);
         uint256 decimals = token.decimals();
 
-        // underlyingAmount (for 1 liquid staked token) * underlyingUSDPrice / 1e18
+        // underlyingAmount (for 1 correlated token) * underlyingUSDPrice / 1e18
         return (underlyingAmount * underlyingUSDPrice) / (10 ** decimals);
     }
 
     /**
-     * @notice Gets the underlying amount for liquid staked token
+     * @notice Gets the underlying amount for correlated token
      * @return underlyingAmount Amount of underlying token
      */
     function getUnderlyingAmount() internal view virtual returns (uint256);
