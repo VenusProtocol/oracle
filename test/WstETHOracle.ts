@@ -54,7 +54,7 @@ describe("WstETHOracle unit tests", () => {
 
   describe("getPrice", () => {
     it("revert if wstETH address is wrong", async () => {
-      await expect(wstETHOracle.getPrice(addr0000)).to.be.revertedWith("wrong token address");
+      await expect(wstETHOracle.getPrice(addr0000)).to.be.revertedWithCustomError(wstETHOracle, "InvalidTokenAddress");
     });
 
     it("should get correct price", async () => {

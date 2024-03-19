@@ -8,7 +8,7 @@ import { ensureNonzeroAddress, ensureNonzeroValue } from "@venusprotocol/solidit
 /**
  * @title PendleOracle
  * @author Venus
- * @notice This oracle fetches the price of an pendle token
+ * @notice This oracle fetches the price of a pendle token
  */
 contract PendleOracle is CorrelatedTokenOracle {
     /// @notice Address of the PT oracle
@@ -22,6 +22,9 @@ contract PendleOracle is CorrelatedTokenOracle {
     /// @notice Twap duration for the oracle
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     uint32 public immutable TWAP_DURATION;
+
+    /// @notice Thrown if the duration is invalid
+    error InvalidDuration();
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -40,6 +43,14 @@ contract PendleOracle is CorrelatedTokenOracle {
         MARKET = market;
         PT_ORACLE = IPendlePtOracle(ptOracle);
         TWAP_DURATION = twapDuration;
+
+        (bool increaseCardinalityRequired, , bool oldestObservationSatisfied) = PT_ORACLE.getOracleState(
+            MARKET,
+            TWAP_DURATION
+        );
+        if (increaseCardinalityRequired || !oldestObservationSatisfied) {
+            revert InvalidDuration();
+        }
     }
 
     /**

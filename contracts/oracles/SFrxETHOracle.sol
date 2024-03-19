@@ -3,6 +3,7 @@ pragma solidity 0.8.13;
 
 import { ISfrxETH } from "../interfaces/ISfrxETH.sol";
 import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
+import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 
 /**
  * @title SFrxETHOracle
@@ -23,6 +24,6 @@ contract SFrxETHOracle is CorrelatedTokenOracle {
      * @return amount Amount of frxETH
      */
     function getUnderlyingAmount() internal view override returns (uint256) {
-        return ISfrxETH(CORRELATED_TOKEN).convertToAssets(1 ether);
+        return ISfrxETH(CORRELATED_TOKEN).convertToAssets(EXP_SCALE);
     }
 }

@@ -33,6 +33,7 @@ describe("WstETHOracle unit tests", () => {
 
     ptOracleMock = await smock.fake<IPendlePtOracle>("IPendlePtOracle", { address: PTOracle });
     ptOracleMock.getPtToAssetRate.returns(EETH_AMOUNT_FOR_ONE_WEETH);
+    ptOracleMock.getOracleState.returns([false, 0, true]);
 
     pendleOracleFactory = await ethers.getContractFactory("PendleOracle");
   });
@@ -104,6 +105,23 @@ describe("WstETHOracle unit tests", () => {
       ).to.be.reverted;
     });
 
+    it("revert if invalid TWAP duration", async () => {
+      ptOracleMock.getOracleState.returns([true, 0, true]);
+
+      await expect(
+        pendleOracleFactory.deploy(
+          PTweETHMarket,
+          ptOracleMock.address,
+          ptWeETHMock.address,
+          eETH,
+          resilientOracleMock.address,
+          DURATION,
+        ),
+      ).to.be.reverted;
+
+      ptOracleMock.getOracleState.returns([false, 0, true]);
+    });
+
     it("should deploy contract", async () => {
       pendleOracle = await pendleOracleFactory.deploy(
         PTweETHMarket,
@@ -118,12 +136,11 @@ describe("WstETHOracle unit tests", () => {
 
   describe("getPrice", () => {
     it("revert if wstETH address is wrong", async () => {
-      await expect(pendleOracle.getPrice(addr0000)).to.be.revertedWith("wrong token address");
+      await expect(pendleOracle.getPrice(addr0000)).to.be.revertedWithCustomError(pendleOracle, "InvalidTokenAddress");
     });
 
-    // it("should get correct price", async () => {
-    //   const expectedPrice = STETH_USD_PRICE.mul(STETH_AMOUNT_FOR_ONE_WSTETH).div(PRICE_DENOMINATOR);
-    //   expect(await wstETHOracle.getPrice(WSTETH)).to.equal(expectedPrice);
-    // });
+    it("should get correct price", async () => {
+      expect(await pendleOracle.getPrice(ptWeETHMock.address)).to.equal(parseUnits("3140.2448353733447812", 18));
+    });
   });
 });

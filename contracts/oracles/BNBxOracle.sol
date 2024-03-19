@@ -12,6 +12,9 @@ import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
  * @notice This oracle fetches the price of BNBx asset
  */
 contract BNBxOracle is CorrelatedTokenOracle {
+    /// @notice This is used as token address of BNB on BSC
+    address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
+
     /// @notice Address of StakeManager
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IStaderStakeManager public immutable STAKE_MANAGER;
@@ -21,9 +24,8 @@ contract BNBxOracle is CorrelatedTokenOracle {
     constructor(
         address stakeManager,
         address bnbx,
-        address bnb,
         address resilientOracle
-    ) CorrelatedTokenOracle(bnbx, bnb, resilientOracle) {
+    ) CorrelatedTokenOracle(bnbx, NATIVE_TOKEN_ADDR, resilientOracle) {
         ensureNonzeroAddress(stakeManager);
         STAKE_MANAGER = IStaderStakeManager(stakeManager);
     }
@@ -33,6 +35,6 @@ contract BNBxOracle is CorrelatedTokenOracle {
      * @return price The amount of BNB for BNBx
      */
     function getUnderlyingAmount() internal view override returns (uint256) {
-        return STAKE_MANAGER.convertBnbXToBnb(1 ether);
+        return STAKE_MANAGER.convertBnbXToBnb(EXP_SCALE);
     }
 }

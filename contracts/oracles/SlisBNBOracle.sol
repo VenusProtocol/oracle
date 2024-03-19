@@ -4,6 +4,7 @@ pragma solidity 0.8.13;
 import { ISynclubStakeManager } from "../interfaces/ISynclubStakeManager.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
+import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 
 /**
  * @title SlisBNBOracle
@@ -11,6 +12,9 @@ import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
  * @notice This oracle fetches the price of slisBNB asset
  */
 contract SlisBNBOracle is CorrelatedTokenOracle {
+    /// @notice This is used as token address of BNB on BSC
+    address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
+
     /// @notice Address of StakeManager
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     ISynclubStakeManager public immutable STAKE_MANAGER;
@@ -18,13 +22,12 @@ contract SlisBNBOracle is CorrelatedTokenOracle {
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
-        address _stakeManager,
-        address _slisBNB,
-        address _bnb,
-        address _resilientOracle
-    ) CorrelatedTokenOracle(_slisBNB, _bnb, _resilientOracle) {
-        ensureNonzeroAddress(_stakeManager);
-        STAKE_MANAGER = ISynclubStakeManager(_stakeManager);
+        address stakeManager,
+        address slisBNB,
+        address resilientOracle
+    ) CorrelatedTokenOracle(slisBNB, NATIVE_TOKEN_ADDR, resilientOracle) {
+        ensureNonzeroAddress(stakeManager);
+        STAKE_MANAGER = ISynclubStakeManager(stakeManager);
     }
 
     /**
@@ -32,6 +35,6 @@ contract SlisBNBOracle is CorrelatedTokenOracle {
      * @return amount The amount of BNB for slisBNB
      */
     function getUnderlyingAmount() internal view override returns (uint256) {
-        return STAKE_MANAGER.convertSnBnbToBnb(1 ether);
+        return STAKE_MANAGER.convertSnBnbToBnb(EXP_SCALE);
     }
 }
