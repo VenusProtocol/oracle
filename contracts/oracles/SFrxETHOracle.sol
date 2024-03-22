@@ -1,29 +1,29 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.13;
 
-import { IStETH } from "../interfaces/IStETH.sol";
+import { ISfrxETH } from "../interfaces/ISfrxETH.sol";
 import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 
 /**
- * @title WstETHOracle
+ * @title SFrxETHOracle
  * @author Venus
- * @notice This oracle fetches the price of wstETH
+ * @notice This oracle fetches the price of sfrxETH
  */
-contract WstETHOracle is CorrelatedTokenOracle {
+contract SFrxETHOracle is CorrelatedTokenOracle {
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
-        address wstETH,
-        address stETH,
+        address sfrxETH,
+        address frxETH,
         address resilientOracle
-    ) CorrelatedTokenOracle(wstETH, stETH, resilientOracle) {}
+    ) CorrelatedTokenOracle(sfrxETH, frxETH, resilientOracle) {}
 
     /**
-     * @notice Gets the stETH for 1 wstETH
-     * @return amount Amount of stETH
+     * @notice Gets the frxETH for 1 sfrxETH
+     * @return amount Amount of frxETH
      */
     function getUnderlyingAmount() internal view override returns (uint256) {
-        return IStETH(UNDERLYING_TOKEN).getPooledEthByShares(EXP_SCALE);
+        return ISfrxETH(CORRELATED_TOKEN).convertToAssets(EXP_SCALE);
     }
 }

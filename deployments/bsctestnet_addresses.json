@@ -2,6 +2,9 @@
   "name": "bsctestnet",
   "chainId": "97",
   "addresses": {
+    "BNBxOracle": "0xE0C0cd050C91ED2e88D616C638C752F4007846D2",
+    "BNBxOracle_Implementation": "0x8eD8CAd5b2b877d9eC1C5c058410cd6E92b7Ca54",
+    "BNBxOracle_Proxy": "0xE0C0cd050C91ED2e88D616C638C752F4007846D2",
     "BinanceOracle": "0xB58BFDCE610042311Dc0e034a80Cc7776c1D68f5",
     "BinanceOracle_Implementation": "0xCd64844CD0E8E34782cd0d1bF3E537bf7b474FAe",
     "BinanceOracle_Proxy": "0xB58BFDCE610042311Dc0e034a80Cc7776c1D68f5",
@@ -20,6 +23,12 @@
     "RedStoneOracle_Proxy": "0x0Af51d1504ac5B711A9EAFe2fAC11A51d32029Ad",
     "ResilientOracle": "0x3cD69251D04A28d887Ac14cbe2E14c52F3D57823",
     "ResilientOracle_Implementation": "0x35cC3b99985F9d970aEcc9BD83d5Ac78a074a896",
-    "ResilientOracle_Proxy": "0x3cD69251D04A28d887Ac14cbe2E14c52F3D57823"
+    "ResilientOracle_Proxy": "0x3cD69251D04A28d887Ac14cbe2E14c52F3D57823",
+    "SlisBNBOracle": "0xc25d6f7B014d50a8505c508B621768234eA27d0b",
+    "SlisBNBOracle_Implementation": "0xB528d1fC07684bb027772073C388E2935e614E00",
+    "SlisBNBOracle_Proxy": "0xc25d6f7B014d50a8505c508B621768234eA27d0b",
+    "StkBNBOracle": "0x3Dcd95d7544b440E5A648A96eCd3873a86DBAaEA",
+    "StkBNBOracle_Implementation": "0x6ACef03e7f4F0E5a33D75a84B70E8C41497B7049",
+    "StkBNBOracle_Proxy": "0x3Dcd95d7544b440E5A648A96eCd3873a86DBAaEA"
   }
 }
