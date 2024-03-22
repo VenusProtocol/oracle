@@ -63,7 +63,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
-  if (network.name === "arbitrum") {
+  if (network.name === "arbitrumOne") {
     await deploy("SequencerChainlinkOracle", {
       contract: "SequencerChainlinkOracle",
       from: deployer,

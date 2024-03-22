@@ -117,6 +117,20 @@ export const ADDRESSES: PreconfiguredAddresses = {
     acm: opbnbmainnetGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0xC46796a21a3A9FAB6546aF3434F2eBfFd0604207", // opBNB Multisig
   },
+  arbitrumSepolia: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: "0xa36AD96441cB931D8dFEAAaC97D3FaB4B39E590F",
+    timelock: "0x1426A5Ae009c4443188DA8793751024E358A61C2",
+  },
+  arbitrumOne: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: "",
+    timelock: "0x14e0E151b33f9802b3e75b621c1457afc44DcAA0",
+  },
 };
 
 export const chainlinkFeed: Config = {
