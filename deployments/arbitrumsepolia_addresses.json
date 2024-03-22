@@ -1,5 +1,5 @@
 {
-  "name": "arbitrumSepolia",
+  "name": "arbitrumsepolia",
   "chainId": "421614",
   "addresses": {
     "BoundValidator": "0xfe6bc1545Cc14C131bacA97476D6035ffcC0b889",
