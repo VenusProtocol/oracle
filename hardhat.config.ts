@@ -129,6 +129,15 @@ const config: HardhatUserConfig = {
       live: true,
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
+    arbitrum: {
+      url: "https://arbitrum.llamarpc.com/",
+      chainId: 42161,
+      live: true,
+      timeout: 1200000,
+      accounts: {
+        mnemonic: process.env.MNEMONIC || "",
+      },
+    },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
