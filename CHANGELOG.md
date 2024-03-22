@@ -1,3 +1,15 @@
+## [1.11.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.10.0...v1.11.0-dev.1) (2024-03-22)
+
+
+### Features
+
+* add Chainlink Oracle for Arbitrum checking Sequencer uptime. ([2ab8e8d](https://github.com/VenusProtocol/oracle/commit/2ab8e8d64fc3d2d8ce86464c48ba2eb4da0ff5a8))
+
+
+### Bug Fixes
+
+* VTIME-3 ([82f1e42](https://github.com/VenusProtocol/oracle/commit/82f1e429aa887ba1fdd7787cfe77bee41e4a79f4))
+
 ## [1.10.0](https://github.com/VenusProtocol/oracle/compare/v1.9.0...v1.10.0) (2024-02-22)
 
 
