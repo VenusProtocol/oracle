@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2021 Pyth Data Foundation
-pragma solidity 0.8.13;
+pragma solidity ^0.8.20;
 
 contract PythStructs {
     // A price with a degree of uncertainty, represented as a price +- a confidence interval.
