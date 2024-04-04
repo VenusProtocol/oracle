@@ -29,8 +29,6 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     await mockEtherFiLiquidityPool.transferOwnership(proxyOwnerAddress);
   }
 
-  console.log(EtherFiLiquidityPool, weETH, eETH, resilientOracle.address)
-
   await deploy("WeETHOracle", {
     from: deployer,
     log: true,
