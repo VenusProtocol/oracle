@@ -4,13 +4,13 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { BEP20Harness, ResilientOracleInterface } from "../typechain-types";
+import { BEP20Harness, IEtherFiLiquidityPool, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
 chai.use(smock.matchers);
 
-const { weETH, eETH } = ADDRESSES.ethereum;
+const { weETH, eETH, EtherFiLiquidityPool } = ADDRESSES.ethereum;
 const ETH_USD_PRICE = parseUnits("3100", 18); // 3100 USD for 1 ETH
 
 describe("WeETHOracle unit tests", () => {
@@ -32,9 +32,10 @@ describe("WeETHOracle unit tests", () => {
     weETHMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: weETH });
     weETHMock.decimals.returns(18);
 
-    const MockLiquidityPoolFactory = await ethers.getContractFactory("MockEtherFiLiquidityPool");
-    mockLiquidityPool = await MockLiquidityPoolFactory.deploy();
-    await mockLiquidityPool.setAmountPerShare(parseUnits("1.032226887617316822", 18));
+    mockLiquidityPool = await smock.fake<IEtherFiLiquidityPool>("IEtherFiLiquidityPool", {
+      address: EtherFiLiquidityPool,
+    });
+    mockLiquidityPool.amountForShare.returns(parseUnits("1.032226887617316822", 18));
 
     WeETHOracleFactory = await ethers.getContractFactory("WeETHOracle");
   });
