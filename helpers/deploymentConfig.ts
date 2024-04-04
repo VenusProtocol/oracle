@@ -121,6 +121,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     PTweETH: "0xc69Ad9baB1dEE23F4605a82b3354F8E40d1E5966",
     PTweETHMarket: "0xF32e58F92e60f4b0A37A69b95d642A471365EAe8",
     PTOracle: "0xbbd487268A295531d299c125F3e5f749884A3e30",
+    EtherFiLiquidityPool: "0x308861A430be4cce5502d0A12724771Fc6DaF216",
   },
   opbnbtestnet: {
     vBNBAddress: ethers.constants.AddressZero,
