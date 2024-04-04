@@ -11,11 +11,27 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const resilientOracle = await ethers.getContract("ResilientOracle");
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
-  const { EtherFiLiquidityPool } = ADDRESSES[network.name];
-  const weETH = assets[network.name].find(asset => asset.token === "weETH");
-  const eETH = assets[network.name].find(asset => asset.token === "eETH");
+  let { EtherFiLiquidityPool, weETH, eETH } = ADDRESSES[network.name];
 
-  await deploy("BNBxOracle", {
+  if (!EtherFiLiquidityPool) {
+    // deploy mock liquidity pool
+    await deploy("MockEtherFiLiquidityPool", {
+      from: deployer,
+      contract: "MockEtherFiLiquidityPool",
+      args: [],
+      log: true,
+      autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
+      skipIfAlreadyDeployed: true,
+    });
+
+    const mockEtherFiLiquidityPool = await ethers.getContract("MockEtherFiLiquidityPool");
+    EtherFiLiquidityPool = mockEtherFiLiquidityPool.address;
+    await mockEtherFiLiquidityPool.transferOwnership(proxyOwnerAddress);
+  }
+
+  console.log(EtherFiLiquidityPool, weETH, eETH, resilientOracle.address)
+
+  await deploy("WeETHOracle", {
     from: deployer,
     log: true,
     deterministicDeployment: false,
