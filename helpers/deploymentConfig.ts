@@ -104,7 +104,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     acm: sepoliaGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x94fa6078b6b8a26f0b6edffbe6501b22a10470fb", // Sepolia Multisig
     weETH: "0x3b8b6E96e57f0d1cD366AaCf4CcC68413aF308D0",
-    eETH: "0x0012875a7395a293Adfc9b5cDC2Cfa352C4cDcD3"
+    eETH: "0x0012875a7395a293Adfc9b5cDC2Cfa352C4cDcD3",
   },
   ethereum: {
     vBNBAddress: ethers.constants.AddressZero,
