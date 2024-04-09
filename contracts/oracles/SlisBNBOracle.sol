@@ -34,7 +34,7 @@ contract SlisBNBOracle is CorrelatedTokenOracle {
      * @notice Fetches the amount of BNB for 1 slisBNB
      * @return amount The amount of BNB for slisBNB
      */
-    function getUnderlyingAmount() internal view override returns (uint256) {
+    function _getUnderlyingAmount() internal view override returns (uint256) {
         return STAKE_MANAGER.convertSnBnbToBnb(EXP_SCALE);
     }
 }

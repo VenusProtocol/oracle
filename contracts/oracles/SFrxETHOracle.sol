@@ -23,7 +23,7 @@ contract SFrxETHOracle is CorrelatedTokenOracle {
      * @notice Gets the frxETH for 1 sfrxETH
      * @return amount Amount of frxETH
      */
-    function getUnderlyingAmount() internal view override returns (uint256) {
+    function _getUnderlyingAmount() internal view override returns (uint256) {
         return ISfrxETH(CORRELATED_TOKEN).convertToAssets(EXP_SCALE);
     }
 }

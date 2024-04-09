@@ -37,7 +37,7 @@ contract StkBNBOracle is CorrelatedTokenOracle {
      * @notice Fetches the amount of BNB for 1 stkBNB
      * @return price The amount of BNB for stkBNB
      */
-    function getUnderlyingAmount() internal view override returns (uint256) {
+    function _getUnderlyingAmount() internal view override returns (uint256) {
         IPStakePool.Data memory exchangeRateData = STAKE_POOL.exchangeRate();
 
         if (exchangeRateData.poolTokenSupply == 0) {

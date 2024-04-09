@@ -32,7 +32,7 @@ contract WeETHOracle is CorrelatedTokenOracle {
      * @notice Gets the eETH for 1 weETH
      * @return amount Amount of eETH
      */
-    function getUnderlyingAmount() internal view override returns (uint256) {
+    function _getUnderlyingAmount() internal view override returns (uint256) {
         return LIQUIDITY_POOL.amountForShare(EXP_SCALE);
     }
 }

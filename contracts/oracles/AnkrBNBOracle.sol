@@ -25,7 +25,7 @@ contract AnkrBNBOracle is CorrelatedTokenOracle {
      * @notice Fetches the amount of BNB for 1 ankrBNB
      * @return amount The amount of BNB for ankrBNB
      */
-    function getUnderlyingAmount() internal view override returns (uint256) {
+    function _getUnderlyingAmount() internal view override returns (uint256) {
         return IAnkrBNB(CORRELATED_TOKEN).sharesToBonds(EXP_SCALE);
     }
 }

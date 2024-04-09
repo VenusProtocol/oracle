@@ -45,7 +45,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
         if (asset != CORRELATED_TOKEN) revert InvalidTokenAddress();
 
         // get underlying token amount for 1 correlated token scaled by underlying token decimals
-        uint256 underlyingAmount = getUnderlyingAmount();
+        uint256 underlyingAmount = _getUnderlyingAmount();
 
         // oracle returns (36 - asset decimal) scaled price
         uint256 underlyingUSDPrice = RESILIENT_ORACLE.getPrice(UNDERLYING_TOKEN);
@@ -61,5 +61,5 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
      * @notice Gets the underlying amount for correlated token
      * @return underlyingAmount Amount of underlying token
      */
-    function getUnderlyingAmount() internal view virtual returns (uint256);
+    function _getUnderlyingAmount() internal view virtual returns (uint256);
 }
