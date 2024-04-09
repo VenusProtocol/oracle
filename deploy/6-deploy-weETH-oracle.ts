@@ -21,7 +21,6 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       args: [],
       log: true,
       autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
-      skipIfAlreadyDeployed: true,
     });
 
     const mockEtherFiLiquidityPool = await ethers.getContract("MockEtherFiLiquidityPool");
