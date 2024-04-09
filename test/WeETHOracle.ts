@@ -77,6 +77,7 @@ describe("WeETHOracle unit tests", () => {
 
     it("should get correct price of weETH", async () => {
       const price = await WeETHOracle.getPrice(weETHMock.address);
+      // 1.032226887617316822 (weETH to eETH exchange rate) * 3100 (eETH price) = 3199.9033516136821482
       expect(price).to.equal(parseUnits("3199.9033516136821482", 18));
     });
   });
