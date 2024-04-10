@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity 0.8.13;
+pragma solidity 0.8.25;
 
-import { OracleInterface } from "../interfaces/OracleInterface.sol";
 import { IPStakePool } from "../interfaces/IPStakePool.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
@@ -38,7 +37,7 @@ contract StkBNBOracle is CorrelatedTokenOracle {
      * @notice Fetches the amount of BNB for 1 stkBNB
      * @return price The amount of BNB for stkBNB
      */
-    function getUnderlyingAmount() internal view override returns (uint256) {
+    function _getUnderlyingAmount() internal view override returns (uint256) {
         IPStakePool.Data memory exchangeRateData = STAKE_POOL.exchangeRate();
 
         if (exchangeRateData.poolTokenSupply == 0) {

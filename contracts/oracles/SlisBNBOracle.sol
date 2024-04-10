@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity 0.8.13;
+pragma solidity 0.8.25;
 
 import { ISynclubStakeManager } from "../interfaces/ISynclubStakeManager.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
@@ -34,7 +34,7 @@ contract SlisBNBOracle is CorrelatedTokenOracle {
      * @notice Fetches the amount of BNB for 1 slisBNB
      * @return amount The amount of BNB for slisBNB
      */
-    function getUnderlyingAmount() internal view override returns (uint256) {
+    function _getUnderlyingAmount() internal view override returns (uint256) {
         return STAKE_MANAGER.convertSnBnbToBnb(EXP_SCALE);
     }
 }

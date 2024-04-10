@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity 0.8.13;
+pragma solidity 0.8.25;
 
 import { ISfrxETH } from "../interfaces/ISfrxETH.sol";
 import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
@@ -23,7 +23,7 @@ contract SFrxETHOracle is CorrelatedTokenOracle {
      * @notice Gets the frxETH for 1 sfrxETH
      * @return amount Amount of frxETH
      */
-    function getUnderlyingAmount() internal view override returns (uint256) {
+    function _getUnderlyingAmount() internal view override returns (uint256) {
         return ISfrxETH(CORRELATED_TOKEN).convertToAssets(EXP_SCALE);
     }
 }

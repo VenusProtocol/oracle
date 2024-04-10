@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity 0.8.13;
+pragma solidity 0.8.25;
 
 import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
@@ -31,7 +31,7 @@ contract OneJumpOracle is CorrelatedTokenOracle {
      * @notice Fetches the amount of the underlying token for 1 correlated token
      * @return amount The amount of the underlying token for 1 correlated token
      */
-    function getUnderlyingAmount() internal view override returns (uint256) {
+    function _getUnderlyingAmount() internal view override returns (uint256) {
         return INTERMEDIATE_ORACLE.getPrice(CORRELATED_TOKEN);
     }
 }

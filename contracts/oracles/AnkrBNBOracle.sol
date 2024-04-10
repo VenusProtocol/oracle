@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity 0.8.13;
+pragma solidity 0.8.25;
 
 import { IAnkrBNB } from "../interfaces/IAnkrBNB.sol";
 import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
@@ -25,7 +25,7 @@ contract AnkrBNBOracle is CorrelatedTokenOracle {
      * @notice Fetches the amount of BNB for 1 ankrBNB
      * @return amount The amount of BNB for ankrBNB
      */
-    function getUnderlyingAmount() internal view override returns (uint256) {
+    function _getUnderlyingAmount() internal view override returns (uint256) {
         return IAnkrBNB(CORRELATED_TOKEN).sharesToBonds(EXP_SCALE);
     }
 }

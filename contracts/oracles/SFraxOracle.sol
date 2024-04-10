@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity 0.8.13;
+pragma solidity 0.8.25;
 
 import { ISFrax } from "../interfaces/ISFrax.sol";
 import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
@@ -23,7 +23,7 @@ contract SFraxOracle is CorrelatedTokenOracle {
      * @notice Fetches the amount of FRAX for 1 sFrax
      * @return amount The amount of FRAX for sFrax
      */
-    function getUnderlyingAmount() internal view override returns (uint256) {
+    function _getUnderlyingAmount() internal view override returns (uint256) {
         return ISFrax(CORRELATED_TOKEN).convertToAssets(EXP_SCALE);
     }
 }
