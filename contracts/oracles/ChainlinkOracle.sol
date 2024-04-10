@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity 0.8.13;
+pragma solidity 0.8.25;
 
 import "../interfaces/VBep20Interface.sol";
 import "../interfaces/OracleInterface.sol";
@@ -115,7 +115,7 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
      * @param asset Address of the asset
      * @return Price in USD from Chainlink or a manually set price for the asset
      */
-    function getPrice(address asset) public view returns (uint256) {
+    function getPrice(address asset) public view virtual returns (uint256) {
         uint256 decimals;
 
         if (asset == NATIVE_TOKEN_ADDR) {

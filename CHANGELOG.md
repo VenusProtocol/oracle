@@ -1,3 +1,43 @@
+## [2.0.0](https://github.com/VenusProtocol/oracle/compare/v1.10.0...v2.0.0) (2024-04-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate to Solidity 0.8.25
+
+### Features
+
+* add Chainlink Oracle for Arbitrum checking Sequencer uptime. ([2ab8e8d](https://github.com/VenusProtocol/oracle/commit/2ab8e8d64fc3d2d8ce86464c48ba2eb4da0ff5a8))
+* migrate to Solidity 0.8.25 ([00d4cd0](https://github.com/VenusProtocol/oracle/commit/00d4cd0fa799ed9b15342f1f66c15c5e8e234b5f))
+
+
+### Bug Fixes
+
+* VTIME-3 ([82f1e42](https://github.com/VenusProtocol/oracle/commit/82f1e429aa887ba1fdd7787cfe77bee41e4a79f4))
+
+## [2.0.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.11.0-dev.1...v2.0.0-dev.1) (2024-04-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate to Solidity 0.8.25
+
+### Features
+
+* migrate to Solidity 0.8.25 ([00d4cd0](https://github.com/VenusProtocol/oracle/commit/00d4cd0fa799ed9b15342f1f66c15c5e8e234b5f))
+
+## [1.11.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.10.0...v1.11.0-dev.1) (2024-03-22)
+
+
+### Features
+
+* add Chainlink Oracle for Arbitrum checking Sequencer uptime. ([2ab8e8d](https://github.com/VenusProtocol/oracle/commit/2ab8e8d64fc3d2d8ce86464c48ba2eb4da0ff5a8))
+
+
+### Bug Fixes
+
+* VTIME-3 ([82f1e42](https://github.com/VenusProtocol/oracle/commit/82f1e429aa887ba1fdd7787cfe77bee41e4a79f4))
+
 ## [1.10.0](https://github.com/VenusProtocol/oracle/compare/v1.9.0...v1.10.0) (2024-02-22)
 
 
