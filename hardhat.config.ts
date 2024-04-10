@@ -54,7 +54,7 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: "0.8.13",
+        version: "0.8.25",
         settings: {
           optimizer: {
             enabled: true,
@@ -130,6 +130,15 @@ const config: HardhatUserConfig = {
       chainId: 204,
       live: true,
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
+    },
+    arbitrum: {
+      url: "https://arbitrum.llamarpc.com/",
+      chainId: 42161,
+      live: true,
+      timeout: 1200000,
+      accounts: {
+        mnemonic: process.env.MNEMONIC || "",
+      },
     },
   },
   gasReporter: {
