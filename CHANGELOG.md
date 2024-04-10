@@ -1,3 +1,14 @@
+## [2.0.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.11.0-dev.1...v2.0.0-dev.1) (2024-04-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate to Solidity 0.8.25
+
+### Features
+
+* migrate to Solidity 0.8.25 ([00d4cd0](https://github.com/VenusProtocol/oracle/commit/00d4cd0fa799ed9b15342f1f66c15c5e8e234b5f))
+
 ## [1.11.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v1.10.0...v1.11.0-dev.1) (2024-03-22)
 
 
