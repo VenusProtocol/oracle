@@ -1,7 +1,7 @@
 {
   "arrowParens": avoid,
   "bracketSpacing": true,
-  "endOfLine": "auto",
+  "endOfLine": "lf",
   "importOrder": ["module-alias/register", "<THIRD_PARTY_MODULES>", "^[./]"],
   "importOrderParserPlugins": ["typescript"],
   "importOrderSeparation": true,

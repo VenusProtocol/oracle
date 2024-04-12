@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity 0.8.13;
+pragma solidity 0.8.25;
 
 import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
 import { IEtherFiLiquidityPool } from "../interfaces/IEtherFiLiquidityPool.sol";
@@ -32,7 +32,7 @@ contract WeETHOracle is CorrelatedTokenOracle {
      * @notice Gets the eETH for 1 weETH
      * @return amount Amount of eETH
      */
-    function getUnderlyingAmount() internal view override returns (uint256) {
+    function _getUnderlyingAmount() internal view override returns (uint256) {
         return LIQUIDITY_POOL.amountForShare(EXP_SCALE);
     }
 }

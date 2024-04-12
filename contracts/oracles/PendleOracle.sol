@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity 0.8.13;
+pragma solidity 0.8.25;
 
 import { IPendlePtOracle } from "../interfaces/IPendlePtOracle.sol";
 import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
@@ -57,7 +57,7 @@ contract PendleOracle is CorrelatedTokenOracle {
      * @notice Fetches the amount of underlying token for 1 pendle token
      * @return amount The amount of underlying token for pendle token
      */
-    function getUnderlyingAmount() internal view override returns (uint256) {
+    function _getUnderlyingAmount() internal view override returns (uint256) {
         return PT_ORACLE.getPtToAssetRate(MARKET, TWAP_DURATION);
     }
 }

@@ -103,6 +103,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: sepoliaGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x94fa6078b6b8a26f0b6edffbe6501b22a10470fb", // Sepolia Multisig
+    weETH: "0x3b8b6E96e57f0d1cD366AaCf4CcC68413aF308D0",
+    eETH: "0x0012875a7395a293Adfc9b5cDC2Cfa352C4cDcD3",
   },
   ethereum: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -121,6 +123,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     PTweETH: "0xc69Ad9baB1dEE23F4605a82b3354F8E40d1E5966",
     PTweETHMarket: "0xF32e58F92e60f4b0A37A69b95d642A471365EAe8",
     PTOracle: "0xbbd487268A295531d299c125F3e5f749884A3e30",
+    EtherFiLiquidityPool: "0x308861A430be4cce5502d0A12724771Fc6DaF216",
   },
   opbnbtestnet: {
     vBNBAddress: ethers.constants.AddressZero,
