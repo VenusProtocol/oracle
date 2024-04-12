@@ -53,7 +53,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
         IERC20Metadata token = IERC20Metadata(CORRELATED_TOKEN);
         uint256 decimals = token.decimals();
 
-        // underlyingAmount (for 1 correlated token) * underlyingUSDPrice / 1e18
+        // underlyingAmount (for 1 correlated token) * underlyingUSDPrice / decimals(correlated token)
         return (underlyingAmount * underlyingUSDPrice) / (10 ** decimals);
     }
 
