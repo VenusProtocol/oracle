@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { ADDRESSES, assets } from "../helpers/deploymentConfig";
+import { ADDRESSES } from "../helpers/deploymentConfig";
 
 const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
@@ -11,7 +11,8 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const resilientOracle = await ethers.getContract("ResilientOracle");
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
-  let { EtherFiLiquidityPool, weETH, eETH } = ADDRESSES[network.name];
+  let { EtherFiLiquidityPool } = ADDRESSES[network.name];
+  const { weETH, eETH } = ADDRESSES[network.name];
 
   if (!EtherFiLiquidityPool) {
     // deploy mock liquidity pool
