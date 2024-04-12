@@ -11,7 +11,7 @@ import { OracleInterface } from "../interfaces/OracleInterface.sol";
  * @notice This oracle fetches the price of an asset in through an intermediate asset
  */
 contract OneJumpOracle is CorrelatedTokenOracle {
-    /// @notice Address of the PT oracle
+    /// @notice Address of the intermediate oracle
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     OracleInterface public immutable INTERMEDIATE_ORACLE;
 
