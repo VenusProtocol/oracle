@@ -28,8 +28,8 @@ contract OneJumpOracle is CorrelatedTokenOracle {
     }
 
     /**
-     * @notice Fetches the amount of the underlying token for 1 correlated token
-     * @return amount The amount of the underlying token for 1 correlated token
+     * @notice Fetches the amount of the underlying token for 1 correlated token, using the intermediate oracle
+     * @return amount The amount of the underlying token for 1 correlated token, using the intermediate oracle
      */
     function _getUnderlyingAmount() internal view override returns (uint256) {
         return INTERMEDIATE_ORACLE.getPrice(CORRELATED_TOKEN);
