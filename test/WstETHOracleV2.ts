@@ -15,7 +15,7 @@ const STETH_USD_PRICE = parseUnits("1500", 18); // 1500 USD for 1 stETH
 const PRICE_DENOMINATOR = parseUnits("1", 18);
 const STETH_AMOUNT_FOR_ONE_WSTETH = parseUnits("1.15", 18); // 1.5 stETH for 1 wETH
 
-describe("WstETHOracle unit tests", () => {
+describe("WstETHOracleV2 unit tests", () => {
   let stETHMock;
   let resilientOracleMock;
   let wstETHOracle;
@@ -32,7 +32,7 @@ describe("WstETHOracle unit tests", () => {
     stETHMock = await smock.fake<IStETH>("IStETH");
     stETHMock.getPooledEthByShares.returns(STETH_AMOUNT_FOR_ONE_WSTETH);
     stETHMock.decimals.returns(18);
-    WsETHOracleFactory = await ethers.getContractFactory("WstETHOracle");
+    WsETHOracleFactory = await ethers.getContractFactory("WstETHOracleV2");
 
     resilientOracleMock.getPrice.returns(STETH_USD_PRICE);
   });
