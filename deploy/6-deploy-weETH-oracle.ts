@@ -9,10 +9,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const { deployer } = await getNamedAccounts();
 
   const resilientOracle = await ethers.getContract("ResilientOracle");
+  const chainlinkOracle = await ethers.getContract("ChainlinkOracle");
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
   let { EtherFiLiquidityPool } = ADDRESSES[network.name];
-  const { weETH, eETH } = ADDRESSES[network.name];
+  const { weETH, eETH, WETH } = ADDRESSES[network.name];
 
   if (!EtherFiLiquidityPool) {
     // deploy mock liquidity pool
@@ -30,17 +31,45 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     await mockEtherFiLiquidityPool.transferOwnership(proxyOwnerAddress);
   }
 
-  await deploy("WeETHOracle", {
-    from: deployer,
-    log: true,
-    deterministicDeployment: false,
-    args: [EtherFiLiquidityPool, weETH, eETH, resilientOracle.address],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
-    },
-    skipIfAlreadyDeployed: true,
-  });
+  if (network.name === "sepolia") {
+    await deploy("WeETHOracle", {
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [EtherFiLiquidityPool, weETH, eETH, resilientOracle.address],
+      proxy: {
+        owner: proxyOwnerAddress,
+        proxyContract: "OptimizedTransparentProxy",
+      },
+      skipIfAlreadyDeployed: true,
+    });
+  } else {
+    await deploy("WeETHOracle_Equivalence", {
+      contract: "WeETHOracle",
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [EtherFiLiquidityPool, weETH, WETH, resilientOracle.address],
+      proxy: {
+        owner: proxyOwnerAddress,
+        proxyContract: "OptimizedTransparentProxy",
+      },
+      skipIfAlreadyDeployed: true,
+    });
+
+    await deploy("WeETHOracle_NonEquivalence", {
+      contract: "OneJumpOracle",
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [weETH, WETH, resilientOracle.address, chainlinkOracle.address],
+      proxy: {
+        owner: proxyOwnerAddress,
+        proxyContract: "OptimizedTransparentProxy",
+      },
+      skipIfAlreadyDeployed: true,
+    });
+  }
 };
 
 export default func;
