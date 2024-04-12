@@ -117,7 +117,11 @@ const config: HardhatUserConfig = {
     ethereum: {
       url: process.env.ARCHIVE_NODE_ethereum || "https://ethereum.blockpi.network/v1/rpc/public",
       chainId: 1,
-      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
+      // accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
+      accounts: {
+        mnemonic: process.env.MNEMONIC || "",
+      },
+      gasPrice: 44000000000,
     },
     opbnbtestnet: {
       url: process.env.ARCHIVE_NODE_opbnbtestnet || "https://opbnb-testnet-rpc.bnbchain.org",
