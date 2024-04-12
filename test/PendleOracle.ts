@@ -16,7 +16,7 @@ const PRICE_DENOMINATOR = parseUnits("1", 18);
 const EETH_AMOUNT_FOR_ONE_WEETH = parseUnits("0.923601422168630818", 18);
 const DURATION = 3600; // 1 hour
 
-describe("WstETHOracle unit tests", () => {
+describe("PendleOracle unit tests", () => {
   let ptWeETHMock;
   let resilientOracleMock;
   let pendleOracle;
