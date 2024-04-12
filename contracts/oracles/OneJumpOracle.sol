@@ -4,6 +4,7 @@ pragma solidity 0.8.25;
 import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { OracleInterface } from "../interfaces/OracleInterface.sol";
+import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
 /**
  * @title OneJumpOracle
@@ -32,6 +33,11 @@ contract OneJumpOracle is CorrelatedTokenOracle {
      * @return amount The amount of the underlying token for 1 correlated token, using the intermediate oracle
      */
     function _getUnderlyingAmount() internal view override returns (uint256) {
-        return INTERMEDIATE_ORACLE.getPrice(CORRELATED_TOKEN);
+        uint256 underlyingDecimals = IERC20Metadata(UNDERLYING_TOKEN).decimals();
+        uint256 correlatedDecimals = IERC20Metadata(CORRELATED_TOKEN).decimals();
+
+        uint256 underlyingAmount = INTERMEDIATE_ORACLE.getPrice(CORRELATED_TOKEN);
+
+        return (underlyingAmount * (10 ** correlatedDecimals)) / (10 ** (36 - underlyingDecimals));
     }
 }
