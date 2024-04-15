@@ -41,9 +41,7 @@
           "userdoc",
           "evm.gasEstimates"
         ],
-        "": [
-          "ast"
-        ]
+        "": ["ast"]
       }
     },
     "evmVersion": "paris",
