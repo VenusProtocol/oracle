@@ -44,18 +44,18 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       skipIfAlreadyDeployed: true,
     });
   } else {
-    // await deploy("WeETHOracle_Equivalence", {
-    //   contract: "WeETHOracle",
-    //   from: deployer,
-    //   log: true,
-    //   deterministicDeployment: false,
-    //   args: [EtherFiLiquidityPool, weETH, WETH, resilientOracle.address],
-    //   proxy: {
-    //     owner: proxyOwnerAddress,
-    //     proxyContract: "OptimizedTransparentProxy",
-    //   },
-    //   skipIfAlreadyDeployed: true,
-    // });
+    await deploy("WeETHOracle_Equivalence", {
+      contract: "WeETHOracle",
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [EtherFiLiquidityPool, weETH, WETH, resilientOracle.address],
+      proxy: {
+        owner: proxyOwnerAddress,
+        proxyContract: "OptimizedTransparentProxy",
+      },
+      skipIfAlreadyDeployed: true,
+    });
 
     await deploy("WeETHOracle_NonEquivalence", {
       contract: "OneJumpOracle",
