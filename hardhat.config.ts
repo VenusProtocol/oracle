@@ -40,11 +40,13 @@ function isFork() {
           accountsBalance: "1000000000000000000",
         },
         live: false,
+        saveDeployments: false,
       }
     : {
         allowUnlimitedContractSize: true,
         loggingEnabled: false,
         live: false,
+        saveDeployments: false,
       };
 }
 
