@@ -2,6 +2,12 @@
   "name": "bsctestnet",
   "chainId": "97",
   "addresses": {
+    "AnkrBNBOracle": "0x99e7Fabc3643530E1b3bc6Dc962e67F8b3dAA90e",
+    "AnkrBNBOracle_Implementation": "0xD6cAA52142074EdB7c5893593Fd4748c95414e3C",
+    "AnkrBNBOracle_Proxy": "0x99e7Fabc3643530E1b3bc6Dc962e67F8b3dAA90e",
+    "BNBxOracle": "0x24f6E7f40E3d8782E0c50d749625b6412437Af18",
+    "BNBxOracle_Implementation": "0xBbfB90D65D2C09DB70ef9641915DbAe541eAa309",
+    "BNBxOracle_Proxy": "0x24f6E7f40E3d8782E0c50d749625b6412437Af18",
     "BinanceOracle": "0xB58BFDCE610042311Dc0e034a80Cc7776c1D68f5",
     "BinanceOracle_Implementation": "0xCd64844CD0E8E34782cd0d1bF3E537bf7b474FAe",
     "BinanceOracle_Proxy": "0xB58BFDCE610042311Dc0e034a80Cc7776c1D68f5",
@@ -12,6 +18,8 @@
     "ChainlinkOracle_Implementation": "0xa074529FD3d0E7261A730d0f867107BA0C20d74A",
     "ChainlinkOracle_Proxy": "0xCeA29f1266e880A1482c06eD656cD08C148BaA32",
     "DefaultProxyAdmin": "0xef480a5654b231ff7d80A0681F938f3Db71a6Ca6",
+    "MockAnkrBNB": "0xA37c883CaA38025eE79BF160406709CF443B5F6f",
+    "MockWBETH": "0x9c37E59Ba22c4320547F00D4f1857AF1abd1Dd6f",
     "PythOracle": "0x94E1534c14e0736BB24decA625f2F5364B198E0C",
     "PythOracle_Implementation": "0xb8a450101DF8ab770c8F8521E189a4B39e7Cf5f5",
     "PythOracle_Proxy": "0x94E1534c14e0736BB24decA625f2F5364B198E0C",
@@ -20,6 +28,15 @@
     "RedStoneOracle_Proxy": "0x0Af51d1504ac5B711A9EAFe2fAC11A51d32029Ad",
     "ResilientOracle": "0x3cD69251D04A28d887Ac14cbe2E14c52F3D57823",
     "ResilientOracle_Implementation": "0x35cC3b99985F9d970aEcc9BD83d5Ac78a074a896",
-    "ResilientOracle_Proxy": "0x3cD69251D04A28d887Ac14cbe2E14c52F3D57823"
+    "ResilientOracle_Proxy": "0x3cD69251D04A28d887Ac14cbe2E14c52F3D57823",
+    "SlisBNBOracle": "0x57e9230b8e57561e0Be71075A0BAC1B6e6a3369E",
+    "SlisBNBOracle_Implementation": "0x2d8207811E58303c64871e0BdcBD56B99F4b4324",
+    "SlisBNBOracle_Proxy": "0x57e9230b8e57561e0Be71075A0BAC1B6e6a3369E",
+    "StkBNBOracle": "0x78c1248c07c3724fe7D6FbD0e8D9859eF206B6d0",
+    "StkBNBOracle_Implementation": "0xD2879c81Fb27BC53084d45a33917c81823B745De",
+    "StkBNBOracle_Proxy": "0x78c1248c07c3724fe7D6FbD0e8D9859eF206B6d0",
+    "WBETHOracle": "0x80f80ad1d963673819752c234339901fa19fA7cb",
+    "WBETHOracle_Implementation": "0x867a2d7efEbDcdaa0A0437CFcDe4fBd7BC2cA557",
+    "WBETHOracle_Proxy": "0x80f80ad1d963673819752c234339901fa19fA7cb"
   }
 }
