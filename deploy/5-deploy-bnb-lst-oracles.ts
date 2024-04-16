@@ -11,11 +11,9 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const oracle = await ethers.getContract("ResilientOracle");
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
-  const { stkBNB, ankrBNB, BNBx, BNBxStakeManager, slisBNBStakeManager, stkBNBStakePool, slisBNB, wBETH } =
+  const { ankrBNB, stkBNB, BNBx, BNBxStakeManager, slisBNBStakeManager, stkBNBStakePool, slisBNB, wBETH } =
     ADDRESSES[network.name];
   const ETH = assets[network.name].find(asset => asset.token === "ETH");
-
-  console.log(deployer);
 
   await deploy("BNBxOracle", {
     from: deployer,
@@ -53,32 +51,19 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     skipIfAlreadyDeployed: true,
   });
 
-  let ankrBNBAddress = ankrBNB;
-  if (!ankrBNB) {
-    // deploy MockAnkrBNB
-    await deploy("MockAnkrBNB", {
+  if (ankrBNB) {
+    await deploy("AnkrBNBOracle", {
       from: deployer,
       log: true,
-      autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
+      deterministicDeployment: false,
+      args: [ankrBNB, oracle.address],
+      proxy: {
+        owner: proxyOwnerAddress,
+        proxyContract: "OptimizedTransparentProxy",
+      },
       skipIfAlreadyDeployed: true,
-      args: ["Ankr Staked BNB ", "ankrBNB", "18"],
     });
-
-    const ankrBNBContract = await ethers.getContract("MockAnkrBNB");
-    ankrBNBAddress = ankrBNBContract.address;
   }
-
-  await deploy("AnkrBNBOracle", {
-    from: deployer,
-    log: true,
-    deterministicDeployment: false,
-    args: [ankrBNBAddress, oracle.address],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
-    },
-    skipIfAlreadyDeployed: true,
-  });
 
   let wBETHAddress = wBETH;
   if (!wBETH) {
