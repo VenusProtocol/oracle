@@ -36,6 +36,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   }
 };
 
-func.skip = async ({ network }: HardhatRuntimeEnvironment) => network.name !== "arbitrumone";
+func.skip = async ({ network }: HardhatRuntimeEnvironment) => network.name === "arbitrumone";
 func.tags = ["deploy-redstone"];
 export default func;

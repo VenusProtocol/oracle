@@ -203,12 +203,11 @@ export const chainlinkFeed: Config = {
     stETH: "0xCfE54B5cD566aB89272946F602D76Ea879CAb4a8",
   },
   arbitrumsepolia: {
-    WBTC: "0xFb8d93FD3Cf18386a5564bb5619cD1FdB130dF7D",
-    USDC: "0x86f096B1D970990091319835faF3Ee011708eAe8",
-    USDT: "0xf3118a17863996B9F2A073c9A66Faaa664355cf8",
-    ARB: "0x4371bb358aB5cC192E481543417D2F67b8781731",
-    WETH: "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
-    XVS: "0x47fA6E9F717c9eB081c4734FfB5a1EcD70508891",
+    WBTC: "0x56a43EB56Da12C0dc1D972ACb089c06a5dEF8e69",
+    USDC: "0x0153002d20B96532C639313c2d54c3dA09109309",
+    USDT: "0x80EDee6f667eCc9f63a0a6f55578F870651f06A4",
+    ARB: "0xD1092a65338d049DB68D7Be6bD89d17a0929945e",
+    WETH: "0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165",
   },
 };
 
@@ -826,12 +825,12 @@ export const assets: Assets = {
       price: "3500000000000000000000",
       oracle: "chainlink",
     },
-    // {
-    //   token: "XVS",
-    //   address: "0x47fA6E9F717c9eB081c4734FfB5a1EcD70508891", // TODO: add oracle for XVS once configured
-    //   price: ""
-    //   oracle: ""
-    // }
+    {
+      token: "XVS",
+      address: "0x47fA6E9F717c9eB081c4734FfB5a1EcD70508891",
+      price: "10000000000000000000",
+      oracle: "chainlinkFixed",
+    },
   ],
 };
 
