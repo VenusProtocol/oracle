@@ -65,7 +65,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     const ankrBNBContract = await ethers.getContract("MockAnkrBNB");
     ankrBNBAddress = ankrBNBContract.address;
 
-    if ((await ankrBNBContract.owner()) == deployer) {
+    if ((await ankrBNBContract.owner()) === deployer) {
       await ankrBNBContract.transferOwnership(proxyOwnerAddress);
     }
   }
@@ -96,7 +96,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     const wBETHContract = await ethers.getContract("MockWBETH");
     wBETHAddress = wBETHContract.address;
 
-    if ((await wBETHContract.owner()) == deployer) {
+    if ((await wBETHContract.owner()) === deployer) {
       await wBETHContract.transferOwnership(proxyOwnerAddress);
     }
   }
