@@ -1,3 +1,4 @@
+import arbitrumsepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/arbitrumsepolia.json";
 import bscmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bscmainnet.json";
 import bsctestnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bsctestnet.json";
 import ethereumGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/ethereum.json";
@@ -148,15 +149,15 @@ export const ADDRESSES: PreconfiguredAddresses = {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
-    acm: "0xa36AD96441cB931D8dFEAAaC97D3FaB4B39E590F",
-    timelock: "0x1426A5Ae009c4443188DA8793751024E358A61C2",
+    acm: arbitrumsepoliaGovernanceDeployments.contracts.AccessControlManager.address,
+    timelock: "0x1426A5Ae009c4443188DA8793751024E358A61C2", // Arbitrum Sepolia Multisig
   },
   arbitrumone: {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
     acm: "",
-    timelock: "0x14e0E151b33f9802b3e75b621c1457afc44DcAA0",
+    timelock: "0x14e0E151b33f9802b3e75b621c1457afc44DcAA0", // Arbitrum One Multisig
   },
 };
 
