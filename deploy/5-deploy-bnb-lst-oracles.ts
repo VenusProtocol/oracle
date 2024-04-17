@@ -51,19 +51,36 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     skipIfAlreadyDeployed: true,
   });
 
-  if (ankrBNB) {
-    await deploy("AnkrBNBOracle", {
+  let ankrBNBAddress = ankrBNB;
+  if (!ankrBNB) {
+    // deploy MockAnkrBNB
+    await deploy("MockAnkrBNB", {
       from: deployer,
       log: true,
-      deterministicDeployment: false,
-      args: [ankrBNB, oracle.address],
-      proxy: {
-        owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
-      },
+      autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
       skipIfAlreadyDeployed: true,
+      args: ["Ankr Staked BNB ", "ankrBNB", "18"],
     });
+
+    const ankrBNBContract = await ethers.getContract("MockAnkrBNB");
+    ankrBNBAddress = ankrBNBContract.address;
+
+    if ((await ankrBNBContract.owner()) == deployer) {
+      await ankrBNBContract.transferOwnership(proxyOwnerAddress);
+    }
   }
+
+  await deploy("AnkrBNBOracle", {
+    from: deployer,
+    log: true,
+    deterministicDeployment: false,
+    args: [ankrBNBAddress, oracle.address],
+    proxy: {
+      owner: proxyOwnerAddress,
+      proxyContract: "OptimizedTransparentProxy",
+    },
+    skipIfAlreadyDeployed: true,
+  });
 
   let wBETHAddress = wBETH;
   if (!wBETH) {
@@ -78,6 +95,10 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
     const wBETHContract = await ethers.getContract("MockWBETH");
     wBETHAddress = wBETHContract.address;
+
+    if ((await wBETHContract.owner()) == deployer) {
+      await wBETHContract.transferOwnership(proxyOwnerAddress);
+    }
   }
 
   await deploy("WBETHOracle", {
