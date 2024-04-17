@@ -1,3 +1,17 @@
+## [2.2.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.1.0...v2.2.0-dev.1) (2024-04-17)
+
+
+### Features
+
+* add config and deployments for arbitrum sepolia ([a2f66e7](https://github.com/VenusProtocol/oracle/commit/a2f66e7fae650b8c1e800dc9c88ca153979c844c))
+* updating deployment files ([7d2b60b](https://github.com/VenusProtocol/oracle/commit/7d2b60b40741d8b6629ae83b68e9e960ba51e59c))
+
+
+### Bug Fixes
+
+* import acm address from npm package ([084e080](https://github.com/VenusProtocol/oracle/commit/084e08037567352c98edb3940c8d0101a997968a))
+* pr comments ([5f4f8be](https://github.com/VenusProtocol/oracle/commit/5f4f8be3d496f4e7df1ad32a54a4aa6acf5ee422))
+
 ## [2.1.0](https://github.com/VenusProtocol/oracle/compare/v2.0.0...v2.1.0) (2024-04-16)
 
 
