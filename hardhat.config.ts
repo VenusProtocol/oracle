@@ -40,11 +40,13 @@ function isFork() {
           accountsBalance: "1000000000000000000",
         },
         live: false,
+        saveDeployments: false,
       }
     : {
         allowUnlimitedContractSize: true,
         loggingEnabled: false,
         live: false,
+        saveDeployments: false,
       };
 }
 
@@ -52,7 +54,7 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: "0.8.13",
+        version: "0.8.25",
         settings: {
           optimizer: {
             enabled: true,

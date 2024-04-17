@@ -3135,17 +3135,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@venusprotocol/governance-contracts@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "@venusprotocol/governance-contracts@npm:1.4.0"
-  dependencies:
-    "@venusprotocol/solidity-utilities": ^1.1.0
-    hardhat-deploy-ethers: ^0.3.0-beta.13
-    module-alias: ^2.2.2
-  checksum: 85c6b6a815edb0befa4c38e3652a58464827d390620210b99575c16960ee6505e95e7c2192ebc972da7ed758d3c62e150d32fbdd1f01acab1731f29b11d1884e
-  languageName: node
-  linkType: hard
-
 "@venusprotocol/governance-contracts@npm:^1.4.0-dev.1":
   version: 1.4.0-dev.9
   resolution: "@venusprotocol/governance-contracts@npm:1.4.0-dev.9"
@@ -3154,6 +3143,17 @@ __metadata:
     hardhat-deploy-ethers: ^0.3.0-beta.13
     module-alias: ^2.2.2
   checksum: 25583a20738973d2ade4a1fdf84dcacf0caec42004f5bf755fdfa29b3602f2b9184638f2d828359195bf8baa3b082797cad941874be1a91a61900b343420cead
+  languageName: node
+  linkType: hard
+
+"@venusprotocol/governance-contracts@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@venusprotocol/governance-contracts@npm:2.0.0"
+  dependencies:
+    "@venusprotocol/solidity-utilities": 2.0.0
+    hardhat-deploy-ethers: ^0.3.0-beta.13
+    module-alias: ^2.2.2
+  checksum: 18b56d951c4e68fa1edadc93ed44daa55c8b81294778a4969d940a084de6d949630eacd4702d1b92f04ad5d709963a3a0a790014871ec34b0b2f4806cebc731c
   languageName: node
   linkType: hard
 
@@ -3188,8 +3188,8 @@ __metadata:
     "@types/sinon-chai": ^3.2.9
     "@typescript-eslint/eslint-plugin": ^5.27.1
     "@typescript-eslint/parser": ^5.27.1
-    "@venusprotocol/governance-contracts": ^1.4.0
-    "@venusprotocol/solidity-utilities": 1.3.0
+    "@venusprotocol/governance-contracts": ^2.0.0
+    "@venusprotocol/solidity-utilities": ^2.0.0
     "@venusprotocol/venus-protocol": ^6.0.0
     chai: ^4.3.6
     cross-env: ^7.0.3
@@ -3241,10 +3241,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@venusprotocol/solidity-utilities@npm:1.3.0":
-  version: 1.3.0
-  resolution: "@venusprotocol/solidity-utilities@npm:1.3.0"
-  checksum: d1109365a5e01959c47b25fb129373db93792e60bf1bc0ed324b63c2a64f6e4a7878ebf016cfade94bc41a2c1245d3e861fdc6b8c5844ac210ed1d73e7307e72
+"@venusprotocol/solidity-utilities@npm:2.0.0, @venusprotocol/solidity-utilities@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@venusprotocol/solidity-utilities@npm:2.0.0"
+  checksum: 87a2ce2fd1d702bc04c4e98d675b904176c7f2489476e8da586d1782b48faae92aa4f2ba894737773d189ba72a6b274f1464cf2e0308e62758303d0adde749e6
   languageName: node
   linkType: hard
 
