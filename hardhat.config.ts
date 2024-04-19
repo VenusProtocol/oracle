@@ -62,6 +62,7 @@ const config: HardhatUserConfig = {
               yul: !process.env.CI,
             },
           },
+          evmVersion: "paris",
           outputSelection: {
             "*": {
               "*": ["storageLayout"],
