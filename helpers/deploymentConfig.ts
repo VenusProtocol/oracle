@@ -1,3 +1,4 @@
+import arbitrumsepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/arbitrumsepolia.json";
 import bscmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bscmainnet.json";
 import bsctestnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bsctestnet.json";
 import ethereumGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/ethereum.json";
@@ -144,6 +145,20 @@ export const ADDRESSES: PreconfiguredAddresses = {
     acm: opbnbmainnetGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0xC46796a21a3A9FAB6546aF3434F2eBfFd0604207", // opBNB Multisig
   },
+  arbitrumsepolia: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: arbitrumsepoliaGovernanceDeployments.contracts.AccessControlManager.address,
+    timelock: "0x1426A5Ae009c4443188DA8793751024E358A61C2", // Arbitrum Sepolia Multisig
+  },
+  arbitrumone: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: "",
+    timelock: "0x14e0E151b33f9802b3e75b621c1457afc44DcAA0", // Arbitrum One Multisig
+  },
 };
 
 export const chainlinkFeed: Config = {
@@ -214,6 +229,13 @@ export const chainlinkFeed: Config = {
     CRV: "0xCd627aA160A6fA45Eb793D19Ef54f5062F20f33f",
     crvUSD: "0xEEf0C605546958c1f899b6fB336C20671f9cD49F",
     stETH: "0xCfE54B5cD566aB89272946F602D76Ea879CAb4a8",
+  },
+  arbitrumsepolia: {
+    WBTC: "0x56a43EB56Da12C0dc1D972ACb089c06a5dEF8e69",
+    USDC: "0x0153002d20B96532C639313c2d54c3dA09109309",
+    USDT: "0x80EDee6f667eCc9f63a0a6f55578F870651f06A4",
+    ARB: "0xD1092a65338d049DB68D7Be6bD89d17a0929945e",
+    WETH: "0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165",
   },
 };
 
@@ -798,6 +820,44 @@ export const assets: Assets = {
       token: "FDUSD",
       address: "0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb",
       oracle: "binance",
+    },
+  ],
+  arbitrumsepolia: [
+    {
+      token: "WBTC",
+      address: "0xFb8d93FD3Cf18386a5564bb5619cD1FdB130dF7D",
+      price: "68000000000000000000000",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDC",
+      address: "0x86f096B1D970990091319835faF3Ee011708eAe8",
+      price: "1000000000000000000",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDT",
+      address: "0xf3118a17863996B9F2A073c9A66Faaa664355cf8",
+      price: "1000000000000000000",
+      oracle: "chainlink",
+    },
+    {
+      token: "ARB",
+      address: "0x4371bb358aB5cC192E481543417D2F67b8781731",
+      price: "1500000000000000000",
+      oracle: "chainlink",
+    },
+    {
+      token: "WETH",
+      address: "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+      price: "3500000000000000000000",
+      oracle: "chainlink",
+    },
+    {
+      token: "XVS",
+      address: "0x47fA6E9F717c9eB081c4734FfB5a1EcD70508891",
+      price: "10000000000000000000",
+      oracle: "chainlinkFixed",
     },
   ],
 };
