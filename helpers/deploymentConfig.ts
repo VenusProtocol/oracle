@@ -855,7 +855,7 @@ export const assets: Assets = {
     },
     {
       token: "XVS",
-      address: "0x47fA6E9F717c9eB081c4734FfB5a1EcD70508891",
+      address: "0x877Dc896e7b13096D3827872e396927BbE704407",
       price: "10000000000000000000",
       oracle: "chainlinkFixed",
     },
