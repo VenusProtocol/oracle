@@ -1,3 +1,10 @@
+## [2.2.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.2.0-dev.2...v2.2.0-dev.3) (2024-04-24)
+
+
+### Bug Fixes
+
+* update xvs address for arbitrumsepolia ([ca39f18](https://github.com/VenusProtocol/oracle/commit/ca39f180bc55c691af70242dd2462ee047637e2f))
+
 ## [2.2.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.2.0-dev.1...v2.2.0-dev.2) (2024-04-24)
 
 
