@@ -106,7 +106,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     timelock: "0x94fa6078b6b8a26f0b6edffbe6501b22a10470fb", // Sepolia Multisig
     weETH: "0x3b8b6E96e57f0d1cD366AaCf4CcC68413aF308D0",
     eETH: "0x0012875a7395a293Adfc9b5cDC2Cfa352C4cDcD3",
-    WETH: "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9"
+    WETH: "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9",
+    PTweETH: "0x56107201d3e4b7Db92dEa0Edb9e0454346AEb8B5",
   },
   ethereum: {
     vBNBAddress: ethers.constants.AddressZero,

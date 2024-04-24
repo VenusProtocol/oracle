@@ -5,7 +5,7 @@ import "../../interfaces/IPendlePtOracle.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MockPendlePtOracle is IPendlePtOracle, Ownable {
-    mapping (address => mapping(uint32 => uint256)) public ptToAssetRate;
+    mapping(address => mapping(uint32 => uint256)) public ptToAssetRate;
 
     constructor() Ownable() {}
 
@@ -14,13 +14,17 @@ contract MockPendlePtOracle is IPendlePtOracle, Ownable {
     }
 
     function getPtToAssetRate(address market, uint32 duration) external view returns (uint256) {
-        return 1;
+        return ptToAssetRate[market][duration];
     }
 
     function getOracleState(
         address market,
         uint32 duration
-    ) external view returns (bool increaseCardinalityRequired, uint16 cardinalityRequired, bool oldestObservationSatisfied) {
+    )
+        external
+        view
+        returns (bool increaseCardinalityRequired, uint16 cardinalityRequired, bool oldestObservationSatisfied)
+    {
         return (false, 0, true);
     }
 }

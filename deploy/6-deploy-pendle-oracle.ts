@@ -38,7 +38,14 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [PTweETHMarket, ptOracleAddress, PTweETH, WETH, oracle.address, 1800],
+    args: [
+      PTweETHMarket || "0x0000000000000000000000000000000000000001",
+      ptOracleAddress,
+      PTweETH,
+      WETH,
+      oracle.address,
+      1800,
+    ],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
@@ -49,5 +56,4 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
 export default func;
 func.tags = ["pendle"];
-func.skip = async (hre: HardhatRuntimeEnvironment) =>
-  hre.network.name !== "ethereum" && hre.network.name !== "sepolia";
+func.skip = async (hre: HardhatRuntimeEnvironment) => hre.network.name !== "ethereum" && hre.network.name !== "sepolia";
