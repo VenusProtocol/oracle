@@ -1,3 +1,26 @@
+## [2.2.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.2.0-dev.1...v2.2.0-dev.2) (2024-04-24)
+
+
+### Features
+
+* updating deployment files ([156b02f](https://github.com/VenusProtocol/oracle/commit/156b02fc2e57badc786533a2f3ea11fbbfbff061))
+* updating deployment files ([077b57a](https://github.com/VenusProtocol/oracle/commit/077b57a569a7d738d0c45b560e4793f2a4058107))
+* updating deployment files ([df1e03e](https://github.com/VenusProtocol/oracle/commit/df1e03ef8db38ff48964984d7bd88c9f29553b6f))
+* updating deployment files ([d837c8c](https://github.com/VenusProtocol/oracle/commit/d837c8ce22a2db42d78cef71f39eadcf38d220f6))
+
+
+### Bug Fixes
+
+* added AnkrBNB oracle and mock ankrBNB ([df3d20f](https://github.com/VenusProtocol/oracle/commit/df3d20f701a8a09061294eb03879e6cb961329c2))
+* deployed LST oracles on bsctestnet ([4406013](https://github.com/VenusProtocol/oracle/commit/4406013ea3dda84bcda33bf0ead76e9a8bf0f676))
+* deployed lst oracles to bsc mainnet ([c14881c](https://github.com/VenusProtocol/oracle/commit/c14881c3cf08136b433d8c6fc8d71c96a2251eef))
+* fixed ankrBNB oracle ([58aaa1d](https://github.com/VenusProtocol/oracle/commit/58aaa1d43aa9d06b81ca60b00d4db38b57999142))
+* fixed lint ([2680429](https://github.com/VenusProtocol/oracle/commit/2680429c2131058ab190c08c08000c3a1499b80a))
+* renamed file ([b067b69](https://github.com/VenusProtocol/oracle/commit/b067b693570fa5a3178cf3aa186fc5b85cd6b609))
+* reverted config changes ([df860a8](https://github.com/VenusProtocol/oracle/commit/df860a84c769a0302e9470cbec71ca98f0cb8b62))
+* reverted hardhat config ([3ec2d87](https://github.com/VenusProtocol/oracle/commit/3ec2d871e01ee9ea1c58f588d0af71dbb07bcb7a))
+* reverted hardhat config ([3f3faf5](https://github.com/VenusProtocol/oracle/commit/3f3faf597478f0d97d2df426e37a68c54cfae841))
+
 ## [2.2.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.1.0...v2.2.0-dev.1) (2024-04-17)
 
 
