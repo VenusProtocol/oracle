@@ -1,3 +1,20 @@
+## [2.3.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.2.0...v2.3.0-dev.1) (2024-04-25)
+
+
+### Features
+
+* updating deployment files ([bae54ff](https://github.com/VenusProtocol/oracle/commit/bae54ff84ef2f6377fe4f04b7c65b21bf291014c))
+
+
+### Bug Fixes
+
+* added deployment script ([f2823f8](https://github.com/VenusProtocol/oracle/commit/f2823f8cb5d81ccb97d4f1bc2c57d1d88993e3e0))
+* deployed pendle oracle ([c014ecc](https://github.com/VenusProtocol/oracle/commit/c014ecc7ffadd5008e72dfe425c7d32ba61be3bf))
+* fixed addresses ([b7bcb58](https://github.com/VenusProtocol/oracle/commit/b7bcb58400205e89c7d490d58fc6385065feba67))
+* fixed lint ([83671c8](https://github.com/VenusProtocol/oracle/commit/83671c8cb9e129deb24227eff2a11a57baa31791))
+* fixed tests ([cd7c20a](https://github.com/VenusProtocol/oracle/commit/cd7c20a868e8d9c5e960ffa0880f0882a5fad065))
+* renamed PTweETH to PTweETH_26DEC2024 ([3fb7355](https://github.com/VenusProtocol/oracle/commit/3fb73554d3a5901afed135a7831b1537ad789ee5))
+
 ## [2.2.0](https://github.com/VenusProtocol/oracle/compare/v2.1.0...v2.2.0) (2024-04-25)
 
 
