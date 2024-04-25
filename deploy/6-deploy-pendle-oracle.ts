@@ -11,7 +11,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const oracle = await ethers.getContract("ResilientOracle");
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
-  const { PTweETH, PTweETHMarket, PTOracle, WETH } = ADDRESSES[network.name];
+  const { PTweETH_26DEC2024, PTweETH_26DEC2024_Market, PTOracle, WETH } = ADDRESSES[network.name];
 
   let ptOracleAddress = PTOracle;
   if (!ptOracleAddress) {
@@ -39,9 +39,9 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     log: true,
     deterministicDeployment: false,
     args: [
-      PTweETHMarket || "0x0000000000000000000000000000000000000001",
+      PTweETH_26DEC2024_Market || "0x0000000000000000000000000000000000000001",
       ptOracleAddress,
-      PTweETH,
+      PTweETH_26DEC2024,
       WETH,
       oracle.address,
       1800,
