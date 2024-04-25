@@ -89,7 +89,14 @@ describe("PendleOracle unit tests", () => {
     });
     it("revert if ResilientOracle address is 0", async () => {
       await expect(
-        pendleOracleFactory.deploy(PTweETH_26DEC2024_Market, ptOracleMock.address, ptWeETHMock.address, eETH, addr0000, DURATION),
+        pendleOracleFactory.deploy(
+          PTweETH_26DEC2024_Market,
+          ptOracleMock.address,
+          ptWeETHMock.address,
+          eETH,
+          addr0000,
+          DURATION,
+        ),
       ).to.be.reverted;
     });
     it("revert if TWAP duration is 0", async () => {
