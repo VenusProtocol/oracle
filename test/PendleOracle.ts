@@ -10,7 +10,7 @@ import { addr0000 } from "./utils/data";
 const { expect } = chai;
 chai.use(smock.matchers);
 
-const { PTweETH, PTweETHMarket, PTOracle, eETH } = ADDRESSES.ethereum;
+const { PTweETH_26DEC2024, PTweETH_26DEC2024_Market, PTOracle, eETH } = ADDRESSES.ethereum;
 const eETH_PRICE = parseUnits("3400", 18);
 const PRICE_DENOMINATOR = parseUnits("1", 18);
 const EETH_AMOUNT_FOR_ONE_WEETH = parseUnits("0.923601422168630818", 18);
@@ -28,7 +28,7 @@ describe("PendleOracle unit tests", () => {
     resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
     resilientOracleMock.getPrice.returns(eETH_PRICE);
 
-    ptWeETHMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: PTweETH });
+    ptWeETHMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: PTweETH_26DEC2024 });
     ptWeETHMock.decimals.returns(18);
 
     ptOracleMock = await smock.fake<IPendlePtOracle>("IPendlePtOracle", { address: PTOracle });
@@ -54,7 +54,7 @@ describe("PendleOracle unit tests", () => {
     it("revert if ptOracle address is 0", async () => {
       await expect(
         pendleOracleFactory.deploy(
-          PTweETHMarket,
+          PTweETH_26DEC2024_Market,
           addr0000,
           ptWeETHMock.address,
           eETH,
@@ -66,7 +66,7 @@ describe("PendleOracle unit tests", () => {
     it("revert if ptWeETH address is 0", async () => {
       await expect(
         pendleOracleFactory.deploy(
-          PTweETHMarket,
+          PTweETH_26DEC2024_Market,
           ptOracleMock.address,
           addr0000,
           eETH,
@@ -78,7 +78,7 @@ describe("PendleOracle unit tests", () => {
     it("revert if eETH address is 0", async () => {
       await expect(
         pendleOracleFactory.deploy(
-          PTweETHMarket,
+          PTweETH_26DEC2024_Market,
           ptOracleMock.address,
           ptWeETHMock.address,
           addr0000,
@@ -89,13 +89,20 @@ describe("PendleOracle unit tests", () => {
     });
     it("revert if ResilientOracle address is 0", async () => {
       await expect(
-        pendleOracleFactory.deploy(PTweETHMarket, ptOracleMock.address, ptWeETHMock.address, eETH, addr0000, DURATION),
+        pendleOracleFactory.deploy(
+          PTweETH_26DEC2024_Market,
+          ptOracleMock.address,
+          ptWeETHMock.address,
+          eETH,
+          addr0000,
+          DURATION,
+        ),
       ).to.be.reverted;
     });
     it("revert if TWAP duration is 0", async () => {
       await expect(
         pendleOracleFactory.deploy(
-          PTweETHMarket,
+          PTweETH_26DEC2024_Market,
           ptOracleMock.address,
           ptWeETHMock.address,
           eETH,
@@ -110,7 +117,7 @@ describe("PendleOracle unit tests", () => {
 
       await expect(
         pendleOracleFactory.deploy(
-          PTweETHMarket,
+          PTweETH_26DEC2024_Market,
           ptOracleMock.address,
           ptWeETHMock.address,
           eETH,
@@ -124,7 +131,7 @@ describe("PendleOracle unit tests", () => {
 
     it("should deploy contract", async () => {
       pendleOracle = await pendleOracleFactory.deploy(
-        PTweETHMarket,
+        PTweETH_26DEC2024_Market,
         ptOracleMock.address,
         ptWeETHMock.address,
         eETH,
