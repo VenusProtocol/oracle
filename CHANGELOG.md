@@ -1,3 +1,31 @@
+## [2.2.0](https://github.com/VenusProtocol/oracle/compare/v2.1.0...v2.2.0) (2024-04-25)
+
+
+### Features
+
+* add config and deployments for arbitrum sepolia ([a2f66e7](https://github.com/VenusProtocol/oracle/commit/a2f66e7fae650b8c1e800dc9c88ca153979c844c))
+* updating deployment files ([156b02f](https://github.com/VenusProtocol/oracle/commit/156b02fc2e57badc786533a2f3ea11fbbfbff061))
+* updating deployment files ([077b57a](https://github.com/VenusProtocol/oracle/commit/077b57a569a7d738d0c45b560e4793f2a4058107))
+* updating deployment files ([df1e03e](https://github.com/VenusProtocol/oracle/commit/df1e03ef8db38ff48964984d7bd88c9f29553b6f))
+* updating deployment files ([d837c8c](https://github.com/VenusProtocol/oracle/commit/d837c8ce22a2db42d78cef71f39eadcf38d220f6))
+* updating deployment files ([7d2b60b](https://github.com/VenusProtocol/oracle/commit/7d2b60b40741d8b6629ae83b68e9e960ba51e59c))
+
+
+### Bug Fixes
+
+* added AnkrBNB oracle and mock ankrBNB ([df3d20f](https://github.com/VenusProtocol/oracle/commit/df3d20f701a8a09061294eb03879e6cb961329c2))
+* deployed LST oracles on bsctestnet ([4406013](https://github.com/VenusProtocol/oracle/commit/4406013ea3dda84bcda33bf0ead76e9a8bf0f676))
+* deployed lst oracles to bsc mainnet ([c14881c](https://github.com/VenusProtocol/oracle/commit/c14881c3cf08136b433d8c6fc8d71c96a2251eef))
+* fixed ankrBNB oracle ([58aaa1d](https://github.com/VenusProtocol/oracle/commit/58aaa1d43aa9d06b81ca60b00d4db38b57999142))
+* fixed lint ([2680429](https://github.com/VenusProtocol/oracle/commit/2680429c2131058ab190c08c08000c3a1499b80a))
+* import acm address from npm package ([084e080](https://github.com/VenusProtocol/oracle/commit/084e08037567352c98edb3940c8d0101a997968a))
+* pr comments ([5f4f8be](https://github.com/VenusProtocol/oracle/commit/5f4f8be3d496f4e7df1ad32a54a4aa6acf5ee422))
+* renamed file ([b067b69](https://github.com/VenusProtocol/oracle/commit/b067b693570fa5a3178cf3aa186fc5b85cd6b609))
+* reverted config changes ([df860a8](https://github.com/VenusProtocol/oracle/commit/df860a84c769a0302e9470cbec71ca98f0cb8b62))
+* reverted hardhat config ([3ec2d87](https://github.com/VenusProtocol/oracle/commit/3ec2d871e01ee9ea1c58f588d0af71dbb07bcb7a))
+* reverted hardhat config ([3f3faf5](https://github.com/VenusProtocol/oracle/commit/3f3faf597478f0d97d2df426e37a68c54cfae841))
+* update xvs address for arbitrumsepolia ([ca39f18](https://github.com/VenusProtocol/oracle/commit/ca39f180bc55c691af70242dd2462ee047637e2f))
+
 ## [2.2.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.2.0-dev.2...v2.2.0-dev.3) (2024-04-24)
 
 
