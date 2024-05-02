@@ -21,11 +21,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       log: true,
       autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
       skipIfAlreadyDeployed: true,
-      args: [
-        "Staked FRAX",
-        "sFRAX",
-        18
-      ],
+      args: ["Staked FRAX", "sFRAX", 18],
     });
 
     const mockSFraxContract = await ethers.getContract("MockSFrax");
@@ -41,11 +37,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [
-      sFRAXAddress,
-      FRAX,
-      oracle.address,
-    ],
+    args: [sFRAXAddress, FRAX, oracle.address],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
