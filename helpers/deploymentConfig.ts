@@ -108,6 +108,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     eETH: "0x0012875a7395a293Adfc9b5cDC2Cfa352C4cDcD3",
     WETH: "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9",
     PTweETH_26DEC2024: "0x56107201d3e4b7Db92dEa0Edb9e0454346AEb8B5",
+    FRAX: "0x10630d59848547c9F59538E2d8963D63B912C075",
   },
   ethereum: {
     vBNBAddress: ethers.constants.AddressZero,

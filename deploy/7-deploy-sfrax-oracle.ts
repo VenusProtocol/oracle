@@ -42,7 +42,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     log: true,
     deterministicDeployment: false,
     args: [
-      sFRAX,
+      sFRAXAddress,
       FRAX,
       oracle.address,
     ],
