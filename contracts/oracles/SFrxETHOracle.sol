@@ -44,6 +44,6 @@ contract SFrxETHOracle is CorrelatedTokenOracle {
         uint256 averagePrice = (priceLow + priceHigh) / 2;
 
         // return (1 / averagePrice) as the average price is in sfraxETH
-        return EXP_SCALE * 2 / averagePrice;
+        return (EXP_SCALE ** 2) / averagePrice;
     }
 }
