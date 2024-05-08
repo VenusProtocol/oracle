@@ -4,7 +4,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { BEP20Harness, ISfrxEthFraxOracle, ResilientOracleInterface } from "../typechain-types";
+import { AccessControlManager, BEP20Harness, ISfrxEthFraxOracle, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -20,6 +20,7 @@ describe("SFrxETHOracle unit tests", () => {
   let SFrxETHOracle;
   let fraxMock;
   let sfrxEthFraxOracleMock;
+  let fakeAccessControlManager;
   before(async () => {
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
@@ -38,6 +39,9 @@ describe("SFrxETHOracle unit tests", () => {
     sfrxETHMock.decimals.returns(18);
 
     SFrxETHOracleFactory = await ethers.getContractFactory("SFrxETHOracle");
+
+    fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
   });
 
   describe("deployment", () => {
@@ -61,6 +65,8 @@ describe("SFrxETHOracle unit tests", () => {
         fraxMock.address,
         resilientOracleMock.address,
       );
+
+      await SFrxETHOracle.initialize(fakeAccessControlManager.address);
     });
   });
 
