@@ -4,14 +4,13 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { AccessControlManager, BEP20Harness, ISfrxEthFraxOracle, ResilientOracleInterface } from "../typechain-types";
+import { AccessControlManager, BEP20Harness, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
 chai.use(smock.matchers);
 
 const { sfrxETH, FRAX } = ADDRESSES.ethereum;
-const ETH_USD_PRICE = parseUnits("3100", 18); // 3100 USD for 1 ETH
 
 describe("SFrxETHOracle unit tests", () => {
   let resilientOracleMock;
@@ -30,7 +29,11 @@ describe("SFrxETHOracle unit tests", () => {
     const sfrxEthFraxOracleMockFactory = await ethers.getContractFactory("MockSfrxEthFraxOracle");
     sfrxEthFraxOracleMock = await sfrxEthFraxOracleMockFactory.deploy();
     await sfrxEthFraxOracleMock.deployed();
-    await sfrxEthFraxOracleMock.setPrices(false, parseUnits("0.000306430391670677", 18), parseUnits("0.000309520800596522", 18));
+    await sfrxEthFraxOracleMock.setPrices(
+      false,
+      parseUnits("0.000306430391670677", 18),
+      parseUnits("0.000309520800596522", 18),
+    );
 
     fraxMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: FRAX });
     fraxMock.decimals.returns(18);
@@ -46,17 +49,30 @@ describe("SFrxETHOracle unit tests", () => {
 
   describe("deployment", () => {
     it("revert if frax address is 0", async () => {
-      await expect(SFrxETHOracleFactory.deploy(sfrxEthFraxOracleMock.address, sfrxETHMock.address, addr0000, resilientOracleMock.address)).to.be
-        .reverted;
+      await expect(
+        SFrxETHOracleFactory.deploy(
+          sfrxEthFraxOracleMock.address,
+          sfrxETHMock.address,
+          addr0000,
+          resilientOracleMock.address,
+        ),
+      ).to.be.reverted;
     });
     it("revert if sfrxETH address is 0", async () => {
-      await expect(SFrxETHOracleFactory.deploy(sfrxEthFraxOracleMock.address, addr0000, fraxMock.address, resilientOracleMock.address)).to.be
-        .reverted;
+      await expect(
+        SFrxETHOracleFactory.deploy(
+          sfrxEthFraxOracleMock.address,
+          addr0000,
+          fraxMock.address,
+          resilientOracleMock.address,
+        ),
+      ).to.be.reverted;
     });
 
     it("revert if sfrxEthFraxOracle address is 0", async () => {
-      await expect(SFrxETHOracleFactory.deploy(addr0000, sfrxETHMock.address, fraxMock.address, resilientOracleMock.address)).to.be
-        .reverted;
+      await expect(
+        SFrxETHOracleFactory.deploy(addr0000, sfrxETHMock.address, fraxMock.address, resilientOracleMock.address),
+      ).to.be.reverted;
     });
     it("should deploy contract", async () => {
       SFrxETHOracle = await SFrxETHOracleFactory.deploy(
@@ -78,10 +94,20 @@ describe("SFrxETHOracle unit tests", () => {
       );
     });
 
+    it("revert if price difference is more than allowed", async () => {
+      resilientOracleMock.getPrice.returns(parseUnits("0.99838881", 18));
+      await SFrxETHOracle.setMaxAllowedPriceDifference(parseUnits("1", 18));
+      await expect(SFrxETHOracle.getPrice(sfrxETHMock.address)).to.be.revertedWithCustomError(
+        SFrxETHOracle,
+        "PriceDifferenceExceeded",
+      );
+    });
+
     it("should get correct price of sfrxETH", async () => {
       resilientOracleMock.getPrice.returns(parseUnits("0.99838881", 18));
+      await SFrxETHOracle.setMaxAllowedPriceDifference(parseUnits("300", 18));
       const price = await SFrxETHOracle.getPrice(sfrxETHMock.address);
-      expect(price).to.equal(parseUnits("3241.778967340326445028", 18));
+      expect(price).to.equal(parseUnits("3241.860575508872480501", 18));
     });
   });
 });

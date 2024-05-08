@@ -5,7 +5,7 @@ import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
 import { ISfrxEthFraxOracle } from "../interfaces/ISfrxEthFraxOracle.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
-import {AccessControlledV8} from "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
+import { AccessControlledV8 } from "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
 /**
  * @title SFrxETHOracle
@@ -19,6 +19,9 @@ contract SFrxETHOracle is CorrelatedTokenOracle, AccessControlledV8 {
 
     /// @notice Maximum allowed price difference
     uint256 public maxAllowedPriceDifference;
+
+    /// @notice Emits when the maximum allowed price difference is updated
+    event MaxAllowedPriceDifferenceUpdated(uint256 oldMaxAllowedPriceDifference, uint256 newMaxAllowedPriceDifference);
 
     /// @notice Thrown if the price data is invalid
     error BadPriceData();
@@ -46,6 +49,12 @@ contract SFrxETHOracle is CorrelatedTokenOracle, AccessControlledV8 {
         __AccessControlled_init(_accessControlManager);
     }
 
+    function setMaxAllowedPriceDifference(uint256 _maxAllowedPriceDifference) external {
+        _checkAccessAllowed("setMaxAllowedPriceDifference(uint256)");
+        emit MaxAllowedPriceDifferenceUpdated(maxAllowedPriceDifference, _maxAllowedPriceDifference);
+        maxAllowedPriceDifference = _maxAllowedPriceDifference;
+    }
+
     /**
      * @notice Gets the FRAX for 1 sfrxETH
      * @return amount Amount of FRAX
@@ -54,11 +63,15 @@ contract SFrxETHOracle is CorrelatedTokenOracle, AccessControlledV8 {
         (bool isBadData, uint256 priceLow, uint256 priceHigh) = SFRXETH_FRAX_ORACLE.getPrices();
 
         if (isBadData) revert BadPriceData();
-        
-        // calculate average price
-        uint256 averagePrice = (priceLow + priceHigh) / 2;
 
-        // return (1 / averagePrice) as the average price is in sfraxETH
-        return (EXP_SCALE ** 2) / averagePrice;
+        // calculate price in FRAX
+        uint256 priceLowInFrax = (EXP_SCALE ** 2) / priceLow;
+        uint256 priceHighInFrax = (EXP_SCALE ** 2) / priceHigh;
+
+        // validate price difference
+        if (priceLowInFrax - priceHighInFrax > maxAllowedPriceDifference) revert PriceDifferenceExceeded();
+
+        // calculate and return average price
+        return (priceLowInFrax + priceHighInFrax) / 2;
     }
 }
