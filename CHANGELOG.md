@@ -1,3 +1,15 @@
+## [2.3.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.3.0-dev.2...v2.3.0-dev.3) (2024-05-08)
+
+
+### Features
+
+* updating deployment files ([734bb3e](https://github.com/VenusProtocol/oracle/commit/734bb3ed4711047ad1dcbd8b05c861eb09bedf7b))
+
+
+### Bug Fixes
+
+* deployed sFrax oracle on ethereum ([5dd8b5a](https://github.com/VenusProtocol/oracle/commit/5dd8b5a3f1682a838a2b33ddaba787d8f2f5cd1c))
+
 ## [2.3.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.3.0-dev.1...v2.3.0-dev.2) (2024-05-06)
 
 
