@@ -16,11 +16,11 @@ contract SFrxETHOracle is AccessControlledV8 {
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     ISfrxEthFraxOracle public immutable SFRXETH_FRAX_ORACLE;
 
-    /// @notice Maximum allowed price difference
-    uint256 public maxAllowedPriceDifference;
-
     /// @notice Address of sfrxETH
     address public immutable SFRXETH;
+
+    /// @notice Maximum allowed price difference
+    uint256 public maxAllowedPriceDifference;
 
     /// @notice Emits when the maximum allowed price difference is updated
     event MaxAllowedPriceDifferenceUpdated(uint256 oldMaxAllowedPriceDifference, uint256 newMaxAllowedPriceDifference);
