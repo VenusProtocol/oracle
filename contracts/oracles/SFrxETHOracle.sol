@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.25;
 
-import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
 import { ISfrxEthFraxOracle } from "../interfaces/ISfrxEthFraxOracle.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
@@ -12,13 +11,16 @@ import { AccessControlledV8 } from "@venusprotocol/governance-contracts/contract
  * @author Venus
  * @notice This oracle fetches the price of sfrxETH
  */
-contract SFrxETHOracle is CorrelatedTokenOracle, AccessControlledV8 {
+contract SFrxETHOracle is AccessControlledV8 {
     /// @notice Address of SfrxEthFraxOracle
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     ISfrxEthFraxOracle public immutable SFRXETH_FRAX_ORACLE;
 
     /// @notice Maximum allowed price difference
     uint256 public maxAllowedPriceDifference;
+
+    /// @notice Address of sfrxETH
+    address public sfrxETH;
 
     /// @notice Emits when the maximum allowed price difference is updated
     event MaxAllowedPriceDifferenceUpdated(uint256 oldMaxAllowedPriceDifference, uint256 newMaxAllowedPriceDifference);
@@ -29,16 +31,16 @@ contract SFrxETHOracle is CorrelatedTokenOracle, AccessControlledV8 {
     /// @notice Thrown if the price difference exceeds the allowed limit
     error PriceDifferenceExceeded();
 
+    /// @notice Thrown if the token address is invalid
+    error InvalidTokenAddress();
+
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(
-        address sfrxEthFraxOracle,
-        address sfrxETH,
-        address frax,
-        address resilientOracle
-    ) CorrelatedTokenOracle(sfrxETH, frax, resilientOracle) {
-        ensureNonzeroAddress(sfrxEthFraxOracle);
-        SFRXETH_FRAX_ORACLE = ISfrxEthFraxOracle(sfrxEthFraxOracle);
+    constructor(address _sfrxEthFraxOracle, address _sfrxETH) {
+        ensureNonzeroAddress(_sfrxEthFraxOracle);
+        ensureNonzeroAddress(_sfrxETH);
+        SFRXETH_FRAX_ORACLE = ISfrxEthFraxOracle(_sfrxEthFraxOracle);
+        sfrxETH = _sfrxETH;
     }
 
     /**
@@ -56,10 +58,13 @@ contract SFrxETHOracle is CorrelatedTokenOracle, AccessControlledV8 {
     }
 
     /**
-     * @notice Gets the FRAX for 1 sfrxETH
-     * @return amount Amount of FRAX
+     * @notice Fetches the price of sfrxETH
+     * @param asset Address of the sfrxETH token
+     * @return price The price scaled by 1e18
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getPrice(address asset) external view returns (uint256) {
+        if (asset != sfrxETH) revert InvalidTokenAddress();
+
         (bool isBadData, uint256 priceLow, uint256 priceHigh) = SFRXETH_FRAX_ORACLE.getPrices();
 
         if (isBadData) revert BadPriceData();
