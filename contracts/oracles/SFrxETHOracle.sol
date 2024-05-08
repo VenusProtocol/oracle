@@ -20,7 +20,7 @@ contract SFrxETHOracle is AccessControlledV8 {
     uint256 public maxAllowedPriceDifference;
 
     /// @notice Address of sfrxETH
-    address public sfrxETH;
+    address public immutable SFRXETH;
 
     /// @notice Emits when the maximum allowed price difference is updated
     event MaxAllowedPriceDifferenceUpdated(uint256 oldMaxAllowedPriceDifference, uint256 newMaxAllowedPriceDifference);
@@ -40,7 +40,7 @@ contract SFrxETHOracle is AccessControlledV8 {
         ensureNonzeroAddress(_sfrxEthFraxOracle);
         ensureNonzeroAddress(_sfrxETH);
         SFRXETH_FRAX_ORACLE = ISfrxEthFraxOracle(_sfrxEthFraxOracle);
-        sfrxETH = _sfrxETH;
+        SFRXETH = _sfrxETH;
     }
 
     /**
@@ -63,7 +63,7 @@ contract SFrxETHOracle is AccessControlledV8 {
      * @return price The price scaled by 1e18
      */
     function getPrice(address asset) external view returns (uint256) {
-        if (asset != sfrxETH) revert InvalidTokenAddress();
+        if (asset != SFRXETH) revert InvalidTokenAddress();
 
         (bool isBadData, uint256 priceLow, uint256 priceHigh) = SFRXETH_FRAX_ORACLE.getPrices();
 
