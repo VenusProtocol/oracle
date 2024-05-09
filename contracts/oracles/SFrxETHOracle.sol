@@ -70,8 +70,8 @@ contract SFrxETHOracle is AccessControlledV8 {
         if (isBadData) revert BadPriceData();
 
         // calculate price in USD
-        uint256 priceLowInFrax = (EXP_SCALE ** 2) / priceLow;
-        uint256 priceHighInFrax = (EXP_SCALE ** 2) / priceHigh;
+        uint256 priceLowInUSD = (EXP_SCALE ** 2) / priceLow;
+        uint256 priceHighInUSD = (EXP_SCALE ** 2) / priceHigh;
 
         // validate price difference
         if (priceLowInFrax - priceHighInFrax > maxAllowedPriceDifference) revert PriceDifferenceExceeded();
