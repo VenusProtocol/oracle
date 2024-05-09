@@ -52,6 +52,10 @@ contract SFrxETHOracle is AccessControlledV8 {
         __AccessControlled_init(_accessControlManager);
     }
 
+    /**
+     * @notice Sets the maximum allowed price difference
+     * @param _maxAllowedPriceDifference Maximum allowed price difference
+     */
     function setMaxAllowedPriceDifference(uint256 _maxAllowedPriceDifference) external {
         _checkAccessAllowed("setMaxAllowedPriceDifference(uint256)");
         emit MaxAllowedPriceDifferenceUpdated(maxAllowedPriceDifference, _maxAllowedPriceDifference);
