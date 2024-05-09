@@ -17,6 +17,7 @@ contract SFrxETHOracle is AccessControlledV8 {
     ISfrxEthFraxOracle public immutable SFRXETH_FRAX_ORACLE;
 
     /// @notice Address of sfrxETH
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable SFRXETH;
 
     /// @notice Maximum allowed price difference
@@ -70,13 +71,13 @@ contract SFrxETHOracle is AccessControlledV8 {
         if (isBadData) revert BadPriceData();
 
         // calculate price in USD
-        uint256 priceLowInUSD = (EXP_SCALE ** 2) / priceLow;
-        uint256 priceHighInUSD = (EXP_SCALE ** 2) / priceHigh;
+        uint256 priceHighInUSD = (EXP_SCALE ** 2) / priceLow;
+        uint256 priceLowInUSD = (EXP_SCALE ** 2) / priceHigh;
 
         // validate price difference
-        if (priceLowInFrax - priceHighInFrax > maxAllowedPriceDifference) revert PriceDifferenceExceeded();
+        if (priceHighInUSD - priceLowInUSD > maxAllowedPriceDifference) revert PriceDifferenceExceeded();
 
         // calculate and return average price
-        return (priceLowInFrax + priceHighInFrax) / 2;
+        return (priceHighInUSD + priceLowInUSD) / 2;
     }
 }
