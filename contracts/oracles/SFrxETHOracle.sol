@@ -58,7 +58,7 @@ contract SFrxETHOracle is AccessControlledV8 {
     }
 
     /**
-     * @notice Fetches the price of sfrxETH
+     * @notice Fetches the USD price of sfrxETH
      * @param asset Address of the sfrxETH token
      * @return price The price scaled by 1e18
      */
