@@ -38,7 +38,7 @@
     "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
     "@openzeppelin/contracts": "^4.6.0",
     "@openzeppelin/contracts-upgradeable": "^4.7.3",
-    "@venusprotocol/governance-contracts": "^2.0.0",
+    "@venusprotocol/governance-contracts": "^2.1.0-dev.1",
     "@venusprotocol/solidity-utilities": "^2.0.0",
     "@venusprotocol/venus-protocol": "^6.0.0",
     "ethers": "^5.6.8",

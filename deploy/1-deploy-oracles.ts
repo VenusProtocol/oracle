@@ -161,7 +161,13 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   }
 
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
-  const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
+
+  let chainlinkOracle;
+  if (networkName === "arbitrumone") {
+    chainlinkOracle = await hre.ethers.getContract("SequencerChainlinkOracle");
+  } else {
+    chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
+  }
 
   await accessControlManager?.giveCallPermission(chainlinkOracle.address, "setTokenConfig(TokenConfig)", deployer);
   await accessControlManager?.giveCallPermission(resilientOracle.address, "setTokenConfig(TokenConfig)", deployer);
