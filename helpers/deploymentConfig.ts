@@ -241,6 +241,13 @@ export const chainlinkFeed: Config = {
     ARB: "0xD1092a65338d049DB68D7Be6bD89d17a0929945e",
     WETH: "0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165",
   },
+  arbitrumone: {
+    WBTC: "0xd0C7101eACbB49F3deCcCc166d238410D6D46d57",
+    USDC: "0x50834F3163758fcC1Df9973b6e91f0F0F0434aD3",
+    USDT: "0x3f3f5dF88dC9F13eac63DF89EC16ef6e7E25DdE7",
+    ARB: "0xb2A824043730FE05F3DA2efaFa1CBbe83fa548D6",
+    WETH: "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
+  },
 };
 
 export const redstoneFeed: Config = {
@@ -862,6 +869,38 @@ export const assets: Assets = {
       address: "0x877Dc896e7b13096D3827872e396927BbE704407",
       price: "10000000000000000000",
       oracle: "chainlinkFixed",
+    },
+  ],
+  arbitrumone: [
+    {
+      token: "WBTC",
+      address: "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
+      price: "63000000000000000000000",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDC",
+      address: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+      price: "1000000000000000000",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDT",
+      address: "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+      price: "1000000000000000000",
+      oracle: "chainlink",
+    },
+    {
+      token: "ARB",
+      address: "0x912ce59144191c1204e64559fe8253a0e49e6548",
+      price: "1500000000000000000",
+      oracle: "chainlink",
+    },
+    {
+      token: "WETH",
+      address: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
+      price: "3000000000000000000000",
+      oracle: "chainlink",
     },
   ],
 };
