@@ -2,7 +2,7 @@
 pragma solidity 0.8.25;
 
 import { ISfrxEthFraxOracle } from "../interfaces/ISfrxEthFraxOracle.sol";
-import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
+import { ensureNonzeroAddress, ensureNonzeroValue } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 import { AccessControlledV8 } from "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
@@ -77,6 +77,9 @@ contract SFrxETHOracle is AccessControlledV8 {
         // calculate price in USD
         uint256 priceHighInUSD = (EXP_SCALE ** 2) / priceLow;
         uint256 priceLowInUSD = (EXP_SCALE ** 2) / priceHigh;
+
+        ensureNonzeroValue(priceHighInUSD);
+        ensureNonzeroValue(priceLowInUSD);
 
         // validate price difference
         if (priceHighInUSD - priceLowInUSD > maxAllowedPriceDifference) revert PriceDifferenceExceeded();
