@@ -42,6 +42,8 @@ contract SFrxETHOracle is AccessControlledV8 {
         ensureNonzeroAddress(_sfrxETH);
         SFRXETH_FRAX_ORACLE = ISfrxEthFraxOracle(_sfrxEthFraxOracle);
         SFRXETH = _sfrxETH;
+
+        _disableInitializers();
     }
 
     /**
