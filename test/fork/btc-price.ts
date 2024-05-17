@@ -72,8 +72,8 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         // set upper and lower bounds for price to be valid - we are setting price to be within 1% difference
         await boundValdiator.setValidateConfig({
           asset: BTC,
-          upperBoundRatio: parseUnits("1.01", 18), // or 1
-          lowerBoundRatio: parseUnits("1", 18), // or 0.99
+          upperBoundRatio: parseUnits("1.01", 18),
+          lowerBoundRatio: parseUnits("0.99", 18),
         });
 
         console.log((await redstoneOracle.getPrice(BTC)).toString());
