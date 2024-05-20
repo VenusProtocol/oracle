@@ -1,3 +1,18 @@
+## [2.3.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.3.0-dev.3...v2.3.0-dev.4) (2024-05-20)
+
+
+### Features
+
+* updating deployment files ([cc264d3](https://github.com/VenusProtocol/oracle/commit/cc264d38ff7896ab7b79c6c391fa34cb753aa5e8))
+* updating deployment files ([5ef59c9](https://github.com/VenusProtocol/oracle/commit/5ef59c99aeeec1c4e95b76f98ad76241e33d3f08))
+
+
+### Bug Fixes
+
+* deployed pendle oracle ([253d1ac](https://github.com/VenusProtocol/oracle/commit/253d1ac7e7cf48443e8ff2257ac36d74edf646fb))
+* redeployed oracle ([e0d10fa](https://github.com/VenusProtocol/oracle/commit/e0d10fa29c8a63c010e0330105391f826c651f0e))
+* removed deployment and changed oracle address ([a226a36](https://github.com/VenusProtocol/oracle/commit/a226a363d6520d246fddfcd64c9276a95e8a8160))
+
 ## [2.3.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.3.0-dev.2...v2.3.0-dev.3) (2024-05-08)
 
 
