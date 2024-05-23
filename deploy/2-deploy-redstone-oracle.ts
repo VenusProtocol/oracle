@@ -4,6 +4,8 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
 
+const ARBITRUM_SEQUENCER = "0xFdB631F5EE196F0ed6FAa767959853A9F217697D";
+
 const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
@@ -11,21 +13,39 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
   console.log(`Timelock (${proxyOwnerAddress})`);
 
-  await deploy("RedStoneOracle", {
-    contract: network.live ? "ChainlinkOracle" : "MockChainlinkOracle",
-    from: deployer,
-    log: true,
-    deterministicDeployment: false,
-    args: [],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
-      execute: {
-        methodName: "initialize",
-        args: network.live ? [ADDRESSES[network.name].acm] : [],
+  if (network.name === "arbitrumone") {
+    await deploy("RedStoneOracle", {
+      contract: "SequencerChainlinkOracle",
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [ARBITRUM_SEQUENCER],
+      proxy: {
+        owner: proxyOwnerAddress,
+        proxyContract: "OptimizedTransparentProxy",
+        execute: {
+          methodName: "initialize",
+          args: network.live ? [ADDRESSES[network.name].acm] : [],
+        },
       },
-    },
-  });
+    });
+  } else {
+    await deploy("RedStoneOracle", {
+      contract: network.live ? "ChainlinkOracle" : "MockChainlinkOracle",
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [],
+      proxy: {
+        owner: proxyOwnerAddress,
+        proxyContract: "OptimizedTransparentProxy",
+        execute: {
+          methodName: "initialize",
+          args: network.live ? [ADDRESSES[network.name].acm] : [],
+        },
+      },
+    });
+  }
 
   const redStoneOracle = await hre.ethers.getContract("RedStoneOracle");
   const redStoneOracleOwner = await redStoneOracle.owner();
@@ -37,6 +57,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 };
 
 func.skip = async ({ network }: HardhatRuntimeEnvironment) =>
-  !["hardhat", "bscmainnet", "bsctestnet", "sepolia", "ethereum"].includes(network.name);
+  !["hardhat", "bscmainnet", "bsctestnet", "sepolia", "ethereum", "arbitrumone"].includes(network.name);
 func.tags = ["deploy-redstone"];
 export default func;
