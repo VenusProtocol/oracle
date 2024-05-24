@@ -5,13 +5,14 @@ import { ISfrxEthFraxOracle } from "../interfaces/ISfrxEthFraxOracle.sol";
 import { ensureNonzeroAddress, ensureNonzeroValue } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 import { AccessControlledV8 } from "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
+import { OracleInterface } from "../interfaces/OracleInterface.sol";
 
 /**
  * @title SFrxETHOracle
  * @author Venus
  * @notice This oracle fetches the price of sfrxETH
  */
-contract SFrxETHOracle is AccessControlledV8 {
+contract SFrxETHOracle is AccessControlledV8, OracleInterface {
     /// @notice Address of SfrxEthFraxOracle
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     ISfrxEthFraxOracle public immutable SFRXETH_FRAX_ORACLE;
