@@ -1,3 +1,15 @@
+## [2.3.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v2.3.0-dev.4...v2.3.0-dev.5) (2024-05-24)
+
+
+### Bug Fixes
+
+* added bnb test ([b2908f5](https://github.com/VenusProtocol/oracle/commit/b2908f52281d721dee3bd36f4c35019e6da61701))
+* btc fork tests ([ff0c1a0](https://github.com/VenusProtocol/oracle/commit/ff0c1a0da497344c1ef44eb80e6f56e26c796eaf))
+* change lower bound ratio ([e62281d](https://github.com/VenusProtocol/oracle/commit/e62281df28d59e7bf3dffe248e00f726fa610745))
+* remove logs ([826fbf6](https://github.com/VenusProtocol/oracle/commit/826fbf684ef061eea1270c9d02abcd3954876efe))
+* reverted comment ([d07cb05](https://github.com/VenusProtocol/oracle/commit/d07cb05dfff5b925c2ea9bf60b3585f571930f4e))
+* updated comment ([591fdf9](https://github.com/VenusProtocol/oracle/commit/591fdf9910228593b6078f6468d92a4319f9ed93))
+
 ## [2.3.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.3.0-dev.3...v2.3.0-dev.4) (2024-05-20)
 
 
