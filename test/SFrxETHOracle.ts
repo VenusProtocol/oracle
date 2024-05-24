@@ -18,6 +18,7 @@ describe("SFrxETHOracle unit tests", () => {
   let SFrxETHOracleContract;
   let sfrxEthFraxOracleMock;
   let fakeAccessControlManager;
+  const priceDifference = parseUnits("300", 18);
   before(async () => {
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
@@ -45,14 +46,21 @@ describe("SFrxETHOracle unit tests", () => {
     it("revert if SfrxEthFraxOracle address is 0", async () => {
       await expect(
         upgrades.deployProxy(SFrxETHOracleFactory, [fakeAccessControlManager.address], {
-          constructorArgs: [addr0000, sfrxETHMock.address],
+          constructorArgs: [addr0000, sfrxETHMock.address, priceDifference],
         }),
       ).to.be.reverted;
     });
     it("revert if sfrxETH address is 0", async () => {
       await expect(
         upgrades.deployProxy(SFrxETHOracleFactory, [fakeAccessControlManager.address], {
-          constructorArgs: [sfrxEthFraxOracleMock.address, addr0000],
+          constructorArgs: [sfrxEthFraxOracleMock.address, addr0000, priceDifference],
+        }),
+      ).to.be.reverted;
+    });
+    it("revert if price different is 0", async () => {
+      await expect(
+        upgrades.deployProxy(SFrxETHOracleFactory, [fakeAccessControlManager.address], {
+          constructorArgs: [sfrxEthFraxOracleMock.address, sfrxETHMock.address, 0],
         }),
       ).to.be.reverted;
     });
@@ -61,7 +69,7 @@ describe("SFrxETHOracle unit tests", () => {
         SFrxETHOracleFactory,
         [fakeAccessControlManager.address],
         {
-          constructorArgs: [sfrxEthFraxOracleMock.address, sfrxETHMock.address],
+          constructorArgs: [sfrxEthFraxOracleMock.address, sfrxETHMock.address, priceDifference],
         },
       );
     });
@@ -84,7 +92,7 @@ describe("SFrxETHOracle unit tests", () => {
     });
 
     it("should get correct price of sfrxETH", async () => {
-      await SFrxETHOracleContract.setMaxAllowedPriceDifference(parseUnits("300", 18));
+      await SFrxETHOracleContract.setMaxAllowedPriceDifference(priceDifference);
       const price = await SFrxETHOracleContract.getPrice(sfrxETHMock.address);
       expect(price).to.equal(parseUnits("3247.092258084175122617", 18));
     });

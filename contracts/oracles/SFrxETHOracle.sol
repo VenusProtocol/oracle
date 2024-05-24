@@ -37,11 +37,13 @@ contract SFrxETHOracle is AccessControlledV8 {
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address _sfrxEthFraxOracle, address _sfrxETH) {
+    constructor(address _sfrxEthFraxOracle, address _sfrxETH, uint256 _maxAllowedPriceDifference) {
         ensureNonzeroAddress(_sfrxEthFraxOracle);
         ensureNonzeroAddress(_sfrxETH);
+        ensureNonzeroValue(_maxAllowedPriceDifference);
         SFRXETH_FRAX_ORACLE = ISfrxEthFraxOracle(_sfrxEthFraxOracle);
         SFRXETH = _sfrxETH;
+        maxAllowedPriceDifference = _maxAllowedPriceDifference;
 
         _disableInitializers();
     }
