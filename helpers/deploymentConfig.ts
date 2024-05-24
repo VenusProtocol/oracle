@@ -229,7 +229,6 @@ export const chainlinkFeed: Config = {
     WETH: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419",
     USDT: "0x3E7d1eAB13ad0104d2750B8863b489D65364e32D",
     USDC: "0x8fFfFfd4AfB6115b954Bd326cbe7B4BA576818f6",
-    XVS: "0xa2a8507DEb233ceE4F5594044C259DD0582339CC",
     CRV: "0xCd627aA160A6fA45Eb793D19Ef54f5062F20f33f",
     crvUSD: "0xEEf0C605546958c1f899b6fB336C20671f9cD49F",
     stETH: "0xCfE54B5cD566aB89272946F602D76Ea879CAb4a8",
@@ -242,7 +241,7 @@ export const chainlinkFeed: Config = {
     WETH: "0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165",
   },
   arbitrumone: {
-    WBTC: "0xd0C7101eACbB49F3deCcCc166d238410D6D46d57",
+    WBTC: "0x6ce185860a4963106506C203335A2910413708e9",
     USDC: "0x50834F3163758fcC1Df9973b6e91f0F0F0434aD3",
     USDT: "0x3f3f5dF88dC9F13eac63DF89EC16ef6e7E25DdE7",
     ARB: "0xb2A824043730FE05F3DA2efaFa1CBbe83fa548D6",
@@ -254,6 +253,12 @@ export const redstoneFeed: Config = {
   bsctestnet: {},
   sepolia: {
     XVS: "0x0d7697a15bce933cE8671Ba3D60ab062dA216C60",
+  },
+  ethereum: {
+    XVS: "0xa2a8507DEb233ceE4F5594044C259DD0582339CC",
+  },
+  arbitrumone: {
+    XVS: "0xd9a66Ff1D660aD943F48e9c606D09eA672f312E8",
   },
 };
 
@@ -901,6 +906,11 @@ export const assets: Assets = {
       address: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
       price: "3000000000000000000000",
       oracle: "chainlink",
+    },
+    {
+      token: "XVS",
+      address: "0xc1Eb7689147C81aC840d4FF0D298489fc7986d52",
+      oracle: "redstone",
     },
   ],
 };
