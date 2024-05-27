@@ -41,6 +41,8 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 };
 
 func.skip = async ({ network }: HardhatRuntimeEnvironment) =>
-  !["hardhat", "bscmainnet", "bsctestnet", "sepolia", "ethereum", "arbitrumone"].includes(network.name);
+  !["hardhat", "bscmainnet", "bsctestnet", "sepolia", "ethereum", "arbitrumone", "arbitrumsepolia"].includes(
+    network.name,
+  );
 func.tags = ["deploy-redstone"];
 export default func;
