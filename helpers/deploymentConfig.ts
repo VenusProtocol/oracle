@@ -58,6 +58,10 @@ export interface Oracles {
   [key: string]: Oracle;
 }
 
+export const SEQUENCER: Record<string, string> = {
+  arbitrumone: "0xFdB631F5EE196F0ed6FAa767959853A9F217697D",
+};
+
 export const addr0000 = "0x0000000000000000000000000000000000000000";
 export const DEFAULT_STALE_PERIOD = 24 * 60 * 60; // 24 hrs
 const STALE_PERIOD_100M = 60 * 100; // 100 minutes (for pricefeeds with heartbeat of 1 hr)
@@ -685,19 +689,16 @@ export const assets: Assets = {
       token: "WBTC",
       address: "0x92A2928f5634BEa89A195e7BeCF0f0FEEDAB885b",
       oracle: "chainlink",
-      price: "25000000000000000000000",
     },
     {
       token: "WETH",
       address: "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9",
       oracle: "chainlink",
-      price: "2080000000000000000000",
     },
     {
       token: "USDC",
       address: "0x772d68929655ce7234C8C94256526ddA66Ef641E",
       oracle: "chainlink",
-      price: "1000000000000000000",
     },
     {
       token: "USDT",
@@ -709,7 +710,6 @@ export const assets: Assets = {
       token: "XVS",
       address: "0xdb633c11d3f9e6b8d17ac2c972c9e3b05da59bf9",
       oracle: "redstone",
-      price: "5000000000000000000", // $5.00
     },
     {
       token: "CRV",
@@ -779,31 +779,26 @@ export const assets: Assets = {
       token: "BTCB",
       address: "0x7Af23F9eA698E9b953D2BD70671173AaD0347f19",
       oracle: "binance",
-      price: "35000000000000000000000",
     },
     {
       token: "ETH",
       address: "0x94680e003861D43C6c0cf18333972312B6956FF1",
       oracle: "binance",
-      price: "2000000000000000000000",
     },
     {
       token: "USDT",
       address: "0x8ac9B3801D0a8f5055428ae0bF301CA1Da976855",
       oracle: "binance",
-      price: "1000000000000000000",
     },
     {
       token: "WBNB",
       address: "0xF9ce72611a1BE9797FdD2c995dB6fB61FD20E4eB",
       oracle: "binance",
-      price: "230000000000000000000",
     },
     {
       token: "XVS",
       address: "0x3d0e20D4caD958bc848B045e1da19Fe378f86f03",
       oracle: "binance",
-      price: "7000000000000000000",
     },
   ],
   opbnbmainnet: [
@@ -842,31 +837,26 @@ export const assets: Assets = {
     {
       token: "WBTC",
       address: "0xFb8d93FD3Cf18386a5564bb5619cD1FdB130dF7D",
-      price: "68000000000000000000000",
       oracle: "chainlink",
     },
     {
       token: "USDC",
       address: "0x86f096B1D970990091319835faF3Ee011708eAe8",
-      price: "1000000000000000000",
       oracle: "chainlink",
     },
     {
       token: "USDT",
       address: "0xf3118a17863996B9F2A073c9A66Faaa664355cf8",
-      price: "1000000000000000000",
       oracle: "chainlink",
     },
     {
       token: "ARB",
       address: "0x4371bb358aB5cC192E481543417D2F67b8781731",
-      price: "1500000000000000000",
       oracle: "chainlink",
     },
     {
       token: "WETH",
       address: "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
-      price: "3500000000000000000000",
       oracle: "chainlink",
     },
     {
@@ -880,31 +870,26 @@ export const assets: Assets = {
     {
       token: "WBTC",
       address: "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
-      price: "63000000000000000000000",
       oracle: "chainlink",
     },
     {
       token: "USDC",
       address: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-      price: "1000000000000000000",
       oracle: "chainlink",
     },
     {
       token: "USDT",
       address: "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
-      price: "1000000000000000000",
       oracle: "chainlink",
     },
     {
       token: "ARB",
       address: "0x912ce59144191c1204e64559fe8253a0e49e6548",
-      price: "1500000000000000000",
       oracle: "chainlink",
     },
     {
       token: "WETH",
       address: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-      price: "3000000000000000000000",
       oracle: "chainlink",
     },
     {

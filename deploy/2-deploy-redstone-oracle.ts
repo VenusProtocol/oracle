@@ -2,9 +2,7 @@ import hre from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { ADDRESSES } from "../helpers/deploymentConfig";
-
-const ARBITRUM_SEQUENCER = "0xFdB631F5EE196F0ed6FAa767959853A9F217697D";
+import { ADDRESSES, SEQUENCER } from "../helpers/deploymentConfig";
 
 const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
@@ -13,39 +11,25 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
   console.log(`Timelock (${proxyOwnerAddress})`);
 
-  if (network.name === "arbitrumone") {
-    await deploy("RedStoneOracle", {
-      contract: "SequencerChainlinkOracle",
-      from: deployer,
-      log: true,
-      deterministicDeployment: false,
-      args: [ARBITRUM_SEQUENCER],
-      proxy: {
-        owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
-        execute: {
-          methodName: "initialize",
-          args: network.live ? [ADDRESSES[network.name].acm] : [],
-        },
+  const sequencer = SEQUENCER[network.name];
+  let contractName = "ChainlinkOracle";
+  if (sequencer !== undefined) contractName = "SequencerChainlinkOracle";
+
+  await deploy("RedStoneOracle", {
+    contract: network.live ? contractName : "MockChainlinkOracle",
+    from: deployer,
+    log: true,
+    deterministicDeployment: false,
+    args: sequencer ? [sequencer] : [],
+    proxy: {
+      owner: proxyOwnerAddress,
+      proxyContract: "OptimizedTransparentProxy",
+      execute: {
+        methodName: "initialize",
+        args: network.live ? [ADDRESSES[network.name].acm] : [],
       },
-    });
-  } else {
-    await deploy("RedStoneOracle", {
-      contract: network.live ? "ChainlinkOracle" : "MockChainlinkOracle",
-      from: deployer,
-      log: true,
-      deterministicDeployment: false,
-      args: [],
-      proxy: {
-        owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
-        execute: {
-          methodName: "initialize",
-          args: network.live ? [ADDRESSES[network.name].acm] : [],
-        },
-      },
-    });
-  }
+    },
+  });
 
   const redStoneOracle = await hre.ethers.getContract("RedStoneOracle");
   const redStoneOracleOwner = await redStoneOracle.owner();
