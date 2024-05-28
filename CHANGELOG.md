@@ -1,3 +1,18 @@
+## [2.3.0-dev.6](https://github.com/VenusProtocol/oracle/compare/v2.3.0-dev.5...v2.3.0-dev.6) (2024-05-28)
+
+
+### Features
+
+* updating deployment files ([291ab9d](https://github.com/VenusProtocol/oracle/commit/291ab9db0a0bc641df3477bb6efaff33aa6c9cf0))
+* updating deployment files ([3baf6f3](https://github.com/VenusProtocol/oracle/commit/3baf6f37d88091d6efc0c6dd4cde96119de169db))
+* updating deployment files ([39ae403](https://github.com/VenusProtocol/oracle/commit/39ae4031db033cd14022e290f0bf2a57ee95e1d6))
+
+
+### Bug Fixes
+
+* deployment script to execute on arbitrumone ([99d067f](https://github.com/VenusProtocol/oracle/commit/99d067f4477b507dc933b0e4bb595249b3daac0b))
+* pr comments ([3cd18f5](https://github.com/VenusProtocol/oracle/commit/3cd18f5b3be060eb9fcff1ec23a3f29203528d72))
+
 ## [2.3.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v2.3.0-dev.4...v2.3.0-dev.5) (2024-05-24)
 
 
