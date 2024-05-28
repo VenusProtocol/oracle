@@ -46,30 +46,30 @@ describe("SFrxETHOracle unit tests", () => {
     it("revert if SfrxEthFraxOracle address is 0", async () => {
       await expect(
         upgrades.deployProxy(SFrxETHOracleFactory, [fakeAccessControlManager.address], {
-          constructorArgs: [addr0000, sfrxETHMock.address, priceDifference],
+          constructorArgs: [addr0000, sfrxETHMock.address],
         }),
       ).to.be.reverted;
     });
     it("revert if sfrxETH address is 0", async () => {
       await expect(
         upgrades.deployProxy(SFrxETHOracleFactory, [fakeAccessControlManager.address], {
-          constructorArgs: [sfrxEthFraxOracleMock.address, addr0000, priceDifference],
+          constructorArgs: [sfrxEthFraxOracleMock.address, addr0000],
         }),
       ).to.be.reverted;
     });
     it("revert if price different is 0", async () => {
       await expect(
-        upgrades.deployProxy(SFrxETHOracleFactory, [fakeAccessControlManager.address], {
-          constructorArgs: [sfrxEthFraxOracleMock.address, sfrxETHMock.address, 0],
+        upgrades.deployProxy(SFrxETHOracleFactory, [fakeAccessControlManager.address, 0], {
+          constructorArgs: [sfrxEthFraxOracleMock.address, sfrxETHMock.address],
         }),
       ).to.be.reverted;
     });
     it("should deploy contract", async () => {
       SFrxETHOracleContract = <SFrxETHOracle>await upgrades.deployProxy(
         SFrxETHOracleFactory,
-        [fakeAccessControlManager.address],
+        [fakeAccessControlManager.address, priceDifference],
         {
-          constructorArgs: [sfrxEthFraxOracleMock.address, sfrxETHMock.address, priceDifference],
+          constructorArgs: [sfrxEthFraxOracleMock.address, sfrxETHMock.address],
         },
       );
     });

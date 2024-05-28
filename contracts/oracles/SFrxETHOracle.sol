@@ -44,15 +44,12 @@ contract SFrxETHOracle is AccessControlledV8, OracleInterface {
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address _sfrxEthFraxOracle, address _sfrxETH, uint256 _maxAllowedPriceDifference) {
+    constructor(address _sfrxEthFraxOracle, address _sfrxETH) {
         ensureNonzeroAddress(_sfrxEthFraxOracle);
         ensureNonzeroAddress(_sfrxETH);
-        ensureNonzeroValue(_maxAllowedPriceDifference);
+
         SFRXETH_FRAX_ORACLE = ISfrxEthFraxOracle(_sfrxEthFraxOracle);
         SFRXETH = _sfrxETH;
-
-        if (_maxAllowedPriceDifference > MAX_BPS) revert InvalidPriceDifference();
-        maxAllowedPriceDifference = _maxAllowedPriceDifference;
 
         _disableInitializers();
     }
@@ -60,9 +57,14 @@ contract SFrxETHOracle is AccessControlledV8, OracleInterface {
     /**
      * @notice Sets the contracts required to fetch prices
      * @param _accessControlManager Address of the access control manager contract
+     * @param _maxAllowedPriceDifference Maximum allowed price difference
      */
-    function initialize(address _accessControlManager) external initializer {
+    function initialize(address _accessControlManager, uint256 _maxAllowedPriceDifference) external initializer {
+        ensureNonzeroValue(_maxAllowedPriceDifference);
+
         __AccessControlled_init(_accessControlManager);
+        if (_maxAllowedPriceDifference > MAX_BPS) revert InvalidPriceDifference();
+        maxAllowedPriceDifference = _maxAllowedPriceDifference;
     }
 
     /**
@@ -71,6 +73,9 @@ contract SFrxETHOracle is AccessControlledV8, OracleInterface {
      */
     function setMaxAllowedPriceDifference(uint256 _maxAllowedPriceDifference) external {
         _checkAccessAllowed("setMaxAllowedPriceDifference(uint256)");
+        ensureNonzeroValue(_maxAllowedPriceDifference);
+        if (_maxAllowedPriceDifference > MAX_BPS) revert InvalidPriceDifference();
+
         emit MaxAllowedPriceDifferenceUpdated(maxAllowedPriceDifference, _maxAllowedPriceDifference);
         maxAllowedPriceDifference = _maxAllowedPriceDifference;
     }
