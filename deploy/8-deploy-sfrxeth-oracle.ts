@@ -11,7 +11,6 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
   const { SfrxEthFraxOracle, sfrxETH } = ADDRESSES[network.name];
-  const maxAllowedPriceDifference = parseUnits("100", 18);
 
   let SfrxEthFraxOracleAddress = SfrxEthFraxOracle;
   if (!SfrxEthFraxOracleAddress) {
@@ -37,7 +36,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [SfrxEthFraxOracleAddress, sfrxETH, maxAllowedPriceDifference],
+    args: [SfrxEthFraxOracleAddress, sfrxETH],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
