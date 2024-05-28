@@ -1,3 +1,42 @@
+## [2.3.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v2.3.0-dev.4...v2.3.0-dev.5) (2024-05-24)
+
+
+### Bug Fixes
+
+* added bnb test ([b2908f5](https://github.com/VenusProtocol/oracle/commit/b2908f52281d721dee3bd36f4c35019e6da61701))
+* btc fork tests ([ff0c1a0](https://github.com/VenusProtocol/oracle/commit/ff0c1a0da497344c1ef44eb80e6f56e26c796eaf))
+* change lower bound ratio ([e62281d](https://github.com/VenusProtocol/oracle/commit/e62281df28d59e7bf3dffe248e00f726fa610745))
+* remove logs ([826fbf6](https://github.com/VenusProtocol/oracle/commit/826fbf684ef061eea1270c9d02abcd3954876efe))
+* reverted comment ([d07cb05](https://github.com/VenusProtocol/oracle/commit/d07cb05dfff5b925c2ea9bf60b3585f571930f4e))
+* updated comment ([591fdf9](https://github.com/VenusProtocol/oracle/commit/591fdf9910228593b6078f6468d92a4319f9ed93))
+
+## [2.3.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.3.0-dev.3...v2.3.0-dev.4) (2024-05-20)
+
+
+### Features
+
+* updating deployment files ([cc264d3](https://github.com/VenusProtocol/oracle/commit/cc264d38ff7896ab7b79c6c391fa34cb753aa5e8))
+* updating deployment files ([5ef59c9](https://github.com/VenusProtocol/oracle/commit/5ef59c99aeeec1c4e95b76f98ad76241e33d3f08))
+
+
+### Bug Fixes
+
+* deployed pendle oracle ([253d1ac](https://github.com/VenusProtocol/oracle/commit/253d1ac7e7cf48443e8ff2257ac36d74edf646fb))
+* redeployed oracle ([e0d10fa](https://github.com/VenusProtocol/oracle/commit/e0d10fa29c8a63c010e0330105391f826c651f0e))
+* removed deployment and changed oracle address ([a226a36](https://github.com/VenusProtocol/oracle/commit/a226a363d6520d246fddfcd64c9276a95e8a8160))
+
+## [2.3.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.3.0-dev.2...v2.3.0-dev.3) (2024-05-08)
+
+
+### Features
+
+* updating deployment files ([734bb3e](https://github.com/VenusProtocol/oracle/commit/734bb3ed4711047ad1dcbd8b05c861eb09bedf7b))
+
+
+### Bug Fixes
+
+* deployed sFrax oracle on ethereum ([5dd8b5a](https://github.com/VenusProtocol/oracle/commit/5dd8b5a3f1682a838a2b33ddaba787d8f2f5cd1c))
+
 ## [2.3.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.3.0-dev.1...v2.3.0-dev.2) (2024-05-06)
 
 
