@@ -13,6 +13,9 @@ import { OracleInterface } from "../interfaces/OracleInterface.sol";
  * @notice This oracle fetches the price of sfrxETH
  */
 contract SFrxETHOracle is AccessControlledV8, OracleInterface {
+    /// @notice Maximum basis points value
+    uint256 private constant MAX_BPS = 100_00;
+
     /// @notice Address of SfrxEthFraxOracle
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     ISfrxEthFraxOracle public immutable SFRXETH_FRAX_ORACLE;
@@ -36,6 +39,9 @@ contract SFrxETHOracle is AccessControlledV8, OracleInterface {
     /// @notice Thrown if the token address is invalid
     error InvalidTokenAddress();
 
+    /// @notice Thrown if the price difference is invalid
+    error InvalidPriceDifference();
+
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address _sfrxEthFraxOracle, address _sfrxETH, uint256 _maxAllowedPriceDifference) {
@@ -44,6 +50,8 @@ contract SFrxETHOracle is AccessControlledV8, OracleInterface {
         ensureNonzeroValue(_maxAllowedPriceDifference);
         SFRXETH_FRAX_ORACLE = ISfrxEthFraxOracle(_sfrxEthFraxOracle);
         SFRXETH = _sfrxETH;
+
+        if (_maxAllowedPriceDifference > MAX_BPS) revert InvalidPriceDifference();
         maxAllowedPriceDifference = _maxAllowedPriceDifference;
 
         _disableInitializers();
@@ -87,7 +95,8 @@ contract SFrxETHOracle is AccessControlledV8, OracleInterface {
         ensureNonzeroValue(priceLowInUSD);
 
         // validate price difference
-        if (priceHighInUSD - priceLowInUSD > maxAllowedPriceDifference) revert PriceDifferenceExceeded();
+        uint256 differenceBPS = MAX_BPS - ((priceLowInUSD * MAX_BPS) / priceHighInUSD);
+        if (differenceBPS > maxAllowedPriceDifference) revert PriceDifferenceExceeded();
 
         // calculate and return average price
         return (priceHighInUSD + priceLowInUSD) / 2;

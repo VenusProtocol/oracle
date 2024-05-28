@@ -18,7 +18,7 @@ describe("SFrxETHOracle unit tests", () => {
   let SFrxETHOracleContract;
   let sfrxEthFraxOracleMock;
   let fakeAccessControlManager;
-  const priceDifference = parseUnits("300", 18);
+  const priceDifference = 100; // 1%
   before(async () => {
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
@@ -84,7 +84,7 @@ describe("SFrxETHOracle unit tests", () => {
     });
 
     it("revert if price difference is more than allowed", async () => {
-      await SFrxETHOracleContract.setMaxAllowedPriceDifference(parseUnits("1", 18));
+      await SFrxETHOracleContract.setMaxAllowedPriceDifference(1); // 0.01%
       await expect(SFrxETHOracleContract.getPrice(sfrxETHMock.address)).to.be.revertedWithCustomError(
         SFrxETHOracleContract,
         "PriceDifferenceExceeded",
