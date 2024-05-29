@@ -95,8 +95,8 @@ contract SFrxETHOracle is AccessControlledV8, OracleInterface {
         ensureNonzeroValue(priceLowInUSD);
 
         // validate price difference
-        uint256 differenceBPS = (priceHighInUSD * 1e18) / priceLowInUSD;
-        if (differenceBPS > maxAllowedPriceDifference) revert PriceDifferenceExceeded();
+        uint256 difference = (priceHighInUSD * 1e18) / priceLowInUSD;
+        if (difference > maxAllowedPriceDifference) revert PriceDifferenceExceeded();
 
         // calculate and return average price
         return (priceHighInUSD + priceLowInUSD) / 2;
