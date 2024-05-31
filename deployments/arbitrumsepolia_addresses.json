@@ -9,6 +9,9 @@
     "ChainlinkOracle_Implementation": "0xC75b363aEBd490FBb43c4BF5Fe0961Ea3c0A0791",
     "ChainlinkOracle_Proxy": "0xeDd02c7FfA31490b4107e8f2c25e9198a04F9E45",
     "DefaultProxyAdmin": "0xA78A1Df376c3CEeBC5Fab574fe6EdDbbF76fd03e",
+    "RedStoneOracle": "0x15058891ca0c71Bd724b873c41596A682420613C",
+    "RedStoneOracle_Implementation": "0x30DA2116bFc1474FaE803531620AAB34b118D9dE",
+    "RedStoneOracle_Proxy": "0x15058891ca0c71Bd724b873c41596A682420613C",
     "ResilientOracle": "0x6708bAd042916B47311c8078b29d7f432342102F",
     "ResilientOracle_Implementation": "0xbeF4F9590Bb7B3a7620b6444Aca5D81471019d8C",
     "ResilientOracle_Proxy": "0x6708bAd042916B47311c8078b29d7f432342102F"

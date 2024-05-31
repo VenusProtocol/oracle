@@ -2,7 +2,7 @@ import hre from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { ADDRESSES } from "../helpers/deploymentConfig";
+import { ADDRESSES, SEQUENCER } from "../helpers/deploymentConfig";
 
 const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
@@ -11,12 +11,16 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
   console.log(`Timelock (${proxyOwnerAddress})`);
 
+  const sequencer = SEQUENCER[network.name];
+  let contractName = "ChainlinkOracle";
+  if (sequencer !== undefined) contractName = "SequencerChainlinkOracle";
+
   await deploy("RedStoneOracle", {
-    contract: network.live ? "ChainlinkOracle" : "MockChainlinkOracle",
+    contract: network.live ? contractName : "MockChainlinkOracle",
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [],
+    args: sequencer ? [sequencer] : [],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
@@ -37,6 +41,8 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 };
 
 func.skip = async ({ network }: HardhatRuntimeEnvironment) =>
-  !["hardhat", "bscmainnet", "bsctestnet", "sepolia", "ethereum"].includes(network.name);
+  !["hardhat", "bscmainnet", "bsctestnet", "sepolia", "ethereum", "arbitrumone", "arbitrumsepolia"].includes(
+    network.name,
+  );
 func.tags = ["deploy-redstone"];
 export default func;

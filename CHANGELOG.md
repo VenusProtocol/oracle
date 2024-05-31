@@ -1,3 +1,88 @@
+## [2.3.0-dev.6](https://github.com/VenusProtocol/oracle/compare/v2.3.0-dev.5...v2.3.0-dev.6) (2024-05-28)
+
+
+### Features
+
+* updating deployment files ([291ab9d](https://github.com/VenusProtocol/oracle/commit/291ab9db0a0bc641df3477bb6efaff33aa6c9cf0))
+* updating deployment files ([3baf6f3](https://github.com/VenusProtocol/oracle/commit/3baf6f37d88091d6efc0c6dd4cde96119de169db))
+* updating deployment files ([39ae403](https://github.com/VenusProtocol/oracle/commit/39ae4031db033cd14022e290f0bf2a57ee95e1d6))
+
+
+### Bug Fixes
+
+* deployment script to execute on arbitrumone ([99d067f](https://github.com/VenusProtocol/oracle/commit/99d067f4477b507dc933b0e4bb595249b3daac0b))
+* pr comments ([3cd18f5](https://github.com/VenusProtocol/oracle/commit/3cd18f5b3be060eb9fcff1ec23a3f29203528d72))
+
+## [2.3.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v2.3.0-dev.4...v2.3.0-dev.5) (2024-05-24)
+
+
+### Bug Fixes
+
+* added bnb test ([b2908f5](https://github.com/VenusProtocol/oracle/commit/b2908f52281d721dee3bd36f4c35019e6da61701))
+* btc fork tests ([ff0c1a0](https://github.com/VenusProtocol/oracle/commit/ff0c1a0da497344c1ef44eb80e6f56e26c796eaf))
+* change lower bound ratio ([e62281d](https://github.com/VenusProtocol/oracle/commit/e62281df28d59e7bf3dffe248e00f726fa610745))
+* remove logs ([826fbf6](https://github.com/VenusProtocol/oracle/commit/826fbf684ef061eea1270c9d02abcd3954876efe))
+* reverted comment ([d07cb05](https://github.com/VenusProtocol/oracle/commit/d07cb05dfff5b925c2ea9bf60b3585f571930f4e))
+* updated comment ([591fdf9](https://github.com/VenusProtocol/oracle/commit/591fdf9910228593b6078f6468d92a4319f9ed93))
+
+## [2.3.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.3.0-dev.3...v2.3.0-dev.4) (2024-05-20)
+
+
+### Features
+
+* updating deployment files ([cc264d3](https://github.com/VenusProtocol/oracle/commit/cc264d38ff7896ab7b79c6c391fa34cb753aa5e8))
+* updating deployment files ([5ef59c9](https://github.com/VenusProtocol/oracle/commit/5ef59c99aeeec1c4e95b76f98ad76241e33d3f08))
+
+
+### Bug Fixes
+
+* deployed pendle oracle ([253d1ac](https://github.com/VenusProtocol/oracle/commit/253d1ac7e7cf48443e8ff2257ac36d74edf646fb))
+* redeployed oracle ([e0d10fa](https://github.com/VenusProtocol/oracle/commit/e0d10fa29c8a63c010e0330105391f826c651f0e))
+* removed deployment and changed oracle address ([a226a36](https://github.com/VenusProtocol/oracle/commit/a226a363d6520d246fddfcd64c9276a95e8a8160))
+
+## [2.3.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.3.0-dev.2...v2.3.0-dev.3) (2024-05-08)
+
+
+### Features
+
+* updating deployment files ([734bb3e](https://github.com/VenusProtocol/oracle/commit/734bb3ed4711047ad1dcbd8b05c861eb09bedf7b))
+
+
+### Bug Fixes
+
+* deployed sFrax oracle on ethereum ([5dd8b5a](https://github.com/VenusProtocol/oracle/commit/5dd8b5a3f1682a838a2b33ddaba787d8f2f5cd1c))
+
+## [2.3.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.3.0-dev.1...v2.3.0-dev.2) (2024-05-06)
+
+
+### Features
+
+* updating deployment files ([867c0fd](https://github.com/VenusProtocol/oracle/commit/867c0fd9110db39b8035b352ccec74fd4b724d9c))
+
+
+### Bug Fixes
+
+* added deployment script for sFrax ([c0a8c11](https://github.com/VenusProtocol/oracle/commit/c0a8c1122e843fed6b6e55d417ff04349c537303))
+* deployed oracle ([92cfac4](https://github.com/VenusProtocol/oracle/commit/92cfac4d21b19843a6c68bb7352c201db317c953))
+* fixed lint ([6080feb](https://github.com/VenusProtocol/oracle/commit/6080feb6d51a0bc759602b6081d48b3328fff03c))
+
+## [2.3.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.2.0...v2.3.0-dev.1) (2024-04-25)
+
+
+### Features
+
+* updating deployment files ([bae54ff](https://github.com/VenusProtocol/oracle/commit/bae54ff84ef2f6377fe4f04b7c65b21bf291014c))
+
+
+### Bug Fixes
+
+* added deployment script ([f2823f8](https://github.com/VenusProtocol/oracle/commit/f2823f8cb5d81ccb97d4f1bc2c57d1d88993e3e0))
+* deployed pendle oracle ([c014ecc](https://github.com/VenusProtocol/oracle/commit/c014ecc7ffadd5008e72dfe425c7d32ba61be3bf))
+* fixed addresses ([b7bcb58](https://github.com/VenusProtocol/oracle/commit/b7bcb58400205e89c7d490d58fc6385065feba67))
+* fixed lint ([83671c8](https://github.com/VenusProtocol/oracle/commit/83671c8cb9e129deb24227eff2a11a57baa31791))
+* fixed tests ([cd7c20a](https://github.com/VenusProtocol/oracle/commit/cd7c20a868e8d9c5e960ffa0880f0882a5fad065))
+* renamed PTweETH to PTweETH_26DEC2024 ([3fb7355](https://github.com/VenusProtocol/oracle/commit/3fb73554d3a5901afed135a7831b1537ad789ee5))
+
 ## [2.2.0](https://github.com/VenusProtocol/oracle/compare/v2.1.0...v2.2.0) (2024-04-25)
 
 

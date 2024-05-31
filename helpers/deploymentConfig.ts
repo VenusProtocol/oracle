@@ -1,3 +1,4 @@
+import arbitrumoneGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/arbitrumone.json";
 import arbitrumsepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/arbitrumsepolia.json";
 import bscmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bscmainnet.json";
 import bsctestnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bsctestnet.json";
@@ -57,6 +58,10 @@ export interface Oracles {
   [key: string]: Oracle;
 }
 
+export const SEQUENCER: Record<string, string> = {
+  arbitrumone: "0xFdB631F5EE196F0ed6FAa767959853A9F217697D",
+};
+
 export const addr0000 = "0x0000000000000000000000000000000000000000";
 export const DEFAULT_STALE_PERIOD = 24 * 60 * 60; // 24 hrs
 const STALE_PERIOD_100M = 60 * 100; // 100 minutes (for pricefeeds with heartbeat of 1 hr)
@@ -106,6 +111,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     timelock: "0x94fa6078b6b8a26f0b6edffbe6501b22a10470fb", // Sepolia Multisig
     weETH: "0x3b8b6E96e57f0d1cD366AaCf4CcC68413aF308D0",
     eETH: "0x0012875a7395a293Adfc9b5cDC2Cfa352C4cDcD3",
+    WETH: "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9",
+    PTweETH_26DEC2024: "0x56107201d3e4b7Db92dEa0Edb9e0454346AEb8B5",
+    FRAX: "0x10630d59848547c9F59538E2d8963D63B912C075",
   },
   ethereum: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -121,9 +129,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     frxETH: "0x5e8422345238f34275888049021821e8e08caa1f",
     weETH: "0xCd5fE23C85820F7B72D0926FC9b05b43E359b7ee",
     eETH: "0x35fA164735182de50811E8e2E824cFb9B6118ac2",
-    PTweETH: "0xc69Ad9baB1dEE23F4605a82b3354F8E40d1E5966",
-    PTweETHMarket: "0xF32e58F92e60f4b0A37A69b95d642A471365EAe8",
-    PTOracle: "0xbbd487268A295531d299c125F3e5f749884A3e30",
+    PTweETH_26DEC2024: "0x6ee2b5e19ecba773a352e5b21415dc419a700d1d",
+    PTweETH_26DEC2024_Market: "0x7d372819240d14fb477f17b964f95f33beb4c704",
+    PTOracle: "0x66a1096C6366b2529274dF4f5D8247827fe4CEA8",
     EtherFiLiquidityPool: "0x308861A430be4cce5502d0A12724771Fc6DaF216",
     WETH: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
   },
@@ -156,7 +164,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
-    acm: "",
+    acm: arbitrumoneGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x14e0E151b33f9802b3e75b621c1457afc44DcAA0", // Arbitrum One Multisig
   },
 };
@@ -225,7 +233,6 @@ export const chainlinkFeed: Config = {
     WETH: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419",
     USDT: "0x3E7d1eAB13ad0104d2750B8863b489D65364e32D",
     USDC: "0x8fFfFfd4AfB6115b954Bd326cbe7B4BA576818f6",
-    XVS: "0xa2a8507DEb233ceE4F5594044C259DD0582339CC",
     CRV: "0xCd627aA160A6fA45Eb793D19Ef54f5062F20f33f",
     crvUSD: "0xEEf0C605546958c1f899b6fB336C20671f9cD49F",
     stETH: "0xCfE54B5cD566aB89272946F602D76Ea879CAb4a8",
@@ -237,12 +244,25 @@ export const chainlinkFeed: Config = {
     ARB: "0xD1092a65338d049DB68D7Be6bD89d17a0929945e",
     WETH: "0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165",
   },
+  arbitrumone: {
+    WBTC: "0x6ce185860a4963106506C203335A2910413708e9",
+    USDC: "0x50834F3163758fcC1Df9973b6e91f0F0F0434aD3",
+    USDT: "0x3f3f5dF88dC9F13eac63DF89EC16ef6e7E25DdE7",
+    ARB: "0xb2A824043730FE05F3DA2efaFa1CBbe83fa548D6",
+    WETH: "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
+  },
 };
 
 export const redstoneFeed: Config = {
   bsctestnet: {},
   sepolia: {
     XVS: "0x0d7697a15bce933cE8671Ba3D60ab062dA216C60",
+  },
+  ethereum: {
+    XVS: "0xa2a8507DEb233ceE4F5594044C259DD0582339CC",
+  },
+  arbitrumone: {
+    XVS: "0xd9a66Ff1D660aD943F48e9c606D09eA672f312E8",
   },
 };
 
@@ -669,19 +689,16 @@ export const assets: Assets = {
       token: "WBTC",
       address: "0x92A2928f5634BEa89A195e7BeCF0f0FEEDAB885b",
       oracle: "chainlink",
-      price: "25000000000000000000000",
     },
     {
       token: "WETH",
       address: "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9",
       oracle: "chainlink",
-      price: "2080000000000000000000",
     },
     {
       token: "USDC",
       address: "0x772d68929655ce7234C8C94256526ddA66Ef641E",
       oracle: "chainlink",
-      price: "1000000000000000000",
     },
     {
       token: "USDT",
@@ -693,7 +710,6 @@ export const assets: Assets = {
       token: "XVS",
       address: "0xdb633c11d3f9e6b8d17ac2c972c9e3b05da59bf9",
       oracle: "redstone",
-      price: "5000000000000000000", // $5.00
     },
     {
       token: "CRV",
@@ -763,31 +779,26 @@ export const assets: Assets = {
       token: "BTCB",
       address: "0x7Af23F9eA698E9b953D2BD70671173AaD0347f19",
       oracle: "binance",
-      price: "35000000000000000000000",
     },
     {
       token: "ETH",
       address: "0x94680e003861D43C6c0cf18333972312B6956FF1",
       oracle: "binance",
-      price: "2000000000000000000000",
     },
     {
       token: "USDT",
       address: "0x8ac9B3801D0a8f5055428ae0bF301CA1Da976855",
       oracle: "binance",
-      price: "1000000000000000000",
     },
     {
       token: "WBNB",
       address: "0xF9ce72611a1BE9797FdD2c995dB6fB61FD20E4eB",
       oracle: "binance",
-      price: "230000000000000000000",
     },
     {
       token: "XVS",
       address: "0x3d0e20D4caD958bc848B045e1da19Fe378f86f03",
       oracle: "binance",
-      price: "7000000000000000000",
     },
   ],
   opbnbmainnet: [
@@ -826,31 +837,26 @@ export const assets: Assets = {
     {
       token: "WBTC",
       address: "0xFb8d93FD3Cf18386a5564bb5619cD1FdB130dF7D",
-      price: "68000000000000000000000",
       oracle: "chainlink",
     },
     {
       token: "USDC",
       address: "0x86f096B1D970990091319835faF3Ee011708eAe8",
-      price: "1000000000000000000",
       oracle: "chainlink",
     },
     {
       token: "USDT",
       address: "0xf3118a17863996B9F2A073c9A66Faaa664355cf8",
-      price: "1000000000000000000",
       oracle: "chainlink",
     },
     {
       token: "ARB",
       address: "0x4371bb358aB5cC192E481543417D2F67b8781731",
-      price: "1500000000000000000",
       oracle: "chainlink",
     },
     {
       token: "WETH",
       address: "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
-      price: "3500000000000000000000",
       oracle: "chainlink",
     },
     {
@@ -858,6 +864,38 @@ export const assets: Assets = {
       address: "0x877Dc896e7b13096D3827872e396927BbE704407",
       price: "10000000000000000000",
       oracle: "chainlinkFixed",
+    },
+  ],
+  arbitrumone: [
+    {
+      token: "WBTC",
+      address: "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDC",
+      address: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDT",
+      address: "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+      oracle: "chainlink",
+    },
+    {
+      token: "ARB",
+      address: "0x912ce59144191c1204e64559fe8253a0e49e6548",
+      oracle: "chainlink",
+    },
+    {
+      token: "WETH",
+      address: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
+      oracle: "chainlink",
+    },
+    {
+      token: "XVS",
+      address: "0xc1Eb7689147C81aC840d4FF0D298489fc7986d52",
+      oracle: "redstone",
     },
   ],
 };

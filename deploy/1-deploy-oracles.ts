@@ -2,9 +2,7 @@ import hre from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { ADDRESSES } from "../helpers/deploymentConfig";
-
-const ARBITRUM_SEQUENCER = "0xFdB631F5EE196F0ed6FAa767959853A9F217697D";
+import { ADDRESSES, SEQUENCER } from "../helpers/deploymentConfig";
 
 const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
@@ -63,39 +61,25 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
-  if (network.name === "arbitrumone") {
-    await deploy("SequencerChainlinkOracle", {
-      contract: "SequencerChainlinkOracle",
-      from: deployer,
-      log: true,
-      deterministicDeployment: false,
-      args: [ARBITRUM_SEQUENCER],
-      proxy: {
-        owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
-        execute: {
-          methodName: "initialize",
-          args: [accessControlManagerAddress],
-        },
+  const sequencer = SEQUENCER[network.name];
+  let contractName = "ChainlinkOracle";
+  if (sequencer !== undefined) contractName = "SequencerChainlinkOracle";
+
+  await deploy(contractName, {
+    contract: network.live ? contractName : "MockChainlinkOracle",
+    from: deployer,
+    log: true,
+    deterministicDeployment: false,
+    args: sequencer ? [sequencer] : [],
+    proxy: {
+      owner: proxyOwnerAddress,
+      proxyContract: "OptimizedTransparentProxy",
+      execute: {
+        methodName: "initialize",
+        args: network.live ? [accessControlManagerAddress] : [],
       },
-    });
-  } else {
-    await deploy("ChainlinkOracle", {
-      contract: network.live ? "ChainlinkOracle" : "MockChainlinkOracle",
-      from: deployer,
-      log: true,
-      deterministicDeployment: false,
-      args: [],
-      proxy: {
-        owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
-        execute: {
-          methodName: "initialize",
-          args: network.live ? [accessControlManagerAddress] : [],
-        },
-      },
-    });
-  }
+    },
+  });
 
   const { pythOracleAddress } = ADDRESSES[networkName];
 
@@ -161,7 +145,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   }
 
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
-  const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
+  const chainlinkOracle = await hre.ethers.getContract(contractName);
 
   await accessControlManager?.giveCallPermission(chainlinkOracle.address, "setTokenConfig(TokenConfig)", deployer);
   await accessControlManager?.giveCallPermission(resilientOracle.address, "setTokenConfig(TokenConfig)", deployer);
