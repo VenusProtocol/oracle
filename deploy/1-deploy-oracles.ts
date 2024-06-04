@@ -62,11 +62,12 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   });
 
   const sequencer = SEQUENCER[network.name];
-  let contractName = "ChainlinkOracle";
-  if (sequencer !== undefined) contractName = "SequencerChainlinkOracle";
+  const isXlayerNetwork = network.name === "xlayertestnet" || network.name === "xlayermainnet";
+  const contract = sequencer !== undefined ? "SequencerChainlinkOracle" : "ChainlinkOracle";
+  const contractName = isXlayerNetwork ? "API3" : contract;
 
   await deploy(contractName, {
-    contract: network.live ? contractName : "MockChainlinkOracle",
+    contract: network.live ? contract : "MockChainlinkOracle",
     from: deployer,
     log: true,
     deterministicDeployment: false,
