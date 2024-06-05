@@ -263,7 +263,7 @@ export const chainlinkFeed: Config = {
     WBTC: "0x97E995E93Af96203A2FD88668a46E72E7dD9255D",
     WETH: "0xB5ab0d331A03a6c8b10ED1F5ea3F921E8e608E7f",
     USDC: "0x2c1CF766f539B94D1E3FC9BC79f79d4076A06568",
-    USDT: "", // TODO
+    USDT: "0xbaff6720438bd27fc6f66502c1fa026a65f1e665",
     XVS: "", // TBD
   },
 };
@@ -941,7 +941,7 @@ export const assets: Assets = {
     },
     {
       token: "XVS",
-      address: "0xdb68dDAA30E3F248292891d04705D0E7243fD755",
+      address: "0x702A73f85F9302D7A7D8Cd4ab81E37D62AA2974E",
       oracle: "", // TBD
     },
   ],
