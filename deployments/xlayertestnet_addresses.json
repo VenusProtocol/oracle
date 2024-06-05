@@ -1,0 +1,16 @@
+{
+  "name": "xlayertestnet",
+  "chainId": "195",
+  "addresses": {
+    "API3": "0x6Da6d7330fA6bc334538f82f3Ea52cF178FB2029",
+    "API3_Implementation": "0x481d138cED300Da78DB45a39596AEEaa17F5bfbC",
+    "API3_Proxy": "0x6Da6d7330fA6bc334538f82f3Ea52cF178FB2029",
+    "BoundValidator": "0xE03665Ee85Cbb817C19525347Ff73db31eddd8ab",
+    "BoundValidator_Implementation": "0x12ED7aE2bAaeC07315507960D8C8b31b56e65cA8",
+    "BoundValidator_Proxy": "0xE03665Ee85Cbb817C19525347Ff73db31eddd8ab",
+    "DefaultProxyAdmin": "0x67f7db70C14cFb4687414942fA11E6D997469bb1",
+    "ResilientOracle": "0xaa1e831bB810C0880d06c2871a7277049F32C244",
+    "ResilientOracle_Implementation": "0xAdE5513bb05Be335627739e9048195FE82FD3c14",
+    "ResilientOracle_Proxy": "0xaa1e831bB810C0880d06c2871a7277049F32C244"
+  }
+}
