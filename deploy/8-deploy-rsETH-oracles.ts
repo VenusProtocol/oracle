@@ -23,7 +23,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
   const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
 
-  await deploy("OneJumpOracleMain", {
+  await deploy("rsETHOneJumpRedStoneOracle", {
     contract: "OneJumpOracle",
     from: deployer,
     log: true,
@@ -36,7 +36,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     skipIfAlreadyDeployed: true,
   });
 
-  await deploy("OneJumpOraclePivot", {
+  await deploy("rsETHOneJumpChainlinkOracle", {
     contract: "OneJumpOracle",
     from: deployer,
     log: true,
@@ -52,5 +52,5 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
 func.skip = async () => hre.network.name !== "ethereum" && hre.network.name !== "sepolia";
 
-func.tags = ["OneJumpOracle"];
+func.tags = ["rsETHOneJumpOracles"];
 export default func;
