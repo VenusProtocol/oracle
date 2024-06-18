@@ -1,3 +1,14 @@
+## [2.4.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.3.0...v2.4.0-dev.1) (2024-06-18)
+
+
+### Features
+
+* add rsETH oracle deployments on ethereum ([968d849](https://github.com/VenusProtocol/oracle/commit/968d849bf414aebbf9615c98075b6aa7374fdf63))
+* deploy one jump oracle on sepolia ([7079a6c](https://github.com/VenusProtocol/oracle/commit/7079a6c5b8e52c13278240755e23cdb7a8b74eb7))
+* updating deployment files ([bccaec6](https://github.com/VenusProtocol/oracle/commit/bccaec67c7bc5ff330d4cfcfadf94db2fe584932))
+* updating deployment files ([f426c17](https://github.com/VenusProtocol/oracle/commit/f426c17920ce1291e15ea77781e6404721f2b846))
+* updating deployment files ([62fa36d](https://github.com/VenusProtocol/oracle/commit/62fa36da6c0ce3eee7db8377f86ed01235a09c14))
+
 ## [2.3.0](https://github.com/VenusProtocol/oracle/compare/v2.2.0...v2.3.0) (2024-05-31)
 
 
