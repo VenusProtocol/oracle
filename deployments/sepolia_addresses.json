@@ -29,6 +29,12 @@
     "WeETHOracle_Proxy": "0xc7b78b5c1433C81c455CD1e9A68FF18764acbCe1",
     "WstETHOracle": "0x92E7F73B0d57902fDC453E8aef990EdEe827b0BF",
     "WstETHOracle_Implementation": "0xEf0F74FaBC69f32F9b73419726eeFa70F4E8d10F",
-    "WstETHOracle_Proxy": "0x92E7F73B0d57902fDC453E8aef990EdEe827b0BF"
+    "WstETHOracle_Proxy": "0x92E7F73B0d57902fDC453E8aef990EdEe827b0BF",
+    "rsETHOneJumpChainlinkOracle": "0xDAF249b4A937385dB567B73630539BacDBB04342",
+    "rsETHOneJumpChainlinkOracle_Implementation": "0x4024F4d7ca04655eF9fc6C0F31419731d1349a40",
+    "rsETHOneJumpChainlinkOracle_Proxy": "0xDAF249b4A937385dB567B73630539BacDBB04342",
+    "rsETHOneJumpRedStoneOracle": "0xB15CA4Cd4bA5696FDC1cbBd859588c0421cc1F68",
+    "rsETHOneJumpRedStoneOracle_Implementation": "0x4671E637247C0431AD86774a612f0B1C1c564FAe",
+    "rsETHOneJumpRedStoneOracle_Proxy": "0xB15CA4Cd4bA5696FDC1cbBd859588c0421cc1F68"
   }
 }

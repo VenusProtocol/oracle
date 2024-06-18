@@ -32,6 +32,12 @@
     "WstETHOracle_Equivalence_Proxy": "0xd8B43165a6cdA057DBd3Fcd4745E88FC475398c5",
     "WstETHOracle_NonEquivalence": "0xd082B50b3EeB012605598bB45Fc2Be853b9AFEEf",
     "WstETHOracle_NonEquivalence_Implementation": "0x24D3D52332834ddE93692D9ede4679FE920d2afC",
-    "WstETHOracle_NonEquivalence_Proxy": "0xd082B50b3EeB012605598bB45Fc2Be853b9AFEEf"
+    "WstETHOracle_NonEquivalence_Proxy": "0xd082B50b3EeB012605598bB45Fc2Be853b9AFEEf",
+    "rsETHOneJumpChainlinkOracle": "0xD63011ddAc93a6f8348bf7E6Aeb3E30Ad7B46Df8",
+    "rsETHOneJumpChainlinkOracle_Implementation": "0x81cC55e6A67ae1A35D1d2f1eDAC73db9388Ac376",
+    "rsETHOneJumpChainlinkOracle_Proxy": "0xD63011ddAc93a6f8348bf7E6Aeb3E30Ad7B46Df8",
+    "rsETHOneJumpRedStoneOracle": "0xf689AD140BDb9425fB83ba6f55866447244b5a23",
+    "rsETHOneJumpRedStoneOracle_Implementation": "0x349C1b081f54c54C86c654CcFEc85DDf2A367C27",
+    "rsETHOneJumpRedStoneOracle_Proxy": "0xf689AD140BDb9425fB83ba6f55866447244b5a23"
   }
 }
