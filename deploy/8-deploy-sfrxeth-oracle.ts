@@ -1,3 +1,4 @@
+import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -10,7 +11,8 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
-  const { sfrxETH, SfrxEthFraxOracle } = ADDRESSES[network.name];
+  const { sfrxETH, SfrxEthFraxOracle, acm } = ADDRESSES[network.name];
+  const maxAllowedPriceDifference = parseUnits("1.14", 18);
 
   let SfrxEthFraxOracleAddress = SfrxEthFraxOracle;
   if (!SfrxEthFraxOracle) {
@@ -40,9 +42,19 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
+      execute: {
+        methodName: "initialize",
+        args: [acm, maxAllowedPriceDifference],
+      },
     },
     skipIfAlreadyDeployed: true,
   });
+
+  const sfrxETHOracle = await ethers.getContract("SFrxETHOracle");
+
+  if ((await sfrxETHOracle.owner()) === deployer) {
+    await sfrxETHOracle.transferOwnership(proxyOwnerAddress);
+  }
 };
 
 export default func;
