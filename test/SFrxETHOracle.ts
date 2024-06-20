@@ -1,69 +1,100 @@
 import { smock } from "@defi-wonderland/smock";
 import chai from "chai";
 import { parseUnits } from "ethers/lib/utils";
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { BEP20Harness, ISfrxETH, ResilientOracleInterface } from "../typechain-types";
+import { AccessControlManager, BEP20Harness, SFrxETHOracle } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
 chai.use(smock.matchers);
 
-const { sfrxETH, frxETH } = ADDRESSES.ethereum;
-const ETH_USD_PRICE = parseUnits("3100", 18); // 3100 USD for 1 ETH
+const { sfrxETH } = ADDRESSES.ethereum;
 
 describe("SFrxETHOracle unit tests", () => {
-  let resilientOracleMock;
   let sfrxETHMock;
   let SFrxETHOracleFactory;
-  let SFrxETHOracle;
-  let frxETHMock;
+  let SFrxETHOracleContract;
+  let sfrxEthFraxOracleMock;
+  let fakeAccessControlManager;
+  const priceDifference = parseUnits("1.011", 18); // 1.1% difference
   before(async () => {
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
-    resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
 
-    sfrxETHMock = await smock.fake<ISfrxETH>("ISfrxETH", { address: sfrxETH });
-    sfrxETHMock.convertToAssets.returns(parseUnits("1.076546447254363344", 18));
+    // deploy MockSfrxEthFraxOracle
+    const sfrxEthFraxOracleMockFactory = await ethers.getContractFactory("MockSfrxEthFraxOracle");
+    sfrxEthFraxOracleMock = await sfrxEthFraxOracleMockFactory.deploy();
+    await sfrxEthFraxOracleMock.deployed();
+    await sfrxEthFraxOracleMock.setPrices(
+      false,
+      parseUnits("0.000306430391670677", 18),
+      parseUnits("0.000309520800596522", 18),
+    );
+
+    sfrxETHMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: sfrxETH });
     sfrxETHMock.decimals.returns(18);
 
-    frxETHMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: frxETH });
-    frxETHMock.decimals.returns(18);
-
     SFrxETHOracleFactory = await ethers.getContractFactory("SFrxETHOracle");
+
+    fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
   });
 
   describe("deployment", () => {
-    it("revert if frxETH address is 0", async () => {
-      await expect(SFrxETHOracleFactory.deploy(sfrxETHMock.address, addr0000, resilientOracleMock.address)).to.be
-        .reverted;
+    it("revert if SfrxEthFraxOracle address is 0", async () => {
+      await expect(
+        upgrades.deployProxy(SFrxETHOracleFactory, [fakeAccessControlManager.address], {
+          constructorArgs: [addr0000, sfrxETHMock.address],
+        }),
+      ).to.be.reverted;
     });
     it("revert if sfrxETH address is 0", async () => {
-      await expect(SFrxETHOracleFactory.deploy(addr0000, frxETHMock.address, resilientOracleMock.address)).to.be
-        .reverted;
+      await expect(
+        upgrades.deployProxy(SFrxETHOracleFactory, [fakeAccessControlManager.address], {
+          constructorArgs: [sfrxEthFraxOracleMock.address, addr0000],
+        }),
+      ).to.be.reverted;
+    });
+    it("revert if price different is 0", async () => {
+      await expect(
+        upgrades.deployProxy(SFrxETHOracleFactory, [fakeAccessControlManager.address, 0], {
+          constructorArgs: [sfrxEthFraxOracleMock.address, sfrxETHMock.address],
+        }),
+      ).to.be.reverted;
     });
     it("should deploy contract", async () => {
-      SFrxETHOracle = await SFrxETHOracleFactory.deploy(
-        sfrxETHMock.address,
-        frxETHMock.address,
-        resilientOracleMock.address,
+      SFrxETHOracleContract = <SFrxETHOracle>await upgrades.deployProxy(
+        SFrxETHOracleFactory,
+        [fakeAccessControlManager.address, priceDifference],
+        {
+          constructorArgs: [sfrxEthFraxOracleMock.address, sfrxETHMock.address],
+        },
       );
     });
   });
 
   describe("getPrice", () => {
     it("revert if address is not valid sfrxETH address", async () => {
-      await expect(SFrxETHOracle.getPrice(addr0000)).to.be.revertedWithCustomError(
-        SFrxETHOracle,
+      await expect(SFrxETHOracleContract.getPrice(addr0000)).to.be.revertedWithCustomError(
+        SFrxETHOracleContract,
         "InvalidTokenAddress",
       );
     });
 
+    it("revert if price difference is more than allowed", async () => {
+      await SFrxETHOracleContract.setMaxAllowedPriceDifference(parseUnits("1.0001", 18));
+      await expect(SFrxETHOracleContract.getPrice(sfrxETHMock.address)).to.be.revertedWithCustomError(
+        SFrxETHOracleContract,
+        "PriceDifferenceExceeded",
+      );
+    });
+
     it("should get correct price of sfrxETH", async () => {
-      resilientOracleMock.getPrice.returns(ETH_USD_PRICE);
-      const price = await SFrxETHOracle.getPrice(sfrxETHMock.address);
-      expect(price).to.equal(parseUnits("3337.2939864885263664", 18));
+      await SFrxETHOracleContract.setMaxAllowedPriceDifference(priceDifference);
+      const price = await SFrxETHOracleContract.getPrice(sfrxETHMock.address);
+      expect(price).to.equal(parseUnits("3247.092258084175122617", 18));
     });
   });
 });
