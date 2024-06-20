@@ -38,6 +38,7 @@ contract SFrxETHOracle is AccessControlledV8, OracleInterface {
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
+    /// @custom:error ZeroAddressNotAllowed is thrown when `_sfrxEthFraxOracle` or `_sfrxETH` are the zero address
     constructor(address _sfrxEthFraxOracle, address _sfrxETH) {
         ensureNonzeroAddress(_sfrxEthFraxOracle);
         ensureNonzeroAddress(_sfrxETH);
@@ -52,6 +53,7 @@ contract SFrxETHOracle is AccessControlledV8, OracleInterface {
      * @notice Sets the contracts required to fetch prices
      * @param _accessControlManager Address of the access control manager contract
      * @param _maxAllowedPriceDifference Maximum allowed price difference
+     * @custom:error ZeroValueNotAllowed is thrown if `_maxAllowedPriceDifference` is zero
      */
     function initialize(address _accessControlManager, uint256 _maxAllowedPriceDifference) external initializer {
         ensureNonzeroValue(_maxAllowedPriceDifference);
@@ -63,6 +65,7 @@ contract SFrxETHOracle is AccessControlledV8, OracleInterface {
     /**
      * @notice Sets the maximum allowed price difference
      * @param _maxAllowedPriceDifference Maximum allowed price difference
+     * @custom:error ZeroValueNotAllowed is thrown if `_maxAllowedPriceDifference` is zero
      */
     function setMaxAllowedPriceDifference(uint256 _maxAllowedPriceDifference) external {
         _checkAccessAllowed("setMaxAllowedPriceDifference(uint256)");
@@ -76,6 +79,10 @@ contract SFrxETHOracle is AccessControlledV8, OracleInterface {
      * @notice Fetches the USD price of sfrxETH
      * @param asset Address of the sfrxETH token
      * @return price The price scaled by 1e18
+     * @custom:error InvalidTokenAddress is thrown when the `asset` is not the sfrxETH token (`SFRXETH`)
+     * @custom:error BadPriceData is thrown if the `SFRXETH_FRAX_ORACLE` oracle informs it has bad data
+     * @custom:error ZeroValueNotAllowed is thrown if the prices (low or high, in USD) are zero
+     * @custom:error PriceDifferenceExceeded is thrown if priceHigh/priceLow is greater than `maxAllowedPriceDifference`
      */
     function getPrice(address asset) external view returns (uint256) {
         if (asset != SFRXETH) revert InvalidTokenAddress();
