@@ -169,6 +169,13 @@ export const ADDRESSES: PreconfiguredAddresses = {
     acm: arbitrumoneGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x14e0E151b33f9802b3e75b621c1457afc44DcAA0", // Arbitrum One Multisig
   },
+  xlayertestnet: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: "0x6dB7eC37a0fb4d97F9a292C47e5C938763Da861F",
+    timelock: "0x5961449d63149035aCfC0714D5155f24C9819004", // Xlayer testnet Multisig
+  },
 };
 
 export const chainlinkFeed: Config = {
@@ -252,6 +259,14 @@ export const chainlinkFeed: Config = {
     USDT: "0x3f3f5dF88dC9F13eac63DF89EC16ef6e7E25DdE7",
     ARB: "0xb2A824043730FE05F3DA2efaFa1CBbe83fa548D6",
     WETH: "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
+  },
+  xlayertestnet: {
+    WOKB: "0xB46C8e52763a7D5BA7f4626899b0c9538913AB8D",
+    WBTC: "0x97E995E93Af96203A2FD88668a46E72E7dD9255D",
+    WETH: "0xB5ab0d331A03a6c8b10ED1F5ea3F921E8e608E7f",
+    USDC: "0x2c1CF766f539B94D1E3FC9BC79f79d4076A06568",
+    USDT: "0xbaff6720438bd27fc6f66502c1fa026a65f1e665",
+    XVS: "", // TBD
   },
 };
 
@@ -898,6 +913,38 @@ export const assets: Assets = {
       token: "XVS",
       address: "0xc1Eb7689147C81aC840d4FF0D298489fc7986d52",
       oracle: "redstone",
+    },
+  ],
+  xlayertestnet: [
+    {
+      token: "WOKB",
+      address: "0xa7b9c3a116b20bedddbe4d90ff97157f67f0bd97",
+      oracle: "API3",
+    },
+    {
+      token: "WBTC",
+      address: "0x182049e25aea0370679B42c5B5cfa3AB5B564326",
+      oracle: "API3",
+    },
+    {
+      token: "WETH",
+      address: "0x0c912b18E01834a7EF1998f1b5c5bF366f561b32",
+      oracle: "API3",
+    },
+    {
+      token: "USDC",
+      address: "0x30b16006ff0276EDa5944D0fe6E0347b2d9c5f2f",
+      oracle: "API3",
+    },
+    {
+      token: "USDT",
+      address: "0xBBa4d1046697EF8C117421f1089D980901af4145",
+      oracle: "API3",
+    },
+    {
+      token: "XVS",
+      address: "0x702A73f85F9302D7A7D8Cd4ab81E37D62AA2974E",
+      oracle: "", // TBD
     },
   ],
 };
