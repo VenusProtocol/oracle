@@ -11,24 +11,19 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
 
-  const { PTOracle } = ADDRESSES[networkName];
+  await deploy("MockPendlePtOracle", {
+    contract: "MockPendlePtOracle",
+    from: deployer,
+    log: true,
+    autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
+    skipIfAlreadyDeployed: true,
+    args: [],
+  });
 
-  if (!PTOracle) {
-    // deploy MockAnkrBNB
-    await deploy("MockPendlePtOracle", {
-      contract: "MockPendlePtOracle",
-      from: deployer,
-      log: true,
-      autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
-      skipIfAlreadyDeployed: true,
-      args: [],
-    });
+  const pendleOracleContract = await ethers.getContract("MockPendlePtOracle");
 
-    const pendleOracleContract = await ethers.getContract("MockPendlePtOracle");
-
-    if ((await pendleOracleContract.owner()) === deployer) {
-      await pendleOracleContract.transferOwnership(proxyOwnerAddress);
-    }
+  if ((await pendleOracleContract.owner()) === deployer) {
+    await pendleOracleContract.transferOwnership(proxyOwnerAddress);
   }
 };
 

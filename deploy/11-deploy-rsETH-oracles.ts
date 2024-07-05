@@ -50,6 +50,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   });
 };
 
-func.skip = async () => hre.network.name !== "ethereum" && hre.network.name !== "sepolia" && hre.network.name !== "hardhat";
+func.skip = async () =>
+  hre.network.name !== "ethereum" && hre.network.name !== "sepolia" && hre.network.name !== "hardhat";
 func.tags = ["rsETHOneJumpOracles"];
 export default func;

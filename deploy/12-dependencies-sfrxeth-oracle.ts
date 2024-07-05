@@ -11,23 +11,19 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
 
-  const { SfrxEthFraxOracle } = ADDRESSES[networkName];
+  await deploy("MockSfrxEthFraxOracle", {
+    contract: "MockSfrxEthFraxOracle",
+    from: deployer,
+    log: true,
+    autoMine: true,
+    skipIfAlreadyDeployed: true,
+    args: [],
+  });
 
-  if (!SfrxEthFraxOracle) {
-    await deploy("MockSfrxEthFraxOracle", {
-      contract: "MockSfrxEthFraxOracle",
-      from: deployer,
-      log: true,
-      autoMine: true,
-      skipIfAlreadyDeployed: true,
-      args: [],
-    });
+  const mockSfrxEthFraxOracle = await ethers.getContract("MockSfrxEthFraxOracle");
 
-    const mockSfrxEthFraxOracle = await ethers.getContract("MockSfrxEthFraxOracle");
-
-    if ((await mockSfrxEthFraxOracle.owner()) === deployer) {
-      await mockSfrxEthFraxOracle.transferOwnership(proxyOwnerAddress);
-    }
+  if ((await mockSfrxEthFraxOracle.owner()) === deployer) {
+    await mockSfrxEthFraxOracle.transferOwnership(proxyOwnerAddress);
   }
 };
 

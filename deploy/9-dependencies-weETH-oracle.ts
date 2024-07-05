@@ -11,23 +11,17 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
 
-  let { EtherFiLiquidityPool } = ADDRESSES[networkName];
+  await deploy("MockEtherFiLiquidityPool", {
+    from: deployer,
+    contract: "MockEtherFiLiquidityPool",
+    args: [],
+    log: true,
+    autoMine: true,
+    skipIfAlreadyDeployed: true,
+  });
 
-  if (!EtherFiLiquidityPool) {
-    // deploy mock liquidity pool
-    await deploy("MockEtherFiLiquidityPool", {
-      from: deployer,
-      contract: "MockEtherFiLiquidityPool",
-      args: [],
-      log: true,
-      autoMine: true,
-      skipIfAlreadyDeployed: true,
-    });
-
-    const mockEtherFiLiquidityPool = await ethers.getContract("MockEtherFiLiquidityPool");
-    EtherFiLiquidityPool = mockEtherFiLiquidityPool.address;
-    await mockEtherFiLiquidityPool.transferOwnership(proxyOwnerAddress);
-  }
+  const mockEtherFiLiquidityPool = await ethers.getContract("MockEtherFiLiquidityPool");
+  await mockEtherFiLiquidityPool.transferOwnership(proxyOwnerAddress);
 };
 
 export default func;
