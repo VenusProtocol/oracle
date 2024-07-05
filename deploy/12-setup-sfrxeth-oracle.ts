@@ -12,26 +12,6 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
 
-  const { sfrxETH, SfrxEthFraxOracle, acm } = ADDRESSES[networkName];
-  const maxAllowedPriceDifference = parseUnits("1.14", 18);
-
-  await deploy("SFrxETHOracle", {
-    contract: "SFrxETHOracle",
-    from: deployer,
-    log: true,
-    deterministicDeployment: false,
-    args: [SfrxEthFraxOracle || (await ethers.getContract("MockSfrxEthFraxOracle")).address, sfrxETH],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
-      execute: {
-        methodName: "initialize",
-        args: [acm, maxAllowedPriceDifference],
-      },
-    },
-    skipIfAlreadyDeployed: true,
-  });
-
   const sfrxETHOracle = await ethers.getContract("SFrxETHOracle");
 
   if ((await sfrxETHOracle.owner()) === deployer) {
@@ -40,5 +20,5 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 };
 
 export default func;
-func.tags = ["sFraxETHOracle"];
+func.id = "sFraxETHOracle-setup"
 func.skip = async (hre: HardhatRuntimeEnvironment) => hre.network.name !== "ethereum" && hre.network.name !== "sepolia";
