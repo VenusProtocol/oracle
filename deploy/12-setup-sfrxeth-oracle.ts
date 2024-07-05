@@ -5,10 +5,9 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { ADDRESSES } from "../helpers/deploymentConfig";
 
 const func: DeployFunction = async ({ getNamedAccounts, network }: HardhatRuntimeEnvironment) => {
-  const networkName: string = network.name === "hardhat" ? "sepolia" : network.name;
   const { deployer } = await getNamedAccounts();
 
-  const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
+  const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
   const sfrxETHOracle = await ethers.getContract("SFrxETHOracle");
 

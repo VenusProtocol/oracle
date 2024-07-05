@@ -84,4 +84,4 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 export default func;
 func.tags = ["bnb_lst"];
 func.skip = async (hre: HardhatRuntimeEnvironment) =>
-  hre.network.name !== "bscmainnet" && hre.network.name !== "bsctestnet";
+  hre.network.name !== "bscmainnet" && hre.network.name !== "bsctestnet" && hre.network.name !== "hardhat";
