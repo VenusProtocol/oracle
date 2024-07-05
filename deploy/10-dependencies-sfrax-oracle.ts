@@ -14,18 +14,22 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const { sFRAX, FRAX } = ADDRESSES[networkName];
 
-  await deploy("SFraxOracle", {
-    contract: "SFraxOracle",
-    from: deployer,
-    log: true,
-    deterministicDeployment: false,
-    args: [sFRAX || (await ethers.getContract("MockSFrax")).address, FRAX, oracle.address],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
-    },
-    skipIfAlreadyDeployed: true,
-  });
+  if (!sFRAX) {
+    await deploy("MockSFrax", {
+      contract: "MockSFrax",
+      from: deployer,
+      log: true,
+      autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
+      skipIfAlreadyDeployed: true,
+      args: ["Staked FRAX", "sFRAX", 18],
+    });
+
+    const mockSFraxContract = await ethers.getContract("MockSFrax");
+
+    if ((await mockSFraxContract.owner()) === deployer) {
+      await mockSFraxContract.transferOwnership(proxyOwnerAddress);
+    }
+  }
 };
 
 export default func;
