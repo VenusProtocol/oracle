@@ -5,15 +5,16 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { ADDRESSES, assets } from "../helpers/deploymentConfig";
 
 const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
+  const networkName: string = network.name === "hardhat" ? "bsctestnet" : network.name;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
   const oracle = await ethers.getContract("ResilientOracle");
-  const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
+  const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
 
   const { ankrBNB, stkBNB, BNBx, BNBxStakeManager, slisBNBStakeManager, stkBNBStakePool, slisBNB, wBETH } =
-    ADDRESSES[network.name];
-  const ETH = assets[network.name].find(asset => asset.token === "ETH");
+    ADDRESSES[networkName];
+  const ETH = assets[networkName].find(asset => asset.token === "ETH");
 
   await deploy("BNBxOracle", {
     from: deployer,
@@ -51,24 +52,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     skipIfAlreadyDeployed: true,
   });
 
-  let ankrBNBAddress = ankrBNB;
-  if (!ankrBNB) {
-    // deploy MockAnkrBNB
-    await deploy("MockAnkrBNB", {
-      from: deployer,
-      log: true,
-      autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
-      skipIfAlreadyDeployed: true,
-      args: ["Ankr Staked BNB ", "ankrBNB", "18"],
-    });
-
-    const ankrBNBContract = await ethers.getContract("MockAnkrBNB");
-    ankrBNBAddress = ankrBNBContract.address;
-
-    if ((await ankrBNBContract.owner()) === deployer) {
-      await ankrBNBContract.transferOwnership(proxyOwnerAddress);
-    }
-  }
+  let ankrBNBAddress = ankrBNB || (await ethers.getContract("MockAnkrBNB")).address;
 
   await deploy("AnkrBNBOracle", {
     from: deployer,
@@ -82,24 +66,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     skipIfAlreadyDeployed: true,
   });
 
-  let wBETHAddress = wBETH;
-  if (!wBETH) {
-    // deploy MockWBETH
-    await deploy("MockWBETH", {
-      from: deployer,
-      log: true,
-      autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
-      skipIfAlreadyDeployed: true,
-      args: ["Wrapped Binance Beacon ETH", "wBETH", "18"],
-    });
-
-    const wBETHContract = await ethers.getContract("MockWBETH");
-    wBETHAddress = wBETHContract.address;
-
-    if ((await wBETHContract.owner()) === deployer) {
-      await wBETHContract.transferOwnership(proxyOwnerAddress);
-    }
-  }
+  let wBETHAddress = wBETH || (await ethers.getContract("MockWBETH")).address;
 
   await deploy("WBETHOracle", {
     from: deployer,
