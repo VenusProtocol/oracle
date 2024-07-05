@@ -1,0 +1,16 @@
+{
+  "name": "opsepolia",
+  "chainId": "11155420",
+  "addresses": {
+    "BoundValidator": "0x482469F1DA6Ec736cacF6361Ec41621f811A6800",
+    "BoundValidator_Implementation": "0x64f3Faa5F36E9d55cD0AAD7F23B000D5bc93F6d4",
+    "BoundValidator_Proxy": "0x482469F1DA6Ec736cacF6361Ec41621f811A6800",
+    "ChainlinkOracle": "0x493C3f543AEa37EefF17D823f27Cb1feAB9f3143",
+    "ChainlinkOracle_Implementation": "0xE0157e8702aaAcB01A06BBEB81B76A35a9f74E5f",
+    "ChainlinkOracle_Proxy": "0x493C3f543AEa37EefF17D823f27Cb1feAB9f3143",
+    "DefaultProxyAdmin": "0xa9aaf2A1cCf2C3a87997942abaA740887cC89241",
+    "ResilientOracle": "0x6c01ECa2B5C97F135406a3A5531445A7d977D28e",
+    "ResilientOracle_Implementation": "0x21f8755443d21Fdf2D2FD617C83d0fD317B191A2",
+    "ResilientOracle_Proxy": "0x6c01ECa2B5C97F135406a3A5531445A7d977D28e"
+  }
+}
