@@ -9,7 +9,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const { deployer } = await getNamedAccounts();
 
   console.log(`Deployer ${deployer}`);
-  const networkName: string = network.name === "hardhat" ? "bsctestnet" : network.name;
+  const networkName: string = network.name === "hardhat" ? "sepolia" : network.name;
 
   const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
 

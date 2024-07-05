@@ -12,29 +12,25 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const oracle = await ethers.getContract("ResilientOracle");
   const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
 
-  const { PTweETH_26DEC2024, PTweETH_26DEC2024_Market, PTOracle, WETH } = ADDRESSES[networkName];
+  const { PTOracle, WETH } = ADDRESSES[networkName];
 
-  let ptOracleAddress = PTOracle || (await ethers.getContract("MockPendlePtOracle")).address;
+  if (!PTOracle) {
+    // deploy MockAnkrBNB
+    await deploy("MockPendlePtOracle", {
+      contract: "MockPendlePtOracle",
+      from: deployer,
+      log: true,
+      autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
+      skipIfAlreadyDeployed: true,
+      args: [],
+    });
 
-  await deploy("PendleOracle-PT-weETH-26DEC2024", {
-    contract: "PendleOracle",
-    from: deployer,
-    log: true,
-    deterministicDeployment: false,
-    args: [
-      PTweETH_26DEC2024_Market || "0x0000000000000000000000000000000000000001",
-      ptOracleAddress,
-      PTweETH_26DEC2024,
-      WETH,
-      oracle.address,
-      1800,
-    ],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
-    },
-    skipIfAlreadyDeployed: true,
-  });
+    const pendleOracleContract = await ethers.getContract("MockPendlePtOracle");
+
+    if ((await pendleOracleContract.owner()) === deployer) {
+      await pendleOracleContract.transferOwnership(proxyOwnerAddress);
+    }
+  }
 };
 
 export default func;
