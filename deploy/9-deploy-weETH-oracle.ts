@@ -16,7 +16,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   let { EtherFiLiquidityPool } = ADDRESSES[networkName];
   const { weETH, eETH, WETH } = ADDRESSES[networkName];
 
-  EtherFiLiquidityPool = EtherFiLiquidityPool || ( await ethers.getContract("MockEtherFiLiquidityPool")).address
+  EtherFiLiquidityPool = EtherFiLiquidityPool || (await ethers.getContract("MockEtherFiLiquidityPool")).address;
 
   if (network.name === "sepolia") {
     await deploy("WeETHOracle", {

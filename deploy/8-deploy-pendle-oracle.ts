@@ -14,7 +14,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const { PTweETH_26DEC2024, PTweETH_26DEC2024_Market, PTOracle, WETH } = ADDRESSES[networkName];
 
-  let ptOracleAddress = PTOracle || (await ethers.getContract("MockPendlePtOracle")).address;
+  const ptOracleAddress = PTOracle || (await ethers.getContract("MockPendlePtOracle")).address;
 
   await deploy("PendleOracle-PT-weETH-26DEC2024", {
     contract: "PendleOracle",

@@ -14,7 +14,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   if (networkName === "sepolia" || networkName === "ethereum") {
     ({ WETH } = ADDRESSES[networkName]);
     rsETH =
-    networkName === "sepolia"
+      networkName === "sepolia"
         ? "0xfA0614E5C803E15070d31f7C38d2d430EBe68E47"
         : "0xA1290d69c65A6Fe4DF752f95823fae25cB99e5A7";
   }

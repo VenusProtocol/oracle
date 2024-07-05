@@ -9,10 +9,9 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const oracle = await ethers.getContract("ResilientOracle");
   const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
 
-  const { PTOracle, WETH } = ADDRESSES[networkName];
+  const { PTOracle } = ADDRESSES[networkName];
 
   if (!PTOracle) {
     // deploy MockAnkrBNB

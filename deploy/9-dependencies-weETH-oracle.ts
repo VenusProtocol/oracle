@@ -20,7 +20,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       contract: "MockEtherFiLiquidityPool",
       args: [],
       log: true,
-      autoMine: true, 
+      autoMine: true,
       skipIfAlreadyDeployed: true,
     });
 

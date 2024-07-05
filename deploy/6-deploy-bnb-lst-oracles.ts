@@ -52,7 +52,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     skipIfAlreadyDeployed: true,
   });
 
-  let ankrBNBAddress = ankrBNB || (await ethers.getContract("MockAnkrBNB")).address;
+  const ankrBNBAddress = ankrBNB || (await ethers.getContract("MockAnkrBNB")).address;
 
   await deploy("AnkrBNBOracle", {
     from: deployer,
@@ -66,7 +66,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     skipIfAlreadyDeployed: true,
   });
 
-  let wBETHAddress = wBETH || (await ethers.getContract("MockWBETH")).address;
+  const wBETHAddress = wBETH || (await ethers.getContract("MockWBETH")).address;
 
   await deploy("WBETHOracle", {
     from: deployer,

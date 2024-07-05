@@ -1,4 +1,3 @@
-import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -12,8 +11,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
 
-  const { sfrxETH, SfrxEthFraxOracle, acm } = ADDRESSES[networkName];
-  const maxAllowedPriceDifference = parseUnits("1.14", 18);
+  const { SfrxEthFraxOracle } = ADDRESSES[networkName];
 
   if (!SfrxEthFraxOracle) {
     await deploy("MockSfrxEthFraxOracle", {
