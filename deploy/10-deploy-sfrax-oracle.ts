@@ -5,14 +5,13 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { ADDRESSES } from "../helpers/deploymentConfig";
 
 const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
-  const networkName: string = network.name === "hardhat" ? "sepolia" : network.name;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
   const oracle = await ethers.getContract("ResilientOracle");
-  const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
+  const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
-  const { sFRAX, FRAX } = ADDRESSES[networkName];
+  const { sFRAX, FRAX } = ADDRESSES[network.name];
 
   await deploy("SFraxOracle", {
     contract: "SFraxOracle",
@@ -30,5 +29,4 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
 export default func;
 func.tags = ["sFraxOracle"];
-func.skip = async (hre: HardhatRuntimeEnvironment) =>
-  hre.network.name !== "ethereum" && hre.network.name !== "sepolia" && hre.network.name !== "hardhat";
+func.skip = async (hre: HardhatRuntimeEnvironment) => hre.network.name !== "ethereum" && hre.network.name !== "sepolia";

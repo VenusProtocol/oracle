@@ -5,7 +5,6 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { Oracles, assets, getOraclesData } from "../helpers/deploymentConfig";
 
 const func: DeployFunction = async function ({ network, deployments, getNamedAccounts }: HardhatRuntimeEnvironment) {
-  const networkName: string = network.name === "hardhat" ? "bsctestnet" : network.name;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
@@ -13,7 +12,7 @@ const func: DeployFunction = async function ({ network, deployments, getNamedAcc
 
   const oraclesData: Oracles = await getOraclesData();
 
-  for (const asset of assets[networkName]) {
+  for (const asset of assets[network.name]) {
     const { oracle } = asset;
     console.log(`Configuring ${asset.token}`);
 

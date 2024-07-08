@@ -5,16 +5,15 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { ADDRESSES, assets } from "../helpers/deploymentConfig";
 
 const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
-  const networkName: string = network.name === "hardhat" ? "bsctestnet" : network.name;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
   const oracle = await ethers.getContract("ResilientOracle");
-  const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
+  const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
   const { ankrBNB, stkBNB, BNBx, BNBxStakeManager, slisBNBStakeManager, stkBNBStakePool, slisBNB, wBETH } =
-    ADDRESSES[networkName];
-  const ETH = assets[networkName].find(asset => asset.token === "ETH");
+    ADDRESSES[network.name];
+  const ETH = assets[network.name].find(asset => asset.token === "ETH");
 
   await deploy("BNBxOracle", {
     from: deployer,
@@ -84,4 +83,4 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 export default func;
 func.tags = ["bnb_lst"];
 func.skip = async (hre: HardhatRuntimeEnvironment) =>
-  hre.network.name !== "bscmainnet" && hre.network.name !== "bsctestnet" && hre.network.name !== "hardhat";
+  hre.network.name !== "bscmainnet" && hre.network.name !== "bsctestnet";

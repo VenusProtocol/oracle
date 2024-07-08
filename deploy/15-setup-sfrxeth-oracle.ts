@@ -18,4 +18,4 @@ const func: DeployFunction = async ({ getNamedAccounts, network }: HardhatRuntim
 
 export default func;
 func.id = "sFraxETHOracle-setup";
-func.skip = async (hre: HardhatRuntimeEnvironment) => hre.network.name !== "ethereum" && hre.network.name !== "sepolia";
+func.skip = async (hre: HardhatRuntimeEnvironment) => hre.network.name !== "ethereum";
