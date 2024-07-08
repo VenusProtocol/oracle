@@ -94,66 +94,68 @@ const func: DeployFunction = async function ({
     },
   });
 
-  if (network.live) {
-    const { pythOracleAddress } = ADDRESSES[network.name];
+  if (!network.live) {
+    return;
+  }
 
-    // Skip if no pythOracle address in config
-    if (pythOracleAddress) {
-      await deploy("PythOracle", {
-        contract: network.live ? "PythOracle" : "MockPythOracle",
-        from: deployer,
-        log: true,
-        deterministicDeployment: false,
-        args: [],
-        proxy: {
-          owner: proxyOwnerAddress,
-          proxyContract: "OptimizedTransparentProxy",
-          execute: {
-            methodName: "initialize",
-            args: network.live ? [pythOracleAddress, accessControlManagerAddress] : [pythOracleAddress],
-          },
+  const { pythOracleAddress } = ADDRESSES[network.name];
+
+  // Skip if no pythOracle address in config
+  if (pythOracleAddress) {
+    await deploy("PythOracle", {
+      contract: network.live ? "PythOracle" : "MockPythOracle",
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [],
+      proxy: {
+        owner: proxyOwnerAddress,
+        proxyContract: "OptimizedTransparentProxy",
+        execute: {
+          methodName: "initialize",
+          args: network.live ? [pythOracleAddress, accessControlManagerAddress] : [pythOracleAddress],
         },
-      });
+      },
+    });
 
-      const pythOracle = await hre.ethers.getContract("PythOracle");
-      await accessControlManager?.giveCallPermission(pythOracle.address, "setTokenConfig(TokenConfig)", deployer);
-      const pythOracleOwner = await pythOracle.owner();
+    const pythOracle = await hre.ethers.getContract("PythOracle");
+    await accessControlManager?.giveCallPermission(pythOracle.address, "setTokenConfig(TokenConfig)", deployer);
+    const pythOracleOwner = await pythOracle.owner();
 
-      if (pythOracleOwner === deployer) {
-        await pythOracle.transferOwnership(timelock);
-        console.log(`Ownership of PythOracle transfered from deployer to Timelock (${timelock})`);
-      }
+    if (pythOracleOwner === deployer) {
+      await pythOracle.transferOwnership(timelock);
+      console.log(`Ownership of PythOracle transfered from deployer to Timelock (${timelock})`);
+    }
+  }
+
+  const { sidRegistryAddress, feedRegistryAddress } = ADDRESSES[network.name];
+  // Skip if no sidRegistryAddress address in config
+  if (sidRegistryAddress) {
+    await deploy("BinanceOracle", {
+      contract: network.live ? "BinanceOracle" : "MockBinanceOracle",
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [],
+      proxy: {
+        owner: proxyOwnerAddress,
+        proxyContract: "OptimizedTransparentProxy",
+        execute: {
+          methodName: "initialize",
+          args: network.live ? [sidRegistryAddress, accessControlManagerAddress] : [],
+        },
+      },
+    });
+    const binanceOracle = await hre.ethers.getContract("BinanceOracle");
+    const binanceOracleOwner = await binanceOracle.owner();
+
+    if (network.live && sidRegistryAddress === "0x0000000000000000000000000000000000000000") {
+      await binanceOracle.setFeedRegistryAddress(feedRegistryAddress);
     }
 
-    const { sidRegistryAddress, feedRegistryAddress } = ADDRESSES[network.name];
-    // Skip if no sidRegistryAddress address in config
-    if (sidRegistryAddress) {
-      await deploy("BinanceOracle", {
-        contract: network.live ? "BinanceOracle" : "MockBinanceOracle",
-        from: deployer,
-        log: true,
-        deterministicDeployment: false,
-        args: [],
-        proxy: {
-          owner: proxyOwnerAddress,
-          proxyContract: "OptimizedTransparentProxy",
-          execute: {
-            methodName: "initialize",
-            args: network.live ? [sidRegistryAddress, accessControlManagerAddress] : [],
-          },
-        },
-      });
-      const binanceOracle = await hre.ethers.getContract("BinanceOracle");
-      const binanceOracleOwner = await binanceOracle.owner();
-
-      if (network.live && sidRegistryAddress === "0x0000000000000000000000000000000000000000") {
-        await binanceOracle.setFeedRegistryAddress(feedRegistryAddress);
-      }
-
-      if (binanceOracleOwner === deployer) {
-        await binanceOracle.transferOwnership(timelock);
-        console.log(`Ownership of BinanceOracle transfered from deployer to Timelock (${timelock})`);
-      }
+    if (binanceOracleOwner === deployer) {
+      await binanceOracle.transferOwnership(timelock);
+      console.log(`Ownership of BinanceOracle transfered from deployer to Timelock (${timelock})`);
     }
   }
 
