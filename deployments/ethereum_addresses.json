@@ -21,6 +21,9 @@
     "SFraxOracle": "0x27F811933cA276387554eAffD9860e513bA95AC3",
     "SFraxOracle_Implementation": "0xeA98e3a8c3744B93e21c75aa4b2355f35c9617a7",
     "SFraxOracle_Proxy": "0x27F811933cA276387554eAffD9860e513bA95AC3",
+    "SFrxETHOracle": "0x5E06A5f48692E4Fff376fDfCA9E4C0183AAADCD1",
+    "SFrxETHOracle_Implementation": "0x93e19584359C6c5844f1f7E1621983418b5A892F",
+    "SFrxETHOracle_Proxy": "0x5E06A5f48692E4Fff376fDfCA9E4C0183AAADCD1",
     "WeETHOracle_Equivalence": "0xEa687c54321Db5b20CA544f38f08E429a4bfCBc8",
     "WeETHOracle_Equivalence_Implementation": "0x3694ad1233FC1f7f71D3aD0b1dad128D8d1333AA",
     "WeETHOracle_Equivalence_Proxy": "0xEa687c54321Db5b20CA544f38f08E429a4bfCBc8",
@@ -32,6 +35,12 @@
     "WstETHOracle_Equivalence_Proxy": "0xd8B43165a6cdA057DBd3Fcd4745E88FC475398c5",
     "WstETHOracle_NonEquivalence": "0xd082B50b3EeB012605598bB45Fc2Be853b9AFEEf",
     "WstETHOracle_NonEquivalence_Implementation": "0x24D3D52332834ddE93692D9ede4679FE920d2afC",
-    "WstETHOracle_NonEquivalence_Proxy": "0xd082B50b3EeB012605598bB45Fc2Be853b9AFEEf"
+    "WstETHOracle_NonEquivalence_Proxy": "0xd082B50b3EeB012605598bB45Fc2Be853b9AFEEf",
+    "rsETHOneJumpChainlinkOracle": "0xD63011ddAc93a6f8348bf7E6Aeb3E30Ad7B46Df8",
+    "rsETHOneJumpChainlinkOracle_Implementation": "0x81cC55e6A67ae1A35D1d2f1eDAC73db9388Ac376",
+    "rsETHOneJumpChainlinkOracle_Proxy": "0xD63011ddAc93a6f8348bf7E6Aeb3E30Ad7B46Df8",
+    "rsETHOneJumpRedStoneOracle": "0xf689AD140BDb9425fB83ba6f55866447244b5a23",
+    "rsETHOneJumpRedStoneOracle_Implementation": "0x349C1b081f54c54C86c654CcFEc85DDf2A367C27",
+    "rsETHOneJumpRedStoneOracle_Proxy": "0xf689AD140BDb9425fB83ba6f55866447244b5a23"
   }
 }
