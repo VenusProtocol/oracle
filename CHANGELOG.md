@@ -1,3 +1,42 @@
+## [2.4.0](https://github.com/VenusProtocol/oracle/compare/v2.3.0...v2.4.0) (2024-07-18)
+
+
+### Features
+
+* add rsETH oracle deployments on ethereum ([968d849](https://github.com/VenusProtocol/oracle/commit/968d849bf414aebbf9615c98075b6aa7374fdf63))
+* deploy one jump oracle on sepolia ([7079a6c](https://github.com/VenusProtocol/oracle/commit/7079a6c5b8e52c13278240755e23cdb7a8b74eb7))
+* updating deployment files ([28900dd](https://github.com/VenusProtocol/oracle/commit/28900dd3c7a6d8fd6bc4f8ee310b649430ea715f))
+* updating deployment files ([bccaec6](https://github.com/VenusProtocol/oracle/commit/bccaec67c7bc5ff330d4cfcfadf94db2fe584932))
+* updating deployment files ([f426c17](https://github.com/VenusProtocol/oracle/commit/f426c17920ce1291e15ea77781e6404721f2b846))
+* updating deployment files ([62fa36d](https://github.com/VenusProtocol/oracle/commit/62fa36da6c0ce3eee7db8377f86ed01235a09c14))
+* updating deployment files ([41bac60](https://github.com/VenusProtocol/oracle/commit/41bac602d0b57b3c325c762e391b8132b57d5891))
+* use ratio for price difference ([f76cf1e](https://github.com/VenusProtocol/oracle/commit/f76cf1e0e5e29051ad7e9aace4a576321edeb8e6))
+
+
+### Bug Fixes
+
+* added acm ([2a10937](https://github.com/VenusProtocol/oracle/commit/2a109374d3c40aef882bfc8b067548dd9b9aa937))
+* added netspec ([54462b8](https://github.com/VenusProtocol/oracle/commit/54462b89a393d478f90d1154134d6c75d27753f5))
+* added price difference check ([526eacf](https://github.com/VenusProtocol/oracle/commit/526eacfaa0f193e13e1e5fa66c1b638106f4753e))
+* changed order ([a46c67d](https://github.com/VenusProtocol/oracle/commit/a46c67d8b95648dc7ba3bb38fb808cb1dd4dc6dc))
+* deployed on ethereum ([25ab625](https://github.com/VenusProtocol/oracle/commit/25ab625a97df1dd5f4edbf71687e1523851ed0a2))
+* deployed oracle ([c5ae0fa](https://github.com/VenusProtocol/oracle/commit/c5ae0fae3dca410c5abbc2546b15c2df4398f060))
+* fix comment ([fc62a15](https://github.com/VenusProtocol/oracle/commit/fc62a15d090b7d8e7577a5dbcf07a6a39cbb57f0))
+* fix comment ([3058ef1](https://github.com/VenusProtocol/oracle/commit/3058ef1a794a73a43c43a792af0309fc33ccf852))
+* fixed tests ([0206218](https://github.com/VenusProtocol/oracle/commit/02062182753393f1d982448e043f601226122aef))
+* fixed vars ([5512927](https://github.com/VenusProtocol/oracle/commit/5512927a65f7b2fb8fe422de69374780d90da0ea))
+* make sfrxETH immutable ([95e0494](https://github.com/VenusProtocol/oracle/commit/95e049416e75cda023c323d7faaa3fddee115682))
+* redeployed oracle on testnet ([5b3b6ed](https://github.com/VenusProtocol/oracle/commit/5b3b6ed0955121ad0b6fb5aa7422929811d2b748))
+* remove correlated token oracle ([f475e6b](https://github.com/VenusProtocol/oracle/commit/f475e6b5c3de15ecf705b9b7a9fef805acc32622))
+* removed ISfrxETH ([6f47ec2](https://github.com/VenusProtocol/oracle/commit/6f47ec2c70152c580bf13023c96e2b34a8f12e52))
+* revert config ([3991356](https://github.com/VenusProtocol/oracle/commit/3991356f9ad8e293cb67d91fa9b5fdbbdfb8513e))
+* sfe-03 ([b24ef72](https://github.com/VenusProtocol/oracle/commit/b24ef729a7f1b13d1c2b572e4717612275659dd1))
+* sfe-05 ([6130942](https://github.com/VenusProtocol/oracle/commit/6130942986f3e75725ea295b1e634c73df1601da))
+* update var name ([ae84726](https://github.com/VenusProtocol/oracle/commit/ae84726383d1e858b811453ddc40ab94b6c30593))
+* use sfrxEthFraxOracle oracle ([fc52a39](https://github.com/VenusProtocol/oracle/commit/fc52a39b0033916df264551d5364ed43f1ca79da))
+* ven-1 ([0cd68b2](https://github.com/VenusProtocol/oracle/commit/0cd68b2148a20733c3d74fa8f74016ee9156c9e2))
+* ven-2 ([6374a84](https://github.com/VenusProtocol/oracle/commit/6374a844a89c874887da7349a094b5f982daba95))
+
 ## [2.4.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.4.0-dev.1...v2.4.0-dev.2) (2024-06-20)
 
 
