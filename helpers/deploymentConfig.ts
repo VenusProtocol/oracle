@@ -169,6 +169,13 @@ export const ADDRESSES: PreconfiguredAddresses = {
     acm: arbitrumoneGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x14e0E151b33f9802b3e75b621c1457afc44DcAA0", // Arbitrum One Multisig
   },
+  opsepolia: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: "0x1652E12C8ABE2f0D84466F0fc1fA4286491B3BC1",
+    timelock: "0xd57365EE4E850e881229e2F8Aa405822f289e78d", // OpSepolia Multisig
+  },
 };
 
 export const chainlinkFeed: Config = {
@@ -252,6 +259,9 @@ export const chainlinkFeed: Config = {
     USDT: "0x3f3f5dF88dC9F13eac63DF89EC16ef6e7E25DdE7",
     ARB: "0xb2A824043730FE05F3DA2efaFa1CBbe83fa548D6",
     WETH: "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
+  },
+  opsepolia: {
+    // TODO: add tokens
   },
 };
 
@@ -899,6 +909,9 @@ export const assets: Assets = {
       address: "0xc1Eb7689147C81aC840d4FF0D298489fc7986d52",
       oracle: "redstone",
     },
+  ],
+  opsepolia: [
+    // TODO: add tokens
   ],
 };
 
