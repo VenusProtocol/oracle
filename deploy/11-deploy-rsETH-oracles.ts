@@ -8,8 +8,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
   const proxyOwnerAddress = ADDRESSES[network.name].timelock;
-  const WETH = ADDRESSES[network.name].WETH;
-  const rsETH = ADDRESSES[network.name].rsETH;
+  const { WETH, rsETH } = ADDRESSES[network.name];
 
   const redStoneOracle = await hre.ethers.getContract("RedStoneOracle");
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
