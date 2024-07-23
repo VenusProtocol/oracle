@@ -115,6 +115,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     PTweETH_26DEC2024: "0x56107201d3e4b7Db92dEa0Edb9e0454346AEb8B5",
     FRAX: "0x10630d59848547c9F59538E2d8963D63B912C075",
     sfrxETH: "0x14AECeEc177085fd09EA07348B4E1F7Fcc030fA1",
+    rsETH: "0xfA0614E5C803E15070d31f7C38d2d430EBe68E47",
+    ezETH: "0xB8eb706b85Ae7355c9FE4371a499F50f3484809c"
   },
   ethereum: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -136,6 +138,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     EtherFiLiquidityPool: "0x308861A430be4cce5502d0A12724771Fc6DaF216",
     WETH: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
     SfrxEthFraxOracle: "0x3d3D868522b5a4035ADcb67BF0846D61597A6a6F",
+    rsETH: "0xA1290d69c65A6Fe4DF752f95823fae25cB99e5A7",
+    ezETH: "0xbf5495Efe5DB9ce00f80364C8B423567e58d2110",
   },
   opbnbtestnet: {
     vBNBAddress: ethers.constants.AddressZero,

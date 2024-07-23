@@ -9,18 +9,18 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const { deployer } = await getNamedAccounts();
   const proxyOwnerAddress = ADDRESSES[network.name].timelock;
   const WETH = ADDRESSES[network.name].WETH;
-  const rsETH = ADDRESSES[network.name].rsETH;
+  const ezETH = ADDRESSES[network.name].ezETH;
 
   const redStoneOracle = await hre.ethers.getContract("RedStoneOracle");
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
   const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
 
-  await deploy("rsETHOneJumpRedStoneOracle", {
+  await deploy("ezETHOneJumpRedStoneOracle", {
     contract: "OneJumpOracle",
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [rsETH, WETH, resilientOracle.address, redStoneOracle.address],
+    args: [ezETH, WETH, resilientOracle.address, redStoneOracle.address],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
@@ -28,12 +28,12 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     skipIfAlreadyDeployed: true,
   });
 
-  await deploy("rsETHOneJumpChainlinkOracle", {
+  await deploy("ezETHOneJumpChainlinkOracle", {
     contract: "OneJumpOracle",
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [rsETH, WETH, resilientOracle.address, chainlinkOracle.address],
+    args: [ezETH, WETH, resilientOracle.address, chainlinkOracle.address],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
@@ -43,5 +43,5 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 };
 
 func.skip = async () => hre.network.name !== "ethereum" && hre.network.name !== "sepolia";
-func.tags = ["rsETHOneJumpOracles"];
+func.tags = ["ezETHOneJumpOracles"];
 export default func;
