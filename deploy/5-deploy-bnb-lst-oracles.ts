@@ -10,7 +10,6 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const oracle = await ethers.getContract("ResilientOracle");
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
-  const MAX_FEE_PER_GAS = network.name === "zksyncsepolia" || network.name === "zksync" ? "200000000" : "0";
 
   const { ankrBNB, stkBNB, BNBx, BNBxStakeManager, slisBNBStakeManager, stkBNBStakePool, slisBNB, wBETH } =
     ADDRESSES[network.name];
@@ -31,7 +30,6 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
         artifact: defaultProxyAdmin,
       },
     },
-    maxFeePerGas: MAX_FEE_PER_GAS,
     skipIfAlreadyDeployed: true,
   });
 
@@ -48,7 +46,6 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
         artifact: defaultProxyAdmin,
       },
     },
-    maxFeePerGas: MAX_FEE_PER_GAS,
     skipIfAlreadyDeployed: true,
   });
 
@@ -65,7 +62,6 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
         artifact: defaultProxyAdmin,
       },
     },
-    maxFeePerGas: MAX_FEE_PER_GAS,
     skipIfAlreadyDeployed: true,
   });
 
@@ -101,7 +97,6 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
         artifact: defaultProxyAdmin,
       },
     },
-    maxFeePerGas: MAX_FEE_PER_GAS,
     skipIfAlreadyDeployed: true,
   });
 
@@ -137,7 +132,6 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
         artifact: defaultProxyAdmin,
       },
     },
-    maxFeePerGas: MAX_FEE_PER_GAS,
     skipIfAlreadyDeployed: true,
   });
 };

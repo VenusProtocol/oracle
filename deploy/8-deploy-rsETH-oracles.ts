@@ -17,7 +17,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
         ? "0xfA0614E5C803E15070d31f7C38d2d430EBe68E47"
         : "0xA1290d69c65A6Fe4DF752f95823fae25cB99e5A7";
   }
-  const MAX_FEE_PER_GAS = network.name === "zksyncsepolia" || network.name === "zksync" ? "200000000" : "0";
   const defaultProxyAdmin = await hre.artifacts.readArtifact(
     "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
   );
@@ -41,7 +40,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       },
     },
     skipIfAlreadyDeployed: true,
-    maxFeePerGas: MAX_FEE_PER_GAS,
   });
 
   await deploy("rsETHOneJumpChainlinkOracle", {
@@ -59,7 +57,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       },
     },
     skipIfAlreadyDeployed: true,
-    maxFeePerGas: MAX_FEE_PER_GAS,
   });
 };
 

@@ -8,7 +8,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
-  const MAX_FEE_PER_GAS = network.name === "zksyncsepolia" || network.name === "zksync" ? "200000000" : "0";
 
   console.log(`Timelock (${proxyOwnerAddress})`);
 
@@ -39,7 +38,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
         artifact: defaultProxyAdmin,
       },
     },
-    maxFeePerGas: MAX_FEE_PER_GAS,
   });
 
   const redStoneOracle = await hre.ethers.getContract("RedStoneOracle");

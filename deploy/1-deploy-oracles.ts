@@ -29,7 +29,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const accessControlManagerAddress = network.live ? ADDRESSES[networkName].acm : accessControlManager?.address;
   const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
 
-  const MAX_FEE_PER_GAS = network.name === "zksyncsepolia" || network.name === "zksync" ? "200000000" : "0";
   const defaultProxyAdmin = await hre.artifacts.readArtifact(
     "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
   );
@@ -52,7 +51,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
         artifact: defaultProxyAdmin,
       },
     },
-    maxFeePerGas: MAX_FEE_PER_GAS,
   });
 
   const boundValidator = await hre.ethers.getContract("BoundValidator");
@@ -76,7 +74,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
         artifact: defaultProxyAdmin,
       },
     },
-    maxFeePerGas: MAX_FEE_PER_GAS,
   });
 
   const sequencer = SEQUENCER[network.name];
@@ -102,7 +99,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
         artifact: defaultProxyAdmin,
       },
     },
-    maxFeePerGas: MAX_FEE_PER_GAS,
   });
 
   const { pythOracleAddress } = ADDRESSES[networkName];
@@ -127,7 +123,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
           artifact: defaultProxyAdmin,
         },
       },
-      maxFeePerGas: MAX_FEE_PER_GAS,
     });
 
     const pythOracle = await hre.ethers.getContract("PythOracle");
@@ -162,7 +157,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
           artifact: defaultProxyAdmin,
         },
       },
-      maxFeePerGas: MAX_FEE_PER_GAS,
     });
     const binanceOracle = await hre.ethers.getContract("BinanceOracle");
     const binanceOracleOwner = await binanceOracle.owner();

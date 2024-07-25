@@ -10,7 +10,6 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const { deployer } = await getNamedAccounts();
 
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
-  const MAX_FEE_PER_GAS = network.name === "zksyncsepolia" || network.name === "zksync" ? "200000000" : "0";
   const defaultProxyAdmin = await hre.artifacts.readArtifact(
     "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
   );
@@ -54,7 +53,6 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
         artifact: defaultProxyAdmin,
       },
     },
-    maxFeePerGas: MAX_FEE_PER_GAS,
     skipIfAlreadyDeployed: true,
   });
 
