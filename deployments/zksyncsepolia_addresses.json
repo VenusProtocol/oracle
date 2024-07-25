@@ -1,0 +1,19 @@
+{
+  "name": "zksyncsepolia",
+  "chainId": "300",
+  "addresses": {
+    "BoundValidator": "0x0A4daBeF41C83Af7e30FfC33feC56ba769f3D24b",
+    "BoundValidator_Implementation": "0xbf34F1Ca52586FDf5AFb7A92712D047B69932c9f",
+    "BoundValidator_Proxy": "0x0A4daBeF41C83Af7e30FfC33feC56ba769f3D24b",
+    "ChainlinkOracle": "0x0DFf10dCdb3526010Df01ECc42076C25C27F8323",
+    "ChainlinkOracle_Implementation": "0x73461E884C256e1B5Ec1FEEF305410C478EA6818",
+    "ChainlinkOracle_Proxy": "0x0DFf10dCdb3526010Df01ECc42076C25C27F8323",
+    "DefaultProxyAdmin": "0x18E44f588a4DcF2F7145d35A5C226e129040b6D3",
+    "RedStoneOracle": "0x3af097f1Dcec172D5ECdD0D1eFA6B118FF15f152",
+    "RedStoneOracle_Implementation": "0xf66Ee1C402155483d3d1cb05D5294c59916fF3c5",
+    "RedStoneOracle_Proxy": "0x3af097f1Dcec172D5ECdD0D1eFA6B118FF15f152",
+    "ResilientOracle": "0x748853B3bE26c46b4562Fd314dfb82708F395bDf",
+    "ResilientOracle_Implementation": "0x32810ABAE45A08e0BadEF94b753306E8636B39ED",
+    "ResilientOracle_Proxy": "0x748853B3bE26c46b4562Fd314dfb82708F395bDf"
+  }
+}
