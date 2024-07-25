@@ -8,8 +8,13 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
+  const MAX_FEE_PER_GAS = network.name === "zksyncsepolia" || network.name === "zksync" ? "200000000" : "0";
 
   console.log(`Timelock (${proxyOwnerAddress})`);
+
+  const defaultProxyAdmin = await hre.artifacts.readArtifact(
+    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
+  );
 
   const sequencer = SEQUENCER[network.name];
   let contractName = "ChainlinkOracle";
@@ -20,15 +25,21 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     from: deployer,
     log: true,
     deterministicDeployment: false,
+    skipIfAlreadyDeployed: true,
     args: sequencer ? [sequencer] : [],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
       execute: {
         methodName: "initialize",
         args: network.live ? [ADDRESSES[network.name].acm] : [],
       },
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
+      },
     },
+    maxFeePerGas: MAX_FEE_PER_GAS,
   });
 
   const redStoneOracle = await hre.ethers.getContract("RedStoneOracle");
@@ -41,8 +52,15 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 };
 
 func.skip = async ({ network }: HardhatRuntimeEnvironment) =>
-  !["hardhat", "bscmainnet", "bsctestnet", "sepolia", "ethereum", "arbitrumone", "arbitrumsepolia"].includes(
-    network.name,
-  );
+  ![
+    "hardhat",
+    "bscmainnet",
+    "bsctestnet",
+    "sepolia",
+    "ethereum",
+    "arbitrumone",
+    "arbitrumsepolia",
+    "zksyncsepolia",
+  ].includes(network.name);
 func.tags = ["deploy-redstone"];
 export default func;

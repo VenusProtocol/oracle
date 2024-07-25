@@ -12,7 +12,10 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
   const { sFRAX, FRAX } = ADDRESSES[network.name];
-
+  const MAX_FEE_PER_GAS = network.name === "zksyncsepolia" || network.name === "zksync" ? "200000000" : "0";
+  const defaultProxyAdmin = await hre.artifacts.readArtifact(
+    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
+  );
   let sFRAXAddress = sFRAX;
   if (!sFRAXAddress) {
     await deploy("MockSFrax", {
@@ -40,9 +43,14 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     args: [sFRAXAddress, FRAX, oracle.address],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
+      },
     },
     skipIfAlreadyDeployed: true,
+    maxFeePerGas: MAX_FEE_PER_GAS,
   });
 };
 

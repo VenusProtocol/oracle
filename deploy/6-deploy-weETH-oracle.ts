@@ -11,7 +11,10 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const resilientOracle = await ethers.getContract("ResilientOracle");
   const chainlinkOracle = await ethers.getContract("ChainlinkOracle");
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
-
+  const MAX_FEE_PER_GAS = network.name === "zksyncsepolia" || network.name === "zksync" ? "200000000" : "0";
+  const defaultProxyAdmin = await hre.artifacts.readArtifact(
+    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
+  );
   let { EtherFiLiquidityPool } = ADDRESSES[network.name];
   const { weETH, eETH, WETH } = ADDRESSES[network.name];
 
@@ -39,9 +42,14 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       args: [EtherFiLiquidityPool, weETH, eETH, resilientOracle.address],
       proxy: {
         owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
+        proxyContract: "OptimizedTransparentUpgradeableProxy",
+        viaAdminContract: {
+          name: "DefaultProxyAdmin",
+          artifact: defaultProxyAdmin,
+        },
       },
       skipIfAlreadyDeployed: true,
+      maxFeePerGas: MAX_FEE_PER_GAS,
     });
   } else {
     await deploy("WeETHOracle_Equivalence", {
@@ -52,9 +60,14 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       args: [EtherFiLiquidityPool, weETH, WETH, resilientOracle.address],
       proxy: {
         owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
+        proxyContract: "OptimizedTransparentUpgradeableProxy",
+        viaAdminContract: {
+          name: "DefaultProxyAdmin",
+          artifact: defaultProxyAdmin,
+        },
       },
       skipIfAlreadyDeployed: true,
+      maxFeePerGas: MAX_FEE_PER_GAS,
     });
 
     await deploy("WeETHOracle_NonEquivalence", {
@@ -65,9 +78,14 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       args: [weETH, WETH, resilientOracle.address, chainlinkOracle.address],
       proxy: {
         owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
+        proxyContract: "OptimizedTransparentUpgradeableProxy",
+        viaAdminContract: {
+          name: "DefaultProxyAdmin",
+          artifact: defaultProxyAdmin,
+        },
       },
       skipIfAlreadyDeployed: true,
+      maxFeePerGas: MAX_FEE_PER_GAS,
     });
   }
 };

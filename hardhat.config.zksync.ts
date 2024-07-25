@@ -2,7 +2,6 @@ import "module-alias/register";
 
 import "@matterlabs/hardhat-zksync";
 import "@matterlabs/hardhat-zksync-solc";
-import "@matterlabs/hardhat-zksync-upgradable";
 import "@matterlabs/hardhat-zksync-verify";
 import "@nomicfoundation/hardhat-chai-matchers";
 import "@typechain/hardhat";
@@ -113,6 +112,7 @@ const config: HardhatUserConfig = {
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
       zksync: true,
       live: true,
+      gasPrice: 2000000000, // 20 gwei
     },
   },
   gasReporter: {
@@ -128,8 +128,13 @@ const config: HardhatUserConfig = {
     pages: "files",
     templates: "./docgen-templates",
   },
+
   dependencyCompiler: {
-    paths: ["@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol"],
+    paths: [
+      "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol",
+      "hardhat-deploy/solc_0.8/proxy/OptimizedTransparentUpgradeableProxy.sol",
+      "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol",
+    ],
   },
   paths: {
     tests: "./tests",

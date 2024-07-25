@@ -265,7 +265,6 @@ export const chainlinkFeed: Config = {
     WETH: "0xfEefF7c3fB57d18C5C6Cdd71e45D2D0b4F9377bF",
     USDC: "0x1844478CA634f3a762a2E71E3386837Bd50C947F",
     USDT: "0x07F05C2aFeb54b68Ea425CAbCcbF53E2d5605d76",
-    XVS: "", // TBD
   },
 };
 
@@ -279,6 +278,9 @@ export const redstoneFeed: Config = {
   },
   arbitrumone: {
     XVS: "0xd9a66Ff1D660aD943F48e9c606D09eA672f312E8",
+  },
+  zksyncsepolia: {
+    XVS: "", // TBD
   },
 };
 
@@ -936,9 +938,14 @@ export const assets: Assets = {
       oracle: "chainlink",
     },
     {
+      token: "ZK",
+      address: "0x8A2E9048F5d658E88D6eD89DdD1F3B5cA0250B9F",
+      oracle: "chainlink",
+    },
+    {
       token: "XVS",
       address: "0x3AeCac43A2ebe5D8184e650403bf9F656F9D1cfA",
-      oracle: "", // TBD
+      oracle: "redstone", // TBD
     },
   ],
 };

@@ -16,6 +16,12 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
   const boundValidator = await hre.ethers.getContract("BoundValidator");
 
+  const MAX_FEE_PER_GAS = network.name === "zksyncsepolia" || network.name === "zksync" ? "200000000" : "0";
+
+  const defaultProxyAdmin = await hre.artifacts.readArtifact(
+    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
+  );
+
   await catchUnknownSigner(
     deploy("ResilientOracle", {
       from: deployer,
@@ -24,8 +30,13 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       args: [vBNBAddress, VAIAddress, boundValidator.address],
       proxy: {
         owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
+        proxyContract: "OptimizedTransparentUpgradeableProxy",
+        viaAdminContract: {
+          name: "DefaultProxyAdmin",
+          artifact: defaultProxyAdmin,
+        },
       },
+      maxFeePerGas: MAX_FEE_PER_GAS,
     }),
   );
 };

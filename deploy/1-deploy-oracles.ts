@@ -29,36 +29,54 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const accessControlManagerAddress = network.live ? ADDRESSES[networkName].acm : accessControlManager?.address;
   const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
 
+  const MAX_FEE_PER_GAS = network.name === "zksyncsepolia" || network.name === "zksync" ? "200000000" : "0";
+  const defaultProxyAdmin = await hre.artifacts.readArtifact(
+    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
+  );
+
   await deploy("BoundValidator", {
     from: deployer,
     log: true,
     deterministicDeployment: false,
+    skipIfAlreadyDeployed: true,
     args: [],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
       execute: {
         methodName: "initialize",
         args: [accessControlManagerAddress],
       },
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
+      },
     },
+    maxFeePerGas: MAX_FEE_PER_GAS,
   });
 
   const boundValidator = await hre.ethers.getContract("BoundValidator");
+  console.log(boundValidator.address);
 
   await deploy("ResilientOracle", {
     from: deployer,
     log: true,
     deterministicDeployment: false,
+    skipIfAlreadyDeployed: true,
     args: [vBNBAddress, VAIAddress, boundValidator.address],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
       execute: {
         methodName: "initialize",
         args: [accessControlManagerAddress],
       },
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
+      },
     },
+    maxFeePerGas: MAX_FEE_PER_GAS,
   });
 
   const sequencer = SEQUENCER[network.name];
@@ -70,15 +88,21 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     from: deployer,
     log: true,
     deterministicDeployment: false,
+    skipIfAlreadyDeployed: true,
     args: sequencer ? [sequencer] : [],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
       execute: {
         methodName: "initialize",
         args: network.live ? [accessControlManagerAddress] : [],
       },
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
+      },
     },
+    maxFeePerGas: MAX_FEE_PER_GAS,
   });
 
   const { pythOracleAddress } = ADDRESSES[networkName];
@@ -93,12 +117,17 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       args: [],
       proxy: {
         owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
+        proxyContract: "OptimizedTransparentUpgradeableProxy",
         execute: {
           methodName: "initialize",
           args: network.live ? [pythOracleAddress, accessControlManagerAddress] : [pythOracleAddress],
         },
+        viaAdminContract: {
+          name: "DefaultProxyAdmin",
+          artifact: defaultProxyAdmin,
+        },
       },
+      maxFeePerGas: MAX_FEE_PER_GAS,
     });
 
     const pythOracle = await hre.ethers.getContract("PythOracle");
@@ -119,15 +148,21 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       from: deployer,
       log: true,
       deterministicDeployment: false,
+      skipIfAlreadyDeployed: true,
       args: [],
       proxy: {
         owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
+        proxyContract: "OptimizedTransparentUpgradeableProxy",
         execute: {
           methodName: "initialize",
           args: network.live ? [sidRegistryAddress, accessControlManagerAddress] : [],
         },
+        viaAdminContract: {
+          name: "DefaultProxyAdmin",
+          artifact: defaultProxyAdmin,
+        },
       },
+      maxFeePerGas: MAX_FEE_PER_GAS,
     });
     const binanceOracle = await hre.ethers.getContract("BinanceOracle");
     const binanceOracleOwner = await binanceOracle.owner();
