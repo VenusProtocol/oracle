@@ -54,7 +54,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   });
 
   const boundValidator = await hre.ethers.getContract("BoundValidator");
-  console.log(boundValidator.address);
 
   await deploy("ResilientOracle", {
     from: deployer,
