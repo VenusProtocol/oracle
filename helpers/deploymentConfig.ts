@@ -263,7 +263,7 @@ export const chainlinkFeed: Config = {
   zksyncsepolia: {
     WBTC: "0x95Bc57e794aeb02E4a16eff406147f3ce2531F83",
     WETH: "0xfEefF7c3fB57d18C5C6Cdd71e45D2D0b4F9377bF",
-    USDC: "0x1844478CA634f3a762a2E71E3386837Bd50C947F",
+    "USDC.e": "0x1844478CA634f3a762a2E71E3386837Bd50C947F",
     USDT: "0x07F05C2aFeb54b68Ea425CAbCcbF53E2d5605d76",
   },
 };
@@ -280,7 +280,7 @@ export const redstoneFeed: Config = {
     XVS: "0xd9a66Ff1D660aD943F48e9c606D09eA672f312E8",
   },
   zksyncsepolia: {
-    XVS: "", // TBD
+    XVS: "0x3AeCac43A2ebe5D8184e650403bf9F656F9D1cfA",
   },
 };
 
@@ -928,8 +928,8 @@ export const assets: Assets = {
       oracle: "chainlink",
     },
     {
-      token: "USDC",
-      address: "0x71ff1d2598035C401ED36C97f6cC4DFb05cd9495",
+      token: "USDC.e",
+      address: "0xF98780C8a0843829f98e624d83C3FfDDf43BE984",
       oracle: "chainlink",
     },
     {
@@ -945,7 +945,7 @@ export const assets: Assets = {
     {
       token: "XVS",
       address: "0x3AeCac43A2ebe5D8184e650403bf9F656F9D1cfA",
-      oracle: "redstone", // TBD
+      oracle: "redstone",
     },
   ],
 };
