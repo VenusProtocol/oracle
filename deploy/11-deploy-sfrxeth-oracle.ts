@@ -14,31 +14,12 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const { sfrxETH, SfrxEthFraxOracle, acm } = ADDRESSES[network.name];
   const maxAllowedPriceDifference = parseUnits("1.14", 18);
 
-  let SfrxEthFraxOracleAddress = SfrxEthFraxOracle;
-  if (!SfrxEthFraxOracle) {
-    await deploy("MockSfrxEthFraxOracle", {
-      contract: "MockSfrxEthFraxOracle",
-      from: deployer,
-      log: true,
-      autoMine: true,
-      skipIfAlreadyDeployed: true,
-      args: [],
-    });
-
-    const mockSfrxEthFraxOracle = await ethers.getContract("MockSfrxEthFraxOracle");
-    SfrxEthFraxOracleAddress = mockSfrxEthFraxOracle.address;
-
-    if ((await mockSfrxEthFraxOracle.owner()) === deployer) {
-      await mockSfrxEthFraxOracle.transferOwnership(proxyOwnerAddress);
-    }
-  }
-
   await deploy("SFrxETHOracle", {
     contract: "SFrxETHOracle",
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [SfrxEthFraxOracleAddress, sfrxETH],
+    args: [SfrxEthFraxOracle || (await ethers.getContract("MockSfrxEthFraxOracle")).address, sfrxETH],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",

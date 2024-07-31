@@ -9,8 +9,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const { deployer } = await getNamedAccounts();
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
-  console.log(`Timelock (${proxyOwnerAddress})`);
-
   const sequencer = SEQUENCER[network.name];
   let contractName = "ChainlinkOracle";
   if (sequencer !== undefined) contractName = "SequencerChainlinkOracle";
@@ -40,9 +38,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   }
 };
 
-func.skip = async ({ network }: HardhatRuntimeEnvironment) =>
-  !["hardhat", "bscmainnet", "bsctestnet", "sepolia", "ethereum", "arbitrumone", "arbitrumsepolia"].includes(
-    network.name,
-  );
 func.tags = ["deploy-redstone"];
+func.skip = async env => !env.network.live;
 export default func;
