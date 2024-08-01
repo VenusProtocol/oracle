@@ -1,3 +1,10 @@
+## [2.5.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.5.0-dev.1...v2.5.0-dev.2) (2024-08-01)
+
+
+### Features
+
+* update hardhat/deploy package version ([9cc4705](https://github.com/VenusProtocol/oracle/commit/9cc4705e6500da165872718069a86a396cb74676))
+
 ## [2.5.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.4.0...v2.5.0-dev.1) (2024-07-31)
 
 
