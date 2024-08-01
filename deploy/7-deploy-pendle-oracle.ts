@@ -17,25 +17,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const { PTweETH_26DEC2024, PTweETH_26DEC2024_Market, PTOracle, WETH } = ADDRESSES[network.name];
 
-  let ptOracleAddress = PTOracle;
-  if (!ptOracleAddress) {
-    // deploy MockAnkrBNB
-    await deploy("MockPendlePtOracle", {
-      contract: "MockPendlePtOracle",
-      from: deployer,
-      log: true,
-      autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
-      skipIfAlreadyDeployed: true,
-      args: [],
-    });
-
-    const pendleOracleContract = await ethers.getContract("MockPendlePtOracle");
-    ptOracleAddress = pendleOracleContract.address;
-
-    if ((await pendleOracleContract.owner()) === deployer) {
-      await pendleOracleContract.transferOwnership(proxyOwnerAddress);
-    }
-  }
+  const ptOracleAddress = PTOracle || (await ethers.getContract("MockPendlePtOracle")).address;
 
   await deploy("PendleOracle-PT-weETH-26DEC2024", {
     contract: "PendleOracle",

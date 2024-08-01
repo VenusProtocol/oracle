@@ -12,41 +12,16 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
   const { sFRAX, FRAX } = ADDRESSES[network.name];
-  const defaultProxyAdmin = await hre.artifacts.readArtifact(
-    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
-  );
-  let sFRAXAddress = sFRAX;
-  if (!sFRAXAddress) {
-    await deploy("MockSFrax", {
-      contract: "MockSFrax",
-      from: deployer,
-      log: true,
-      autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
-      skipIfAlreadyDeployed: true,
-      args: ["Staked FRAX", "sFRAX", 18],
-    });
-
-    const mockSFraxContract = await ethers.getContract("MockSFrax");
-    sFRAXAddress = mockSFraxContract.address;
-
-    if ((await mockSFraxContract.owner()) === deployer) {
-      await mockSFraxContract.transferOwnership(proxyOwnerAddress);
-    }
-  }
 
   await deploy("SFraxOracle", {
     contract: "SFraxOracle",
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [sFRAXAddress, FRAX, oracle.address],
+    args: [sFRAX || (await ethers.getContract("MockSFrax")).address, FRAX, oracle.address],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentUpgradeableProxy",
-      viaAdminContract: {
-        name: "DefaultProxyAdmin",
-        artifact: defaultProxyAdmin,
-      },
+      proxyContract: "OptimizedTransparentProxy",
     },
     skipIfAlreadyDeployed: true,
   });

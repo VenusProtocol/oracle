@@ -8,12 +8,10 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const { deploy, catchUnknownSigner } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const networkName: string = network.name === "hardhat" ? "bsctestnet" : network.name;
+  const { vBNBAddress } = ADDRESSES[network.name];
+  const { VAIAddress } = ADDRESSES[network.name];
 
-  const { vBNBAddress } = ADDRESSES[networkName];
-  const { VAIAddress } = ADDRESSES[networkName];
-
-  const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
+  const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
   const boundValidator = await hre.ethers.getContract("BoundValidator");
 
   const defaultProxyAdmin = await hre.artifacts.readArtifact(
@@ -40,3 +38,4 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
 export default func;
 func.tags = ["update-resilientOracle"];
+func.skip = async env => !env.network.live;

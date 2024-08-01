@@ -9,12 +9,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const { deployer } = await getNamedAccounts();
 
   console.log(`Deployer ${deployer}`);
-  const networkName: string = network.name === "hardhat" ? "bsctestnet" : network.name;
 
-  const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
+  const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
-  const { stETHAddress, wstETHAddress } = ADDRESSES[networkName];
-  const WETHAsset = assets[networkName].find(asset => asset.token === "WETH");
+  const { stETHAddress, wstETHAddress } = ADDRESSES[network.name];
+  const WETHAsset = assets[network.name].find(asset => asset.token === "WETH");
   const WETHAddress = WETHAsset?.address ?? addr0000;
 
   const defaultProxyAdmin = await hre.artifacts.readArtifact(

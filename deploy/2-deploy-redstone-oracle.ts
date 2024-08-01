@@ -8,9 +8,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
-
-  console.log(`Timelock (${proxyOwnerAddress})`);
-
   const defaultProxyAdmin = await hre.artifacts.readArtifact(
     "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
   );
@@ -49,16 +46,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   }
 };
 
-func.skip = async ({ network }: HardhatRuntimeEnvironment) =>
-  ![
-    "hardhat",
-    "bscmainnet",
-    "bsctestnet",
-    "sepolia",
-    "ethereum",
-    "arbitrumone",
-    "arbitrumsepolia",
-    "zksyncsepolia",
-  ].includes(network.name);
 func.tags = ["deploy-redstone"];
+func.skip = async env => !env.network.live;
 export default func;

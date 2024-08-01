@@ -4,16 +4,14 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ADDRESSES, SEQUENCER } from "../helpers/deploymentConfig";
 
-const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
+const func: DeployFunction = async function ({
+  getChainId,
+  getNamedAccounts,
+  deployments,
+  network,
+}: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-
-  const networkName: string = network.name === "hardhat" ? "bsctestnet" : network.name;
-
-  console.log(`Timelock: ${ADDRESSES[networkName].timelock}`);
-
-  const { vBNBAddress } = ADDRESSES[networkName];
-  const { VAIAddress } = ADDRESSES[networkName];
 
   let accessControlManager;
   if (!network.live) {
@@ -26,8 +24,23 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
     accessControlManager = await hre.ethers.getContract("AccessControlManagerScenario");
   }
-  const accessControlManagerAddress = network.live ? ADDRESSES[networkName].acm : accessControlManager?.address;
-  const proxyOwnerAddress = network.live ? ADDRESSES[networkName].timelock : deployer;
+
+  let vai;
+  if (!network.live) {
+    await deploy("VAIScenario", {
+      from: deployer,
+      log: true,
+      autoMine: true,
+      args: [await getChainId()],
+    });
+
+    vai = await hre.ethers.getContract("VAIScenario");
+  }
+  const accessControlManagerAddress = network.live ? ADDRESSES[network.name].acm : accessControlManager?.address;
+  const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
+  const vaiAddress = network.live ? ADDRESSES[network.name].VAI : vai?.address;
+  const vbnbAddress = network.live ? ADDRESSES[network.name].vBNB : deployer;
+  const timelock = network.live ? ADDRESSES[network.name].timelock : deployer;
 
   const defaultProxyAdmin = await hre.artifacts.readArtifact(
     "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
@@ -60,7 +73,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     log: true,
     deterministicDeployment: false,
     skipIfAlreadyDeployed: true,
-    args: [vBNBAddress, VAIAddress, boundValidator.address],
+    args: [vbnbAddress, vaiAddress, boundValidator.address],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentUpgradeableProxy",
@@ -100,78 +113,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     },
   });
 
-  const { pythOracleAddress } = ADDRESSES[networkName];
-
-  // Skip if no pythOracle address in config
-  if (pythOracleAddress) {
-    await deploy("PythOracle", {
-      contract: network.live ? "PythOracle" : "MockPythOracle",
-      from: deployer,
-      log: true,
-      deterministicDeployment: false,
-      args: [],
-      proxy: {
-        owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentUpgradeableProxy",
-        execute: {
-          methodName: "initialize",
-          args: network.live ? [pythOracleAddress, accessControlManagerAddress] : [pythOracleAddress],
-        },
-        viaAdminContract: {
-          name: "DefaultProxyAdmin",
-          artifact: defaultProxyAdmin,
-        },
-      },
-    });
-
-    const pythOracle = await hre.ethers.getContract("PythOracle");
-    await accessControlManager?.giveCallPermission(pythOracle.address, "setTokenConfig(TokenConfig)", deployer);
-    const pythOracleOwner = await pythOracle.owner();
-
-    if (pythOracleOwner === deployer) {
-      await pythOracle.transferOwnership(ADDRESSES[networkName].timelock);
-      console.log(`Ownership of PythOracle transfered from deployer to Timelock (${ADDRESSES[networkName].timelock})`);
-    }
-  }
-
-  const { sidRegistryAddress, feedRegistryAddress } = ADDRESSES[networkName];
-  // Skip if no sidRegistryAddress address in config
-  if (sidRegistryAddress) {
-    await deploy("BinanceOracle", {
-      contract: network.live ? "BinanceOracle" : "MockBinanceOracle",
-      from: deployer,
-      log: true,
-      deterministicDeployment: false,
-      skipIfAlreadyDeployed: true,
-      args: [],
-      proxy: {
-        owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentUpgradeableProxy",
-        execute: {
-          methodName: "initialize",
-          args: network.live ? [sidRegistryAddress, accessControlManagerAddress] : [],
-        },
-        viaAdminContract: {
-          name: "DefaultProxyAdmin",
-          artifact: defaultProxyAdmin,
-        },
-      },
-    });
-    const binanceOracle = await hre.ethers.getContract("BinanceOracle");
-    const binanceOracleOwner = await binanceOracle.owner();
-
-    if (network.live && sidRegistryAddress === "0x0000000000000000000000000000000000000000") {
-      await binanceOracle.setFeedRegistryAddress(feedRegistryAddress);
-    }
-
-    if (binanceOracleOwner === deployer) {
-      await binanceOracle.transferOwnership(ADDRESSES[networkName].timelock);
-      console.log(
-        `Ownership of BinanceOracle transfered from deployer to Timelock (${ADDRESSES[networkName].timelock})`,
-      );
-    }
-  }
-
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
   const chainlinkOracle = await hre.ethers.getContract(contractName);
 
@@ -183,24 +124,18 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const boundValidatorOwner = await boundValidator.owner();
 
   if (resilientOracleOwner === deployer) {
-    await resilientOracle.transferOwnership(ADDRESSES[networkName].timelock);
-    console.log(
-      `Ownership of ResilientOracle transfered from deployer to Timelock (${ADDRESSES[networkName].timelock})`,
-    );
+    await resilientOracle.transferOwnership(timelock);
+    console.log(`Ownership of ResilientOracle transfered from deployer to Timelock (${timelock})`);
   }
 
   if (chainlinkOracleOwner === deployer) {
-    await chainlinkOracle.transferOwnership(ADDRESSES[networkName].timelock);
-    console.log(
-      `Ownership of ChainlinkOracle transfered from deployer to Timelock (${ADDRESSES[networkName].timelock})`,
-    );
+    await chainlinkOracle.transferOwnership(timelock);
+    console.log(`Ownership of ChainlinkOracle transfered from deployer to Timelock (${timelock})`);
   }
 
   if (boundValidatorOwner === deployer) {
-    await boundValidator.transferOwnership(ADDRESSES[networkName].timelock);
-    console.log(
-      `Ownership of BoundValidator transfered from deployer to Timelock (${ADDRESSES[networkName].timelock})`,
-    );
+    await boundValidator.transferOwnership(timelock);
+    console.log(`Ownership of BoundValidator transfered from deployer to Timelock (${timelock})`);
   }
 };
 
