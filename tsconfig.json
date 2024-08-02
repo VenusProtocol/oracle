@@ -22,6 +22,6 @@
     }
   },
   "exclude": ["node_modules"],
-  "files": ["./hardhat.config.ts", "./hardhat.config.zksync.ts"],
+  "files": ["./hardhat.config.ts"],
   "include": ["deploy"]
 }
