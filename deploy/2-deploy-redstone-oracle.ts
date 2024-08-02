@@ -8,6 +8,9 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
+  const defaultProxyAdmin = await hre.artifacts.readArtifact(
+    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
+  );
 
   const sequencer = SEQUENCER[network.name];
   let contractName = "ChainlinkOracle";
@@ -18,13 +21,18 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     from: deployer,
     log: true,
     deterministicDeployment: false,
+    skipIfAlreadyDeployed: true,
     args: sequencer ? [sequencer] : [],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
       execute: {
         methodName: "initialize",
         args: network.live ? [ADDRESSES[network.name].acm] : [],
+      },
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
       },
     },
   });

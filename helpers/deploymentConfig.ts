@@ -173,6 +173,13 @@ export const ADDRESSES: PreconfiguredAddresses = {
     acm: arbitrumoneGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x14e0E151b33f9802b3e75b621c1457afc44DcAA0", // Arbitrum One Multisig
   },
+  zksyncsepolia: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: "0xD07f543d47c3a8997D6079958308e981AC14CD01", // To-do: use node modules
+    timelock: "0xa2f83de95E9F28eD443132C331B6a9C9B7a9F866", // Zksync sepolia Multisig
+  },
 };
 
 export const chainlinkFeed: Config = {
@@ -257,6 +264,12 @@ export const chainlinkFeed: Config = {
     ARB: "0xb2A824043730FE05F3DA2efaFa1CBbe83fa548D6",
     WETH: "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
   },
+  zksyncsepolia: {
+    WBTC: "0x95Bc57e794aeb02E4a16eff406147f3ce2531F83",
+    WETH: "0xfEefF7c3fB57d18C5C6Cdd71e45D2D0b4F9377bF",
+    "USDC.e": "0x1844478CA634f3a762a2E71E3386837Bd50C947F",
+    USDT: "0x07F05C2aFeb54b68Ea425CAbCcbF53E2d5605d76",
+  },
 };
 
 export const redstoneFeed: Config = {
@@ -269,6 +282,9 @@ export const redstoneFeed: Config = {
   },
   arbitrumone: {
     XVS: "0xd9a66Ff1D660aD943F48e9c606D09eA672f312E8",
+  },
+  zksyncsepolia: {
+    XVS: "0x3AeCac43A2ebe5D8184e650403bf9F656F9D1cfA",
   },
 };
 
@@ -901,6 +917,38 @@ export const assets: Assets = {
     {
       token: "XVS",
       address: "0xc1Eb7689147C81aC840d4FF0D298489fc7986d52",
+      oracle: "redstone",
+    },
+  ],
+  zksyncsepolia: [
+    {
+      token: "WBTC",
+      address: "0xeF891B3FA37FfD83Ce8cC7b682E4CADBD8fFc6F0",
+      oracle: "chainlink",
+    },
+    {
+      token: "WETH",
+      address: "0x53F7e72C7ac55b44c7cd73cC13D4EF4b121678e6",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDC.e",
+      address: "0xF98780C8a0843829f98e624d83C3FfDDf43BE984",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDT",
+      address: "0x9Bf62C9C6AaB7AB8e01271f0d7A401306579709B",
+      oracle: "chainlink",
+    },
+    {
+      token: "ZK",
+      address: "0x8A2E9048F5d658E88D6eD89DdD1F3B5cA0250B9F",
+      oracle: "chainlink",
+    },
+    {
+      token: "XVS",
+      address: "0x3AeCac43A2ebe5D8184e650403bf9F656F9D1cfA",
       oracle: "redstone",
     },
   ],

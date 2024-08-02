@@ -10,7 +10,9 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const { deployer } = await getNamedAccounts();
 
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
-
+  const defaultProxyAdmin = await hre.artifacts.readArtifact(
+    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
+  );
   const { sfrxETH, SfrxEthFraxOracle, acm } = ADDRESSES[network.name];
   const maxAllowedPriceDifference = parseUnits("1.14", 18);
 
@@ -26,6 +28,10 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       execute: {
         methodName: "initialize",
         args: [acm, maxAllowedPriceDifference],
+      },
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
       },
     },
     skipIfAlreadyDeployed: true,

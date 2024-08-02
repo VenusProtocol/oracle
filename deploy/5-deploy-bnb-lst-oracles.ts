@@ -14,7 +14,9 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const { ankrBNB, stkBNB, BNBx, BNBxStakeManager, slisBNBStakeManager, stkBNBStakePool, slisBNB, wBETH } =
     ADDRESSES[network.name];
   const ETH = assets[network.name].find(asset => asset.token === "ETH");
-
+  const defaultProxyAdmin = await hre.artifacts.readArtifact(
+    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
+  );
   await deploy("BNBxOracle", {
     from: deployer,
     log: true,
@@ -22,7 +24,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     args: [BNBxStakeManager, BNBx, oracle.address],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
+      },
     },
     skipIfAlreadyDeployed: true,
   });
@@ -34,7 +40,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     args: [slisBNBStakeManager, slisBNB, oracle.address],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
+      },
     },
     skipIfAlreadyDeployed: true,
   });
@@ -46,7 +56,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     args: [stkBNBStakePool, stkBNB, oracle.address],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
+      },
     },
     skipIfAlreadyDeployed: true,
   });
@@ -60,7 +74,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     args: [ankrBNBAddress, oracle.address],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
+      },
     },
     skipIfAlreadyDeployed: true,
   });
@@ -74,7 +92,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     args: [wBETHAddress, ETH?.address, oracle.address],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
+      },
     },
     skipIfAlreadyDeployed: true,
   });

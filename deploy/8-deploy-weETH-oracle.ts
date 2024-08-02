@@ -11,7 +11,9 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const resilientOracle = await ethers.getContract("ResilientOracle");
   const chainlinkOracle = await ethers.getContract("ChainlinkOracle");
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
-
+  const defaultProxyAdmin = await hre.artifacts.readArtifact(
+    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
+  );
   let { EtherFiLiquidityPool } = ADDRESSES[network.name];
   const { weETH, eETH, WETH } = ADDRESSES[network.name];
 
@@ -25,7 +27,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       args: [EtherFiLiquidityPool, weETH, eETH, resilientOracle.address],
       proxy: {
         owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
+        proxyContract: "OptimizedTransparentUpgradeableProxy",
+        viaAdminContract: {
+          name: "DefaultProxyAdmin",
+          artifact: defaultProxyAdmin,
+        },
       },
       skipIfAlreadyDeployed: true,
     });
@@ -38,7 +44,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       args: [EtherFiLiquidityPool, weETH, WETH, resilientOracle.address],
       proxy: {
         owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
+        proxyContract: "OptimizedTransparentUpgradeableProxy",
+        viaAdminContract: {
+          name: "DefaultProxyAdmin",
+          artifact: defaultProxyAdmin,
+        },
       },
       skipIfAlreadyDeployed: true,
     });
@@ -51,7 +61,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       args: [weETH, WETH, resilientOracle.address, chainlinkOracle.address],
       proxy: {
         owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
+        proxyContract: "OptimizedTransparentUpgradeableProxy",
+        viaAdminContract: {
+          name: "DefaultProxyAdmin",
+          artifact: defaultProxyAdmin,
+        },
       },
       skipIfAlreadyDeployed: true,
     });

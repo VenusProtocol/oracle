@@ -6,8 +6,10 @@
 !.yarn/sdks
 !.yarn/versions
 **/artifacts
+**/artifacts-zk
 **/build
 **/cache
+**/cache-zk
 **/coverage
 **/.coverage_artifacts
 **/.coverage_cache

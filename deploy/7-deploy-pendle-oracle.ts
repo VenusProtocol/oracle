@@ -11,6 +11,10 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const oracle = await ethers.getContract("ResilientOracle");
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
+  const defaultProxyAdmin = await hre.artifacts.readArtifact(
+    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
+  );
+
   const { PTweETH_26DEC2024, PTweETH_26DEC2024_Market, PTOracle, WETH } = ADDRESSES[network.name];
 
   const ptOracleAddress = PTOracle || (await ethers.getContract("MockPendlePtOracle")).address;
@@ -30,7 +34,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     ],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
+      },
     },
     skipIfAlreadyDeployed: true,
   });

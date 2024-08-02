@@ -38,21 +38,30 @@ const func: DeployFunction = async function ({
   }
   const accessControlManagerAddress = network.live ? ADDRESSES[network.name].acm : accessControlManager?.address;
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
-  const vaiAddress = network.live ? ADDRESSES[network.name].VAI : vai?.address;
-  const vbnbAddress = network.live ? ADDRESSES[network.name].vBNB : deployer;
+  const vaiAddress = network.live ? ADDRESSES[network.name].VAIAddress : vai?.address;
+  const vbnbAddress = network.live ? ADDRESSES[network.name].vBNBAddress : deployer;
   const timelock = network.live ? ADDRESSES[network.name].timelock : deployer;
+
+  const defaultProxyAdmin = await hre.artifacts.readArtifact(
+    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
+  );
 
   await deploy("BoundValidator", {
     from: deployer,
     log: true,
     deterministicDeployment: false,
+    skipIfAlreadyDeployed: true,
     args: [],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
       execute: {
         methodName: "initialize",
         args: [accessControlManagerAddress],
+      },
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
       },
     },
   });
@@ -63,13 +72,18 @@ const func: DeployFunction = async function ({
     from: deployer,
     log: true,
     deterministicDeployment: false,
+    skipIfAlreadyDeployed: true,
     args: [vbnbAddress, vaiAddress, boundValidator.address],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
       execute: {
         methodName: "initialize",
         args: [accessControlManagerAddress],
+      },
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
       },
     },
   });
@@ -83,13 +97,18 @@ const func: DeployFunction = async function ({
     from: deployer,
     log: true,
     deterministicDeployment: false,
+    skipIfAlreadyDeployed: true,
     args: sequencer ? [sequencer] : [],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
       execute: {
         methodName: "initialize",
         args: network.live ? [accessControlManagerAddress] : [],
+      },
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
       },
     },
   });

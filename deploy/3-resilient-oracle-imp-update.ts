@@ -14,6 +14,10 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
   const boundValidator = await hre.ethers.getContract("BoundValidator");
 
+  const defaultProxyAdmin = await hre.artifacts.readArtifact(
+    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
+  );
+
   await catchUnknownSigner(
     deploy("ResilientOracle", {
       from: deployer,
@@ -22,7 +26,11 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       args: [vBNBAddress, VAIAddress, boundValidator.address],
       proxy: {
         owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
+        proxyContract: "OptimizedTransparentUpgradeableProxy",
+        viaAdminContract: {
+          name: "DefaultProxyAdmin",
+          artifact: defaultProxyAdmin,
+        },
       },
     }),
   );

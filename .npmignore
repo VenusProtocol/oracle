@@ -8,6 +8,7 @@ networks
 test
 .npmignore
 hardhat.config.ts
+hardhat.config.zksync.ts
 .yarnrc.yml
 .solhintignore
 .solhint.json

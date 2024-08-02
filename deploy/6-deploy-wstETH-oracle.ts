@@ -16,6 +16,10 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const WETHAsset = assets[network.name].find(asset => asset.token === "WETH");
   const WETHAddress = WETHAsset?.address ?? addr0000;
 
+  const defaultProxyAdmin = await hre.artifacts.readArtifact(
+    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
+  );
+
   const oracle = await ethers.getContract("ResilientOracle");
 
   // Equivalence and NonEquivalence is related to if the oracle will
@@ -30,7 +34,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     args: [wstETHAddress, WETHAddress, stETHAddress, oracle.address, true],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
+      },
     },
   });
 
@@ -42,7 +50,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     args: [wstETHAddress, WETHAddress, stETHAddress, oracle.address, false],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
+      },
     },
   });
 };
