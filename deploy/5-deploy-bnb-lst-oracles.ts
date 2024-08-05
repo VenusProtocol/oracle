@@ -4,7 +4,12 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ADDRESSES, assets } from "../helpers/deploymentConfig";
 
-const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
+const func: DeployFunction = async ({
+  getNamedAccounts,
+  deployments,
+  network,
+  artifacts,
+}: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
@@ -14,7 +19,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const { ankrBNB, stkBNB, BNBx, BNBxStakeManager, slisBNBStakeManager, stkBNBStakePool, slisBNB, wBETH } =
     ADDRESSES[network.name];
   const ETH = assets[network.name].find(asset => asset.token === "ETH");
-  const defaultProxyAdmin = await hre.artifacts.readArtifact(
+  const defaultProxyAdmin = await artifacts.readArtifact(
     "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
   );
   await deploy("BNBxOracle", {
