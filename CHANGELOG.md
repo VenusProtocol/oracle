@@ -1,3 +1,18 @@
+## [2.5.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.5.0-dev.2...v2.5.0-dev.3) (2024-08-05)
+
+
+### Features
+
+* add config for zksync ([c492b6a](https://github.com/VenusProtocol/oracle/commit/c492b6a29a45d3493c7799b80e52a30fc704c7ae))
+* deployments of oracle on zksync sepolia ([a89526d](https://github.com/VenusProtocol/oracle/commit/a89526dba384926510c510826cd4c7af9720aa93))
+* updating deployment files ([0fa5a04](https://github.com/VenusProtocol/oracle/commit/0fa5a04169e593adcb32e49752c294559404edca))
+
+
+### Bug Fixes
+
+* build ([02f6170](https://github.com/VenusProtocol/oracle/commit/02f61703624cdd8a586456a42f40e7520dfa90c5))
+* deploy and ci.yml ([3a8eb4b](https://github.com/VenusProtocol/oracle/commit/3a8eb4bd04b44a1e1fed38f82604806b5fa4a4d1))
+
 ## [2.5.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.5.0-dev.1...v2.5.0-dev.2) (2024-08-01)
 
 
