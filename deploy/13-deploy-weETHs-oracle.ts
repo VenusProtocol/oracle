@@ -13,22 +13,20 @@ const func: DeployFunction = async ({
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
+  const redStoneOracle = await ethers.getContract("RedStoneOracle");
   const resilientOracle = await ethers.getContract("ResilientOracle");
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
   const defaultProxyAdmin = await artifacts.readArtifact(
     "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
   );
-  let { weETHsAccountant } = ADDRESSES[network.name];
   const { weETHs, WETH } = ADDRESSES[network.name];
 
-  weETHsAccountant = weETHsAccountant || (await ethers.getContract("weETHsMockAccountantWithRateProviders")).address;
-
-  await deploy("WeETHsAccountantOracle", {
-    contract: "WeETHAccountantOracle",
+  await deploy("weETHsOneJumpRedStoneOracle", {
+    contract: "OneJumpOracle",
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [weETHsAccountant, weETHs, WETH, resilientOracle.address],
+    args: [weETHs, WETH, resilientOracle.address, redStoneOracle.address],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentUpgradeableProxy",
@@ -42,5 +40,5 @@ const func: DeployFunction = async ({
 };
 
 export default func;
-func.tags = ["accountant-oracle"];
+func.tags = ["weETHs"];
 func.skip = async (hre: HardhatRuntimeEnvironment) => hre.network.name !== "ethereum" && hre.network.name !== "sepolia";
