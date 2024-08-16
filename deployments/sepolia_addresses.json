@@ -45,6 +45,9 @@
     "rsETHOneJumpChainlinkOracle_Proxy": "0xDAF249b4A937385dB567B73630539BacDBB04342",
     "rsETHOneJumpRedStoneOracle": "0xB15CA4Cd4bA5696FDC1cbBd859588c0421cc1F68",
     "rsETHOneJumpRedStoneOracle_Implementation": "0x4671E637247C0431AD86774a612f0B1C1c564FAe",
-    "rsETHOneJumpRedStoneOracle_Proxy": "0xB15CA4Cd4bA5696FDC1cbBd859588c0421cc1F68"
+    "rsETHOneJumpRedStoneOracle_Proxy": "0xB15CA4Cd4bA5696FDC1cbBd859588c0421cc1F68",
+    "weETHsOneJumpRedStoneOracle": "0x0EC39B9846539699A5c2371f324ba46865804988",
+    "weETHsOneJumpRedStoneOracle_Implementation": "0x681dD3486dCBBE329091aae47d573092F99f45b9",
+    "weETHsOneJumpRedStoneOracle_Proxy": "0x0EC39B9846539699A5c2371f324ba46865804988"
   }
 }
