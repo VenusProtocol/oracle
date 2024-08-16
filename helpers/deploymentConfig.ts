@@ -117,6 +117,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     sfrxETH: "0x14AECeEc177085fd09EA07348B4E1F7Fcc030fA1",
     rsETH: "0xfA0614E5C803E15070d31f7C38d2d430EBe68E47",
     ezETH: "0xB8eb706b85Ae7355c9FE4371a499F50f3484809c",
+    weETHs: "0x917ceE801a67f933F2e6b33fC0cD1ED2d5909D88",
   },
   ethereum: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -140,6 +141,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     SfrxEthFraxOracle: "0x3d3D868522b5a4035ADcb67BF0846D61597A6a6F",
     rsETH: "0xA1290d69c65A6Fe4DF752f95823fae25cB99e5A7",
     ezETH: "0xbf5495Efe5DB9ce00f80364C8B423567e58d2110",
+    weETHs: "0x917ceE801a67f933F2e6b33fC0cD1ED2d5909D88",
+    weETHsAccountant: "0xbe16605B22a7faCEf247363312121670DFe5afBE",
   },
   opbnbtestnet: {
     vBNBAddress: ethers.constants.AddressZero,
