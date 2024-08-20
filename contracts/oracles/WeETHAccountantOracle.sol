@@ -28,8 +28,8 @@ contract WeETHAccountantOracle is CorrelatedTokenOracle {
     }
 
     /**
-     * @notice Gets the eETH for 1 weETH
-     * @return amount Amount of eETH
+     * @notice Gets the ETH for 1 weETH LST
+     * @return amount Amount of ETH
      */
     function _getUnderlyingAmount() internal view override returns (uint256) {
         return ACCOUNTANT.getRate();
