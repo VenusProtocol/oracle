@@ -18,17 +18,17 @@ const func: DeployFunction = async ({
   const defaultProxyAdmin = await artifacts.readArtifact(
     "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
   );
-  let { Accountant } = ADDRESSES[network.name];
+  let { weETHs_Accountant } = ADDRESSES[network.name];
   const { weETHs, WETH } = ADDRESSES[network.name];
 
-  Accountant = Accountant || (await ethers.getContract("MockAccountant")).address;
+  weETHs_Accountant = weETHs_Accountant || (await ethers.getContract("MockAccountant_weETHs")).address;
 
   await deploy("WeETHAccountantOracle_weETHs", {
     contract: "WeETHAccountantOracle",
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [Accountant, weETHs, WETH, resilientOracle.address],
+    args: [weETHs_Accountant, weETHs, WETH, resilientOracle.address],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentUpgradeableProxy",

@@ -19,7 +19,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     skipIfAlreadyDeployed: true,
   });
 
-  const mockAccountant = await ethers.getContract("MockAccountant");
+  const mockAccountant = await ethers.getContract("MockAccountant_weETHs");
   await mockAccountant.transferOwnership(proxyOwnerAddress);
 };
 
