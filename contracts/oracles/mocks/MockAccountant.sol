@@ -13,7 +13,7 @@ contract MockAccountant is IAccountant, Ownable {
         rate = _rate;
     }
 
-    function getRate() external view override returns (uint256) {
+    function getRateSafe() external view override returns (uint256) {
         return rate;
     }
 }

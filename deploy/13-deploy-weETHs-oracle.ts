@@ -42,5 +42,5 @@ const func: DeployFunction = async ({
 };
 
 export default func;
-func.tags = ["weETHAccountant"];
+func.tags = ["WeETHAccountantOracle_weETHs"];
 func.skip = async (hre: HardhatRuntimeEnvironment) => hre.network.name !== "ethereum" && hre.network.name !== "sepolia";

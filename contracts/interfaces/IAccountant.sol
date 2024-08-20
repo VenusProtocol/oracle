@@ -2,5 +2,5 @@
 pragma solidity 0.8.25;
 
 interface IAccountant {
-    function getRate() external view returns (uint256);
+    function getRateSafe() external view returns (uint256);
 }

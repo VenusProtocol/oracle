@@ -24,5 +24,5 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 };
 
 export default func;
-func.tags = ["weETHAccountant"];
+func.tags = ["WeETHAccountantOracle_weETHs"];
 func.skip = async (hre: HardhatRuntimeEnvironment) => hre.network.name !== "sepolia";

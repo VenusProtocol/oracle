@@ -20,9 +20,9 @@ contract WeETHAccountantOracle is CorrelatedTokenOracle {
     constructor(
         address accountant,
         address weethLRT,
-        address eth,
+        address weth,
         address resilientOracle
-    ) CorrelatedTokenOracle(weethLRT, eth, resilientOracle) {
+    ) CorrelatedTokenOracle(weethLRT, weth, resilientOracle) {
         ensureNonzeroAddress(accountant);
         ACCOUNTANT = IAccountant(accountant);
     }
@@ -32,6 +32,6 @@ contract WeETHAccountantOracle is CorrelatedTokenOracle {
      * @return amount Amount of ETH
      */
     function _getUnderlyingAmount() internal view override returns (uint256) {
-        return ACCOUNTANT.getRate();
+        return ACCOUNTANT.getRateSafe();
     }
 }
