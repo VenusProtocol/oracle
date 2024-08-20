@@ -118,7 +118,6 @@ export const ADDRESSES: PreconfiguredAddresses = {
     rsETH: "0xfA0614E5C803E15070d31f7C38d2d430EBe68E47",
     ezETH: "0xB8eb706b85Ae7355c9FE4371a499F50f3484809c",
     weETHs: "0xE233527306c2fa1E159e251a2E5893334505A5E0",
-    weETHs_Accountant: "0xbe16605B22a7faCEf247363312121670DFe5afBE",
   },
   ethereum: {
     vBNBAddress: ethers.constants.AddressZero,
