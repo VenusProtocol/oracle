@@ -8,7 +8,7 @@ import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contract
 /**
  * @title WeETHAccountantOracle
  * @author Venus
- * @notice This oracle fetches the price of weETH LRT
+ * @notice This oracle fetches the price of Ether.fi tokens based on an `Accountant` contract (i.e. weETHs and weETHk)
  */
 contract WeETHAccountantOracle is CorrelatedTokenOracle {
     /// @notice Address of Accountant
