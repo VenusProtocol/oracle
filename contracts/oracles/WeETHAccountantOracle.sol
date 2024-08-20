@@ -8,7 +8,7 @@ import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contract
 /**
  * @title WeETHAccountantOracle
  * @author Venus
- * @notice This oracle fetches the price of weETH LST
+ * @notice This oracle fetches the price of weETH LRT
  */
 contract WeETHAccountantOracle is CorrelatedTokenOracle {
     /// @notice Address of Accountant
@@ -19,16 +19,16 @@ contract WeETHAccountantOracle is CorrelatedTokenOracle {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address accountant,
-        address weethLST,
+        address weethLRT,
         address eth,
         address resilientOracle
-    ) CorrelatedTokenOracle(weethLST, eth, resilientOracle) {
+    ) CorrelatedTokenOracle(weethLRT, eth, resilientOracle) {
         ensureNonzeroAddress(accountant);
         ACCOUNTANT = IAccountant(accountant);
     }
 
     /**
-     * @notice Gets the ETH for 1 weETH LST
+     * @notice Gets the ETH for 1 weETH LRT
      * @return amount Amount of ETH
      */
     function _getUnderlyingAmount() internal view override returns (uint256) {
