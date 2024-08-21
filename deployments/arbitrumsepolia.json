@@ -4762,7 +4762,7 @@
       ]
     },
     "weETHOneJumpChainlinkOracle": {
-      "address": "0x930b4aB92e4Ab9dFd044953a6aE4C48258562292",
+      "address": "0x4f894aC6F5e2E2bD72632B137E28234339Db3D53",
       "abi": [
         {
           "anonymous": false,
@@ -4979,7 +4979,7 @@
       ]
     },
     "weETHOneJumpChainlinkOracle_Implementation": {
-      "address": "0x124eF92e097F2535c6654B53a52eB05467e2E400",
+      "address": "0xd53226E153a7F525ca2f7481bDf6E284767347dC",
       "abi": [
         {
           "inputs": [
@@ -5091,7 +5091,7 @@
       ]
     },
     "weETHOneJumpChainlinkOracle_Proxy": {
-      "address": "0x930b4aB92e4Ab9dFd044953a6aE4C48258562292",
+      "address": "0x4f894aC6F5e2E2bD72632B137E28234339Db3D53",
       "abi": [
         {
           "inputs": [
@@ -5227,7 +5227,7 @@
       ]
     },
     "wstETHOneJumpChainlinkOracle": {
-      "address": "0xA25770DD334E4423b8f688a3694e577a5B9ddE19",
+      "address": "0x06b47B32d9C4D8f948EB3FFDB4a1ecE93794f922",
       "abi": [
         {
           "anonymous": false,
@@ -5444,7 +5444,7 @@
       ]
     },
     "wstETHOneJumpChainlinkOracle_Implementation": {
-      "address": "0x8ae6d8f1F830a84DAa27E2227d935DE003CdaE92",
+      "address": "0x01f8d4A0178ceB60B2fFBf8736765198c7392607",
       "abi": [
         {
           "inputs": [
@@ -5556,7 +5556,7 @@
       ]
     },
     "wstETHOneJumpChainlinkOracle_Proxy": {
-      "address": "0xA25770DD334E4423b8f688a3694e577a5B9ddE19",
+      "address": "0x06b47B32d9C4D8f948EB3FFDB4a1ecE93794f922",
       "abi": [
         {
           "inputs": [
