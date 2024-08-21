@@ -4,7 +4,12 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
 
-const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
+const func: DeployFunction = async function ({
+  getNamedAccounts,
+  deployments,
+  network,
+  artifacts,
+}: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
   const proxyOwnerAddress = ADDRESSES[network.name].timelock;
@@ -12,6 +17,10 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
   const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
+
+  const defaultProxyAdmin = await artifacts.readArtifact(
+    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
+  );
 
   await deploy("wstETHOneJumpChainlinkOracle", {
     contract: "OneJumpOracle",
@@ -21,7 +30,11 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     args: [wstETH, WETH, resilientOracle.address, chainlinkOracle.address],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
+      },
     },
     skipIfAlreadyDeployed: true,
   });
@@ -34,12 +47,16 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     args: [weETH, WETH, resilientOracle.address, chainlinkOracle.address],
     proxy: {
       owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
+      },
     },
     skipIfAlreadyDeployed: true,
   });
 };
 
 func.skip = async () => hre.network.name !== "arbitrumone" && hre.network.name !== "arbitrumsepolia";
-func.tags = ["wstETH_weETH_OneJumpOracles"];
+func.tags = ["wstETH_weETH_OneJumpOracles_arbitrum"];
 export default func;
