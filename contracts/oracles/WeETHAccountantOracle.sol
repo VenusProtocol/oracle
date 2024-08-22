@@ -28,7 +28,7 @@ contract WeETHAccountantOracle is CorrelatedTokenOracle {
     }
 
     /**
-     * @notice Gets the ETH for 1 weETH LRT
+     * @notice Gets the WETH for 1 weETH LRT
      * @return amount Amount of ETH
      */
     function _getUnderlyingAmount() internal view override returns (uint256) {
