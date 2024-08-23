@@ -890,6 +890,16 @@ export const assets: Assets = {
       price: "10000000000000000000",
       oracle: "chainlinkFixed",
     },
+    {
+      token: "wstETH",
+      address: "0x4A9dc15aA6094eF2c7eb9d9390Ac1d71f9406fAE",
+      oracle: "chainlink",
+    },
+    {
+      token: "weETH",
+      address: "0x243141DBff86BbB0a082d790fdC21A6ff615Fa34",
+      oracle: "chainlink",
+    },
   ],
   arbitrumone: [
     {
