@@ -297,9 +297,6 @@ export const redstoneFeed: Config = {
   arbitrumone: {
     XVS: "0xd9a66Ff1D660aD943F48e9c606D09eA672f312E8",
   },
-  zksyncsepolia: {
-    XVS: "",
-  },
   zksyncmainnet: {
     XVS: "0xca4793Eeb7a837E30884279b3D557970E444EBDe",
     ZK: "0x5efDb74da192584746c96EcCe138681Ec1501218",
