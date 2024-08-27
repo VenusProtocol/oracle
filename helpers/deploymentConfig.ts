@@ -168,6 +168,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: arbitrumsepoliaGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x1426A5Ae009c4443188DA8793751024E358A61C2", // Arbitrum Sepolia Multisig
+    wstETH: "0x4A9dc15aA6094eF2c7eb9d9390Ac1d71f9406fAE",
+    weETH: "0x243141DBff86BbB0a082d790fdC21A6ff615Fa34",
+    WETH: "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
   },
   arbitrumone: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -889,6 +892,16 @@ export const assets: Assets = {
       address: "0x877Dc896e7b13096D3827872e396927BbE704407",
       price: "10000000000000000000",
       oracle: "chainlinkFixed",
+    },
+    {
+      token: "wstETH",
+      address: "0x4A9dc15aA6094eF2c7eb9d9390Ac1d71f9406fAE",
+      oracle: "chainlink",
+    },
+    {
+      token: "weETH",
+      address: "0x243141DBff86BbB0a082d790fdC21A6ff615Fa34",
+      oracle: "chainlink",
     },
   ],
   arbitrumone: [
