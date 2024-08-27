@@ -1,3 +1,13 @@
+## [2.5.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v2.5.0-dev.4...v2.5.0-dev.5) (2024-08-27)
+
+
+### Features
+
+* add script for wstETH and weETH oneJumpOracle deployment on arbitrum sepolia ([97a98a3](https://github.com/VenusProtocol/oracle/commit/97a98a3db261bfa8b71733007e5d08633f81df65))
+* deployment files for wstETH and weETH oneJumpOracle on arbitrum sepolia ([fbceebd](https://github.com/VenusProtocol/oracle/commit/fbceebd975c1f7d193b8c49d304618e1c6e9a53f))
+* updating deployment files ([6b9a2a5](https://github.com/VenusProtocol/oracle/commit/6b9a2a58c1a8e35fb5e07be2a3b9adda3e9767a1))
+* updating deployment files ([f698c0c](https://github.com/VenusProtocol/oracle/commit/f698c0c0843d58db57b8f50baa3b1d049edf670c))
+
 ## [2.5.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.5.0-dev.3...v2.5.0-dev.4) (2024-08-23)
 
 
