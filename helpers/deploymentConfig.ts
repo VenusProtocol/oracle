@@ -6,6 +6,7 @@ import ethereumGovernanceDeployments from "@venusprotocol/governance-contracts/d
 import opbnbmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/opbnbmainnet.json";
 import opbnbtestnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/opbnbtestnet.json";
 import sepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/sepolia.json";
+import zksyncsepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/zksyncsepolia.json";
 import mainnetDeployments from "@venusprotocol/venus-protocol/deployments/bscmainnet.json";
 import testnetDeployments from "@venusprotocol/venus-protocol/deployments/bsctestnet.json";
 import { Contract } from "ethers";
@@ -183,8 +184,15 @@ export const ADDRESSES: PreconfiguredAddresses = {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
-    acm: "0xD07f543d47c3a8997D6079958308e981AC14CD01", // To-do: use node modules
+    acm: zksyncsepoliaGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0xa2f83de95E9F28eD443132C331B6a9C9B7a9F866", // Zksync sepolia Multisig
+  },
+  zksyncmainnet: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: "0x526159A92A82afE5327d37Ef446b68FD9a5cA914", // To-do: use node modules
+    timelock: "0x751Aa759cfBB6CE71A43b48e40e1cCcFC66Ba4aa", // Zksync mainnet Multisig
   },
 };
 
@@ -276,6 +284,12 @@ export const chainlinkFeed: Config = {
     "USDC.e": "0x1844478CA634f3a762a2E71E3386837Bd50C947F",
     USDT: "0x07F05C2aFeb54b68Ea425CAbCcbF53E2d5605d76",
   },
+  zksyncmainnet: {
+    WBTC: "0x4Cba285c15e3B540C474A114a7b135193e4f1EA6",
+    WETH: "0x6D41d1dc818112880b40e26BD6FD347E41008eDA",
+    "USDC.e": "0x1824D297C6d6D311A204495277B63e943C2D376E",
+    USDT: "0xB615075979AE1836B476F651f1eB79f0Cd3956a9",
+  },
 };
 
 export const redstoneFeed: Config = {
@@ -289,8 +303,9 @@ export const redstoneFeed: Config = {
   arbitrumone: {
     XVS: "0xd9a66Ff1D660aD943F48e9c606D09eA672f312E8",
   },
-  zksyncsepolia: {
-    XVS: "0x3AeCac43A2ebe5D8184e650403bf9F656F9D1cfA",
+  zksyncmainnet: {
+    XVS: "0xca4793Eeb7a837E30884279b3D557970E444EBDe",
+    ZK: "0x5efDb74da192584746c96EcCe138681Ec1501218",
   },
 };
 
@@ -965,6 +980,38 @@ export const assets: Assets = {
     {
       token: "XVS",
       address: "0x3AeCac43A2ebe5D8184e650403bf9F656F9D1cfA",
+      oracle: "redstone",
+    },
+  ],
+  zksyncmainnet: [
+    {
+      token: "WBTC",
+      address: "0xbbeb516fb02a01611cbbe0453fe3c580d7281011",
+      oracle: "chainlink",
+    },
+    {
+      token: "WETH",
+      address: "0x5aea5775959fbc2557cc8789bc1bf90a239d9a91",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDC.e",
+      address: "0x3355df6d4c9c3035724fd0e3914de96a5a83aaf4",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDT",
+      address: "0x493257fd37edb34451f62edf8d2a0c418852ba4c",
+      oracle: "chainlink",
+    },
+    {
+      token: "ZK",
+      address: "0x5a7d6b2f92c77fad6ccabd7ee0624e64907eaf3e",
+      oracle: "redstone",
+    },
+    {
+      token: "XVS",
+      address: "0xD78ABD81a3D57712a3af080dc4185b698Fe9ac5A",
       oracle: "redstone",
     },
   ],

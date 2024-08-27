@@ -128,6 +128,14 @@ const config: HardhatUserConfig = {
       live: true,
       gasPrice: 2000000000, // 20 gwei
     },
+    zksyncmainnet: {
+      url: process.env.ARCHIVE_NODE_zksyncmainnet || "https://mainnet.era.zksync.io",
+      ethNetwork: "mainnet",
+      verifyURL: "https://zksync2-mainnet-explorer.zksync.io/contract_verification",
+      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
+      zksync: true,
+      live: true,
+    },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,

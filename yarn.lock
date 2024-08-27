@@ -3584,14 +3584,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@venusprotocol/governance-contracts@npm:^2.1.0":
-  version: 2.2.0
-  resolution: "@venusprotocol/governance-contracts@npm:2.2.0"
+"@venusprotocol/governance-contracts@npm:^2.3.0-dev.4":
+  version: 2.3.0-dev.4
+  resolution: "@venusprotocol/governance-contracts@npm:2.3.0-dev.4"
   dependencies:
     "@venusprotocol/solidity-utilities": 2.0.0
     hardhat-deploy-ethers: ^0.3.0-beta.13
     module-alias: ^2.2.2
-  checksum: 8e6ba9b824a47cc03b296e4cfa2f9781e30e412710dd71f1e52d7b0d41d8cd6efb0b877239edadbf4eb382bda57436d96a4ee5cac6d0fae29b555ccdb68fc8c0
+  checksum: f0419c100101e61a2a39f0b325ae1123a60c9a4baad3e95851c6be46baf833f36bf4a0e0835985310fe845f18d2d6944a4c43b64075fb31cf1f51978907f48b4
   languageName: node
   linkType: hard
 
@@ -3630,7 +3630,7 @@ __metadata:
     "@types/sinon-chai": ^3.2.9
     "@typescript-eslint/eslint-plugin": ^5.27.1
     "@typescript-eslint/parser": ^5.27.1
-    "@venusprotocol/governance-contracts": ^2.1.0
+    "@venusprotocol/governance-contracts": ^2.3.0-dev.4
     "@venusprotocol/solidity-utilities": ^2.0.0
     "@venusprotocol/venus-protocol": ^6.0.0
     chai: ^4.3.6
