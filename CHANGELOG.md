@@ -1,3 +1,16 @@
+## [2.5.0-dev.6](https://github.com/VenusProtocol/oracle/compare/v2.5.0-dev.5...v2.5.0-dev.6) (2024-08-27)
+
+
+### Features
+
+* oracles deployments on zksync ([13a72f9](https://github.com/VenusProtocol/oracle/commit/13a72f99c2275467699c25cc6f91fc4c13cf5c56))
+* updating deployment files ([25c37bf](https://github.com/VenusProtocol/oracle/commit/25c37bf37a95d5dda07383ccacb8ce59f99f2857))
+
+
+### Bug Fixes
+
+* remove zksyncsepolia entry from redstoneFeed ([affc0c8](https://github.com/VenusProtocol/oracle/commit/affc0c89dff351b19422b13c15e78f8a9c37096d))
+
 ## [2.5.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v2.5.0-dev.4...v2.5.0-dev.5) (2024-08-27)
 
 
