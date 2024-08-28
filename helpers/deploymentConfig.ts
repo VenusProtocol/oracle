@@ -179,6 +179,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: arbitrumoneGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x14e0E151b33f9802b3e75b621c1457afc44DcAA0", // Arbitrum One Multisig
+    wstETH: "0x5979D7b546E38E414F7E9822514be443A4800529",
+    weETH: "0x35751007a407ca6FEFfE80b3cB397736D2cf4dbe",
+    WETH: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
   },
   zksyncsepolia: {
     vBNBAddress: ethers.constants.AddressZero,
