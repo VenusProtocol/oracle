@@ -4,15 +4,13 @@
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/recommended",
-    "prettier",
+    "prettier"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": ".eslinttsconfigrc"
   },
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  "plugins": ["@typescript-eslint"],
   "root": true,
   "rules": {
     "import/extensions": 0,
@@ -23,10 +21,7 @@
     "import/no-extraneous-dependencies": [
       "error",
       {
-        "devDependencies": [
-          "test/**",
-          "hardhat.config.ts"
-        ]
+        "devDependencies": ["test/**", "hardhat.config.ts", "hardhat.config.zksync.ts"]
       }
     ],
     "@typescript-eslint/no-floating-promises": [
@@ -44,12 +39,16 @@
         "varsIgnorePattern": "_"
       }
     ],
-    "prefer-destructuring": ["error", {
-      "array": false,
-      "object": true
-    }, {
-      "enforceForRenamedProperties": false
-    }]
+    "prefer-destructuring": [
+      "error",
+      {
+        "array": false,
+        "object": true
+      },
+      {
+        "enforceForRenamedProperties": false
+      }
+    ]
   },
   "settings": {
     "import/resolver": {

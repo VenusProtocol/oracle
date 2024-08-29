@@ -5,6 +5,7 @@ import "@nomiclabs/hardhat-etherscan";
 import "@openzeppelin/hardhat-upgrades";
 import "@typechain/hardhat";
 import * as dotenv from "dotenv";
+import "hardhat-dependency-compiler";
 import "hardhat-deploy";
 import "hardhat-gas-reporter";
 import { HardhatUserConfig, extendConfig } from "hardhat/config";
@@ -78,6 +79,20 @@ const config: HardhatUserConfig = {
             details: {
               yul: !process.env.CI,
             },
+          },
+          outputSelection: {
+            "*": {
+              "*": ["storageLayout"],
+            },
+          },
+        },
+      },
+      {
+        version: "0.5.16",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
           },
           outputSelection: {
             "*": {
@@ -260,6 +275,14 @@ const config: HardhatUserConfig = {
   },
   paths: {
     tests: "./test",
+  },
+  dependencyCompiler: {
+    paths: [
+      "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol",
+      "hardhat-deploy/solc_0.8/proxy/OptimizedTransparentUpgradeableProxy.sol",
+      "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol",
+      "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
+    ],
   },
   // Hardhat deploy
   namedAccounts: {
