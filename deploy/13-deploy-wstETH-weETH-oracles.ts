@@ -22,12 +22,10 @@ const func: DeployFunction = async function ({
     "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
   );
 
-  await deploy("wstETHOneJumpChainlinkOracle", {
-    contract: "OneJumpOracle",
+  const commonParams = {
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [wstETH, WETH, resilientOracle.address, chainlinkOracle.address],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentUpgradeableProxy",
@@ -37,26 +35,38 @@ const func: DeployFunction = async function ({
       },
     },
     skipIfAlreadyDeployed: true,
+    waitConfirmations: 1,
+  };
+
+  await deploy("wstETHOneJumpChainlinkOracle", {
+    contract: "OneJumpOracle",
+    args: [wstETH, WETH, resilientOracle.address, chainlinkOracle.address],
+    ...commonParams,
   });
 
   await deploy("weETHOneJumpChainlinkOracle", {
     contract: "OneJumpOracle",
-    from: deployer,
-    log: true,
-    deterministicDeployment: false,
     args: [weETH, WETH, resilientOracle.address, chainlinkOracle.address],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentUpgradeableProxy",
-      viaAdminContract: {
-        name: "DefaultProxyAdmin",
-        artifact: defaultProxyAdmin,
-      },
-    },
-    skipIfAlreadyDeployed: true,
+    ...commonParams,
   });
+
+  if (["bscmainnet", "bsctestnet"].includes(hre.network.name)) {
+    const redstoneOracle = await hre.ethers.getContract("RedStoneOracle");
+
+    await deploy("wstETHOneJumpRedstoneOracle", {
+      contract: "OneJumpOracle",
+      args: [wstETH, WETH, resilientOracle.address, redstoneOracle.address],
+      ...commonParams,
+    });
+
+    await deploy("weETHOneJumpRedstoneOracle", {
+      contract: "OneJumpOracle",
+      args: [weETH, WETH, resilientOracle.address, redstoneOracle.address],
+      ...commonParams,
+    });
+  }
 };
 
-func.skip = async () => hre.network.name !== "arbitrumone" && hre.network.name !== "arbitrumsepolia";
-func.tags = ["wstETH_weETH_OneJumpOracles_arbitrum"];
+func.skip = async () => !["bscmainnet", "bsctestnet", "arbitrumone", "arbitrumsepolia"].includes(hre.network.name);
+func.tags = ["wstETH_weETH_OneJumpOracles"];
 export default func;
