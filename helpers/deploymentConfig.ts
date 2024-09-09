@@ -179,6 +179,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: arbitrumoneGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x14e0E151b33f9802b3e75b621c1457afc44DcAA0", // Arbitrum One Multisig
+    wstETH: "0x5979D7b546E38E414F7E9822514be443A4800529",
+    weETH: "0x35751007a407ca6FEFfE80b3cB397736D2cf4dbe",
+    WETH: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
   },
   zksyncsepolia: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -277,6 +280,8 @@ export const chainlinkFeed: Config = {
     USDT: "0x3f3f5dF88dC9F13eac63DF89EC16ef6e7E25DdE7",
     ARB: "0xb2A824043730FE05F3DA2efaFa1CBbe83fa548D6",
     WETH: "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
+    wstETH: "0xB1552C5e96B312d0Bf8b554186F846C40614a540",
+    weETH: "0x20bAe7e1De9c596f5F7615aeaa1342Ba99294e12",
   },
   zksyncsepolia: {
     WBTC: "0x95Bc57e794aeb02E4a16eff406147f3ce2531F83",
@@ -949,6 +954,16 @@ export const assets: Assets = {
       token: "XVS",
       address: "0xc1Eb7689147C81aC840d4FF0D298489fc7986d52",
       oracle: "redstone",
+    },
+    {
+      token: "wstETH",
+      address: "0x5979D7b546E38E414F7E9822514be443A4800529",
+      oracle: "chainlink",
+    },
+    {
+      token: "weETH",
+      address: "0x35751007a407ca6FEFfE80b3cB397736D2cf4dbe",
+      oracle: "chainlink",
     },
   ],
   zksyncsepolia: [

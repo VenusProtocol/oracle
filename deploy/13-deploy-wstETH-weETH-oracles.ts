@@ -16,7 +16,13 @@ const func: DeployFunction = async function ({
   const { WETH, wstETH, weETH } = ADDRESSES[network.name];
 
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
-  const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
+
+  let chainlinkOracle;
+  if (hre.network.name === "arbitrumone") {
+    chainlinkOracle = await hre.ethers.getContract("SequencerChainlinkOracle");
+  } else {
+    chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
+  }
 
   const defaultProxyAdmin = await artifacts.readArtifact(
     "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
