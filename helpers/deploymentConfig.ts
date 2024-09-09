@@ -298,11 +298,12 @@ export const chainlinkFeed: Config = {
     USDT: "0xB615075979AE1836B476F651f1eB79f0Cd3956a9",
   },
   opsepolia: {
-    WBTC: "0x3015aa11f5c2D4Bd0f891E708C8927961b38cE7D",
-    WETH: "0x61Ec26aA57019C486B10502285c5A3D4A4750AD7",
-    USDC: "0x6e44e50E3cc14DD16e01C590DC1d7020cb36eD4C",
-    USDT: "0xF83696ca1b8a266163bE252bE2B94702D4929392",
-    OP: "0x8907a105E562C9F3d7F2ed46539Ae36D87a15590",
+    WBTC: "0x9f5039a86AF12AB10Ff16659eA0885bb4C04d013",
+    WETH: "0x4200000000000000000000000000000000000006",
+    USDC: "0x71B49d40B10Aa76cc44954e821eB6eA038Cf196F",
+    USDT: "0x9AD0542c71c09B764cf58d38918892F3Ae7ecc63",
+    OP: "0xEC5f6eB84677F562FC568B89121C5E5C19639776",
+    XVS: "0xF020C751efb29922075CE7A22d75bF310b20D71c",
   },
 };
 
@@ -1030,7 +1031,37 @@ export const assets: Assets = {
     },
   ],
   opsepolia: [
-    // TODO: add tokens
+    {
+      token: "WBTC",
+      address: "0x9f5039a86AF12AB10Ff16659eA0885bb4C04d013",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDC",
+      address: "0x71B49d40B10Aa76cc44954e821eB6eA038Cf196F",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDT",
+      address: "0x9AD0542c71c09B764cf58d38918892F3Ae7ecc63",
+      oracle: "chainlink",
+    },
+    {
+      token: "OP",
+      address: "0xEC5f6eB84677F562FC568B89121C5E5C19639776",
+      oracle: "chainlink",
+    },
+    {
+      token: "WETH",
+      address: "0x4200000000000000000000000000000000000006",
+      oracle: "chainlink",
+    },
+    {
+      token: "XVS",
+      address: "0xF020C751efb29922075CE7A22d75bF310b20D71c",
+      price: "10000000000000000000",
+      oracle: "redstoneFixed",
+    },
   ],
 };
 
