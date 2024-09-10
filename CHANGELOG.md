@@ -1,3 +1,10 @@
+## [2.5.0-dev.9](https://github.com/VenusProtocol/oracle/compare/v2.5.0-dev.8...v2.5.0-dev.9) (2024-09-10)
+
+
+### Features
+
+* bump dependencies with venus packages ([c906023](https://github.com/VenusProtocol/oracle/commit/c90602348cfefac8323c46e236eda669d883e567))
+
 ## [2.5.0-dev.8](https://github.com/VenusProtocol/oracle/compare/v2.5.0-dev.7...v2.5.0-dev.8) (2024-09-09)
 
 
