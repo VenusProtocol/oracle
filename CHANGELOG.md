@@ -1,3 +1,10 @@
+## [2.5.1-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.5.0...v2.5.1-dev.1) (2024-09-10)
+
+
+### Bug Fixes
+
+* restore deployment script to configure some price feeds on hardhat ([ee980da](https://github.com/VenusProtocol/oracle/commit/ee980da7253f882861ef4f97dcda0cb4c17711d4))
+
 ## [2.5.0](https://github.com/VenusProtocol/oracle/compare/v2.4.0...v2.5.0) (2024-09-10)
 
 
