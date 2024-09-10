@@ -4,32 +4,25 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
 
-const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
+const func: DeployFunction = async ({
+  getNamedAccounts,
+  deployments,
+  network,
+  artifacts,
+}: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
   const resilientOracle = await ethers.getContract("ResilientOracle");
   const chainlinkOracle = await ethers.getContract("ChainlinkOracle");
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
-
+  const defaultProxyAdmin = await artifacts.readArtifact(
+    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
+  );
   let { EtherFiLiquidityPool } = ADDRESSES[network.name];
   const { weETH, eETH, WETH } = ADDRESSES[network.name];
 
-  if (!EtherFiLiquidityPool) {
-    // deploy mock liquidity pool
-    await deploy("MockEtherFiLiquidityPool", {
-      from: deployer,
-      contract: "MockEtherFiLiquidityPool",
-      args: [],
-      log: true,
-      autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
-      skipIfAlreadyDeployed: true,
-    });
-
-    const mockEtherFiLiquidityPool = await ethers.getContract("MockEtherFiLiquidityPool");
-    EtherFiLiquidityPool = mockEtherFiLiquidityPool.address;
-    await mockEtherFiLiquidityPool.transferOwnership(proxyOwnerAddress);
-  }
+  EtherFiLiquidityPool = EtherFiLiquidityPool || (await ethers.getContract("MockEtherFiLiquidityPool")).address;
 
   if (network.name === "sepolia") {
     await deploy("WeETHOracle", {
@@ -39,7 +32,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       args: [EtherFiLiquidityPool, weETH, eETH, resilientOracle.address],
       proxy: {
         owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
+        proxyContract: "OptimizedTransparentUpgradeableProxy",
+        viaAdminContract: {
+          name: "DefaultProxyAdmin",
+          artifact: defaultProxyAdmin,
+        },
       },
       skipIfAlreadyDeployed: true,
     });
@@ -52,7 +49,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       args: [EtherFiLiquidityPool, weETH, WETH, resilientOracle.address],
       proxy: {
         owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
+        proxyContract: "OptimizedTransparentUpgradeableProxy",
+        viaAdminContract: {
+          name: "DefaultProxyAdmin",
+          artifact: defaultProxyAdmin,
+        },
       },
       skipIfAlreadyDeployed: true,
     });
@@ -65,7 +66,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       args: [weETH, WETH, resilientOracle.address, chainlinkOracle.address],
       proxy: {
         owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentProxy",
+        proxyContract: "OptimizedTransparentUpgradeableProxy",
+        viaAdminContract: {
+          name: "DefaultProxyAdmin",
+          artifact: defaultProxyAdmin,
+        },
       },
       skipIfAlreadyDeployed: true,
     });
