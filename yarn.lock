@@ -789,7 +789,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/abi@npm:5.7.0, @ethersproject/abi@npm:^5.0.9, @ethersproject/abi@npm:^5.1.2, @ethersproject/abi@npm:^5.6.3, @ethersproject/abi@npm:^5.7.0":
+"@ethersproject/abi@npm:5.7.0, @ethersproject/abi@npm:^5.0.9, @ethersproject/abi@npm:^5.1.2, @ethersproject/abi@npm:^5.4.0, @ethersproject/abi@npm:^5.6.3, @ethersproject/abi@npm:^5.7.0":
   version: 5.7.0
   resolution: "@ethersproject/abi@npm:5.7.0"
   dependencies:
@@ -821,7 +821,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/abstract-signer@npm:5.7.0, @ethersproject/abstract-signer@npm:^5.6.2, @ethersproject/abstract-signer@npm:^5.7.0":
+"@ethersproject/abstract-signer@npm:5.7.0, @ethersproject/abstract-signer@npm:^5.4.1, @ethersproject/abstract-signer@npm:^5.6.2, @ethersproject/abstract-signer@npm:^5.7.0":
   version: 5.7.0
   resolution: "@ethersproject/abstract-signer@npm:5.7.0"
   dependencies:
@@ -834,7 +834,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/address@npm:5.7.0, @ethersproject/address@npm:^5.0.2, @ethersproject/address@npm:^5.7.0":
+"@ethersproject/address@npm:5.7.0, @ethersproject/address@npm:^5.0.2, @ethersproject/address@npm:^5.4.0, @ethersproject/address@npm:^5.7.0":
   version: 5.7.0
   resolution: "@ethersproject/address@npm:5.7.0"
   dependencies:
@@ -866,7 +866,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/bignumber@npm:5.7.0, @ethersproject/bignumber@npm:^5.6.2, @ethersproject/bignumber@npm:^5.7.0":
+"@ethersproject/bignumber@npm:5.7.0, @ethersproject/bignumber@npm:^5.4.1, @ethersproject/bignumber@npm:^5.6.2, @ethersproject/bignumber@npm:^5.7.0":
   version: 5.7.0
   resolution: "@ethersproject/bignumber@npm:5.7.0"
   dependencies:
@@ -877,7 +877,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/bytes@npm:5.7.0, @ethersproject/bytes@npm:^5.6.1, @ethersproject/bytes@npm:^5.7.0":
+"@ethersproject/bytes@npm:5.7.0, @ethersproject/bytes@npm:^5.4.0, @ethersproject/bytes@npm:^5.6.1, @ethersproject/bytes@npm:^5.7.0":
   version: 5.7.0
   resolution: "@ethersproject/bytes@npm:5.7.0"
   dependencies:
@@ -886,7 +886,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/constants@npm:5.7.0, @ethersproject/constants@npm:^5.7.0":
+"@ethersproject/constants@npm:5.7.0, @ethersproject/constants@npm:^5.4.0, @ethersproject/constants@npm:^5.7.0":
   version: 5.7.0
   resolution: "@ethersproject/constants@npm:5.7.0"
   dependencies:
@@ -895,7 +895,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/contracts@npm:5.7.0, @ethersproject/contracts@npm:^5.7.0":
+"@ethersproject/contracts@npm:5.7.0, @ethersproject/contracts@npm:^5.4.1, @ethersproject/contracts@npm:^5.7.0":
   version: 5.7.0
   resolution: "@ethersproject/contracts@npm:5.7.0"
   dependencies:
@@ -1016,7 +1016,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/providers@npm:5.7.2, @ethersproject/providers@npm:^5.6.8, @ethersproject/providers@npm:^5.7.0, @ethersproject/providers@npm:^5.7.1, @ethersproject/providers@npm:^5.7.2":
+"@ethersproject/providers@npm:5.7.2, @ethersproject/providers@npm:^5.4.4, @ethersproject/providers@npm:^5.6.8, @ethersproject/providers@npm:^5.7.0, @ethersproject/providers@npm:^5.7.1, @ethersproject/providers@npm:^5.7.2":
   version: 5.7.2
   resolution: "@ethersproject/providers@npm:5.7.2"
   dependencies:
@@ -1089,7 +1089,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/solidity@npm:5.7.0, @ethersproject/solidity@npm:^5.7.0":
+"@ethersproject/solidity@npm:5.7.0, @ethersproject/solidity@npm:^5.4.0, @ethersproject/solidity@npm:^5.7.0":
   version: 5.7.0
   resolution: "@ethersproject/solidity@npm:5.7.0"
   dependencies:
@@ -1114,7 +1114,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/transactions@npm:5.7.0, @ethersproject/transactions@npm:^5.7.0":
+"@ethersproject/transactions@npm:5.7.0, @ethersproject/transactions@npm:^5.4.0, @ethersproject/transactions@npm:^5.7.0":
   version: 5.7.0
   resolution: "@ethersproject/transactions@npm:5.7.0"
   dependencies:
@@ -1142,7 +1142,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/wallet@npm:5.7.0, @ethersproject/wallet@npm:^5.7.0":
+"@ethersproject/wallet@npm:5.7.0, @ethersproject/wallet@npm:^5.4.0, @ethersproject/wallet@npm:^5.7.0":
   version: 5.7.0
   resolution: "@ethersproject/wallet@npm:5.7.0"
   dependencies:
@@ -1300,6 +1300,36 @@ __metadata:
     "@jridgewell/resolve-uri": ^3.1.0
     "@jridgewell/sourcemap-codec": ^1.4.14
   checksum: 9d3c40d225e139987b50c48988f8717a54a8c994d8a948ee42e1412e08988761d0754d7d10b803061cc3aebf35f92a5dbbab493bd0e1a9ef9e89a2130e83ba34
+  languageName: node
+  linkType: hard
+
+"@layerzerolabs/lz-evm-sdk-v1-0.7@npm:^1.5.14":
+  version: 1.5.16
+  resolution: "@layerzerolabs/lz-evm-sdk-v1-0.7@npm:1.5.16"
+  dependencies:
+    "@openzeppelin/contracts": 3.4.2-solc-0.7
+    "@openzeppelin/contracts-upgradeable": 3.4.2-solc-0.7
+  checksum: c4a42f446fe4c961bdfc5cbdd848b98ba1f2352ddd539d04affba7d9760905b0604a3422a1a9a7e89808466e6fcbb05e40498948b663beb21e47127b00d9cd9f
+  languageName: node
+  linkType: hard
+
+"@layerzerolabs/solidity-examples@npm:^1.0.0":
+  version: 1.1.0
+  resolution: "@layerzerolabs/solidity-examples@npm:1.1.0"
+  dependencies:
+    "@layerzerolabs/lz-evm-sdk-v1-0.7": ^1.5.14
+    "@openzeppelin-3/contracts": "npm:@openzeppelin/contracts@^3.4.2-solc-0.7"
+    "@openzeppelin/contracts": ^4.4.1
+    "@openzeppelin/contracts-upgradeable": ^4.6.0
+    "@openzeppelin/hardhat-upgrades": ^1.18.3
+    dotenv: ^10.0.0
+    erc721a: ^4.2.3
+    hardhat: ^2.8.0
+    hardhat-contract-sizer: ^2.1.1
+    hardhat-deploy: ^0.10.5
+    hardhat-deploy-ethers: ^0.3.0-beta.13
+    hardhat-gas-reporter: ^1.0.6
+  checksum: f7603710b18bdda227024b161059b5f725499529d25ea2c6dc7a16c664f2b25bd2be2761e81e870a08b05013c425bf7b5258e7a667ac9390cf598c043b216407
   languageName: node
   linkType: hard
 
@@ -1531,10 +1561,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nomicfoundation/edr-darwin-arm64@npm:0.5.2":
+  version: 0.5.2
+  resolution: "@nomicfoundation/edr-darwin-arm64@npm:0.5.2"
+  checksum: f6ab386603c6e080fe7f611b739eb6d1d6a370220318b725cb582702563577150b3be14b6d0be71cb72bdb854e6992c587ecfc6833216f750eae8e7cd96de46f
+  languageName: node
+  linkType: hard
+
 "@nomicfoundation/edr-darwin-x64@npm:0.5.0":
   version: 0.5.0
   resolution: "@nomicfoundation/edr-darwin-x64@npm:0.5.0"
   checksum: 3ed082b9c8cb258675c5c4aea33bd3f5e05149317a258287cc5db263db1aca81e88ece3f22d779124d891fd79f049a9397f0152f61c2116d523be4b10b9bf0bf
+  languageName: node
+  linkType: hard
+
+"@nomicfoundation/edr-darwin-x64@npm:0.5.2":
+  version: 0.5.2
+  resolution: "@nomicfoundation/edr-darwin-x64@npm:0.5.2"
+  checksum: 6f91f6d0294c0450e0501983f1de34a48582fe93f48428bc4b798ac93bb5483a96d626c2b4c62ac91102f00c826a3f9bfa16d748301440ebe1bbb2920ba3ba6d
   languageName: node
   linkType: hard
 
@@ -1545,10 +1589,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nomicfoundation/edr-linux-arm64-gnu@npm:0.5.2":
+  version: 0.5.2
+  resolution: "@nomicfoundation/edr-linux-arm64-gnu@npm:0.5.2"
+  checksum: bd84cc2741bb2be3c3a60bae9dbb8ca7794a68b8675684c97f2c6e7310e5cba7efd1cf18d392d42481cda83fb478f83c0bd605104c5cf08bab44ec07669c3010
+  languageName: node
+  linkType: hard
+
 "@nomicfoundation/edr-linux-arm64-musl@npm:0.5.0":
   version: 0.5.0
   resolution: "@nomicfoundation/edr-linux-arm64-musl@npm:0.5.0"
   checksum: 9edaeed61cecf138c02b6363095467cfa4e5c2faad83e4d9ea257d04191bd611ac8d9ca2dbcb873d19e22ed9f88bdf9e4cb0a71dddb48a1be4205bb629b49b72
+  languageName: node
+  linkType: hard
+
+"@nomicfoundation/edr-linux-arm64-musl@npm:0.5.2":
+  version: 0.5.2
+  resolution: "@nomicfoundation/edr-linux-arm64-musl@npm:0.5.2"
+  checksum: e7f7d82f16be1b26805bd90964c456aecb4a6a1397e87d507810d37bd383064271fa63932564e725fdb30868925334338ec459fe32f84fc11206644b7b37825c
   languageName: node
   linkType: hard
 
@@ -1559,6 +1617,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nomicfoundation/edr-linux-x64-gnu@npm:0.5.2":
+  version: 0.5.2
+  resolution: "@nomicfoundation/edr-linux-x64-gnu@npm:0.5.2"
+  checksum: ec025bf75227638b6b2cd01b7ba01b3ddaddf54c4d18d25e9d0364ac621981be2aaf124f4e60a88da5c9e267adb41a660a42668e2d6c9a6a57e55e8671fc76f1
+  languageName: node
+  linkType: hard
+
 "@nomicfoundation/edr-linux-x64-musl@npm:0.5.0":
   version: 0.5.0
   resolution: "@nomicfoundation/edr-linux-x64-musl@npm:0.5.0"
@@ -1566,10 +1631,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nomicfoundation/edr-linux-x64-musl@npm:0.5.2":
+  version: 0.5.2
+  resolution: "@nomicfoundation/edr-linux-x64-musl@npm:0.5.2"
+  checksum: c9ff47f72645492383b2a598675878abc029b86325e2c457db1b2c4281916e11e4ef6336c355d40ae3c1736595bc43da51cfcf1e923464011f526f4db64c245b
+  languageName: node
+  linkType: hard
+
 "@nomicfoundation/edr-win32-x64-msvc@npm:0.5.0":
   version: 0.5.0
   resolution: "@nomicfoundation/edr-win32-x64-msvc@npm:0.5.0"
   checksum: 04c8546a6f672380dd04a28636ec0df56a832e48e8fe91d925277c38434a553b633c72294440b89c07d309006c5f40cc2f182ef94d52d6c8685d84d64fb8a914
+  languageName: node
+  linkType: hard
+
+"@nomicfoundation/edr-win32-x64-msvc@npm:0.5.2":
+  version: 0.5.2
+  resolution: "@nomicfoundation/edr-win32-x64-msvc@npm:0.5.2"
+  checksum: 56da7a1283470dede413cda5f2fef96e10250ec7a25562254ca0cd8045a653212c91e40fbcf37330e7af4e036d3c3aed83ea617831f9c7a5424389c73c53ed4e
   languageName: node
   linkType: hard
 
@@ -1585,6 +1664,21 @@ __metadata:
     "@nomicfoundation/edr-linux-x64-musl": 0.5.0
     "@nomicfoundation/edr-win32-x64-msvc": 0.5.0
   checksum: 4fe46ee81d48056f6b0a6c3562291146ca54c68419707b0bc38a1305d1f2cc74d0b246716d9da116f00bc63d335a36776f30d860981f253b71928d91053b2675
+  languageName: node
+  linkType: hard
+
+"@nomicfoundation/edr@npm:^0.5.2":
+  version: 0.5.2
+  resolution: "@nomicfoundation/edr@npm:0.5.2"
+  dependencies:
+    "@nomicfoundation/edr-darwin-arm64": 0.5.2
+    "@nomicfoundation/edr-darwin-x64": 0.5.2
+    "@nomicfoundation/edr-linux-arm64-gnu": 0.5.2
+    "@nomicfoundation/edr-linux-arm64-musl": 0.5.2
+    "@nomicfoundation/edr-linux-x64-gnu": 0.5.2
+    "@nomicfoundation/edr-linux-x64-musl": 0.5.2
+    "@nomicfoundation/edr-win32-x64-msvc": 0.5.2
+  checksum: 336b1c7cad96fa78410f0c9cc9524abe9fb1e56384fe990b98bfd17f15f25b4665ad8f0525ccd9511f7c19173841fe712d50db993078629e2fc4047fda4665dc
   languageName: node
   linkType: hard
 
@@ -1967,6 +2061,19 @@ __metadata:
     ethers: ^5.0.0
     hardhat: ^2.9.4
   checksum: c388e5ed9068f2ba7c227737ab7312dd03405d5fab195247b061f2fa52e700fbd0fb65359c2d4f2086f2905bfca642c19a9122d034533edd936f89aea65ac7f2
+  languageName: node
+  linkType: hard
+
+"@nomicfoundation/hardhat-ethers@npm:^3.0.0":
+  version: 3.0.8
+  resolution: "@nomicfoundation/hardhat-ethers@npm:3.0.8"
+  dependencies:
+    debug: ^4.1.1
+    lodash.isequal: ^4.5.0
+  peerDependencies:
+    ethers: ^6.1.0
+    hardhat: ^2.0.0
+  checksum: 6ad6da6713fa25e653cef894ec10762fc3d728a50461a63c169eac248b5b1ea81bb3d42e8017601bbd231c9fee034336e1f2dc25375d5dcf9926ec4d4389034a
   languageName: node
   linkType: hard
 
@@ -2558,17 +2665,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts-upgradeable@npm:^4.7.3, @openzeppelin/contracts-upgradeable@npm:^4.8.0, @openzeppelin/contracts-upgradeable@npm:^4.8.3, @openzeppelin/contracts-upgradeable@npm:^4.9.2":
+"@openzeppelin-3/contracts@npm:@openzeppelin/contracts@^3.4.2-solc-0.7, @openzeppelin/contracts-v0.7@npm:@openzeppelin/contracts@v3.4.2":
+  version: 3.4.2
+  resolution: "@openzeppelin/contracts@npm:3.4.2"
+  checksum: 0c90f029fe50a49643588e4c8670dae3bbf31795133a6ddce9bdcbc258486332700bb732287baabf7bf807f39182fe8ea2ffa19aa5caf359b1b9c0f083280748
+  languageName: node
+  linkType: hard
+
+"@openzeppelin/contracts-upgradeable@npm:3.4.2-solc-0.7":
+  version: 3.4.2-solc-0.7
+  resolution: "@openzeppelin/contracts-upgradeable@npm:3.4.2-solc-0.7"
+  checksum: 662d168ea1763faa5e168751043e4e041ccd810c3d4c781aa5aee0e9947e9f95d51edaeb1daaa4cc2860463beb961b576c6a3e60e3fbb6fa27188a611c8522e4
+  languageName: node
+  linkType: hard
+
+"@openzeppelin/contracts-upgradeable@npm:^4.6.0, @openzeppelin/contracts-upgradeable@npm:^4.7.3, @openzeppelin/contracts-upgradeable@npm:^4.8.0, @openzeppelin/contracts-upgradeable@npm:^4.8.3, @openzeppelin/contracts-upgradeable@npm:^4.9.2":
   version: 4.9.6
   resolution: "@openzeppelin/contracts-upgradeable@npm:4.9.6"
   checksum: 481075e7222cab025ae55304263fca69a2d04305521957bc16d2aece9fa2b86b6914711724822493e3d04df7e793469cd0bcb1e09f0ddd10cb4e360ac7eed12a
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts-v0.7@npm:@openzeppelin/contracts@v3.4.2":
-  version: 3.4.2
-  resolution: "@openzeppelin/contracts@npm:3.4.2"
-  checksum: 0c90f029fe50a49643588e4c8670dae3bbf31795133a6ddce9bdcbc258486332700bb732287baabf7bf807f39182fe8ea2ffa19aa5caf359b1b9c0f083280748
+"@openzeppelin/contracts@npm:3.4.2-solc-0.7":
+  version: 3.4.2-solc-0.7
+  resolution: "@openzeppelin/contracts@npm:3.4.2-solc-0.7"
+  checksum: 1a6048f31ed560c34429a05e534102c51124ecaf113aca7ebeb7897cfaaf61007cdd7952374c282adaeb79b04ee86ee80b16eed28b62fc6d60e3ffcd7a696895
   languageName: node
   linkType: hard
 
@@ -2579,7 +2700,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts@npm:^4.3.3, @openzeppelin/contracts@npm:^4.6.0, @openzeppelin/contracts@npm:^4.8.3, @openzeppelin/contracts@npm:^4.9.2":
+"@openzeppelin/contracts@npm:^4.3.3, @openzeppelin/contracts@npm:^4.4.1, @openzeppelin/contracts@npm:^4.6.0, @openzeppelin/contracts@npm:^4.8.3, @openzeppelin/contracts@npm:^4.9.2":
   version: 4.9.6
   resolution: "@openzeppelin/contracts@npm:4.9.6"
   checksum: 274b6e968268294f12d5ca4f0278f6e6357792c8bb4d76664f83dbdc325f780541538a127e6a6e97e4f018088b42f65952014dec9c745c0fa25081f43ef9c4bf
@@ -2599,7 +2720,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/hardhat-upgrades@npm:^1.21.0, @openzeppelin/hardhat-upgrades@npm:^1.22.0":
+"@openzeppelin/hardhat-upgrades@npm:^1.18.3, @openzeppelin/hardhat-upgrades@npm:^1.21.0, @openzeppelin/hardhat-upgrades@npm:^1.22.0":
   version: 1.28.0
   resolution: "@openzeppelin/hardhat-upgrades@npm:1.28.0"
   dependencies:
@@ -3573,7 +3694,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@venusprotocol/governance-contracts@npm:^1.4.0-dev.1":
+"@venusprotocol/governance-contracts@npm:^1.4.0":
   version: 1.4.0
   resolution: "@venusprotocol/governance-contracts@npm:1.4.0"
   dependencies:
@@ -3584,14 +3705,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@venusprotocol/governance-contracts@npm:^2.3.0-dev.4":
-  version: 2.3.0-dev.4
-  resolution: "@venusprotocol/governance-contracts@npm:2.3.0-dev.4"
+"@venusprotocol/governance-contracts@npm:^2.1.0, @venusprotocol/governance-contracts@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "@venusprotocol/governance-contracts@npm:2.3.0"
   dependencies:
     "@venusprotocol/solidity-utilities": 2.0.0
     hardhat-deploy-ethers: ^0.3.0-beta.13
     module-alias: ^2.2.2
-  checksum: f0419c100101e61a2a39f0b325ae1123a60c9a4baad3e95851c6be46baf833f36bf4a0e0835985310fe845f18d2d6944a4c43b64075fb31cf1f51978907f48b4
+  checksum: b7c6054d36f435e6360acbe5ef31816901377bffb119147a519c7aa93f8ad4205dfbb85deb706a5fbc37ab144dfdb42284f18c8e95bc729a780303c828221891
   languageName: node
   linkType: hard
 
@@ -3630,9 +3751,9 @@ __metadata:
     "@types/sinon-chai": ^3.2.9
     "@typescript-eslint/eslint-plugin": ^5.27.1
     "@typescript-eslint/parser": ^5.27.1
-    "@venusprotocol/governance-contracts": ^2.3.0-dev.4
+    "@venusprotocol/governance-contracts": ^2.3.0
     "@venusprotocol/solidity-utilities": ^2.0.0
-    "@venusprotocol/venus-protocol": ^6.0.0
+    "@venusprotocol/venus-protocol": ^9.1.0
     chai: ^4.3.6
     cross-env: ^7.0.3
     cz-conventional-changelog: ^3.3.0
@@ -3668,7 +3789,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@venusprotocol/protocol-reserve@npm:^1.1.0":
+"@venusprotocol/protocol-reserve@npm:^1.4.0":
   version: 1.5.0
   resolution: "@venusprotocol/protocol-reserve@npm:1.5.0"
   dependencies:
@@ -3685,6 +3806,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@venusprotocol/protocol-reserve@npm:^2.0.0":
+  version: 2.2.0
+  resolution: "@venusprotocol/protocol-reserve@npm:2.2.0"
+  dependencies:
+    "@nomiclabs/hardhat-ethers": ^2.2.3
+    "@openzeppelin/contracts": ^4.8.3
+    "@openzeppelin/contracts-upgradeable": ^4.8.3
+    "@openzeppelin/hardhat-upgrades": ^1.21.0
+    "@solidity-parser/parser": ^0.13.2
+    "@venusprotocol/solidity-utilities": ^2.0.0
+    "@venusprotocol/venus-protocol": ^7.5.0
+    ethers: ^5.7.0
+    hardhat-deploy: ^0.11.14
+    module-alias: ^2.2.2
+  checksum: ae875b95c1adabcc73ca52f74bf3f875c15e8a29cc6cbdf08038542692e5c397d986424194f1e1819659b0bc17d53770e75e7f74304ecbee24e9e84dd4ef79ed
+  languageName: node
+  linkType: hard
+
 "@venusprotocol/solidity-utilities@npm:2.0.0":
   version: 2.0.0
   resolution: "@venusprotocol/solidity-utilities@npm:2.0.0"
@@ -3692,32 +3831,83 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@venusprotocol/solidity-utilities@npm:^1.1.0, @venusprotocol/solidity-utilities@npm:^1.3.0":
+"@venusprotocol/solidity-utilities@npm:^1.1.0, @venusprotocol/solidity-utilities@npm:^1.2.0, @venusprotocol/solidity-utilities@npm:^1.3.0":
   version: 1.3.0
   resolution: "@venusprotocol/solidity-utilities@npm:1.3.0"
   checksum: d1109365a5e01959c47b25fb129373db93792e60bf1bc0ed324b63c2a64f6e4a7878ebf016cfade94bc41a2c1245d3e861fdc6b8c5844ac210ed1d73e7307e72
   languageName: node
   linkType: hard
 
-"@venusprotocol/solidity-utilities@npm:^2.0.0":
+"@venusprotocol/solidity-utilities@npm:^2.0.0, @venusprotocol/solidity-utilities@npm:^2.0.3":
   version: 2.0.3
   resolution: "@venusprotocol/solidity-utilities@npm:2.0.3"
   checksum: 5f196d61989e1b276b6f2d515c0410f3af07deee9bec58a6657e61d46b1810b2da6e2880d1ec737fd410f23a035c2db47b6a3ab2274cac229cabfcf03d4424ac
   languageName: node
   linkType: hard
 
-"@venusprotocol/venus-protocol@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "@venusprotocol/venus-protocol@npm:6.0.0"
+"@venusprotocol/token-bridge@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@venusprotocol/token-bridge@npm:1.1.0"
   dependencies:
+    "@layerzerolabs/solidity-examples": ^1.0.0
+    "@openzeppelin/contracts": ^4.8.3
+    "@openzeppelin/contracts-upgradeable": ^4.8.3
+    "@openzeppelin/hardhat-upgrades": ^1.21.0
+    "@solidity-parser/parser": ^0.13.2
+    ethers: ^5.7.0
+    module-alias: ^2.2.2
+  checksum: 86c0e758491b63ce7da57aacf764a4d040a54fdc89994c92a79363e4cbb33b84cd1db38630e76cbcc26f6f7a5a676b3ac96871ad98486701982ea4699bdc15f1
+  languageName: node
+  linkType: hard
+
+"@venusprotocol/token-bridge@npm:^2.0.0":
+  version: 2.1.0
+  resolution: "@venusprotocol/token-bridge@npm:2.1.0"
+  dependencies:
+    "@layerzerolabs/solidity-examples": ^1.0.0
+    "@openzeppelin/contracts": ^4.8.3
+    "@openzeppelin/contracts-upgradeable": ^4.8.3
+    "@openzeppelin/hardhat-upgrades": ^1.21.0
+    "@solidity-parser/parser": ^0.13.2
+    ethers: ^5.7.0
+    module-alias: ^2.2.2
+  checksum: 022163873126822b7cd84bd470b2f7bdb439cad1ac78136a5956418803bdc873360de28ab8d1e50f28ab80add900d56660c8273ac132ba47bbd3c3890b67b046
+  languageName: node
+  linkType: hard
+
+"@venusprotocol/venus-protocol@npm:^7.5.0":
+  version: 7.5.0
+  resolution: "@venusprotocol/venus-protocol@npm:7.5.0"
+  dependencies:
+    "@nomicfoundation/hardhat-ethers": ^3.0.0
     "@openzeppelin/contracts": 4.9.3
     "@openzeppelin/contracts-upgradeable": ^4.8.0
-    "@venusprotocol/governance-contracts": ^1.4.0-dev.1
-    "@venusprotocol/protocol-reserve": ^1.1.0
+    "@venusprotocol/governance-contracts": ^1.4.0
+    "@venusprotocol/protocol-reserve": ^1.4.0
+    "@venusprotocol/solidity-utilities": ^1.2.0
+    "@venusprotocol/token-bridge": ^1.1.0
     bignumber.js: ^9.1.2
     dotenv: ^16.0.1
     module-alias: ^2.2.2
-  checksum: 2e819a464626233c24e566be21438f120378b617289e9646024b47859dc6fc7cb785c3af5e6b04fc1fe9a78aac73b98cb51014c48910db93ba6e4b9ff397c17e
+  checksum: 0a39304b6f2e0db05a20dacf6d678f3245be878a121e7d1ddeb503c28974dea9cbec0228be3d03f77abb97d1adb8e6e8ad8708cb730a5833e62c4e6735fb6eea
+  languageName: node
+  linkType: hard
+
+"@venusprotocol/venus-protocol@npm:^9.1.0":
+  version: 9.1.0
+  resolution: "@venusprotocol/venus-protocol@npm:9.1.0"
+  dependencies:
+    "@nomicfoundation/hardhat-ethers": ^3.0.0
+    "@openzeppelin/contracts": 4.9.3
+    "@openzeppelin/contracts-upgradeable": ^4.8.0
+    "@venusprotocol/governance-contracts": ^2.1.0
+    "@venusprotocol/protocol-reserve": ^2.0.0
+    "@venusprotocol/solidity-utilities": ^2.0.3
+    "@venusprotocol/token-bridge": ^2.0.0
+    bignumber.js: ^9.1.2
+    dotenv: ^16.0.1
+    module-alias: ^2.2.2
+  checksum: 7c1063d7a584fc95787022dad0de62583ee8965a061d024ae4fbd86c7aee4dda04c8f562b2b7293a672fe38a57580105af9e28b9293590b13e17459863812135
   languageName: node
   linkType: hard
 
@@ -5105,7 +5295,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cli-table3@npm:^0.6.2, cli-table3@npm:^0.6.3":
+"cli-table3@npm:^0.6.0, cli-table3@npm:^0.6.2, cli-table3@npm:^0.6.3":
   version: 0.6.5
   resolution: "cli-table3@npm:0.6.5"
   dependencies:
@@ -6086,6 +6276,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "dotenv@npm:10.0.0"
+  checksum: f412c5fe8c24fbe313d302d2500e247ba8a1946492db405a4de4d30dd0eb186a88a43f13c958c5a7de303938949c4231c56994f97d05c4bc1f22478d631b4005
+  languageName: node
+  linkType: hard
+
 "dotenv@npm:^16.0.1":
   version: 16.4.5
   resolution: "dotenv@npm:16.4.5"
@@ -6217,6 +6414,13 @@ __metadata:
   version: 2.2.1
   resolution: "env-paths@npm:2.2.1"
   checksum: 65b5df55a8bab92229ab2b40dad3b387fad24613263d103a97f91c9fe43ceb21965cd3392b1ccb5d77088021e525c4e0481adb309625d0cb94ade1d1fb8dc17e
+  languageName: node
+  linkType: hard
+
+"erc721a@npm:^4.2.3":
+  version: 4.3.0
+  resolution: "erc721a@npm:4.3.0"
+  checksum: deede7094e88daa1ecc11f1b114fb10db3a6b0557087e8f0ceca31eaaec643d75028d308f3a97e615cd1a09087095d61196ac938b73f6d56c222c4cf4a1430b8
   languageName: node
   linkType: hard
 
@@ -7740,6 +7944,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hardhat-contract-sizer@npm:^2.1.1":
+  version: 2.10.0
+  resolution: "hardhat-contract-sizer@npm:2.10.0"
+  dependencies:
+    chalk: ^4.0.0
+    cli-table3: ^0.6.0
+    strip-ansi: ^6.0.0
+  peerDependencies:
+    hardhat: ^2.0.0
+  checksum: 870e7cad5d96ad7288b64da0faec7962a9a18e1eaaa02ed474e4f9285cd4b1a0fc6f66326e6a7476f7063fdf99aee57f227084519b1fb3723700a2d65fc65cfa
+  languageName: node
+  linkType: hard
+
 "hardhat-dependency-compiler@npm:^1.2.1":
   version: 1.2.1
   resolution: "hardhat-dependency-compiler@npm:1.2.1"
@@ -7756,6 +7973,39 @@ __metadata:
     ethers: ^5.0.0
     hardhat: ^2.0.0
   checksum: 45206bf8d088cda08822ecf79d73e4027d8a4777cc23c3ef94568e316c45b8597130d72826fb2417edd32fe4b3dc54097161bef577663769b5c47b8262b983bb
+  languageName: node
+  linkType: hard
+
+"hardhat-deploy@npm:^0.10.5":
+  version: 0.10.6
+  resolution: "hardhat-deploy@npm:0.10.6"
+  dependencies:
+    "@ethersproject/abi": ^5.4.0
+    "@ethersproject/abstract-signer": ^5.4.1
+    "@ethersproject/address": ^5.4.0
+    "@ethersproject/bignumber": ^5.4.1
+    "@ethersproject/bytes": ^5.4.0
+    "@ethersproject/constants": ^5.4.0
+    "@ethersproject/contracts": ^5.4.1
+    "@ethersproject/providers": ^5.4.4
+    "@ethersproject/solidity": ^5.4.0
+    "@ethersproject/transactions": ^5.4.0
+    "@ethersproject/wallet": ^5.4.0
+    "@types/qs": ^6.9.7
+    axios: ^0.21.1
+    chalk: ^4.1.2
+    chokidar: ^3.5.2
+    debug: ^4.3.2
+    enquirer: ^2.3.6
+    form-data: ^4.0.0
+    fs-extra: ^10.0.0
+    match-all: ^1.2.6
+    murmur-128: ^0.2.1
+    qs: ^6.9.4
+  peerDependencies:
+    "@ethersproject/hardware-wallets": ^5.0.14
+    hardhat: ^2.6.8
+  checksum: dd82fafd74da7f7d180c529ea7a044b8c9c9c0d65d5e05285bafeeb3f864492ffb2271174bc2ac4ed963d60f4bc3e95e4b70e4e063ee23807f34fbf6a29a8681
   languageName: node
   linkType: hard
 
@@ -7823,7 +8073,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hardhat-gas-reporter@npm:^1.0.8":
+"hardhat-gas-reporter@npm:^1.0.6, hardhat-gas-reporter@npm:^1.0.8":
   version: 1.0.10
   resolution: "hardhat-gas-reporter@npm:1.0.10"
   dependencies:
@@ -7961,6 +8211,67 @@ __metadata:
   bin:
     hardhat: internal/cli/bootstrap.js
   checksum: 3b630db8c337d47d220ab0a94a009e61da0a4bb08cc4576ae33cb50e57d9dbb577ab64a85211914fc511e59cd5fca55c986e9ee2180c2e05657c084a14128b16
+  languageName: node
+  linkType: hard
+
+"hardhat@npm:^2.8.0":
+  version: 2.22.10
+  resolution: "hardhat@npm:2.22.10"
+  dependencies:
+    "@ethersproject/abi": ^5.1.2
+    "@metamask/eth-sig-util": ^4.0.0
+    "@nomicfoundation/edr": ^0.5.2
+    "@nomicfoundation/ethereumjs-common": 4.0.4
+    "@nomicfoundation/ethereumjs-tx": 5.0.4
+    "@nomicfoundation/ethereumjs-util": 9.0.4
+    "@nomicfoundation/solidity-analyzer": ^0.1.0
+    "@sentry/node": ^5.18.1
+    "@types/bn.js": ^5.1.0
+    "@types/lru-cache": ^5.1.0
+    adm-zip: ^0.4.16
+    aggregate-error: ^3.0.0
+    ansi-escapes: ^4.3.0
+    boxen: ^5.1.2
+    chalk: ^2.4.2
+    chokidar: ^3.4.0
+    ci-info: ^2.0.0
+    debug: ^4.1.1
+    enquirer: ^2.3.0
+    env-paths: ^2.2.0
+    ethereum-cryptography: ^1.0.3
+    ethereumjs-abi: ^0.6.8
+    find-up: ^2.1.0
+    fp-ts: 1.19.3
+    fs-extra: ^7.0.1
+    glob: 7.2.0
+    immutable: ^4.0.0-rc.12
+    io-ts: 1.10.4
+    keccak: ^3.0.2
+    lodash: ^4.17.11
+    mnemonist: ^0.38.0
+    mocha: ^10.0.0
+    p-map: ^4.0.0
+    raw-body: ^2.4.1
+    resolve: 1.17.0
+    semver: ^6.3.0
+    solc: 0.8.26
+    source-map-support: ^0.5.13
+    stacktrace-parser: ^0.1.10
+    tsort: 0.0.1
+    undici: ^5.14.0
+    uuid: ^8.3.2
+    ws: ^7.4.6
+  peerDependencies:
+    ts-node: "*"
+    typescript: "*"
+  peerDependenciesMeta:
+    ts-node:
+      optional: true
+    typescript:
+      optional: true
+  bin:
+    hardhat: internal/cli/bootstrap.js
+  checksum: 2bb961a11f428fd025f990ea18472f4197c8352dd81f4231f27c04b7a8e94bc71d668262475102ae2c339ad83dd0e759b90ac7e4905f043be7bde471c04b5951
   languageName: node
   linkType: hard
 
