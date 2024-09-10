@@ -321,6 +321,68 @@ export const pythID: Config = {
 };
 
 export const assets: Assets = {
+  hardhat: [
+    {
+      token: "BNX",
+      address: "",
+      oracle: "chainlinkFixed",
+      price: "159990000000000000000",
+    },
+    {
+      token: "BTCB",
+      address: "",
+      oracle: "chainlinkFixed",
+      price: "208000000000000000",
+    },
+    {
+      token: "XVS",
+      address: "",
+      oracle: "chainlinkFixed",
+      price: "208000000000000000",
+    },
+    {
+      token: "ANKR",
+      address: "",
+      oracle: "chainlinkFixed",
+      price: "159990000000000000000",
+    },
+    {
+      token: "ankrBNB",
+      address: "",
+      oracle: "chainlinkFixed",
+      price: "159990000000000000000",
+    },
+    {
+      token: "MBOX",
+      address: "",
+      oracle: "chainlinkFixed",
+      price: "159990000000000000000",
+    },
+    {
+      token: "NFT",
+      address: "",
+      oracle: "chainlinkFixed",
+      price: "159990000000000000000",
+    },
+    {
+      token: "RACA",
+      address: "",
+      oracle: "chainlinkFixed",
+      price: "159990000000000000000",
+    },
+    {
+      token: "stkBNB",
+      address: "",
+      oracle: "chainlinkFixed",
+      price: "159990000000000000000",
+    },
+    {
+      token: "USDD",
+      address: "",
+      oracle: "chainlinkFixed",
+      price: "159990000000000000000",
+    },
+  ],
   bsctestnet: [
     {
       token: "BNX",
