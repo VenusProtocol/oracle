@@ -1,3 +1,16 @@
+## [2.6.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.5.1...v2.6.0-dev.1) (2024-09-12)
+
+
+### Features
+
+* updating deployment files ([2006972](https://github.com/VenusProtocol/oracle/commit/20069723205e8cf746a772ba48551fcf2e61f06a))
+
+
+### Bug Fixes
+
+* minor fix ([9875747](https://github.com/VenusProtocol/oracle/commit/98757475e6ae5bc765aeec3bb13d973432ba22cd))
+* xvs address and chainlink feeds ([67b3129](https://github.com/VenusProtocol/oracle/commit/67b3129ad5922de430d8bb5dcb539d7e6538afb8))
+
 ## [2.5.1](https://github.com/VenusProtocol/oracle/compare/v2.5.0...v2.5.1) (2024-09-10)
 
 
