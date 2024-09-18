@@ -61,6 +61,7 @@ export interface Oracles {
 
 export const SEQUENCER: Record<string, string> = {
   arbitrumone: "0xFdB631F5EE196F0ed6FAa767959853A9F217697D",
+  opmainnet: "0x371EAD81c9102C9BF4874A9075FFFf170F2Ee389",
 };
 
 export const addr0000 = "0x0000000000000000000000000000000000000000";
