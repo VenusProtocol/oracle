@@ -37,7 +37,7 @@ describe("Oracle unit tests", () => {
     this.daiFeed = await makeChainlinkOracle(8, 100000000);
 
     const chainlinkOracle = await ethers.getContractFactory("ChainlinkOracle", admin);
-    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
     fakeAccessControlManager.isAllowedToCall.returns(true);
 
     const instance = <ChainlinkOracle>await upgrades.deployProxy(chainlinkOracle, [fakeAccessControlManager.address], {
