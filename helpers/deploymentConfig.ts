@@ -341,6 +341,9 @@ export const redstoneFeed: Config = {
     XVS: "0xca4793Eeb7a837E30884279b3D557970E444EBDe",
     ZK: "0x5efDb74da192584746c96EcCe138681Ec1501218",
   },
+  opmainnet: {
+    XVS: "0x414F8f961969A8131AbE53294600c6C515E68f81",
+  },
 };
 
 export const pythID: Config = {
@@ -894,12 +897,12 @@ export const assets: Assets = {
       oracle: "chainlink",
       stalePeriod: STALE_PERIOD_26H,
     },
-    // {
-    //   token: "XVS",
-    //   address: "", // TODO: add redstone address when we get it
-    //   oracle: "redstone",
-    //   stalePeriod: STALE_PERIOD_26H
-    // },
+    {
+      token: "XVS",
+      address: "0xd3CC9d8f3689B83c91b7B59cAB4946B063EB894A",
+      oracle: "redstone",
+      stalePeriod: STALE_PERIOD_26H,
+    },
     {
       token: "CRV",
       address: "0xD533a949740bb3306d119CC777fa900bA034cd52",
@@ -1182,7 +1185,7 @@ export const assets: Assets = {
     },
     {
       token: "XVS",
-      address: "",
+      address: "0x4a971e87ad1F61f7f3081645f52a99277AE917cF",
       oracle: "redstone",
     },
   ],
