@@ -25,7 +25,7 @@ const getPythOracle = deployments.createFixture(async ({ getNamedAccounts }) => 
   });
 
   const pythOracle = await ethers.getContractFactory("PythOracle", deployer);
-  const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
+  const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
   fakeAccessControlManager.isAllowedToCall.returns(true);
 
   const instance = <PythOracle>await upgrades.deployProxy(

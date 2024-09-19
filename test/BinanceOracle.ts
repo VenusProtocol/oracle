@@ -32,7 +32,7 @@ describe("Binance Oracle unit tests", () => {
     sidRegistry.resolver.returns(publicResolver.address);
     publicResolver.addr.returns(this.mockBinanceFeedRegistry.address);
 
-    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
     fakeAccessControlManager.isAllowedToCall.returns(true);
     this.fakeAccessControlManager = fakeAccessControlManager;
 

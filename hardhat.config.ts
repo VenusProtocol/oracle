@@ -293,6 +293,16 @@ const config: HardhatUserConfig = {
     pages: "files",
     templates: "./docgen-templates",
   },
+  external: {
+    contracts: [
+      {
+        artifacts: "node_modules/@venusprotocol/venus-protocol/artifacts",
+      },
+      {
+        artifacts: "node_modules/@venusprotocol/governance-contracts/artifacts",
+      },
+    ],
+  },
 };
 
 export default config;

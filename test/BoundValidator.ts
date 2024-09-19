@@ -13,7 +13,7 @@ const EXP_SCALE = BigNumber.from(10).pow(18);
 const getBoundValidator = async (account: SignerWithAddress) => {
   const boundValidator = await ethers.getContractFactory("BoundValidator", account);
 
-  const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
+  const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
   fakeAccessControlManager.isAllowedToCall.returns(true);
 
   return <BoundValidator>await upgrades.deployProxy(boundValidator, [fakeAccessControlManager.address], {

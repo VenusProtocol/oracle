@@ -43,7 +43,7 @@ describe("Oracle plugin frame unit tests", () => {
   });
 
   beforeEach(async function () {
-    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
     fakeAccessControlManager.isAllowedToCall.returns(true);
 
     const resilientOracle = await ethers.getContractFactory("ResilientOracle", this.admin);

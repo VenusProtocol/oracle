@@ -38,7 +38,7 @@ describe("SFrxETHOracle unit tests", () => {
 
     SFrxETHOracleFactory = await ethers.getContractFactory("SFrxETHOracle");
 
-    fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManagerScenario");
+    fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
     fakeAccessControlManager.isAllowedToCall.returns(true);
   });
 
