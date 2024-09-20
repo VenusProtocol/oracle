@@ -1,3 +1,17 @@
+## [2.6.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.6.0-dev.1...v2.6.0-dev.2) (2024-09-20)
+
+
+### Features
+
+* deployment files for oracles on op mainnet ([a157808](https://github.com/VenusProtocol/oracle/commit/a157808679f42c03705fdbfbf86130e79cd14bfd))
+* updating deployment files ([54af379](https://github.com/VenusProtocol/oracle/commit/54af379f3b57f68309a1c090b2b7462b872048d3))
+* updating deployment files ([8c1c23b](https://github.com/VenusProtocol/oracle/commit/8c1c23b53102f4e08fba1062e5dffa935adcff19))
+
+
+### Bug Fixes
+
+* update type import ([13b5a1e](https://github.com/VenusProtocol/oracle/commit/13b5a1e3810ae152e1f96c5009825c87fa14cacb))
+
 ## [2.6.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.5.1...v2.6.0-dev.1) (2024-09-12)
 
 
