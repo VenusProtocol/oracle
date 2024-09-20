@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint:
-    name: Lint
+    name: Compile / Lint / Build
     runs-on: ubuntu-latest
 
     steps:
@@ -30,6 +30,9 @@ jobs:
 
       - name: Lint solidity and ts files
         run: yarn lint
+
+      - name: Lint solidity and ts files
+        run: yarn build
 
   test:
     name: Test
