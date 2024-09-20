@@ -61,6 +61,7 @@ export interface Oracles {
 
 export const SEQUENCER: Record<string, string> = {
   arbitrumone: "0xFdB631F5EE196F0ed6FAa767959853A9F217697D",
+  opmainnet: "0x371EAD81c9102C9BF4874A9075FFFf170F2Ee389",
 };
 
 export const addr0000 = "0x0000000000000000000000000000000000000000";
@@ -204,6 +205,13 @@ export const ADDRESSES: PreconfiguredAddresses = {
     acm: "0x1652E12C8ABE2f0D84466F0fc1fA4286491B3BC1",
     timelock: "0xd57365EE4E850e881229e2F8Aa405822f289e78d", // OpSepolia Multisig
   },
+  opmainnet: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: "0xD71b1F33f6B0259683f11174EE4Ddc2bb9cE4eD6",
+    timelock: "0x2e94dd14E81999CdBF5deDE31938beD7308354b3", // OpMainnet Multisig
+  },
 };
 
 export const chainlinkFeed: Config = {
@@ -309,6 +317,13 @@ export const chainlinkFeed: Config = {
     USDT: "0xF83696ca1b8a266163bE252bE2B94702D4929392",
     OP: "0x8907a105E562C9F3d7F2ed46539Ae36D87a15590",
   },
+  opmainnet: {
+    WBTC: "0xD702DD976Fb76Fffc2D3963D037dfDae5b04E593",
+    WETH: "0x13e3Ee699D1909E989722E753853AE30b17e08c5",
+    USDC: "0x16a9FA2FDa030272Ce99B29CF780dFA30361E0f3",
+    USDT: "0xECef79E109e997bCA29c1c0897ec9d7b03647F5E",
+    OP: "0x0D276FC14719f9292D5C1eA2198673d1f4269246",
+  },
 };
 
 export const redstoneFeed: Config = {
@@ -325,6 +340,9 @@ export const redstoneFeed: Config = {
   zksyncmainnet: {
     XVS: "0xca4793Eeb7a837E30884279b3D557970E444EBDe",
     ZK: "0x5efDb74da192584746c96EcCe138681Ec1501218",
+  },
+  opmainnet: {
+    XVS: "0x414F8f961969A8131AbE53294600c6C515E68f81",
   },
 };
 
@@ -879,12 +897,12 @@ export const assets: Assets = {
       oracle: "chainlink",
       stalePeriod: STALE_PERIOD_26H,
     },
-    // {
-    //   token: "XVS",
-    //   address: "", // TODO: add redstone address when we get it
-    //   oracle: "redstone",
-    //   stalePeriod: STALE_PERIOD_26H
-    // },
+    {
+      token: "XVS",
+      address: "0xd3CC9d8f3689B83c91b7B59cAB4946B063EB894A",
+      oracle: "redstone",
+      stalePeriod: STALE_PERIOD_26H,
+    },
     {
       token: "CRV",
       address: "0xD533a949740bb3306d119CC777fa900bA034cd52",
@@ -1137,6 +1155,38 @@ export const assets: Assets = {
       address: "0x789482e37218f9b26d8D9115E356462fA9A37116",
       price: "10000000000000000000",
       oracle: "redstoneFixed",
+    },
+  ],
+  opmainnet: [
+    {
+      token: "WBTC",
+      address: "0x68f180fcCe6836688e9084f035309E29Bf0A2095",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDC",
+      address: "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDT",
+      address: "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",
+      oracle: "chainlink",
+    },
+    {
+      token: "OP",
+      address: "0x4200000000000000000000000000000000000042",
+      oracle: "chainlink",
+    },
+    {
+      token: "WETH",
+      address: "0x4200000000000000000000000000000000000006",
+      oracle: "chainlink",
+    },
+    {
+      token: "XVS",
+      address: "0x4a971e87ad1F61f7f3081645f52a99277AE917cF",
+      oracle: "redstone",
     },
   ],
 };
