@@ -85,6 +85,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     BNBx: "0x327d6E6FAC0228070884e913263CFF9eFed4a2C8",
     slisBNBStakeManager: "0xbF0Db0d1340fdd5DF245613E280856aEAFbF54d1",
     slisBNB: "0xd2aF6A916Bc77764dc63742BC30f71AF4cF423F4",
+    WETH: "0x98f7A83361F7Ac8765CcEBAB1425da6b341958a7",
+    wstETH: "0x4349016259FCd8eE452f696b2a7beeE31667D129",
+    weETH: "0x7df9372096c8ca2401f30B3dF931bEFF493f1FdC",
   },
   bscmainnet: {
     vBNBAddress: mainnetDeployments.contracts.vBNB.address,
@@ -102,6 +105,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     slisBNB: "0xB0b84D294e0C75A6abe60171b70edEb2EFd14A1B",
     wBETH: "0xa2e3356610840701bdf5611a53974510ae27e2e1",
     ankrBNB: "0x52f24a5e03aee338da5fd9df68d2b6fae1178827",
+    WETH: "0x2170Ed0880ac9A755fd29B2688956BD959F933F8",
+    wstETH: "0x26c5e01524d2E6280A48F2c50fF6De7e52E9611C",
+    weETH: "0x04c0599ae5a44757c0af6f9ec3b93da8976c150a",
   },
   sepolia: {
     vBNBAddress: ethers.constants.AddressZero,
