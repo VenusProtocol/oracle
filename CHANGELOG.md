@@ -1,3 +1,11 @@
+## [2.6.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.6.0-dev.2...v2.6.0-dev.3) (2024-09-24)
+
+
+### Features
+
+* add LST ETH pool deployment on BNB chain ([b1fbeab](https://github.com/VenusProtocol/oracle/commit/b1fbeab71a04786aeaa547f09c4c648b9812b351))
+* updating deployment files ([ab4f42e](https://github.com/VenusProtocol/oracle/commit/ab4f42eb74e2d0702e490d33f22723d255eeaeca))
+
 ## [2.6.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.6.0-dev.1...v2.6.0-dev.2) (2024-09-20)
 
 
