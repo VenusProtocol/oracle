@@ -1,3 +1,10 @@
+## [2.6.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.6.0-dev.3...v2.6.0-dev.4) (2024-10-10)
+
+
+### Features
+
+* use @venusprotocol/governance-contracts that includes the Optimism deployment ([f13d176](https://github.com/VenusProtocol/oracle/commit/f13d176d007988dba9040ab8dbca2b3c7662387b))
+
 ## [2.6.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.6.0-dev.2...v2.6.0-dev.3) (2024-09-24)
 
 
