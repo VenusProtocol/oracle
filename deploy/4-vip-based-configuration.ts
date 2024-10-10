@@ -1,3 +1,4 @@
+import { AccessControlManager } from "@venusprotocol/governance-contracts/dist/typechain";
 import { BigNumberish } from "ethers";
 import { ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/types";
@@ -11,7 +12,6 @@ import {
   assets,
   getOraclesData,
 } from "../helpers/deploymentConfig";
-import { AccessControlManager } from "../typechain-types";
 
 interface GovernanceCommand {
   contract: string;

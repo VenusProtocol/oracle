@@ -61,6 +61,7 @@ export interface Oracles {
 
 export const SEQUENCER: Record<string, string> = {
   arbitrumone: "0xFdB631F5EE196F0ed6FAa767959853A9F217697D",
+  opmainnet: "0x371EAD81c9102C9BF4874A9075FFFf170F2Ee389",
 };
 
 export const addr0000 = "0x0000000000000000000000000000000000000000";
@@ -84,6 +85,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     BNBx: "0x327d6E6FAC0228070884e913263CFF9eFed4a2C8",
     slisBNBStakeManager: "0xbF0Db0d1340fdd5DF245613E280856aEAFbF54d1",
     slisBNB: "0xd2aF6A916Bc77764dc63742BC30f71AF4cF423F4",
+    WETH: "0x98f7A83361F7Ac8765CcEBAB1425da6b341958a7",
+    wstETH: "0x4349016259FCd8eE452f696b2a7beeE31667D129",
+    weETH: "0x7df9372096c8ca2401f30B3dF931bEFF493f1FdC",
   },
   bscmainnet: {
     vBNBAddress: mainnetDeployments.contracts.vBNB.address,
@@ -101,6 +105,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     slisBNB: "0xB0b84D294e0C75A6abe60171b70edEb2EFd14A1B",
     wBETH: "0xa2e3356610840701bdf5611a53974510ae27e2e1",
     ankrBNB: "0x52f24a5e03aee338da5fd9df68d2b6fae1178827",
+    WETH: "0x2170Ed0880ac9A755fd29B2688956BD959F933F8",
+    wstETH: "0x26c5e01524d2E6280A48F2c50fF6De7e52E9611C",
+    weETH: "0x04c0599ae5a44757c0af6f9ec3b93da8976c150a",
   },
   sepolia: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -196,6 +203,20 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: "0x526159A92A82afE5327d37Ef446b68FD9a5cA914", // To-do: use node modules
     timelock: "0x751Aa759cfBB6CE71A43b48e40e1cCcFC66Ba4aa", // Zksync mainnet Multisig
+  },
+  opsepolia: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: "0x1652E12C8ABE2f0D84466F0fc1fA4286491B3BC1",
+    timelock: "0xd57365EE4E850e881229e2F8Aa405822f289e78d", // OpSepolia Multisig
+  },
+  opmainnet: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: "0xD71b1F33f6B0259683f11174EE4Ddc2bb9cE4eD6",
+    timelock: "0x2e94dd14E81999CdBF5deDE31938beD7308354b3", // OpMainnet Multisig
   },
 };
 
@@ -295,6 +316,20 @@ export const chainlinkFeed: Config = {
     "USDC.e": "0x1824D297C6d6D311A204495277B63e943C2D376E",
     USDT: "0xB615075979AE1836B476F651f1eB79f0Cd3956a9",
   },
+  opsepolia: {
+    WBTC: "0x3015aa11f5c2D4Bd0f891E708C8927961b38cE7D",
+    WETH: "0x61Ec26aA57019C486B10502285c5A3D4A4750AD7",
+    USDC: "0x6e44e50E3cc14DD16e01C590DC1d7020cb36eD4C",
+    USDT: "0xF83696ca1b8a266163bE252bE2B94702D4929392",
+    OP: "0x8907a105E562C9F3d7F2ed46539Ae36D87a15590",
+  },
+  opmainnet: {
+    WBTC: "0xD702DD976Fb76Fffc2D3963D037dfDae5b04E593",
+    WETH: "0x13e3Ee699D1909E989722E753853AE30b17e08c5",
+    USDC: "0x16a9FA2FDa030272Ce99B29CF780dFA30361E0f3",
+    USDT: "0xECef79E109e997bCA29c1c0897ec9d7b03647F5E",
+    OP: "0x0D276FC14719f9292D5C1eA2198673d1f4269246",
+  },
 };
 
 export const redstoneFeed: Config = {
@@ -311,6 +346,9 @@ export const redstoneFeed: Config = {
   zksyncmainnet: {
     XVS: "0xca4793Eeb7a837E30884279b3D557970E444EBDe",
     ZK: "0x5efDb74da192584746c96EcCe138681Ec1501218",
+  },
+  opmainnet: {
+    XVS: "0x414F8f961969A8131AbE53294600c6C515E68f81",
   },
 };
 
@@ -865,12 +903,12 @@ export const assets: Assets = {
       oracle: "chainlink",
       stalePeriod: STALE_PERIOD_26H,
     },
-    // {
-    //   token: "XVS",
-    //   address: "", // TODO: add redstone address when we get it
-    //   oracle: "redstone",
-    //   stalePeriod: STALE_PERIOD_26H
-    // },
+    {
+      token: "XVS",
+      address: "0xd3CC9d8f3689B83c91b7B59cAB4946B063EB894A",
+      oracle: "redstone",
+      stalePeriod: STALE_PERIOD_26H,
+    },
     {
       token: "CRV",
       address: "0xD533a949740bb3306d119CC777fa900bA034cd52",
@@ -1089,6 +1127,71 @@ export const assets: Assets = {
     {
       token: "XVS",
       address: "0xD78ABD81a3D57712a3af080dc4185b698Fe9ac5A",
+      oracle: "redstone",
+    },
+  ],
+  opsepolia: [
+    {
+      token: "WBTC",
+      address: "0x9f5039a86AF12AB10Ff16659eA0885bb4C04d013",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDC",
+      address: "0x71B49d40B10Aa76cc44954e821eB6eA038Cf196F",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDT",
+      address: "0x9AD0542c71c09B764cf58d38918892F3Ae7ecc63",
+      oracle: "chainlink",
+    },
+    {
+      token: "OP",
+      address: "0xEC5f6eB84677F562FC568B89121C5E5C19639776",
+      oracle: "chainlink",
+    },
+    {
+      token: "WETH",
+      address: "0x4200000000000000000000000000000000000006",
+      oracle: "chainlink",
+    },
+    {
+      token: "XVS",
+      address: "0x789482e37218f9b26d8D9115E356462fA9A37116",
+      price: "10000000000000000000",
+      oracle: "redstoneFixed",
+    },
+  ],
+  opmainnet: [
+    {
+      token: "WBTC",
+      address: "0x68f180fcCe6836688e9084f035309E29Bf0A2095",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDC",
+      address: "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+      oracle: "chainlink",
+    },
+    {
+      token: "USDT",
+      address: "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",
+      oracle: "chainlink",
+    },
+    {
+      token: "OP",
+      address: "0x4200000000000000000000000000000000000042",
+      oracle: "chainlink",
+    },
+    {
+      token: "WETH",
+      address: "0x4200000000000000000000000000000000000006",
+      oracle: "chainlink",
+    },
+    {
+      token: "XVS",
+      address: "0x4a971e87ad1F61f7f3081645f52a99277AE917cF",
       oracle: "redstone",
     },
   ],

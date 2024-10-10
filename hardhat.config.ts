@@ -160,6 +160,18 @@ const config: HardhatUserConfig = {
       live: true,
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
+    opsepolia: {
+      url: process.env.ARCHIVE_NODE_opsepolia || "https://sepolia.optimism.io",
+      chainId: 11155420,
+      live: true,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
+    },
+    opmainnet: {
+      url: process.env.ARCHIVE_NODE_opmainnet || "https://mainnet.optimism.io",
+      chainId: 10,
+      live: true,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
+    },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
@@ -175,6 +187,8 @@ const config: HardhatUserConfig = {
       opbnbmainnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       arbitrumsepolia: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       arbitrumone: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
+      opsepolia: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
+      opmainnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
     },
     customChains: [
       {
@@ -241,6 +255,22 @@ const config: HardhatUserConfig = {
           browserURL: "https://arbiscan.io/",
         },
       },
+      {
+        network: "opsepolia",
+        chainId: 11155420,
+        urls: {
+          apiURL: "https://api-sepolia-optimistic.etherscan.io/api/",
+          browserURL: "https://sepolia-optimistic.etherscan.io/",
+        },
+      },
+      {
+        network: "opmainnet",
+        chainId: 10,
+        urls: {
+          apiURL: "https://api-optimistic.etherscan.io/api",
+          browserURL: "https://optimistic.etherscan.io/",
+        },
+      },
     ],
   },
   paths: {
@@ -262,6 +292,16 @@ const config: HardhatUserConfig = {
     outputDir: "./docs",
     pages: "files",
     templates: "./docgen-templates",
+  },
+  external: {
+    contracts: [
+      {
+        artifacts: "node_modules/@venusprotocol/venus-protocol/artifacts",
+      },
+      {
+        artifacts: "node_modules/@venusprotocol/governance-contracts/artifacts",
+      },
+    ],
   },
 };
 

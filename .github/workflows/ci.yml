@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint:
-    name: Lint
+    name: Compile / Lint / Build
     runs-on: ubuntu-latest
 
     steps:
@@ -30,6 +30,9 @@ jobs:
 
       - name: Lint solidity and ts files
         run: yarn lint
+
+      - name: Lint solidity and ts files
+        run: yarn build
 
   test:
     name: Test
@@ -116,7 +119,7 @@ jobs:
 
       - name: Export deployments
         run: |
-          for NETWORK in bsctestnet bscmainnet ethereum sepolia opbnbtestnet opbnbmainnet arbitrumsepolia arbitrumone; do
+          for NETWORK in bsctestnet bscmainnet ethereum sepolia opbnbtestnet opbnbmainnet arbitrumsepolia arbitrumone opsepolia opmainnet; do
             EXPORT=true yarn hardhat export --network ${NETWORK} --export ./deployments/${NETWORK}.json
             jq -M '{name, chainId, addresses: .contracts | map_values(.address)}' ./deployments/${NETWORK}.json > ./deployments/${NETWORK}_addresses.json
           done

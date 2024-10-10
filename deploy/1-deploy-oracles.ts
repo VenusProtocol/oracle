@@ -15,26 +15,26 @@ const func: DeployFunction = async function ({
 
   let accessControlManager;
   if (!network.live) {
-    await deploy("AccessControlManagerScenario", {
+    await deploy("AccessControlManager", {
       from: deployer,
       args: [],
       log: true,
       autoMine: true,
     });
 
-    accessControlManager = await hre.ethers.getContract("AccessControlManagerScenario");
+    accessControlManager = await hre.ethers.getContract("AccessControlManager");
   }
 
   let vai;
   if (!network.live) {
-    await deploy("VAIScenario", {
+    await deploy("VAI", {
       from: deployer,
       log: true,
       autoMine: true,
       args: [await getChainId()],
     });
 
-    vai = await hre.ethers.getContract("VAIScenario");
+    vai = await hre.ethers.getContract("VAI");
   }
   const accessControlManagerAddress = network.live ? ADDRESSES[network.name].acm : accessControlManager?.address;
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
