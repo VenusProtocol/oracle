@@ -1,3 +1,23 @@
+## [2.6.0](https://github.com/VenusProtocol/oracle/compare/v2.5.1...v2.6.0) (2024-10-10)
+
+
+### Features
+
+* add LST ETH pool deployment on BNB chain ([b1fbeab](https://github.com/VenusProtocol/oracle/commit/b1fbeab71a04786aeaa547f09c4c648b9812b351))
+* deployment files for oracles on op mainnet ([a157808](https://github.com/VenusProtocol/oracle/commit/a157808679f42c03705fdbfbf86130e79cd14bfd))
+* updating deployment files ([54af379](https://github.com/VenusProtocol/oracle/commit/54af379f3b57f68309a1c090b2b7462b872048d3))
+* updating deployment files ([8c1c23b](https://github.com/VenusProtocol/oracle/commit/8c1c23b53102f4e08fba1062e5dffa935adcff19))
+* updating deployment files ([ab4f42e](https://github.com/VenusProtocol/oracle/commit/ab4f42eb74e2d0702e490d33f22723d255eeaeca))
+* updating deployment files ([2006972](https://github.com/VenusProtocol/oracle/commit/20069723205e8cf746a772ba48551fcf2e61f06a))
+* use @venusprotocol/governance-contracts that includes the Optimism deployment ([f13d176](https://github.com/VenusProtocol/oracle/commit/f13d176d007988dba9040ab8dbca2b3c7662387b))
+
+
+### Bug Fixes
+
+* minor fix ([9875747](https://github.com/VenusProtocol/oracle/commit/98757475e6ae5bc765aeec3bb13d973432ba22cd))
+* update type import ([13b5a1e](https://github.com/VenusProtocol/oracle/commit/13b5a1e3810ae152e1f96c5009825c87fa14cacb))
+* xvs address and chainlink feeds ([67b3129](https://github.com/VenusProtocol/oracle/commit/67b3129ad5922de430d8bb5dcb539d7e6538afb8))
+
 ## [2.6.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.6.0-dev.3...v2.6.0-dev.4) (2024-10-10)
 
 
