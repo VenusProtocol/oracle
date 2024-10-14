@@ -15,7 +15,7 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es6",
+    "target": "es2020",
     "outDir": "dist",
     "paths": {
       "@nomiclabs/hardhat-ethers": ["node_modules/hardhat-deploy-ethers"]
