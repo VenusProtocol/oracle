@@ -8,7 +8,7 @@ import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contract
 /**
  * @title EtherfiAccountantOracle
  * @author Venus
- * @notice This oracle fetches the price of eBTC
+ * @notice This oracle fetches the price of any Ether.fi asset that uses Accountant contracts to derive the underlying price
  */
 contract EtherfiAccountantOracle is CorrelatedTokenOracle {
     /// @notice Address of Accountant
@@ -19,16 +19,16 @@ contract EtherfiAccountantOracle is CorrelatedTokenOracle {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address accountant,
-        address eBTC,
-        address wbtc,
+        address correlatedToken,
+        address underlyingToken,
         address resilientOracle
-    ) CorrelatedTokenOracle(eBTC, wbtc, resilientOracle) {
+    ) CorrelatedTokenOracle(correlatedToken, underlyingToken, resilientOracle) {
         ensureNonzeroAddress(accountant);
         ACCOUNTANT = IAccountant(accountant);
     }
 
     /**
-     * @notice Gets the WBTC for 1 eBTC
+     * @notice Fetches the conversion rate from the ACCOUNTANT contract
      * @return amount Amount of WBTC
      */
     function _getUnderlyingAmount() internal view override returns (uint256) {
