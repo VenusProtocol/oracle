@@ -8,7 +8,8 @@ import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contract
 /**
  * @title EtherfiAccountantOracle
  * @author Venus
- * @notice This oracle fetches the price of any Ether.fi asset that uses Accountant contracts to derive the underlying price
+ * @notice This oracle fetches the price of any Ether.fi asset that uses
+ * Accountant contracts to derive the underlying price
  */
 contract EtherfiAccountantOracle is CorrelatedTokenOracle {
     /// @notice Address of Accountant
