@@ -1,3 +1,26 @@
+## [2.7.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.6.0...v2.7.0-dev.1) (2024-11-08)
+
+
+### Features
+
+* updating deployment files ([b2b592e](https://github.com/VenusProtocol/oracle/commit/b2b592eb1b6d517a4876ebc3ec08c88883b35a21))
+* updating deployment files ([fe03739](https://github.com/VenusProtocol/oracle/commit/fe03739156b83b9f084f2e1f3b8404b6bb4ed82a))
+* updating deployment files ([12c864e](https://github.com/VenusProtocol/oracle/commit/12c864e5f69523bd5cb112540f22f4f6dc554997))
+
+
+### Bug Fixes
+
+* added deployment scripts ([cdf4e52](https://github.com/VenusProtocol/oracle/commit/cdf4e52c5c12790d3f0fab88260de95ddcb75b98))
+* added ethereum addresses ([f5b82d1](https://github.com/VenusProtocol/oracle/commit/f5b82d18077b15ba600fff8403eaf6b2fdd4b889))
+* apply suggestions for generic naming ([1365003](https://github.com/VenusProtocol/oracle/commit/13650032763f09587add3800a95619cf9f309b5f))
+* deployed eBTC oracle ([d3a7b41](https://github.com/VenusProtocol/oracle/commit/d3a7b416fe18a03d5a28c40c99dcd589e880db63))
+* deployed on ethereum ([0b1dff0](https://github.com/VenusProtocol/oracle/commit/0b1dff01bee4ee81a44467c9b7e881150877b83e))
+* fixed lint ([f00e26a](https://github.com/VenusProtocol/oracle/commit/f00e26a9b22900b39fa7d6ffe3e2ab4fdf108244))
+* fixed lint ([9020396](https://github.com/VenusProtocol/oracle/commit/90203968c3269b93a6120522bfc8d01453d598c0))
+* redeployed on sepolia ([2a61077](https://github.com/VenusProtocol/oracle/commit/2a61077782a51204bc8b708fa7037d92674edf0b))
+* revert deployment ([bb48dca](https://github.com/VenusProtocol/oracle/commit/bb48dca8fd7c7b81998c37336d3b97d713cdfa2c))
+* revert deployment ([5f84c03](https://github.com/VenusProtocol/oracle/commit/5f84c03afaf4fc869a6a0ac435f9c034884b717d))
+
 ## [2.6.0](https://github.com/VenusProtocol/oracle/compare/v2.5.1...v2.6.0) (2024-10-10)
 
 
