@@ -224,7 +224,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
     timelock: "0xdf3b635d2b535f906BB02abb22AED71346E36a00", // Base sepolia Multisig
-  }
+  },
 };
 
 export const chainlinkFeed: Config = {

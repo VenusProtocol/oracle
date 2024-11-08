@@ -176,11 +176,8 @@ const config: HardhatUserConfig = {
       url: process.env.ARCHIVE_NODE_basesepolia || "https://sepolia.base.org",
       chainId: 84532,
       live: true,
-      // accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
-      accounts: {
-        mnemonic: process.env.MNEMONIC,
-      }
-    }
+      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
+    },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
@@ -198,6 +195,7 @@ const config: HardhatUserConfig = {
       arbitrumone: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       opsepolia: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       opmainnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
+      basesepolia: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
     },
     customChains: [
       {
@@ -284,7 +282,7 @@ const config: HardhatUserConfig = {
         network: "basesepolia",
         chainId: 84532,
         urls: {
-          apiURL: "https://sepolia.base.org",
+          apiURL: "https://api-sepolia.basescan.org/api",
           browserURL: "https://sepolia.basescan.org/",
         },
       },
