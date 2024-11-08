@@ -218,6 +218,13 @@ export const ADDRESSES: PreconfiguredAddresses = {
     acm: "0xD71b1F33f6B0259683f11174EE4Ddc2bb9cE4eD6",
     timelock: "0x2e94dd14E81999CdBF5deDE31938beD7308354b3", // OpMainnet Multisig
   },
+  basesepolia: {
+    acm: "0x724138223D8F76b519fdE715f60124E7Ce51e051",
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    timelock: "0xdf3b635d2b535f906BB02abb22AED71346E36a00", // Base sepolia Multisig
+  }
 };
 
 export const chainlinkFeed: Config = {
