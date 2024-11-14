@@ -1,0 +1,16 @@
+{
+  "name": "basesepolia",
+  "chainId": "84532",
+  "addresses": {
+    "BoundValidator": "0xC76284488E57554A457A75a8b166fB2ADAB430dB",
+    "BoundValidator_Implementation": "0x9D6aF23E1E42e1eB341eE81cC91855E1f94aDBA0",
+    "BoundValidator_Proxy": "0xC76284488E57554A457A75a8b166fB2ADAB430dB",
+    "ChainlinkOracle": "0x801aB33A69AD867500fbCda7b3dB66C73151494b",
+    "ChainlinkOracle_Implementation": "0x8b5d2A92AF7197f2Ba4aBf524886650038990163",
+    "ChainlinkOracle_Proxy": "0x801aB33A69AD867500fbCda7b3dB66C73151494b",
+    "DefaultProxyAdmin": "0xB85dD19112c4BF1240FeD0f26E8D0b0576a82546",
+    "ResilientOracle": "0xC34871C982cf0Bc6e7aCa2c2670Bc319bDA1C744",
+    "ResilientOracle_Implementation": "0x398f2A7E04c38f57E5282Dd612c45e1d924A0590",
+    "ResilientOracle_Proxy": "0xC34871C982cf0Bc6e7aCa2c2670Bc319bDA1C744"
+  }
+}
