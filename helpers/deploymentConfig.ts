@@ -97,7 +97,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     sidRegistryAddress: "0x08CEd32a7f3eeC915Ba84415e9C07a7286977956",
     acm: bscmainnetGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: bscmainnetGovernanceDeployments.contracts.NormalTimelock.address,
-    BNBxStakeManager: "0x7276241a669489e4bbb76f63d2a43bfe63080f2f",
+    BNBxStakeManager: "0x3b961e83400D51e6E1AF5c450d3C7d7b80588d28",
     BNBx: "0x1bdd3cf7f79cfb8edbb955f20ad99211551ba275",
     stkBNBStakePool: "0xC228CefDF841dEfDbD5B3a18dFD414cC0dbfa0D8",
     stkBNB: "0xc2E9d07F66A89c44062459A47a0D2Dc038E4fb16",
