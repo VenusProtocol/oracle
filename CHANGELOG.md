@@ -1,3 +1,12 @@
+## [2.7.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.7.0-dev.1...v2.7.0-dev.2) (2024-11-18)
+
+
+### Features
+
+* add eth mainnet deployment for pufETH oracle ([73911cb](https://github.com/VenusProtocol/oracle/commit/73911cbde44ddef70f6cb999f41a533669f2aec6))
+* add sepolia deployments for pufETH oracle ([4dcd4eb](https://github.com/VenusProtocol/oracle/commit/4dcd4ebee7ec482e63f90b0738938b4d4187fc1f))
+* updating deployment files ([958a9a1](https://github.com/VenusProtocol/oracle/commit/958a9a177c382a238d2c254b1bbe68e43f0b8de7))
+
 ## [2.7.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.6.0...v2.7.0-dev.1) (2024-11-08)
 
 
