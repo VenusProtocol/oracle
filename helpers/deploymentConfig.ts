@@ -128,6 +128,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     weETHs: "0xE233527306c2fa1E159e251a2E5893334505A5E0",
     eBTC: "0xd48392CCf3fe028023D0783E570DFc71996859d7",
     WBTC: "0x92A2928f5634BEa89A195e7BeCF0f0FEEDAB885b",
+    pufETH: "0x6D9f78b57AEeB0543a3c3B32Cc038bFB14a4bA68",
   },
   ethereum: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -156,6 +157,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     eBTC: "0x657e8c867d8b37dcc18fa4caead9c45eb088c642",
     WBTC: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
     eBTC_Accountant: "0x1b293DC39F94157fA0D1D36d7e0090C8B8B8c13F",
+    pufETH: "0xD9A442856C234a39a81a089C06451EBAa4306a72",
   },
   opbnbtestnet: {
     vBNBAddress: ethers.constants.AddressZero,
