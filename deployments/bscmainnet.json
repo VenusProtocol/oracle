@@ -458,7 +458,7 @@
       ]
     },
     "BNBxOracle": {
-      "address": "0x46F8f9e4cb04ec2Ca4a75A6a4915b823b98A0aA1",
+      "address": "0x94f30dC18D12C210E5ae32752B1033afdd89D5DB",
       "abi": [
         {
           "anonymous": false,
@@ -688,7 +688,7 @@
       ]
     },
     "BNBxOracle_Implementation": {
-      "address": "0xa7f02f77CD40AB146341549489f6BfdBe8dA01C8",
+      "address": "0x49ba22665D598634837344c832C327593817832c",
       "abi": [
         {
           "inputs": [
@@ -808,7 +808,7 @@
       ]
     },
     "BNBxOracle_Proxy": {
-      "address": "0x46F8f9e4cb04ec2Ca4a75A6a4915b823b98A0aA1",
+      "address": "0x94f30dC18D12C210E5ae32752B1033afdd89D5DB",
       "abi": [
         {
           "inputs": [
