@@ -1,3 +1,11 @@
+## [2.7.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.7.0-dev.2...v2.7.0-dev.3) (2024-11-19)
+
+
+### Features
+
+* update BNBx oracle to use the new StakeManager ([d4f0440](https://github.com/VenusProtocol/oracle/commit/d4f044063b703851edd0fc0372ee2bdd5d22b8b5))
+* updating deployment files ([f56b799](https://github.com/VenusProtocol/oracle/commit/f56b799a5f805cb45c1fcd24310cd4852b2ac0e9))
+
 ## [2.7.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.7.0-dev.1...v2.7.0-dev.2) (2024-11-18)
 
 
