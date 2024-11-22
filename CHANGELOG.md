@@ -1,3 +1,19 @@
+## [2.7.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.7.0-dev.3...v2.7.0-dev.4) (2024-11-22)
+
+
+### Features
+
+* updating deployment files ([4a7ef0a](https://github.com/VenusProtocol/oracle/commit/4a7ef0a45ebad3cb019d490fa99403f4475c7c40))
+* updating deployment files ([1b5aed2](https://github.com/VenusProtocol/oracle/commit/1b5aed207b262399ae909d77cedb189a6d798f66))
+
+
+### Bug Fixes
+
+* added network to ci ([4979fcb](https://github.com/VenusProtocol/oracle/commit/4979fcb1c7e3642916dfd78c6429b86254ecc41e))
+* deployed oracles ([665d04e](https://github.com/VenusProtocol/oracle/commit/665d04ef5ed9f0ef1533f975f3cdf3b2f2b7509a))
+* deployed redstone oracle ([d95180d](https://github.com/VenusProtocol/oracle/commit/d95180dfadba0cd14dca77dc950e22fe526ba934))
+* fixed lint ([fc955f0](https://github.com/VenusProtocol/oracle/commit/fc955f0a7db71fd0c7983a18e7798ddce0b90a41))
+
 ## [2.7.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.7.0-dev.2...v2.7.0-dev.3) (2024-11-19)
 
 
