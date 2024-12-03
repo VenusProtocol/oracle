@@ -232,6 +232,13 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     timelock: "0xdf3b635d2b535f906BB02abb22AED71346E36a00", // Base sepolia Multisig
   },
+  basemainnet: {
+    acm: "0x9E6CeEfDC6183e4D0DF8092A9B90cDF659687daB",
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    timelock: "0x1803Cf1D3495b43cC628aa1d8638A981F8CD341C", // Base mainnet Multisig
+  },
 };
 
 export const chainlinkFeed: Config = {
@@ -348,6 +355,11 @@ export const chainlinkFeed: Config = {
     USDC: "0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165",
     cbBTC: "0x0FB99723Aee6f420beAD13e6bBB79b7E6F034298",
     WETH: "0x4aDC67696bA383F43DD60A9e78F2C97Fbbfc7cb1",
+  },
+  basemainnet: {
+    USDC: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+    cbBTC: "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf",
+    WETH: "0x4200000000000000000000000000000000000006",
   },
 };
 
@@ -1235,6 +1247,23 @@ export const assets: Assets = {
       address: "0xE657EDb5579B82135a274E85187927C42E38C021",
       price: "10000000000000000000",
       oracle: "chainlinkFixed",
+    },
+  ],
+  basemainnet: [
+    {
+      token: "USDC",
+      address: "0x7e860098F58bBFC8648a4311b374B1D669a2bc6B",
+      oracle: "chainlink",
+    },
+    {
+      token: "cbBTC",
+      address: "0x07DA0E54543a844a80ABE69c8A12F22B3aA59f9D",
+      oracle: "chainlink",
+    },
+    {
+      token: "WETH",
+      address: "0x71041dddad3595F9CEd3DcCFBe3D1F4b0a16Bb70",
+      oracle: "chainlink",
     },
   ],
 };
