@@ -6,6 +6,7 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./interfaces/VBep20Interface.sol";
 import "./interfaces/OracleInterface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
+import "./TransientSlot.sol";
 
 /**
  * @title ResilientOracle
@@ -44,6 +45,8 @@ isValid = anchorRatio <= upperBoundAnchorRatio && anchorRatio >= lowerBoundAncho
  * oracle to be stagnant and treat it like it's disabled.
  */
 contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOracleInterface {
+    using TransientSlot for *;
+
     /**
      * @dev Oracle roles:
      * **main**: The most trustworthy price source
@@ -67,6 +70,9 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         /// for each oracle in the same order as `oracles`
         bool[3] enableFlagsForOracles;
     }
+
+    bytes32 private constant PIVOT_ORACLE_PRICE_STORAGE =
+        0x9b779b17422d0df92223018b32b4d1fa46e071723d6817e2486d003becc55f00;
 
     uint256 public constant INVALID_PRICE = 0;
 
@@ -236,7 +242,9 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         (address pivotOracle, bool pivotOracleEnabled) = getOracle(asset, OracleRole.PIVOT);
         if (pivotOracle != address(0) && pivotOracleEnabled) {
             //if pivot oracle is not TwapOracle it will revert so we need to catch the revert
-            try TwapInterface(pivotOracle).updateTwap(asset) {} catch {}
+            try TwapInterface(pivotOracle).updateTwap(asset) returns (uint256 assetPrice) {
+                PIVOT_ORACLE_PRICE_STORAGE.asUint256().tstore(assetPrice);
+            } catch {}
         }
     }
 
@@ -331,13 +339,19 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
 
     function _getPrice(address asset) internal view returns (uint256) {
         uint256 pivotPrice = INVALID_PRICE;
-
+        address pivotOracle;
+        bool pivotOracleEnabled;
         // Get pivot oracle price, Invalid price if not available or error
-        (address pivotOracle, bool pivotOracleEnabled) = getOracle(asset, OracleRole.PIVOT);
-        if (pivotOracleEnabled && pivotOracle != address(0)) {
-            try OracleInterface(pivotOracle).getPrice(asset) returns (uint256 pricePivot) {
-                pivotPrice = pricePivot;
-            } catch {}
+        pivotPrice = PIVOT_ORACLE_PRICE_STORAGE.asUint256().tload();
+        if (pivotPrice != INVALID_PRICE) {
+            return pivotPrice;
+        } else {
+            (pivotOracle, pivotOracleEnabled) = getOracle(asset, OracleRole.PIVOT);
+            if (pivotOracleEnabled && pivotOracle != address(0)) {
+                try OracleInterface(pivotOracle).getPrice(asset) returns (uint256 pricePivot) {
+                    pivotPrice = pricePivot;
+                } catch {}
+            }
         }
 
         // Compare main price and pivot price, return main price and if validation was successful
