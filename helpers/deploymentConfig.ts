@@ -1265,6 +1265,11 @@ export const assets: Assets = {
       address: "0x71041dddad3595F9CEd3DcCFBe3D1F4b0a16Bb70",
       oracle: "chainlink",
     },
+    {
+      token: "XVS",
+      address: "0xebB7873213c8d1d9913D8eA39Aa12d74cB107995",
+      oracle: "redstone",
+    },
   ],
 };
 
