@@ -1,3 +1,11 @@
+## [2.7.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v2.7.0-dev.4...v2.7.0-dev.5) (2024-12-05)
+
+
+### Features
+
+* add oracle deployments for LBTC on eth ([7bbdff7](https://github.com/VenusProtocol/oracle/commit/7bbdff75a73ba45c2d9d82f980077160ba1e54b5))
+* updating deployment files ([6293473](https://github.com/VenusProtocol/oracle/commit/62934738a68f84236a65629ff7799476152b19b5))
+
 ## [2.7.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.7.0-dev.3...v2.7.0-dev.4) (2024-11-22)
 
 
