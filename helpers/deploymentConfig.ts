@@ -357,9 +357,9 @@ export const chainlinkFeed: Config = {
     WETH: "0x4aDC67696bA383F43DD60A9e78F2C97Fbbfc7cb1",
   },
   basemainnet: {
-    USDC: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
-    cbBTC: "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf",
-    WETH: "0x4200000000000000000000000000000000000006",
+    USDC: "0x7e860098F58bBFC8648a4311b374B1D669a2bc6B",
+    cbBTC: "0x07DA0E54543a844a80ABE69c8A12F22B3aA59f9D",
+    WETH: "0x71041dddad3595F9CEd3DcCFBe3D1F4b0a16Bb70",
   },
 };
 
@@ -381,6 +381,9 @@ export const redstoneFeed: Config = {
   opmainnet: {
     XVS: "0x414F8f961969A8131AbE53294600c6C515E68f81",
   },
+  basemainnet: {
+    XVS: "0x5ED849a45B4608952161f45483F4B95BCEa7f8f0",
+  }
 };
 
 export const pythID: Config = {
@@ -1252,17 +1255,17 @@ export const assets: Assets = {
   basemainnet: [
     {
       token: "USDC",
-      address: "0x7e860098F58bBFC8648a4311b374B1D669a2bc6B",
+      address: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
       oracle: "chainlink",
     },
     {
       token: "cbBTC",
-      address: "0x07DA0E54543a844a80ABE69c8A12F22B3aA59f9D",
+      address: "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf",
       oracle: "chainlink",
     },
     {
       token: "WETH",
-      address: "0x71041dddad3595F9CEd3DcCFBe3D1F4b0a16Bb70",
+      address: "0x4200000000000000000000000000000000000006",
       oracle: "chainlink",
     },
     {
