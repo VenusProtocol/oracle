@@ -383,7 +383,7 @@ export const redstoneFeed: Config = {
   },
   basemainnet: {
     XVS: "0x5ED849a45B4608952161f45483F4B95BCEa7f8f0",
-  }
+  },
 };
 
 export const pythID: Config = {
