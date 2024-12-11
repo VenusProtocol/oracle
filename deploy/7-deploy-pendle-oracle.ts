@@ -4,6 +4,11 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
 
+enum PendleRateKind {
+  PT_TO_ASSET = 0,
+  PT_TO_SY = 1,
+}
+
 const func: DeployFunction = async ({
   getNamedAccounts,
   deployments,
@@ -32,6 +37,7 @@ const func: DeployFunction = async ({
     args: [
       PTweETH_26DEC2024_Market || "0x0000000000000000000000000000000000000001",
       ptOracleAddress,
+      PendleRateKind.PT_TO_ASSET,
       PTweETH_26DEC2024,
       WETH,
       oracle.address,
