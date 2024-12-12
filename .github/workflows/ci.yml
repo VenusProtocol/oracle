@@ -22,8 +22,7 @@ jobs:
           cache: "yarn"
 
       - name: Install dependencies
-        # Hack to get around failing "ethereumjs-abi The remote archive doesn't match the expected checksum" error
-        run: YARN_CHECKSUM_BEHAVIOR=update yarn
+        run: yarn
 
       - name: Compile contract types
         run: yarn hardhat compile
@@ -49,8 +48,7 @@ jobs:
           cache: "yarn"
 
       - name: Install dependencies
-        # Hack to get around failing "ethereumjs-abi The remote archive doesn't match the expected checksum" error
-        run: YARN_CHECKSUM_BEHAVIOR=update yarn
+        run: yarn
 
       - name: Run hardhat tests coverage
         run: yarn hardhat:coverage
@@ -89,8 +87,7 @@ jobs:
           cache: "yarn"
 
       - name: Install dependencies
-        # Hack to get around failing "ethereumjs-abi The remote archive doesn't match the expected checksum" error
-        run: YARN_CHECKSUM_BEHAVIOR=update yarn
+        run: yarn
 
       - name: Verify deployments work
         run: yarn hardhat deploy
