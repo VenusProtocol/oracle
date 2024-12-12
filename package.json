@@ -117,5 +117,9 @@
   },
   "_moduleAliases": {
     "@nomiclabs/hardhat-ethers": "node_modules/hardhat-deploy-ethers"
+  },
+  "resolutions": {
+    "hardhat": "2.22.15",
+    "@defi-wonderland/smock": "2.4.0"
   }
 }
