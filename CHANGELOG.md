@@ -1,3 +1,10 @@
+## [2.7.0-dev.7](https://github.com/VenusProtocol/oracle/compare/v2.7.0-dev.6...v2.7.0-dev.7) (2024-12-12)
+
+
+### Features
+
+* added ERC4626 oracle ([49beba8](https://github.com/VenusProtocol/oracle/commit/49beba8f270f0b214780ab3e8441122affbf40ce))
+
 ## [2.7.0-dev.6](https://github.com/VenusProtocol/oracle/compare/v2.7.0-dev.5...v2.7.0-dev.6) (2024-12-12)
 
 
