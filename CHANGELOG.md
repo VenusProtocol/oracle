@@ -1,3 +1,22 @@
+## [2.7.0-dev.6](https://github.com/VenusProtocol/oracle/compare/v2.7.0-dev.5...v2.7.0-dev.6) (2024-12-12)
+
+
+### Features
+
+* add configs ([dfe2c8d](https://github.com/VenusProtocol/oracle/commit/dfe2c8dca46a64feaa76413b0f34ea11d0f8481e))
+* deploy redstone oracle ([499c9c0](https://github.com/VenusProtocol/oracle/commit/499c9c053807a0aeb1634850a04c78d6fa120450))
+* updating deployment files ([35dd76f](https://github.com/VenusProtocol/oracle/commit/35dd76f964146b595606ffef30b32082b0e0e9eb))
+* updating deployment files ([44484d5](https://github.com/VenusProtocol/oracle/commit/44484d558bec6a958e40dd95380539b3d6f7bed8))
+* updating deployment files ([4ea0b43](https://github.com/VenusProtocol/oracle/commit/4ea0b43862e3d27208cba9087e84e522e614e28e))
+
+
+### Bug Fixes
+
+* added xvs config ([f3804c1](https://github.com/VenusProtocol/oracle/commit/f3804c1b0f8cf1b37116b4d2987f3d604f31bfa3))
+* deployed oracles ([2da9638](https://github.com/VenusProtocol/oracle/commit/2da963851dc031f605863f80d61a1c19b2dc44f3))
+* fixed lint ([f952b28](https://github.com/VenusProtocol/oracle/commit/f952b28657863109ceeeadffefba4221cc5aeadc))
+* set the right addresses for underlying assets and feeds on basemainnet ([626ae16](https://github.com/VenusProtocol/oracle/commit/626ae166794fdc6fa29cad2961d88b743e9d9d92))
+
 ## [2.7.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v2.7.0-dev.4...v2.7.0-dev.5) (2024-12-05)
 
 
