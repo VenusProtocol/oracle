@@ -88,6 +88,9 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
 
     mapping(address => TokenConfig) private tokenConfigs;
 
+    /// Slot to cache the asset's price, used for transient storage
+    bytes32 constant CACHE_SLOT = keccak256(abi.encode("venus-protocol/oracle/ResilientOracle/cache"));
+
     event TokenConfigAdded(
         address indexed asset,
         address indexed mainOracle,
@@ -233,11 +236,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      */
     function updatePrice(address vToken) external override {
         address asset = _getUnderlyingAsset(vToken);
-        (address pivotOracle, bool pivotOracleEnabled) = getOracle(asset, OracleRole.PIVOT);
-        if (pivotOracle != address(0) && pivotOracleEnabled) {
-            //if pivot oracle is not TwapOracle it will revert so we need to catch the revert
-            try TwapInterface(pivotOracle).updateTwap(asset) {} catch {}
-        }
+        _updateAssetPrice(asset);
     }
 
     /**
@@ -246,11 +245,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @param asset asset address
      */
     function updateAssetPrice(address asset) external {
-        (address pivotOracle, bool pivotOracleEnabled) = getOracle(asset, OracleRole.PIVOT);
-        if (pivotOracle != address(0) && pivotOracleEnabled) {
-            //if pivot oracle is not TwapOracle it will revert so we need to catch the revert
-            try TwapInterface(pivotOracle).updateTwap(asset) {} catch {}
-        }
+        _updateAssetPrice(asset);
     }
 
     /**
@@ -327,6 +322,50 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     function getOracle(address asset, OracleRole role) public view returns (address oracle, bool enabled) {
         oracle = tokenConfigs[asset].oracles[uint256(role)];
         enabled = tokenConfigs[asset].enableFlagsForOracles[uint256(role)];
+    }
+
+    /**
+     * @notice Updates the pivot oracle price. Currently using TWAP
+     * @dev Cache the asset price and return if already cached
+     * @param asset asset address
+     */
+    function _updateAssetPrice(address asset) internal {
+        if (_readCachedPrice(asset) != 0) {
+            return;
+        }
+
+        (address pivotOracle, bool pivotOracleEnabled) = getOracle(asset, OracleRole.PIVOT);
+        if (pivotOracle != address(0) && pivotOracleEnabled) {
+            //if pivot oracle is not TwapOracle it will revert so we need to catch the revert
+            try TwapInterface(pivotOracle).updateTwap(asset) {} catch {}
+        }
+
+        uint256 price = _getPrice(asset);
+        _cachePrice(asset, price);
+    }
+
+    /**
+     * @notice Cache the asset price into transient storage
+     * @param key address of the asset
+     * @param value asset price
+     */
+    function _cachePrice(address key, uint256 value) internal {
+        bytes32 slot = keccak256(abi.encode(CACHE_SLOT, key));
+        assembly ("memory-safe") {
+            tstore(slot, value)
+        }
+    }
+
+    /**
+     * @notice Read cached price from transient storage
+     * @param key address of the asset
+     * @return value cached asset price
+     */
+    function _readCachedPrice(address key) internal view returns (uint256 value) {
+        bytes32 slot = keccak256(abi.encode(CACHE_SLOT, key));
+        assembly ("memory-safe") {
+            value := tload(slot)
+        }
     }
 
     function _getPrice(address asset) internal view returns (uint256) {
