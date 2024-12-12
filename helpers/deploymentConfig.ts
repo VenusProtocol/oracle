@@ -97,7 +97,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     sidRegistryAddress: "0x08CEd32a7f3eeC915Ba84415e9C07a7286977956",
     acm: bscmainnetGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: bscmainnetGovernanceDeployments.contracts.NormalTimelock.address,
-    BNBxStakeManager: "0x7276241a669489e4bbb76f63d2a43bfe63080f2f",
+    BNBxStakeManager: "0x3b961e83400D51e6E1AF5c450d3C7d7b80588d28",
     BNBx: "0x1bdd3cf7f79cfb8edbb955f20ad99211551ba275",
     stkBNBStakePool: "0xC228CefDF841dEfDbD5B3a18dFD414cC0dbfa0D8",
     stkBNB: "0xc2E9d07F66A89c44062459A47a0D2Dc038E4fb16",
@@ -126,6 +126,10 @@ export const ADDRESSES: PreconfiguredAddresses = {
     rsETH: "0xfA0614E5C803E15070d31f7C38d2d430EBe68E47",
     ezETH: "0xB8eb706b85Ae7355c9FE4371a499F50f3484809c",
     weETHs: "0xE233527306c2fa1E159e251a2E5893334505A5E0",
+    eBTC: "0xd48392CCf3fe028023D0783E570DFc71996859d7",
+    WBTC: "0x92A2928f5634BEa89A195e7BeCF0f0FEEDAB885b",
+    pufETH: "0x6D9f78b57AEeB0543a3c3B32Cc038bFB14a4bA68",
+    LBTC: "0x37798CaB3Adde2F4064afBc1C7F9bbBc6A826375",
   },
   ethereum: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -151,6 +155,11 @@ export const ADDRESSES: PreconfiguredAddresses = {
     ezETH: "0xbf5495Efe5DB9ce00f80364C8B423567e58d2110",
     weETHs: "0x917ceE801a67f933F2e6b33fC0cD1ED2d5909D88",
     weETHs_Accountant: "0xbe16605B22a7faCEf247363312121670DFe5afBE",
+    eBTC: "0x657e8c867d8b37dcc18fa4caead9c45eb088c642",
+    WBTC: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+    eBTC_Accountant: "0x1b293DC39F94157fA0D1D36d7e0090C8B8B8c13F",
+    pufETH: "0xD9A442856C234a39a81a089C06451EBAa4306a72",
+    LBTC: "0x8236a87084f8B84306f72007F36F2618A5634494",
   },
   opbnbtestnet: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -217,6 +226,20 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: "0xD71b1F33f6B0259683f11174EE4Ddc2bb9cE4eD6",
     timelock: "0x2e94dd14E81999CdBF5deDE31938beD7308354b3", // OpMainnet Multisig
+  },
+  basesepolia: {
+    acm: "0x724138223D8F76b519fdE715f60124E7Ce51e051",
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    timelock: "0xdf3b635d2b535f906BB02abb22AED71346E36a00", // Base sepolia Multisig
+  },
+  basemainnet: {
+    acm: "0x9E6CeEfDC6183e4D0DF8092A9B90cDF659687daB",
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    timelock: "0x1803Cf1D3495b43cC628aa1d8638A981F8CD341C", // Base mainnet Multisig
   },
 };
 
@@ -330,6 +353,16 @@ export const chainlinkFeed: Config = {
     USDT: "0xECef79E109e997bCA29c1c0897ec9d7b03647F5E",
     OP: "0x0D276FC14719f9292D5C1eA2198673d1f4269246",
   },
+  basesepolia: {
+    USDC: "0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165",
+    cbBTC: "0x0FB99723Aee6f420beAD13e6bBB79b7E6F034298",
+    WETH: "0x4aDC67696bA383F43DD60A9e78F2C97Fbbfc7cb1",
+  },
+  basemainnet: {
+    USDC: "0x7e860098F58bBFC8648a4311b374B1D669a2bc6B",
+    cbBTC: "0x07DA0E54543a844a80ABE69c8A12F22B3aA59f9D",
+    WETH: "0x71041dddad3595F9CEd3DcCFBe3D1F4b0a16Bb70",
+  },
 };
 
 export const redstoneFeed: Config = {
@@ -349,6 +382,9 @@ export const redstoneFeed: Config = {
   },
   opmainnet: {
     XVS: "0x414F8f961969A8131AbE53294600c6C515E68f81",
+  },
+  basemainnet: {
+    XVS: "0x5ED849a45B4608952161f45483F4B95BCEa7f8f0",
   },
 };
 
@@ -1192,6 +1228,51 @@ export const assets: Assets = {
     {
       token: "XVS",
       address: "0x4a971e87ad1F61f7f3081645f52a99277AE917cF",
+      oracle: "redstone",
+    },
+  ],
+  basesepolia: [
+    {
+      token: "USDC",
+      address: "0xFa264c13d657180e65245a9C3ac8d08b9F5Fc54D",
+      oracle: "chainlink",
+    },
+    {
+      token: "cbBTC",
+      address: "0x0948001047A07e38F685f9a11ea1ddB16B234af9",
+      oracle: "chainlink",
+    },
+    {
+      token: "WETH",
+      address: "0x4200000000000000000000000000000000000006",
+      oracle: "chainlink",
+    },
+    {
+      token: "XVS",
+      address: "0xE657EDb5579B82135a274E85187927C42E38C021",
+      price: "10000000000000000000",
+      oracle: "chainlinkFixed",
+    },
+  ],
+  basemainnet: [
+    {
+      token: "USDC",
+      address: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      oracle: "chainlink",
+    },
+    {
+      token: "cbBTC",
+      address: "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf",
+      oracle: "chainlink",
+    },
+    {
+      token: "WETH",
+      address: "0x4200000000000000000000000000000000000006",
+      oracle: "chainlink",
+    },
+    {
+      token: "XVS",
+      address: "0xebB7873213c8d1d9913D8eA39Aa12d74cB107995",
       oracle: "redstone",
     },
   ],
