@@ -621,7 +621,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@defi-wonderland/smock@npm:^2.3.5":
+"@defi-wonderland/smock@npm:2.4.0":
   version: 2.4.0
   resolution: "@defi-wonderland/smock@npm:2.4.0"
   dependencies:
@@ -1683,7 +1683,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nomicfoundation/edr@npm:^0.6.5":
+"@nomicfoundation/edr@npm:^0.6.4":
   version: 0.6.5
   resolution: "@nomicfoundation/edr@npm:0.6.5"
   dependencies:
@@ -3410,7 +3410,7 @@ __metadata:
     "@chainlink/contracts": ^0.5.1
     "@commitlint/cli": ^17.0.3
     "@commitlint/config-conventional": ^17.0.3
-    "@defi-wonderland/smock": ^2.3.5
+    "@defi-wonderland/smock": 2.4.0
     "@ethersproject/abstract-signer": ^5.6.2
     "@ethersproject/bignumber": ^5.6.2
     "@ethersproject/bytes": ^5.6.1
@@ -3450,7 +3450,7 @@ __metadata:
     eslint-config-prettier: ^8.5.0
     eslint-plugin-import: ^2.22.2
     ethers: ^5.6.8
-    hardhat: ^2.22.17
+    hardhat: 2.22.15
     hardhat-dependency-compiler: ^1.2.1
     hardhat-deploy: ^0.12.4
     hardhat-deploy-ethers: ^0.3.0-beta.13
@@ -6743,18 +6743,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fdir@npm:^6.4.2":
-  version: 6.4.2
-  resolution: "fdir@npm:6.4.2"
-  peerDependencies:
-    picomatch: ^3 || ^4
-  peerDependenciesMeta:
-    picomatch:
-      optional: true
-  checksum: 517ad31c495f1c0778238eef574a7818788efaaf2ce1969ffa18c70793e2951a9763dfa2e6720b8fcef615e602a3cbb47f9b8aea9da0b02147579ab36043f22f
-  languageName: node
-  linkType: hard
-
 "figures@npm:^2.0.0":
   version: 2.0.0
   resolution: "figures@npm:2.0.0"
@@ -7668,6 +7656,68 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hardhat@npm:2.22.15":
+  version: 2.22.15
+  resolution: "hardhat@npm:2.22.15"
+  dependencies:
+    "@ethersproject/abi": ^5.1.2
+    "@metamask/eth-sig-util": ^4.0.0
+    "@nomicfoundation/edr": ^0.6.4
+    "@nomicfoundation/ethereumjs-common": 4.0.4
+    "@nomicfoundation/ethereumjs-tx": 5.0.4
+    "@nomicfoundation/ethereumjs-util": 9.0.4
+    "@nomicfoundation/solidity-analyzer": ^0.1.0
+    "@sentry/node": ^5.18.1
+    "@types/bn.js": ^5.1.0
+    "@types/lru-cache": ^5.1.0
+    adm-zip: ^0.4.16
+    aggregate-error: ^3.0.0
+    ansi-escapes: ^4.3.0
+    boxen: ^5.1.2
+    chalk: ^2.4.2
+    chokidar: ^4.0.0
+    ci-info: ^2.0.0
+    debug: ^4.1.1
+    enquirer: ^2.3.0
+    env-paths: ^2.2.0
+    ethereum-cryptography: ^1.0.3
+    ethereumjs-abi: ^0.6.8
+    find-up: ^2.1.0
+    fp-ts: 1.19.3
+    fs-extra: ^7.0.1
+    glob: 7.2.0
+    immutable: ^4.0.0-rc.12
+    io-ts: 1.10.4
+    json-stream-stringify: ^3.1.4
+    keccak: ^3.0.2
+    lodash: ^4.17.11
+    mnemonist: ^0.38.0
+    mocha: ^10.0.0
+    p-map: ^4.0.0
+    raw-body: ^2.4.1
+    resolve: 1.17.0
+    semver: ^6.3.0
+    solc: 0.8.26
+    source-map-support: ^0.5.13
+    stacktrace-parser: ^0.1.10
+    tsort: 0.0.1
+    undici: ^5.14.0
+    uuid: ^8.3.2
+    ws: ^7.4.6
+  peerDependencies:
+    ts-node: "*"
+    typescript: "*"
+  peerDependenciesMeta:
+    ts-node:
+      optional: true
+    typescript:
+      optional: true
+  bin:
+    hardhat: internal/cli/bootstrap.js
+  checksum: 214f0bf9b8a7cb90d5be906e49adf7da87df0d10db42cc7a48ccc1129cda11da8578fe12bbb30a1e5f2c5d9e96a7733a4750626abd602e0a263a8d1f366a4f9a
+  languageName: node
+  linkType: hard
+
 "hardhat@npm:^2.14.0":
   version: 2.22.7
   resolution: "hardhat@npm:2.22.7"
@@ -7726,68 +7776,6 @@ __metadata:
   bin:
     hardhat: internal/cli/bootstrap.js
   checksum: 3b630db8c337d47d220ab0a94a009e61da0a4bb08cc4576ae33cb50e57d9dbb577ab64a85211914fc511e59cd5fca55c986e9ee2180c2e05657c084a14128b16
-  languageName: node
-  linkType: hard
-
-"hardhat@npm:^2.22.17":
-  version: 2.22.17
-  resolution: "hardhat@npm:2.22.17"
-  dependencies:
-    "@ethersproject/abi": ^5.1.2
-    "@metamask/eth-sig-util": ^4.0.0
-    "@nomicfoundation/edr": ^0.6.5
-    "@nomicfoundation/ethereumjs-common": 4.0.4
-    "@nomicfoundation/ethereumjs-tx": 5.0.4
-    "@nomicfoundation/ethereumjs-util": 9.0.4
-    "@nomicfoundation/solidity-analyzer": ^0.1.0
-    "@sentry/node": ^5.18.1
-    "@types/bn.js": ^5.1.0
-    "@types/lru-cache": ^5.1.0
-    adm-zip: ^0.4.16
-    aggregate-error: ^3.0.0
-    ansi-escapes: ^4.3.0
-    boxen: ^5.1.2
-    chokidar: ^4.0.0
-    ci-info: ^2.0.0
-    debug: ^4.1.1
-    enquirer: ^2.3.0
-    env-paths: ^2.2.0
-    ethereum-cryptography: ^1.0.3
-    ethereumjs-abi: ^0.6.8
-    find-up: ^5.0.0
-    fp-ts: 1.19.3
-    fs-extra: ^7.0.1
-    immutable: ^4.0.0-rc.12
-    io-ts: 1.10.4
-    json-stream-stringify: ^3.1.4
-    keccak: ^3.0.2
-    lodash: ^4.17.11
-    mnemonist: ^0.38.0
-    mocha: ^10.0.0
-    p-map: ^4.0.0
-    picocolors: ^1.1.0
-    raw-body: ^2.4.1
-    resolve: 1.17.0
-    semver: ^6.3.0
-    solc: 0.8.26
-    source-map-support: ^0.5.13
-    stacktrace-parser: ^0.1.10
-    tinyglobby: ^0.2.6
-    tsort: 0.0.1
-    undici: ^5.14.0
-    uuid: ^8.3.2
-    ws: ^7.4.6
-  peerDependencies:
-    ts-node: "*"
-    typescript: "*"
-  peerDependenciesMeta:
-    ts-node:
-      optional: true
-    typescript:
-      optional: true
-  bin:
-    hardhat: internal/cli/bootstrap.js
-  checksum: 52fe0b846c6e5808adf85c7704dfb13bfd22368f54b9ade3ba7719e60ea725a6558715f79e4eb92071ef71d1e66bdd02ff0138f71aedf3fea77784ed5ae11809
   languageName: node
   linkType: hard
 
@@ -11037,24 +11025,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"picocolors@npm:^1.1.0":
-  version: 1.1.1
-  resolution: "picocolors@npm:1.1.1"
-  checksum: e1cf46bf84886c79055fdfa9dcb3e4711ad259949e3565154b004b260cd356c5d54b31a1437ce9782624bf766272fe6b0154f5f0c744fb7af5d454d2b60db045
-  languageName: node
-  linkType: hard
-
 "picomatch@npm:^2.0.4, picomatch@npm:^2.2.1, picomatch@npm:^2.3.1":
   version: 2.3.1
   resolution: "picomatch@npm:2.3.1"
   checksum: 050c865ce81119c4822c45d3c84f1ced46f93a0126febae20737bd05ca20589c564d6e9226977df859ed5e03dc73f02584a2b0faad36e896936238238b0446cf
-  languageName: node
-  linkType: hard
-
-"picomatch@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "picomatch@npm:4.0.2"
-  checksum: a7a5188c954f82c6585720e9143297ccd0e35ad8072231608086ca950bee672d51b0ef676254af0788205e59bd4e4deb4e7708769226bed725bf13370a7d1464
   languageName: node
   linkType: hard
 
@@ -12979,16 +12953,6 @@ __metadata:
   version: 1.3.0
   resolution: "tiny-relative-date@npm:1.3.0"
   checksum: 82a1fa2f3b00cd77c3ff0cf45380dad9e5befa8ee344d8de8076525efda4e6bd6af8f7f483e103b5834dc34bbed337fab7ac151f1d1a429a20f434a3744057b4
-  languageName: node
-  linkType: hard
-
-"tinyglobby@npm:^0.2.6":
-  version: 0.2.10
-  resolution: "tinyglobby@npm:0.2.10"
-  dependencies:
-    fdir: ^6.4.2
-    picomatch: ^4.0.2
-  checksum: 7e2ffe262ebc149036bdef37c56b32d02d52cf09efa7d43dbdab2ea3c12844a4da881058835ce4c74d1891190e5ad5ec5133560a11ec8314849b68ad0d99d3f4
   languageName: node
   linkType: hard
 
