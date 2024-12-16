@@ -13739,7 +13739,7 @@
       ]
     },
     "sUSDe_ERC4626Oracle": {
-      "address": "0x4EeA919A68db78572f5B2bb69815D325923AE5AD",
+      "address": "0xa79EC375573f213860320cd401F2D90913AC28FF",
       "abi": [
         {
           "inputs": [
