@@ -6,7 +6,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments }: 
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const sUSDe = "0xD28894b4A8AB53Ce55965AfD330b55C2DbB3E07D";
+  const sUSDe = "0xA3A3e5ecEA56940a4Ae32d0927bfd8821DdA848A";
   const USDe = "0x8bAe3E12870a002A0D4b6Eb0F0CBf91b29d9806F";
 
   const resilientOracle = await ethers.getContract("ResilientOracle");
