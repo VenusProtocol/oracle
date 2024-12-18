@@ -4,12 +4,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import {
-  BEP20Harness,
-  IPendlePtOracle,
-  PendleOracle__factory,
-  ResilientOracleInterface,
-} from "../typechain-types";
+import { BEP20Harness, IPendlePtOracle, PendleOracle__factory, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -149,8 +144,8 @@ describe("PendleOracle unit tests", () => {
   });
 
   describe("getPrice", () => {
-    const deploy = (kind: PendleRateKind) => {
-      return pendleOracleFactory.deploy(
+    const deploy = (kind: PendleRateKind) =>
+      pendleOracleFactory.deploy(
         PTweETH_26DEC2024_Market,
         ptOracleMock.address,
         kind,
@@ -159,7 +154,6 @@ describe("PendleOracle unit tests", () => {
         resilientOracleMock.address,
         DURATION,
       );
-    };
 
     it("revert if wstETH address is wrong", async () => {
       const pendleOracle = await deploy(PendleRateKind.PT_TO_ASSET);
