@@ -3,13 +3,14 @@ import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
+import { PENDLE_TWAP_DURATION } from "../helpers/deploymentConfig";
 
 type OracleConfig = {
   name: string;
   market: string;
-  token: string;
-  collateral: string;
-  customOracle: string;
+  ptToken: string;
+  underlyingToken: string;
+  ptOracle: string;
 }[];
 
 const deployPendleOracle = async (
@@ -57,13 +58,13 @@ const func: DeployFunction = async ({
   const fallbackAddress = "0x0000000000000000000000000000000000000001";
 
   const deployOracles = async (oracleConfig: OracleConfig) => {
-    for (const { name, market, token, collateral, customOracle } of oracleConfig) {
-      const ptOracleAddress = customOracle || (await ethers.getContract("MockPendlePtOracle")).address;
+    for (const { name, market, ptToken, underlyingToken, ptOracle } of oracleConfig) {
+      const ptOracleAddress = ptOracle || (await ethers.getContract("MockPendlePtOracle")).address;
       await deployPendleOracle(
         deployments,
         deployer,
         name,
-        [market || fallbackAddress, ptOracleAddress, token, collateral, oracle.address, 1800],
+        [market || fallbackAddress, ptOracleAddress, ptToken, underlyingToken, oracle.address, PENDLE_TWAP_DURATION],
         proxyOwnerAddress,
         defaultProxyAdmin,
       );
@@ -74,29 +75,29 @@ const func: DeployFunction = async ({
     {
       name: "PendleOracle-PT-weETH-26DEC2024",
       market: addresses.PTweETH_26DEC2024_Market,
-      token: addresses.PTweETH_26DEC2024,
-      collateral: addresses.WETH,
-      customOracle: addresses.PTOracle || (await ethers.getContract("MockPendleOracle")).address,
+      ptToken: addresses.PTweETH_26DEC2024,
+      underlyingToken: addresses.WETH,
+      ptOracle: addresses.newPTOracle || (await ethers.getContract("MockPendleOracle")).address,
     },
     {
       name: "PendleOracle_PT_USDe_27MAR2025",
       market: addresses.PTUSDe_27MAR2025_Market,
-      token: addresses.PTUSDe_27MAR2025,
-      collateral: addresses.USDe,
-      customOracle:
+      ptToken: addresses.PTUSDe_27MAR2025,
+      underlyingToken: addresses.USDe,
+      ptOracle:
         network.name === "sepolia"
           ? (await ethers.getContract("MockPendleOracle_PT_USDe_27MAR2025")).address
-          : addresses.PTOracle,
+          : addresses.newPTOracle,
     },
     {
       name: "PendleOracle_PT_sUSDe_27MAR2025",
       market: addresses.PTsUSDe_27MAR2025_Market,
-      token: addresses.PTsUSDe_27MAR2025,
-      collateral: addresses.USDe,
-      customOracle:
+      ptToken: addresses.PTsUSDe_27MAR2025,
+      underlyingToken: addresses.USDe,
+      ptOracle:
         network.name === "sepolia"
           ? (await ethers.getContract("MockPendleOracle_PT_sUSDe_27MAR2025")).address
-          : addresses.PTOracle,
+          : addresses.newPTOracle,
     },
   ];
 
