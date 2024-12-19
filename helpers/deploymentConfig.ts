@@ -69,6 +69,7 @@ export const DEFAULT_STALE_PERIOD = 24 * 60 * 60; // 24 hrs
 const STALE_PERIOD_100M = 60 * 100; // 100 minutes (for pricefeeds with heartbeat of 1 hr)
 const STALE_PERIOD_26H = 60 * 60 * 26; // 26 hours (pricefeeds with heartbeat of 24 hr)
 export const ANY_CONTRACT = ethers.constants.AddressZero;
+export const PENDLE_TWAP_DURATION = 1800;
 
 export const ADDRESSES: PreconfiguredAddresses = {
   bsctestnet: {
@@ -130,6 +131,10 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WBTC: "0x92A2928f5634BEa89A195e7BeCF0f0FEEDAB885b",
     pufETH: "0x6D9f78b57AEeB0543a3c3B32Cc038bFB14a4bA68",
     LBTC: "0x37798CaB3Adde2F4064afBc1C7F9bbBc6A826375",
+    PTUSDe_27MAR2025: "0x74671106a04496199994787B6BcB064d08afbCCf",
+    USDe: "0x8bAe3E12870a002A0D4b6Eb0F0CBf91b29d9806F",
+    PTsUSDe_27MAR2025: "0x3EBa2Aa29eC2498c2124523634324d4ce89c8579",
+    sUSDe: "0xA3A3e5ecEA56940a4Ae32d0927bfd8821DdA848A",
   },
   ethereum: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -160,6 +165,13 @@ export const ADDRESSES: PreconfiguredAddresses = {
     eBTC_Accountant: "0x1b293DC39F94157fA0D1D36d7e0090C8B8B8c13F",
     pufETH: "0xD9A442856C234a39a81a089C06451EBAa4306a72",
     LBTC: "0x8236a87084f8B84306f72007F36F2618A5634494",
+    newPTOracle: "0x9a9fa8338dd5e5b2188006f1cd2ef26d921650c2",
+    PTUSDe_27MAR2025_Market: "0xB451A36c8B6b2EAc77AD0737BA732818143A0E25",
+    PTUSDe_27MAR2025: "0x8a47b431a7d947c6a3ed6e42d501803615a97eaa",
+    USDe: "0x4c9edd5852cd905f086c759e8383e09bff1e68b3",
+    PTsUSDe_27MAR2025_Market: "0xcDd26Eb5EB2Ce0f203a84553853667aE69Ca29Ce",
+    PTsUSDe_27MAR2025: "0xe00bd3df25fb187d6abbb620b3dfd19839947b81",
+    sUsde: "0x9D39A5DE30e57443BfF2A8307A4256c8797A3497",
   },
   opbnbtestnet: {
     vBNBAddress: ethers.constants.AddressZero,
