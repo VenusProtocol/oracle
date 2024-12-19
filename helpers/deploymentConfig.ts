@@ -88,6 +88,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WETH: "0x98f7A83361F7Ac8765CcEBAB1425da6b341958a7",
     wstETH: "0x4349016259FCd8eE452f696b2a7beeE31667D129",
     weETH: "0x7df9372096c8ca2401f30B3dF931bEFF493f1FdC",
+    BTCB: "0xA808e341e8e723DC6BA0Bb5204Bafc2330d7B8e4",
+    "SolvBTC.BBN": "0x8FD14481C1616d9AdA7195Be60f9d8d0994b9AE1",
+    "PT-SolvBTC.BBN-27MAR2025": "0x964Ea3dC70Ee5b35Ea881cf8416B7a5F50E13f56",
   },
   bscmainnet: {
     vBNBAddress: mainnetDeployments.contracts.vBNB.address,
@@ -97,6 +100,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     sidRegistryAddress: "0x08CEd32a7f3eeC915Ba84415e9C07a7286977956",
     acm: bscmainnetGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: bscmainnetGovernanceDeployments.contracts.NormalTimelock.address,
+    PTOracle: "0x9a9fa8338dd5e5b2188006f1cd2ef26d921650c2",
     BNBxStakeManager: "0x3b961e83400D51e6E1AF5c450d3C7d7b80588d28",
     BNBx: "0x1bdd3cf7f79cfb8edbb955f20ad99211551ba275",
     stkBNBStakePool: "0xC228CefDF841dEfDbD5B3a18dFD414cC0dbfa0D8",
@@ -108,6 +112,10 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WETH: "0x2170Ed0880ac9A755fd29B2688956BD959F933F8",
     wstETH: "0x26c5e01524d2E6280A48F2c50fF6De7e52E9611C",
     weETH: "0x04c0599ae5a44757c0af6f9ec3b93da8976c150a",
+    BTCB: "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c",
+    "SolvBTC.BBN": "0x1346b618dC92810EC74163e4c27004c921D446a5",
+    "PT-SolvBTC.BBN-27MAR2025": "0x541b5eeac7d4434c8f87e2d32019d67611179606",
+    "PT-SolvBTC.BBN-27MAR2025_Market": "0x9dAA2878A8739E66e08e7ad35316C5143c0ea7C7",
   },
   sepolia: {
     vBNBAddress: ethers.constants.AddressZero,

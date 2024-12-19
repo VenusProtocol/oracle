@@ -11,9 +11,27 @@ import { ensureNonzeroAddress, ensureNonzeroValue } from "@venusprotocol/solidit
  * @notice This oracle fetches the price of a pendle token
  */
 contract PendleOracle is CorrelatedTokenOracle {
+    /// @notice Which asset to use as a base for the returned PT
+    /// price. Can be either a standardized yield token (SY), in
+    /// this case PT/SY price is returned, or the underlying
+    /// asset directly. Note that using PT_TO_ASSET rate assumes
+    /// that the yield token can be seamlessly redeemed for the
+    /// underlying asset. In reality, this might not always be
+    /// the case. For more details, see
+    /// https://docs.pendle.finance/Developers/Contracts/StandardizedYield
+    enum RateKind {
+        PT_TO_ASSET,
+        PT_TO_SY
+    }
+
     /// @notice Address of the PT oracle
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IPendlePtOracle public immutable PT_ORACLE;
+
+    /// @notice Whether to use PT/SY (standardized yield token) rate
+    /// or PT/underlying asset rate
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    RateKind public immutable RATE_KIND;
 
     /// @notice Address of the market
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
@@ -31,6 +49,7 @@ contract PendleOracle is CorrelatedTokenOracle {
     constructor(
         address market,
         address ptOracle,
+        RateKind rateKind,
         address ptToken,
         address underlyingToken,
         address resilientOracle,
@@ -42,6 +61,7 @@ contract PendleOracle is CorrelatedTokenOracle {
 
         MARKET = market;
         PT_ORACLE = IPendlePtOracle(ptOracle);
+        RATE_KIND = rateKind;
         TWAP_DURATION = twapDuration;
 
         (bool increaseCardinalityRequired, , bool oldestObservationSatisfied) = PT_ORACLE.getOracleState(
@@ -54,10 +74,13 @@ contract PendleOracle is CorrelatedTokenOracle {
     }
 
     /**
-     * @notice Fetches the amount of underlying token for 1 pendle token
-     * @return amount The amount of underlying token for pendle token
+     * @notice Fetches the amount of underlying or SY token for 1 pendle token
+     * @return amount The amount of underlying or SY token for pendle token
      */
     function _getUnderlyingAmount() internal view override returns (uint256) {
+        if (RATE_KIND == RateKind.PT_TO_SY) {
+            return PT_ORACLE.getPtToSyRate(MARKET, TWAP_DURATION);
+        }
         return PT_ORACLE.getPtToAssetRate(MARKET, TWAP_DURATION);
     }
 }
