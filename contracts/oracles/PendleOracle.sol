@@ -4,6 +4,7 @@ pragma solidity 0.8.25;
 import { IPendlePtOracle } from "../interfaces/IPendlePtOracle.sol";
 import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
 import { ensureNonzeroAddress, ensureNonzeroValue } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
+import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
 /**
  * @title PendleOracle
@@ -41,6 +42,12 @@ contract PendleOracle is CorrelatedTokenOracle {
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     uint32 public immutable TWAP_DURATION;
 
+    /// @notice Decimals of the underlying token
+    /// @dev We make an assumption that the underlying decimals will
+    /// not change throughout the lifetime of the Pendle market
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    uint8 public immutable UNDERLYING_DECIMALS;
+
     /// @notice Thrown if the duration is invalid
     error InvalidDuration();
 
@@ -63,6 +70,7 @@ contract PendleOracle is CorrelatedTokenOracle {
         PT_ORACLE = IPendlePtOracle(ptOracle);
         RATE_KIND = rateKind;
         TWAP_DURATION = twapDuration;
+        UNDERLYING_DECIMALS = IERC20Metadata(UNDERLYING_TOKEN).decimals();
 
         (bool increaseCardinalityRequired, , bool oldestObservationSatisfied) = PT_ORACLE.getOracleState(
             MARKET,
@@ -78,9 +86,12 @@ contract PendleOracle is CorrelatedTokenOracle {
      * @return amount The amount of underlying or SY token for pendle token
      */
     function _getUnderlyingAmount() internal view override returns (uint256) {
+        uint256 rate;
         if (RATE_KIND == RateKind.PT_TO_SY) {
-            return PT_ORACLE.getPtToSyRate(MARKET, TWAP_DURATION);
+            rate = PT_ORACLE.getPtToSyRate(MARKET, TWAP_DURATION);
+        } else {
+            rate = PT_ORACLE.getPtToAssetRate(MARKET, TWAP_DURATION);
         }
-        return PT_ORACLE.getPtToAssetRate(MARKET, TWAP_DURATION);
+        return ((10 ** UNDERLYING_DECIMALS) * rate) / 1e18;
     }
 }
