@@ -12,6 +12,7 @@ chai.use(smock.matchers);
 
 const { weETH, eETH } = ADDRESSES.ethereum;
 const ETH_USD_PRICE = parseUnits("3100", 18); // 3100 USD for 1 ETH
+const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
 
 describe("WeETHOracle unit tests", () => {
   let weETHMock;
@@ -42,30 +43,64 @@ describe("WeETHOracle unit tests", () => {
   describe("deployment", () => {
     it("revert if liquidity pool address is 0", async () => {
       await expect(
-        WeETHOracleFactory.deploy(addr0000, weETHMock.address, eETHMock.address, resilientOracleMock.address),
+        WeETHOracleFactory.deploy(
+          addr0000,
+          weETHMock.address,
+          eETHMock.address,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          ETH_USD_PRICE,
+        ),
       ).to.be.reverted;
     });
 
     it("revert if weETH address is 0", async () => {
       await expect(
-        WeETHOracleFactory.deploy(mockLiquidityPool.address, addr0000, eETHMock.address, resilientOracleMock.address),
+        WeETHOracleFactory.deploy(
+          mockLiquidityPool.address,
+          addr0000,
+          eETHMock.address,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          ETH_USD_PRICE,
+        ),
       ).to.be.reverted;
     });
+
     it("revert if eETH address is 0", async () => {
       await expect(
-        WeETHOracleFactory.deploy(mockLiquidityPool.address, weETHMock.address, addr0000, resilientOracleMock.address),
+        WeETHOracleFactory.deploy(
+          mockLiquidityPool.address,
+          weETHMock.address,
+          addr0000,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          ETH_USD_PRICE,
+        ),
       ).to.be.reverted;
     });
+
     it("revert if resilient oracle address is 0", async () => {
-      await expect(WeETHOracleFactory.deploy(mockLiquidityPool.address, weETHMock.address, eETHMock.address, addr0000))
-        .to.be.reverted;
+      await expect(
+        WeETHOracleFactory.deploy(
+          mockLiquidityPool.address,
+          weETHMock.address,
+          eETHMock.address,
+          addr0000,
+          ANNUAL_GROWTH_RATE,
+          ETH_USD_PRICE,
+        ),
+      ).to.be.reverted;
     });
+
     it("should deploy contract", async () => {
       WeETHOracle = await WeETHOracleFactory.deploy(
         mockLiquidityPool.address,
         weETHMock.address,
         eETHMock.address,
         resilientOracleMock.address,
+        ANNUAL_GROWTH_RATE,
+        ETH_USD_PRICE,
       );
     });
   });

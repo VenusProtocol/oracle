@@ -15,6 +15,7 @@ const eETH_PRICE = parseUnits("3400", 18);
 const PRICE_DENOMINATOR = parseUnits("1", 18);
 const EETH_AMOUNT_FOR_ONE_WEETH = parseUnits("0.923601422168630818", 18);
 const DURATION = 3600; // 1 hour
+const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
 
 describe("PendleOracle unit tests", () => {
   let ptWeETHMock;
@@ -48,6 +49,8 @@ describe("PendleOracle unit tests", () => {
           eETH,
           resilientOracleMock.address,
           DURATION,
+          ANNUAL_GROWTH_RATE,
+          eETH_PRICE,
         ),
       ).to.be.reverted;
     });
@@ -60,6 +63,8 @@ describe("PendleOracle unit tests", () => {
           eETH,
           resilientOracleMock.address,
           DURATION,
+          ANNUAL_GROWTH_RATE,
+          eETH_PRICE,
         ),
       ).to.be.reverted;
     });
@@ -72,6 +77,8 @@ describe("PendleOracle unit tests", () => {
           eETH,
           resilientOracleMock.address,
           DURATION,
+          ANNUAL_GROWTH_RATE,
+          eETH_PRICE,
         ),
       ).to.be.reverted;
     });
@@ -84,6 +91,8 @@ describe("PendleOracle unit tests", () => {
           addr0000,
           resilientOracleMock.address,
           DURATION,
+          ANNUAL_GROWTH_RATE,
+          eETH_PRICE,
         ),
       ).to.be.reverted;
     });
@@ -96,6 +105,8 @@ describe("PendleOracle unit tests", () => {
           eETH,
           addr0000,
           DURATION,
+          ANNUAL_GROWTH_RATE,
+          eETH_PRICE,
         ),
       ).to.be.reverted;
     });
@@ -108,6 +119,8 @@ describe("PendleOracle unit tests", () => {
           eETH,
           resilientOracleMock.address,
           0,
+          ANNUAL_GROWTH_RATE,
+          eETH_PRICE,
         ),
       ).to.be.reverted;
     });
@@ -123,6 +136,8 @@ describe("PendleOracle unit tests", () => {
           eETH,
           resilientOracleMock.address,
           DURATION,
+          ANNUAL_GROWTH_RATE,
+          eETH_PRICE,
         ),
       ).to.be.reverted;
 
@@ -137,6 +152,8 @@ describe("PendleOracle unit tests", () => {
         eETH,
         resilientOracleMock.address,
         DURATION,
+        ANNUAL_GROWTH_RATE,
+        eETH_PRICE,
       );
     });
   });

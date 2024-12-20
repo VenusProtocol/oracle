@@ -14,6 +14,8 @@ const WSTETH = ADDRESSES.ethereum.wstETHAddress;
 const STETH_USD_PRICE = parseUnits("1500", 18); // 1500 USD for 1 stETH
 const PRICE_DENOMINATOR = parseUnits("1", 18);
 const STETH_AMOUNT_FOR_ONE_WSTETH = parseUnits("1.15", 18); // 1.5 stETH for 1 wETH
+const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
+const WstETH_USD_PRICE = STETH_USD_PRICE.mul(STETH_AMOUNT_FOR_ONE_WSTETH).div(PRICE_DENOMINATOR);
 
 describe("WstETHOracleV2 unit tests", () => {
   let stETHMock;
@@ -39,16 +41,36 @@ describe("WstETHOracleV2 unit tests", () => {
 
   describe("deployment", () => {
     it("revert if wstETH address is 0", async () => {
-      await expect(WsETHOracleFactory.deploy(addr0000, stETHMock.address, resilientOracleMock.address)).to.be.reverted;
+      await expect(
+        WsETHOracleFactory.deploy(
+          addr0000,
+          stETHMock.address,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          WstETH_USD_PRICE,
+        ),
+      ).to.be.reverted;
     });
+
     it("revert if stETH address is 0", async () => {
-      await expect(WsETHOracleFactory.deploy(WSTETH, addr0000, resilientOracleMock.address)).to.be.reverted;
+      await expect(
+        WsETHOracleFactory.deploy(WSTETH, addr0000, resilientOracleMock.address, ANNUAL_GROWTH_RATE, WstETH_USD_PRICE),
+      ).to.be.reverted;
     });
+
     it("revert if ResilientOracle address is 0", async () => {
-      await expect(WsETHOracleFactory.deploy(WSTETH, stETHMock.address, addr0000)).to.be.reverted;
+      await expect(WsETHOracleFactory.deploy(WSTETH, stETHMock.address, addr0000, ANNUAL_GROWTH_RATE, WstETH_USD_PRICE))
+        .to.be.reverted;
     });
+
     it("should deploy contract", async () => {
-      wstETHOracle = await WsETHOracleFactory.deploy(WSTETH, stETHMock.address, resilientOracleMock.address);
+      wstETHOracle = await WsETHOracleFactory.deploy(
+        WSTETH,
+        stETHMock.address,
+        resilientOracleMock.address,
+        ANNUAL_GROWTH_RATE,
+        WstETH_USD_PRICE,
+      );
     });
   });
 

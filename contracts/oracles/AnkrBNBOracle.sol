@@ -18,8 +18,10 @@ contract AnkrBNBOracle is CorrelatedTokenOracle {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address ankrBNB,
-        address resilientOracle
-    ) CorrelatedTokenOracle(ankrBNB, NATIVE_TOKEN_ADDR, resilientOracle) {}
+        address resilientOracle,
+        uint256 annualGrowthRate,
+        uint256 storedSnapshotPrice
+    ) CorrelatedTokenOracle(ankrBNB, NATIVE_TOKEN_ADDR, resilientOracle, annualGrowthRate, storedSnapshotPrice) {}
 
     /**
      * @notice Fetches the amount of BNB for 1 ankrBNB

@@ -22,8 +22,10 @@ contract OneJumpOracle is CorrelatedTokenOracle {
         address correlatedToken,
         address underlyingToken,
         address resilientOracle,
-        address intermediateOracle
-    ) CorrelatedTokenOracle(correlatedToken, underlyingToken, resilientOracle) {
+        address intermediateOracle,
+        uint256 annualGrowthRate,
+        uint256 storedSnapshotPrice
+    ) CorrelatedTokenOracle(correlatedToken, underlyingToken, resilientOracle, annualGrowthRate, storedSnapshotPrice) {
         ensureNonzeroAddress(intermediateOracle);
         INTERMEDIATE_ORACLE = OracleInterface(intermediateOracle);
     }

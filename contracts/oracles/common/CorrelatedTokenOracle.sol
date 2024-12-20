@@ -22,18 +22,47 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     OracleInterface public immutable RESILIENT_ORACLE;
 
+    /// @notice Growth rate in 1e18 format
+    uint256 public annualGrowthRate;
+
+    //// @notice Growth rate in seconds
+    uint256 public growthRatePerSecond;
+
+    /// @notice Last stored snapshot price
+    uint256 public storedSnapshotPrice;
+
+    /// @notice Last stored snapshot timestamp
+    uint256 public storedSnapshotTimestamp;
+
     /// @notice Thrown if the token address is invalid
     error InvalidTokenAddress();
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address correlatedToken, address underlyingToken, address resilientOracle) {
+    constructor(
+        address correlatedToken,
+        address underlyingToken,
+        address resilientOracle,
+        uint256 annualGrowthRate,
+        uint256 storedSnapshotPrice
+    ) {
         ensureNonzeroAddress(correlatedToken);
         ensureNonzeroAddress(underlyingToken);
         ensureNonzeroAddress(resilientOracle);
         CORRELATED_TOKEN = correlatedToken;
         UNDERLYING_TOKEN = underlyingToken;
         RESILIENT_ORACLE = OracleInterface(resilientOracle);
+
+        annualGrowthRate = annualGrowthRate;
+        growthRatePerSecond = (annualGrowthRate) / (365 * 24 * 60 * 60);
+        storedSnapshotPrice = storedSnapshotPrice;
+        storedSnapshotTimestamp = block.timestamp;
+    }
+
+    // Implement ACM
+    function updateSnapshot(uint256 currentPrice) external {
+        storedSnapshotPrice = currentPrice;
+        storedSnapshotTimestamp = block.timestamp;
     }
 
     /**
@@ -54,7 +83,19 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
         uint256 decimals = token.decimals();
 
         // underlyingAmount (for 1 correlated token) * underlyingUSDPrice / decimals(correlated token)
-        return (underlyingAmount * underlyingUSDPrice) / (10 ** decimals);
+        uint256 price = (underlyingAmount * underlyingUSDPrice) / (10 ** decimals);
+        uint256 maxAllowedPrice = getMaxAllowedPrice();
+        return ((price > maxAllowedPrice) && (maxAllowedPrice != 0)) ? maxAllowedPrice : price;
+    }
+
+    function getMaxAllowedPrice() public view returns (uint256) {
+        return _getMaxAllowedPrice();
+    }
+
+    function _getMaxAllowedPrice() internal view returns (uint256) {
+        uint256 timeElapsed = block.timestamp - storedSnapshotTimestamp;
+        uint256 maxPrice = storedSnapshotPrice + (storedSnapshotPrice * growthRatePerSecond * timeElapsed) / 1e18;
+        return maxPrice;
     }
 
     /**
