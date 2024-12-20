@@ -3,7 +3,6 @@ import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { PENDLE_TWAP_DURATION } from "../helpers/deploymentConfig";
 
 type OracleConfig = {
   name: string;
@@ -11,6 +10,7 @@ type OracleConfig = {
   ptToken: string;
   underlyingToken: string;
   ptOracle: string;
+  TWAPDuration: number;
 }[];
 
 const deployPendleOracle = async (
@@ -58,13 +58,13 @@ const func: DeployFunction = async ({
   const fallbackAddress = "0x0000000000000000000000000000000000000001";
 
   const deployOracles = async (oracleConfig: OracleConfig) => {
-    for (const { name, market, ptToken, underlyingToken, ptOracle } of oracleConfig) {
+    for (const { name, market, ptToken, underlyingToken, ptOracle, TWAPDuration } of oracleConfig) {
       const ptOracleAddress = ptOracle || (await ethers.getContract("MockPendlePtOracle")).address;
       await deployPendleOracle(
         deployments,
         deployer,
         name,
-        [market || fallbackAddress, ptOracleAddress, ptToken, underlyingToken, oracle.address, PENDLE_TWAP_DURATION],
+        [market || fallbackAddress, ptOracleAddress, ptToken, underlyingToken, oracle.address, TWAPDuration],
         proxyOwnerAddress,
         defaultProxyAdmin,
       );
@@ -78,6 +78,7 @@ const func: DeployFunction = async ({
       ptToken: addresses.PTweETH_26DEC2024,
       underlyingToken: addresses.WETH,
       ptOracle: addresses.newPTOracle || (await ethers.getContract("MockPendleOracle")).address,
+      TWAPDuration: 1800,
     },
     {
       name: "PendleOracle_PT_USDe_27MAR2025",
@@ -88,6 +89,7 @@ const func: DeployFunction = async ({
         network.name === "sepolia"
           ? (await ethers.getContract("MockPendleOracle_PT_USDe_27MAR2025")).address
           : addresses.newPTOracle,
+      TWAPDuration: 1800,
     },
     {
       name: "PendleOracle_PT_sUSDe_27MAR2025",
@@ -98,6 +100,7 @@ const func: DeployFunction = async ({
         network.name === "sepolia"
           ? (await ethers.getContract("MockPendleOracle_PT_sUSDe_27MAR2025")).address
           : addresses.newPTOracle,
+      TWAPDuration: 1800,
     },
   ];
 

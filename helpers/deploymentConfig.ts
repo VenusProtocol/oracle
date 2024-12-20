@@ -69,7 +69,6 @@ export const DEFAULT_STALE_PERIOD = 24 * 60 * 60; // 24 hrs
 const STALE_PERIOD_100M = 60 * 100; // 100 minutes (for pricefeeds with heartbeat of 1 hr)
 const STALE_PERIOD_26H = 60 * 60 * 26; // 26 hours (pricefeeds with heartbeat of 24 hr)
 export const ANY_CONTRACT = ethers.constants.AddressZero;
-export const PENDLE_TWAP_DURATION = 1800;
 
 export const ADDRESSES: PreconfiguredAddresses = {
   bsctestnet: {
@@ -171,7 +170,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     USDe: "0x4c9edd5852cd905f086c759e8383e09bff1e68b3",
     PTsUSDe_27MAR2025_Market: "0xcDd26Eb5EB2Ce0f203a84553853667aE69Ca29Ce",
     PTsUSDe_27MAR2025: "0xe00bd3df25fb187d6abbb620b3dfd19839947b81",
-    sUsde: "0x9D39A5DE30e57443BfF2A8307A4256c8797A3497",
+    sUSDe: "0x9D39A5DE30e57443BfF2A8307A4256c8797A3497",
   },
   opbnbtestnet: {
     vBNBAddress: ethers.constants.AddressZero,
