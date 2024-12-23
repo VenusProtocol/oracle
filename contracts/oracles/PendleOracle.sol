@@ -10,16 +10,23 @@ import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/I
  * @title PendleOracle
  * @author Venus
  * @notice This oracle fetches the price of a pendle token
+ * @dev As a base price the oracle uses either the price of the Pendle
+ * market's asset (in this case PT_TO_ASSET rate should be used) or
+ * the price of the Pendle market's interest bearing token (e.g. wstETH
+ * for stETH; in this case PT_TO_SY rate should be used). Technically,
+ * interest bearing token is different from standardized yield (SY) token,
+ * but since SY is a wrapper around an interest bearing token, we can safely
+ * assume the prices of the two are equal. This is not always true for asset
+ * price though: using PT_TO_ASSET rate assumes that the yield token can
+ * be seamlessly redeemed for the underlying asset. In reality, this might
+ * not always be the case. For more details, see
+ * https://docs.pendle.finance/Developers/Contracts/StandardizedYield
  */
 contract PendleOracle is CorrelatedTokenOracle {
     /// @notice Which asset to use as a base for the returned PT
     /// price. Can be either a standardized yield token (SY), in
-    /// this case PT/SY price is returned, or the underlying
-    /// asset directly. Note that using PT_TO_ASSET rate assumes
-    /// that the yield token can be seamlessly redeemed for the
-    /// underlying asset. In reality, this might not always be
-    /// the case. For more details, see
-    /// https://docs.pendle.finance/Developers/Contracts/StandardizedYield
+    /// this case PT/SY price is returned, or the Pendle
+    /// market's asset directly.
     enum RateKind {
         PT_TO_ASSET,
         PT_TO_SY
@@ -30,7 +37,7 @@ contract PendleOracle is CorrelatedTokenOracle {
     IPendlePtOracle public immutable PT_ORACLE;
 
     /// @notice Whether to use PT/SY (standardized yield token) rate
-    /// or PT/underlying asset rate
+    /// or PT/market asset rate
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     RateKind public immutable RATE_KIND;
 
@@ -53,6 +60,13 @@ contract PendleOracle is CorrelatedTokenOracle {
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
+    /// @param market Pendle market
+    /// @param ptOracle Pendle oracle
+    /// @param rateKind Either PT_TO_ASSET or PT_TO_SY
+    /// @param ptToken Pendle PT token
+    /// @param underlyingToken Underlying token, can be either the market's asset or the interest bearing token
+    /// @param resilientOracle Venus Oracle to get the underlying token price from
+    /// @param twapDuration TWAP duration to call Pendle oracle with
     constructor(
         address market,
         address ptOracle,
@@ -81,10 +95,10 @@ contract PendleOracle is CorrelatedTokenOracle {
         }
     }
 
-    /**
-     * @notice Fetches the amount of underlying or SY token for 1 pendle token
-     * @return amount The amount of underlying or SY token for pendle token
-     */
+    /// @notice Fetches the amount of underlying token for 1 PT
+    /// @return amount The amount of underlying token (either the market's asset
+    /// or the yield token) for 1 PT, adjusted for decimals such that the result
+    /// has the same precision as the underlying token
     function _getUnderlyingAmount() internal view override returns (uint256) {
         uint256 rate;
         if (RATE_KIND == RateKind.PT_TO_SY) {
