@@ -1,3 +1,15 @@
+## [2.8.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.7.0...v2.8.0-dev.1) (2024-12-27)
+
+
+### Features
+
+* add support for pendle's getPtToSyRate ([97d3797](https://github.com/VenusProtocol/oracle/commit/97d37973628a56f8bbd1a8c6d0b3301602fe4aae))
+
+
+### Bug Fixes
+
+* adjust PT price for underlying decimals ([f2a439c](https://github.com/VenusProtocol/oracle/commit/f2a439cd8876b8bfc9fc769f110e9003cf65e25a))
+
 ## [2.7.0](https://github.com/VenusProtocol/oracle/compare/v2.6.0...v2.7.0) (2024-12-12)
 
 
