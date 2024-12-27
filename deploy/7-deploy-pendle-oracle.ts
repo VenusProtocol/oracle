@@ -4,6 +4,11 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
 
+enum PendleRateKind {
+  PT_TO_ASSET = 0,
+  PT_TO_SY = 1,
+}
+
 type OracleConfig = {
   name: string;
   market: string;
@@ -11,6 +16,7 @@ type OracleConfig = {
   underlyingToken: string;
   ptOracle: string;
   TWAPDuration: number;
+  pendleRateKind: PendleRateKind;
 }[];
 
 const deployPendleOracle = async (
@@ -58,17 +64,17 @@ const func: DeployFunction = async ({
   const fallbackAddress = "0x0000000000000000000000000000000000000001";
 
   const deployOracles = async (oracleConfig: OracleConfig) => {
-    for (const { name, market, ptToken, underlyingToken, ptOracle, TWAPDuration } of oracleConfig) {
+    await Promise.all(oracleConfig.map(async ({ name, market, ptToken, underlyingToken, ptOracle, TWAPDuration, pendleRateKind }) => {
       const ptOracleAddress = ptOracle || (await ethers.getContract("MockPendlePtOracle")).address;
       await deployPendleOracle(
         deployments,
         deployer,
         name,
-        [market || fallbackAddress, ptOracleAddress, ptToken, underlyingToken, oracle.address, TWAPDuration],
+        [market || fallbackAddress, ptOracleAddress, pendleRateKind, ptToken, underlyingToken, oracle.address, TWAPDuration],
         proxyOwnerAddress,
         defaultProxyAdmin,
       );
-    }
+    }));
   };
 
   const oracleConfig: OracleConfig = [
@@ -79,6 +85,7 @@ const func: DeployFunction = async ({
       underlyingToken: addresses.WETH,
       ptOracle: addresses.newPTOracle || (await ethers.getContract("MockPendleOracle")).address,
       TWAPDuration: 1800,
+      pendleRateKind: PendleRateKind.PT_TO_ASSET,
     },
     {
       name: "PendleOracle_PT_USDe_27MAR2025",
@@ -90,6 +97,7 @@ const func: DeployFunction = async ({
           ? (await ethers.getContract("MockPendleOracle_PT_USDe_27MAR2025")).address
           : addresses.newPTOracle,
       TWAPDuration: 1800,
+      pendleRateKind: PendleRateKind.PT_TO_ASSET,
     },
     {
       name: "PendleOracle_PT_sUSDe_27MAR2025",
@@ -101,6 +109,7 @@ const func: DeployFunction = async ({
           ? (await ethers.getContract("MockPendleOracle_PT_sUSDe_27MAR2025")).address
           : addresses.newPTOracle,
       TWAPDuration: 1800,
+      pendleRateKind: PendleRateKind.PT_TO_ASSET,
     },
   ];
 
@@ -111,7 +120,7 @@ const func: DeployFunction = async ({
 
     const mockContracts = ["MockPendleOracle_PT_USDe_27MAR2025", "MockPendleOracle_PT_sUSDe_27MAR2025"];
 
-    for (const mock of mockContracts) {
+    await Promise.all(mockContracts.map(async (mock) => {
       const contract = await ethers.getContract(mock);
       if ((await contract.owner()) === deployer) {
         console.log(`Transferring ownership of ${contract.address} to ${NormalTimelock}`);
@@ -119,7 +128,7 @@ const func: DeployFunction = async ({
         await tx.wait();
         console.log(`Ownership transferred to ${NormalTimelock}`);
       }
-    }
+    }));
   }
 };
 
