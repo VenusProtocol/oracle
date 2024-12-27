@@ -93,7 +93,7 @@ const func: DeployFunction = async ({
       market: addresses.PTweETH_26DEC2024_Market,
       ptToken: addresses.PTweETH_26DEC2024,
       underlyingToken: addresses.WETH,
-      ptOracle: addresses.newPTOracle || (await ethers.getContract("MockPendleOracle")).address,
+      ptOracle: addresses.PTOracle || (await ethers.getContract("MockPendleOracle")).address,
       TWAPDuration: 1800,
       pendleRateKind: PendleRateKind.PT_TO_ASSET,
     },
@@ -105,7 +105,7 @@ const func: DeployFunction = async ({
       ptOracle:
         network.name === "sepolia"
           ? (await ethers.getContract("MockPendleOracle_PT_USDe_27MAR2025")).address
-          : addresses.newPTOracle,
+          : addresses.PTOracle,
       TWAPDuration: 1800,
       pendleRateKind: PendleRateKind.PT_TO_ASSET,
     },
@@ -117,7 +117,7 @@ const func: DeployFunction = async ({
       ptOracle:
         network.name === "sepolia"
           ? (await ethers.getContract("MockPendleOracle_PT_sUSDe_27MAR2025")).address
-          : addresses.newPTOracle,
+          : addresses.PTOracle,
       TWAPDuration: 1800,
       pendleRateKind: PendleRateKind.PT_TO_ASSET,
     },
