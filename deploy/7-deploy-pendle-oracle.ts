@@ -64,17 +64,27 @@ const func: DeployFunction = async ({
   const fallbackAddress = "0x0000000000000000000000000000000000000001";
 
   const deployOracles = async (oracleConfig: OracleConfig) => {
-    await Promise.all(oracleConfig.map(async ({ name, market, ptToken, underlyingToken, ptOracle, TWAPDuration, pendleRateKind }) => {
-      const ptOracleAddress = ptOracle || (await ethers.getContract("MockPendlePtOracle")).address;
-      await deployPendleOracle(
-        deployments,
-        deployer,
-        name,
-        [market || fallbackAddress, ptOracleAddress, pendleRateKind, ptToken, underlyingToken, oracle.address, TWAPDuration],
-        proxyOwnerAddress,
-        defaultProxyAdmin,
-      );
-    }));
+    await Promise.all(
+      oracleConfig.map(async ({ name, market, ptToken, underlyingToken, ptOracle, TWAPDuration, pendleRateKind }) => {
+        const ptOracleAddress = ptOracle || (await ethers.getContract("MockPendlePtOracle")).address;
+        await deployPendleOracle(
+          deployments,
+          deployer,
+          name,
+          [
+            market || fallbackAddress,
+            ptOracleAddress,
+            pendleRateKind,
+            ptToken,
+            underlyingToken,
+            oracle.address,
+            TWAPDuration,
+          ],
+          proxyOwnerAddress,
+          defaultProxyAdmin,
+        );
+      }),
+    );
   };
 
   const oracleConfig: OracleConfig = [
@@ -120,15 +130,17 @@ const func: DeployFunction = async ({
 
     const mockContracts = ["MockPendleOracle_PT_USDe_27MAR2025", "MockPendleOracle_PT_sUSDe_27MAR2025"];
 
-    await Promise.all(mockContracts.map(async (mock) => {
-      const contract = await ethers.getContract(mock);
-      if ((await contract.owner()) === deployer) {
-        console.log(`Transferring ownership of ${contract.address} to ${NormalTimelock}`);
-        const tx = await contract.transferOwnership(NormalTimelock);
-        await tx.wait();
-        console.log(`Ownership transferred to ${NormalTimelock}`);
-      }
-    }));
+    await Promise.all(
+      mockContracts.map(async mock => {
+        const contract = await ethers.getContract(mock);
+        if ((await contract.owner()) === deployer) {
+          console.log(`Transferring ownership of ${contract.address} to ${NormalTimelock}`);
+          const tx = await contract.transferOwnership(NormalTimelock);
+          await tx.wait();
+          console.log(`Ownership transferred to ${NormalTimelock}`);
+        }
+      }),
+    );
   }
 };
 
