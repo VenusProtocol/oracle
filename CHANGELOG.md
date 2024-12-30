@@ -1,3 +1,11 @@
+## [2.8.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.8.0-dev.2...v2.8.0-dev.3) (2024-12-30)
+
+
+### Features
+
+* add oracles for PT-SolvBTC.BBN-27MAR2025 ([1dde098](https://github.com/VenusProtocol/oracle/commit/1dde0980333e3cacc8fb9b4e66ce13a592f4efff))
+* updating deployment files ([7fdbfcd](https://github.com/VenusProtocol/oracle/commit/7fdbfcd6b6281c1a59b753c252ec58512cce026d))
+
 ## [2.8.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.8.0-dev.1...v2.8.0-dev.2) (2024-12-27)
 
 
