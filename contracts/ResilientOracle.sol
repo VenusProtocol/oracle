@@ -370,6 +370,11 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
 
     function _getPrice(address asset) internal view returns (uint256) {
         uint256 pivotPrice = INVALID_PRICE;
+        pivotPrice = _readCachedPrice(asset);
+
+        if (pivotPrice != 0) {
+            return pivotPrice;
+        }
 
         // Get pivot oracle price, Invalid price if not available or error
         (address pivotOracle, bool pivotOracleEnabled) = getOracle(asset, OracleRole.PIVOT);
