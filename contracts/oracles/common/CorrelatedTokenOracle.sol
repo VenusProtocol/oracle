@@ -52,7 +52,6 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
         ensureNonzeroAddress(correlatedToken);
         ensureNonzeroAddress(underlyingToken);
         ensureNonzeroAddress(resilientOracle);
-        ensureNonzeroValue(snapshotInterval);
 
         CORRELATED_TOKEN = correlatedToken;
         UNDERLYING_TOKEN = underlyingToken;
