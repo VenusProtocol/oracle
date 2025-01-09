@@ -26,8 +26,16 @@ contract SlisBNBOracle is CorrelatedTokenOracle {
         address slisBNB,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 storedSnapshotPrice
-    ) CorrelatedTokenOracle(slisBNB, NATIVE_TOKEN_ADDR, resilientOracle, annualGrowthRate, storedSnapshotPrice) {
+        uint256 snapshotInterval
+    )
+        CorrelatedTokenOracle(
+            slisBNB,
+            NATIVE_TOKEN_ADDR,
+            resilientOracle,
+            annualGrowthRate,
+            snapshotInterval
+        )
+    {
         ensureNonzeroAddress(stakeManager);
         STAKE_MANAGER = ISynclubStakeManager(stakeManager);
     }

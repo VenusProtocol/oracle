@@ -17,8 +17,8 @@ contract WBETHOracle is CorrelatedTokenOracle {
         address eth,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 storedSnapshotPrice
-    ) CorrelatedTokenOracle(wbeth, eth, resilientOracle, annualGrowthRate, storedSnapshotPrice) {}
+        uint256 snapshotInterval
+    ) CorrelatedTokenOracle(wbeth, eth, resilientOracle, annualGrowthRate, snapshotInterval) {}
 
     /**
      * @notice Fetches the amount of ETH for 1 wBETH

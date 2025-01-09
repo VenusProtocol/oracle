@@ -22,20 +22,23 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     OracleInterface public immutable RESILIENT_ORACLE;
 
-    /// @notice Growth rate in 1e18 format
-    uint256 public annualGrowthRate;
+    //// @notice Growth rate percentage in seconds. Ex: 1e18 is 100%
+    uint256 public immutable GROWTH_RATE_PER_SECOND;
 
-    //// @notice Growth rate in seconds
-    uint256 public growthRatePerSecond;
+    /// @notice Snapshot update interval
+    uint256 public immutable SNAPSHOT_INTERVAL;
 
     /// @notice Last stored snapshot price
-    uint256 public storedSnapshotPrice;
+    uint256 public snapshotPrice;
 
     /// @notice Last stored snapshot timestamp
-    uint256 public storedSnapshotTimestamp;
+    uint256 public snapshotTimestamp;
 
     /// @notice Thrown if the token address is invalid
     error InvalidTokenAddress();
+
+    /// @notice Emitted when the snapshot is updated
+    event SnapshotUpdated(uint256 price, uint256 timestamp);
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -44,7 +47,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
         address underlyingToken,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 storedSnapshotPrice
+        uint256 snapshotInterval
     ) {
         ensureNonzeroAddress(correlatedToken);
         ensureNonzeroAddress(underlyingToken);
@@ -53,16 +56,21 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
         UNDERLYING_TOKEN = underlyingToken;
         RESILIENT_ORACLE = OracleInterface(resilientOracle);
 
-        annualGrowthRate = annualGrowthRate;
-        growthRatePerSecond = (annualGrowthRate) / (365 * 24 * 60 * 60);
-        storedSnapshotPrice = storedSnapshotPrice;
-        storedSnapshotTimestamp = block.timestamp;
+        SNAPSHOT_INTERVAL = snapshotInterval;
+        GROWTH_RATE_PER_SECOND = (annualGrowthRate) / (365 * 24 * 60 * 60);
+        
+        updateSnapshot();
     }
 
-    // Implement ACM
-    function updateSnapshot(uint256 currentPrice) external {
-        storedSnapshotPrice = currentPrice;
-        storedSnapshotTimestamp = block.timestamp;
+    /**
+     * @notice Updates the snapshot price and timestamp
+     */
+    function updateSnapshot() public {
+        if (block.timestamp - snapshotTimestamp < SNAPSHOT_INTERVAL) return;
+
+        snapshotPrice = getPrice(CORRELATED_TOKEN);
+        snapshotTimestamp = block.timestamp;
+        emit SnapshotUpdated(snapshotPrice, snapshotTimestamp);
     }
 
     /**
@@ -70,7 +78,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
      * @param asset Address of the correlated token
      * @return price The price of the correlated token in scaled decimal places
      */
-    function getPrice(address asset) external view override returns (uint256) {
+    function getPrice(address asset) public view override returns (uint256) {
         if (asset != CORRELATED_TOKEN) revert InvalidTokenAddress();
 
         // get underlying token amount for 1 correlated token scaled by underlying token decimals
@@ -84,17 +92,17 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
 
         // underlyingAmount (for 1 correlated token) * underlyingUSDPrice / decimals(correlated token)
         uint256 price = (underlyingAmount * underlyingUSDPrice) / (10 ** decimals);
-        uint256 maxAllowedPrice = getMaxAllowedPrice();
+        uint256 maxAllowedPrice = _getMaxAllowedPrice();
         return ((price > maxAllowedPrice) && (maxAllowedPrice != 0)) ? maxAllowedPrice : price;
     }
 
-    function getMaxAllowedPrice() public view returns (uint256) {
-        return _getMaxAllowedPrice();
-    }
-
+    /**
+     * @notice Gets the maximum allowed price for correlated token
+     * @return maxPrice Maximum allowed price
+     */
     function _getMaxAllowedPrice() internal view returns (uint256) {
-        uint256 timeElapsed = block.timestamp - storedSnapshotTimestamp;
-        uint256 maxPrice = storedSnapshotPrice + (storedSnapshotPrice * growthRatePerSecond * timeElapsed) / 1e18;
+        uint256 timeElapsed = block.timestamp - snapshotTimestamp;
+        uint256 maxPrice = snapshotPrice + (snapshotPrice * GROWTH_RATE_PER_SECOND * timeElapsed) / 1e18;
         return maxPrice;
     }
 

@@ -18,8 +18,8 @@ contract WstETHOracleV2 is CorrelatedTokenOracle {
         address stETH,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 storedSnapshotPrice
-    ) CorrelatedTokenOracle(wstETH, stETH, resilientOracle, annualGrowthRate, storedSnapshotPrice) {}
+        uint256 snapshotInterval
+    ) CorrelatedTokenOracle(wstETH, stETH, resilientOracle, annualGrowthRate, snapshotInterval) {}
 
     /**
      * @notice Gets the stETH for 1 wstETH

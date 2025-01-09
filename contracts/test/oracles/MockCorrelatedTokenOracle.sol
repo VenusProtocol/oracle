@@ -10,15 +10,15 @@ contract MockCorrelatedTokenOracle is CorrelatedTokenOracle {
         address correlatedToken,
         address underlyingToken,
         address resilientOracle,
-        uint256 initialGrowthRate,
-        uint256 initialSnapshotPrice
+        uint256 annualGrowthRate,
+        uint256 snapshotInterval
     )
         CorrelatedTokenOracle(
             correlatedToken,
             underlyingToken,
             resilientOracle,
-            initialGrowthRate,
-            initialSnapshotPrice
+            annualGrowthRate,
+            snapshotInterval
         )
     {}
 

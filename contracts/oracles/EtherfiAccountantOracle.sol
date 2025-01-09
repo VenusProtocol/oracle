@@ -24,8 +24,16 @@ contract EtherfiAccountantOracle is CorrelatedTokenOracle {
         address underlyingToken,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 storedSnapshotPrice
-    ) CorrelatedTokenOracle(correlatedToken, underlyingToken, resilientOracle, annualGrowthRate, storedSnapshotPrice) {
+        uint256 snapshotInterval
+    )
+        CorrelatedTokenOracle(
+            correlatedToken,
+            underlyingToken,
+            resilientOracle,
+            annualGrowthRate,
+            snapshotInterval
+        )
+    {
         ensureNonzeroAddress(accountant);
         ACCOUNTANT = IAccountant(accountant);
     }

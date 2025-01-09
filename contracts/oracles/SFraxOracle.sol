@@ -18,8 +18,8 @@ contract SFraxOracle is CorrelatedTokenOracle {
         address frax,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 storedSnapshotPrice
-    ) CorrelatedTokenOracle(sFrax, frax, resilientOracle, annualGrowthRate, storedSnapshotPrice) {}
+        uint256 snapshotInterval
+    ) CorrelatedTokenOracle(sFrax, frax, resilientOracle, annualGrowthRate, snapshotInterval) {}
 
     /**
      * @notice Fetches the amount of FRAX for 1 sFrax
