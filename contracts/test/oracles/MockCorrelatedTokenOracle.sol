@@ -12,15 +12,7 @@ contract MockCorrelatedTokenOracle is CorrelatedTokenOracle {
         address resilientOracle,
         uint256 annualGrowthRate,
         uint256 snapshotInterval
-    )
-        CorrelatedTokenOracle(
-            correlatedToken,
-            underlyingToken,
-            resilientOracle,
-            annualGrowthRate,
-            snapshotInterval
-        )
-    {}
+    ) CorrelatedTokenOracle(correlatedToken, underlyingToken, resilientOracle, annualGrowthRate, snapshotInterval) {}
 
     function setMockUnderlyingAmount(uint256 amount) external {
         mockUnderlyingAmount = amount;

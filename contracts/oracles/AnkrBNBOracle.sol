@@ -21,15 +21,7 @@ contract AnkrBNBOracle is CorrelatedTokenOracle {
         address resilientOracle,
         uint256 annualGrowthRate,
         uint256 snapshotInterval
-    )
-        CorrelatedTokenOracle(
-            ankrBNB,
-            NATIVE_TOKEN_ADDR,
-            resilientOracle,
-            annualGrowthRate,
-            snapshotInterval
-        )
-    {}
+    ) CorrelatedTokenOracle(ankrBNB, NATIVE_TOKEN_ADDR, resilientOracle, annualGrowthRate, snapshotInterval) {}
 
     /**
      * @notice Fetches the amount of BNB for 1 ankrBNB

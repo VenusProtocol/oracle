@@ -16,6 +16,7 @@ const ETH_USD_PRICE = parseUnits("2500", 18); // 2500 USD for 1 ETH
 const ETH_FOR_ONE_WBETH = parseUnits("1.030692700354", 18);
 const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
 const WBETH_USD_PRICE = ETH_USD_PRICE.mul(ETH_FOR_ONE_WBETH).div(EXP_SCALE);
+const SNAPSHOT_UPDATE_INTERVAL = 10;
 
 describe("WBETHOracle unit tests", () => {
   let wBETH;
@@ -46,7 +47,7 @@ describe("WBETHOracle unit tests", () => {
           wethMock.address,
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
-          WBETH_USD_PRICE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -58,14 +59,20 @@ describe("WBETHOracle unit tests", () => {
           addr0000,
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
-          WBETH_USD_PRICE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
 
     it("revert if resilientOracle address is 0", async () => {
       await expect(
-        WBETHOracleFactory.deploy(wBETH.address, wethMock.address, addr0000, ANNUAL_GROWTH_RATE, WBETH_USD_PRICE),
+        WBETHOracleFactory.deploy(
+          wBETH.address,
+          wethMock.address,
+          addr0000,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+        ),
       ).to.be.reverted;
     });
 
@@ -75,7 +82,7 @@ describe("WBETHOracle unit tests", () => {
         wethMock.address,
         resilientOracleMock.address,
         ANNUAL_GROWTH_RATE,
-        WBETH_USD_PRICE,
+        SNAPSHOT_UPDATE_INTERVAL,
       );
     });
   });

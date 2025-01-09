@@ -14,6 +14,7 @@ const { FRAX, sFRAX } = ADDRESSES.ethereum;
 const FRAX_USD_PRICE = parseUnits("0.9979", 18); // 0.99 USD for 1 FRAX
 const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
 const FRAX_MAX_USD_PRICE = parseUnits("1", 18);
+const SNAPSHOT_UPDATE_INTERVAL = 10;
 
 describe("SFraxOracle unit tests", () => {
   let sFraxMock;
@@ -44,7 +45,7 @@ describe("SFraxOracle unit tests", () => {
           addr0000,
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
-          FRAX_MAX_USD_PRICE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -56,7 +57,7 @@ describe("SFraxOracle unit tests", () => {
           fraxMock.address,
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
-          FRAX_MAX_USD_PRICE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -67,7 +68,7 @@ describe("SFraxOracle unit tests", () => {
         fraxMock.address,
         resilientOracleMock.address,
         ANNUAL_GROWTH_RATE,
-        FRAX_MAX_USD_PRICE,
+        SNAPSHOT_UPDATE_INTERVAL,
       );
     });
   });

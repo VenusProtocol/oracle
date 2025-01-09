@@ -16,6 +16,7 @@ const PRICE_DENOMINATOR = parseUnits("1", 18);
 const EETH_AMOUNT_FOR_ONE_WEETH = parseUnits("0.923601422168630818", 18);
 const DURATION = 3600; // 1 hour
 const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
+const SNAPSHOT_UPDATE_INTERVAL = 10;
 
 describe("PendleOracle unit tests", () => {
   let ptWeETHMock;
@@ -50,7 +51,7 @@ describe("PendleOracle unit tests", () => {
           resilientOracleMock.address,
           DURATION,
           ANNUAL_GROWTH_RATE,
-          eETH_PRICE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -64,7 +65,7 @@ describe("PendleOracle unit tests", () => {
           resilientOracleMock.address,
           DURATION,
           ANNUAL_GROWTH_RATE,
-          eETH_PRICE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -78,7 +79,7 @@ describe("PendleOracle unit tests", () => {
           resilientOracleMock.address,
           DURATION,
           ANNUAL_GROWTH_RATE,
-          eETH_PRICE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -92,7 +93,7 @@ describe("PendleOracle unit tests", () => {
           resilientOracleMock.address,
           DURATION,
           ANNUAL_GROWTH_RATE,
-          eETH_PRICE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -106,7 +107,7 @@ describe("PendleOracle unit tests", () => {
           addr0000,
           DURATION,
           ANNUAL_GROWTH_RATE,
-          eETH_PRICE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -120,7 +121,7 @@ describe("PendleOracle unit tests", () => {
           resilientOracleMock.address,
           0,
           ANNUAL_GROWTH_RATE,
-          eETH_PRICE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -137,7 +138,7 @@ describe("PendleOracle unit tests", () => {
           resilientOracleMock.address,
           DURATION,
           ANNUAL_GROWTH_RATE,
-          eETH_PRICE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
 
@@ -153,7 +154,7 @@ describe("PendleOracle unit tests", () => {
         resilientOracleMock.address,
         DURATION,
         ANNUAL_GROWTH_RATE,
-        eETH_PRICE,
+        SNAPSHOT_UPDATE_INTERVAL,
       );
     });
   });

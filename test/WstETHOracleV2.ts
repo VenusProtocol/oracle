@@ -16,6 +16,7 @@ const PRICE_DENOMINATOR = parseUnits("1", 18);
 const STETH_AMOUNT_FOR_ONE_WSTETH = parseUnits("1.15", 18); // 1.5 stETH for 1 wETH
 const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
 const WstETH_USD_PRICE = STETH_USD_PRICE.mul(STETH_AMOUNT_FOR_ONE_WSTETH).div(PRICE_DENOMINATOR);
+const SNAPSHOT_UPDATE_INTERVAL = 10;
 
 describe("WstETHOracleV2 unit tests", () => {
   let stETHMock;
@@ -47,20 +48,27 @@ describe("WstETHOracleV2 unit tests", () => {
           stETHMock.address,
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
-          WstETH_USD_PRICE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
 
     it("revert if stETH address is 0", async () => {
       await expect(
-        WsETHOracleFactory.deploy(WSTETH, addr0000, resilientOracleMock.address, ANNUAL_GROWTH_RATE, WstETH_USD_PRICE),
+        WsETHOracleFactory.deploy(
+          WSTETH,
+          addr0000,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+        ),
       ).to.be.reverted;
     });
 
     it("revert if ResilientOracle address is 0", async () => {
-      await expect(WsETHOracleFactory.deploy(WSTETH, stETHMock.address, addr0000, ANNUAL_GROWTH_RATE, WstETH_USD_PRICE))
-        .to.be.reverted;
+      await expect(
+        WsETHOracleFactory.deploy(WSTETH, stETHMock.address, addr0000, ANNUAL_GROWTH_RATE, SNAPSHOT_UPDATE_INTERVAL),
+      ).to.be.reverted;
     });
 
     it("should deploy contract", async () => {
@@ -69,7 +77,7 @@ describe("WstETHOracleV2 unit tests", () => {
         stETHMock.address,
         resilientOracleMock.address,
         ANNUAL_GROWTH_RATE,
-        WstETH_USD_PRICE,
+        SNAPSHOT_UPDATE_INTERVAL,
       );
     });
   });

@@ -2,7 +2,7 @@
 pragma solidity 0.8.25;
 
 import { OracleInterface } from "../../interfaces/OracleInterface.sol";
-import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
+import { ensureNonzeroAddress, ensureNonzeroValue } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
 /**
@@ -34,11 +34,11 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
     /// @notice Last stored snapshot timestamp
     uint256 public snapshotTimestamp;
 
-    /// @notice Thrown if the token address is invalid
-    error InvalidTokenAddress();
-
     /// @notice Emitted when the snapshot is updated
     event SnapshotUpdated(uint256 price, uint256 timestamp);
+
+    /// @notice Thrown if the token address is invalid
+    error InvalidTokenAddress();
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -52,14 +52,14 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
         ensureNonzeroAddress(correlatedToken);
         ensureNonzeroAddress(underlyingToken);
         ensureNonzeroAddress(resilientOracle);
+        ensureNonzeroValue(snapshotInterval);
+
         CORRELATED_TOKEN = correlatedToken;
         UNDERLYING_TOKEN = underlyingToken;
         RESILIENT_ORACLE = OracleInterface(resilientOracle);
 
         SNAPSHOT_INTERVAL = snapshotInterval;
         GROWTH_RATE_PER_SECOND = (annualGrowthRate) / (365 * 24 * 60 * 60);
-        
-        updateSnapshot();
     }
 
     /**
@@ -93,6 +93,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
         // underlyingAmount (for 1 correlated token) * underlyingUSDPrice / decimals(correlated token)
         uint256 price = (underlyingAmount * underlyingUSDPrice) / (10 ** decimals);
         uint256 maxAllowedPrice = _getMaxAllowedPrice();
+
         return ((price > maxAllowedPrice) && (maxAllowedPrice != 0)) ? maxAllowedPrice : price;
     }
 

@@ -16,6 +16,7 @@ const BNB_USD_PRICE = parseUnits("300", 18); // 300 USD for 1 BNB
 const BNB_FOR_ONE_SLISBNB = parseUnits("1.014061147834812261", 18);
 const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
 const SLISBNB_USD_PRICE = BNB_USD_PRICE.mul(BNB_FOR_ONE_SLISBNB).div(EXP_SCALE);
+const SNAPSHOT_UPDATE_INTERVAL = 10;
 
 describe("SlisBNBOracle unit tests", () => {
   let SynclubManagerMock;
@@ -45,7 +46,7 @@ describe("SlisBNBOracle unit tests", () => {
           slisBNB,
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
-          SLISBNB_USD_PRICE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -57,7 +58,7 @@ describe("SlisBNBOracle unit tests", () => {
           addr0000,
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
-          SLISBNB_USD_PRICE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -69,7 +70,7 @@ describe("SlisBNBOracle unit tests", () => {
           slisBNB,
           addr0000,
           ANNUAL_GROWTH_RATE,
-          SLISBNB_USD_PRICE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -80,7 +81,7 @@ describe("SlisBNBOracle unit tests", () => {
         slisBNB,
         resilientOracleMock.address,
         ANNUAL_GROWTH_RATE,
-        SLISBNB_USD_PRICE,
+        SNAPSHOT_UPDATE_INTERVAL,
       );
     });
   });

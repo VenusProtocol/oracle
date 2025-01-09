@@ -5,9 +5,10 @@ import { ethers } from "hardhat";
 const { expect } = chai;
 chai.use(smock.matchers);
 
-describe("CorrelatedTokenOracle", function () {
-  let owner, user;
-  let correlatedToken, underlyingToken, resilientOracle;
+describe("CorrelatedTokenOracle", () => {
+  let correlatedToken;
+  let underlyingToken;
+  let resilientOracle;
   let correlatedTokenOracle;
 
   // 5% annual growth rate
@@ -15,9 +16,7 @@ describe("CorrelatedTokenOracle", function () {
   // Snapshot update interval = 10 seconds
   const snapshotUpdateInterval = 10;
 
-  beforeEach(async function () {
-    [owner, user] = await ethers.getSigners();
-
+  beforeEach(async () => {
     // Deploy mock tokens (ERC20) for correlated and underlying tokens
     const MockERC20 = await ethers.getContractFactory("MockERC20");
     correlatedToken = await MockERC20.deploy("Correlated Token", "C-TOKEN", 18);
@@ -34,7 +33,7 @@ describe("CorrelatedTokenOracle", function () {
       underlyingToken.address,
       resilientOracle.address,
       growthRate,
-      snapshotUpdateInterval
+      snapshotUpdateInterval,
     );
 
     await correlatedTokenOracle.setMockUnderlyingAmount(ethers.utils.parseUnits("1", 18));
@@ -44,7 +43,7 @@ describe("CorrelatedTokenOracle", function () {
   });
 
   describe("Max Price Logic", () => {
-    it("should return the correct price capped by the max allowed price", async function () {
+    it("should return the correct price capped by the max allowed price", async () => {
       await correlatedTokenOracle.updateSnapshot();
       let price = await correlatedTokenOracle.getPrice(correlatedToken.address);
       expect(price).to.equal(ethers.utils.parseUnits("10", 18));
@@ -55,7 +54,7 @@ describe("CorrelatedTokenOracle", function () {
       await correlatedTokenOracle.updateSnapshot();
       price = await correlatedTokenOracle.getPrice(correlatedToken.address);
 
-      //Assert that the price should be capped at the max allowed price
+      // Assert that the price should be capped at the max allowed price
       expect(price).to.equal(ethers.utils.parseUnits("10", 18));
     });
   });
