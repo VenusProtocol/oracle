@@ -86,10 +86,10 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     BoundValidatorInterface public immutable boundValidator;
 
-    mapping(address => TokenConfig) private tokenConfigs;
-
     /// Slot to cache the asset's price, used for transient storage
-    bytes32 constant CACHE_SLOT = keccak256(abi.encode("venus-protocol/oracle/ResilientOracle/cache"));
+    bytes32 constant public CACHE_SLOT = keccak256(abi.encode("venus-protocol/oracle/ResilientOracle/cache"));
+
+    mapping(address => TokenConfig) private tokenConfigs;
 
     event TokenConfigAdded(
         address indexed asset,
