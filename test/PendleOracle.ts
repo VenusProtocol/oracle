@@ -1,38 +1,47 @@
-import { smock } from "@defi-wonderland/smock";
+import { FakeContract, smock } from "@defi-wonderland/smock";
 import chai from "chai";
 import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
-import { ADDRESSES } from "../helpers/deploymentConfig";
-import { BEP20Harness, IPendlePtOracle, ResilientOracleInterface } from "../typechain-types";
-import { addr0000 } from "./utils/data";
+import { BEP20Harness, IPendlePtOracle, PendleOracle__factory, ResilientOracleInterface } from "../typechain-types";
+import { addr0000, addr1111 } from "./utils/data";
 
 const { expect } = chai;
 chai.use(smock.matchers);
 
-const { PTweETH_26DEC2024, PTweETH_26DEC2024_Market, PTOracle, eETH } = ADDRESSES.ethereum;
-const eETH_PRICE = parseUnits("3400", 18);
-const PRICE_DENOMINATOR = parseUnits("1", 18);
-const EETH_AMOUNT_FOR_ONE_WEETH = parseUnits("0.923601422168630818", 18);
+const UNDERLYING_PRICE = parseUnits("3400", 18);
+const PT_TO_ASSET_RATE = parseUnits("0.923601422168630818", 18);
+const PT_TO_SY_RATE = parseUnits("0.93", 18);
 const DURATION = 3600; // 1 hour
 
+enum PendleRateKind {
+  PT_TO_ASSET,
+  PT_TO_SY,
+}
+
 describe("PendleOracle unit tests", () => {
-  let ptWeETHMock;
-  let resilientOracleMock;
-  let pendleOracle;
-  let pendleOracleFactory;
-  let ptOracleMock;
+  const market = addr1111;
+  let ptToken: FakeContract<BEP20Harness>;
+  let underlyingToken: FakeContract<BEP20Harness>;
+  let resilientOracleMock: FakeContract<ResilientOracleInterface>;
+  let pendleOracleFactory: PendleOracle__factory;
+  let ptOracleMock: FakeContract<IPendlePtOracle>;
+
   before(async () => {
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
     resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
-    resilientOracleMock.getPrice.returns(eETH_PRICE);
+    resilientOracleMock.getPrice.returns(UNDERLYING_PRICE);
 
-    ptWeETHMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: PTweETH_26DEC2024 });
-    ptWeETHMock.decimals.returns(18);
+    ptToken = await smock.fake<BEP20Harness>("BEP20Harness");
+    ptToken.decimals.returns(18);
 
-    ptOracleMock = await smock.fake<IPendlePtOracle>("IPendlePtOracle", { address: PTOracle });
-    ptOracleMock.getPtToAssetRate.returns(EETH_AMOUNT_FOR_ONE_WEETH);
+    underlyingToken = await smock.fake<BEP20Harness>("BEP20Harness");
+    underlyingToken.decimals.returns(18);
+
+    ptOracleMock = await smock.fake<IPendlePtOracle>("IPendlePtOracle");
+    ptOracleMock.getPtToAssetRate.returns(PT_TO_ASSET_RATE);
+    ptOracleMock.getPtToSyRate.returns(PT_TO_SY_RATE);
     ptOracleMock.getOracleState.returns([false, 0, true]);
 
     pendleOracleFactory = await ethers.getContractFactory("PendleOracle");
@@ -44,8 +53,9 @@ describe("PendleOracle unit tests", () => {
         pendleOracleFactory.deploy(
           addr0000,
           ptOracleMock.address,
-          ptWeETHMock.address,
-          eETH,
+          PendleRateKind.PT_TO_ASSET,
+          ptToken.address,
+          underlyingToken.address,
           resilientOracleMock.address,
           DURATION,
         ),
@@ -54,33 +64,36 @@ describe("PendleOracle unit tests", () => {
     it("revert if ptOracle address is 0", async () => {
       await expect(
         pendleOracleFactory.deploy(
-          PTweETH_26DEC2024_Market,
+          market,
           addr0000,
-          ptWeETHMock.address,
-          eETH,
+          PendleRateKind.PT_TO_ASSET,
+          ptToken.address,
+          underlyingToken.address,
           resilientOracleMock.address,
           DURATION,
         ),
       ).to.be.reverted;
     });
-    it("revert if ptWeETH address is 0", async () => {
+    it("revert if PT token address is 0", async () => {
       await expect(
         pendleOracleFactory.deploy(
-          PTweETH_26DEC2024_Market,
+          market,
           ptOracleMock.address,
+          PendleRateKind.PT_TO_ASSET,
           addr0000,
-          eETH,
+          underlyingToken.address,
           resilientOracleMock.address,
           DURATION,
         ),
       ).to.be.reverted;
     });
-    it("revert if eETH address is 0", async () => {
+    it("revert if underlying token address is 0", async () => {
       await expect(
         pendleOracleFactory.deploy(
-          PTweETH_26DEC2024_Market,
+          market,
           ptOracleMock.address,
-          ptWeETHMock.address,
+          PendleRateKind.PT_TO_ASSET,
+          ptToken.address,
           addr0000,
           resilientOracleMock.address,
           DURATION,
@@ -90,10 +103,11 @@ describe("PendleOracle unit tests", () => {
     it("revert if ResilientOracle address is 0", async () => {
       await expect(
         pendleOracleFactory.deploy(
-          PTweETH_26DEC2024_Market,
+          market,
           ptOracleMock.address,
-          ptWeETHMock.address,
-          eETH,
+          PendleRateKind.PT_TO_ASSET,
+          ptToken.address,
+          underlyingToken.address,
           addr0000,
           DURATION,
         ),
@@ -102,10 +116,11 @@ describe("PendleOracle unit tests", () => {
     it("revert if TWAP duration is 0", async () => {
       await expect(
         pendleOracleFactory.deploy(
-          PTweETH_26DEC2024_Market,
+          market,
           ptOracleMock.address,
-          ptWeETHMock.address,
-          eETH,
+          PendleRateKind.PT_TO_ASSET,
+          ptToken.address,
+          underlyingToken.address,
           resilientOracleMock.address,
           0,
         ),
@@ -117,10 +132,11 @@ describe("PendleOracle unit tests", () => {
 
       await expect(
         pendleOracleFactory.deploy(
-          PTweETH_26DEC2024_Market,
+          market,
           ptOracleMock.address,
-          ptWeETHMock.address,
-          eETH,
+          PendleRateKind.PT_TO_ASSET,
+          ptToken.address,
+          underlyingToken.address,
           resilientOracleMock.address,
           DURATION,
         ),
@@ -128,26 +144,45 @@ describe("PendleOracle unit tests", () => {
 
       ptOracleMock.getOracleState.returns([false, 0, true]);
     });
-
-    it("should deploy contract", async () => {
-      pendleOracle = await pendleOracleFactory.deploy(
-        PTweETH_26DEC2024_Market,
-        ptOracleMock.address,
-        ptWeETHMock.address,
-        eETH,
-        resilientOracleMock.address,
-        DURATION,
-      );
-    });
   });
 
   describe("getPrice", () => {
-    it("revert if wstETH address is wrong", async () => {
-      await expect(pendleOracle.getPrice(addr0000)).to.be.revertedWithCustomError(pendleOracle, "InvalidTokenAddress");
+    const deploy = (kind: PendleRateKind) =>
+      pendleOracleFactory.deploy(
+        market,
+        ptOracleMock.address,
+        kind,
+        ptToken.address,
+        underlyingToken.address,
+        resilientOracleMock.address,
+        DURATION,
+      );
+
+    it("revert if getPrice argument is not the configured PT token", async () => {
+      const pendleOracle = await deploy(PendleRateKind.PT_TO_ASSET);
+      await expect(pendleOracle.getPrice(addr1111)).to.be.revertedWithCustomError(pendleOracle, "InvalidTokenAddress");
     });
 
-    it("should get correct price", async () => {
-      expect(await pendleOracle.getPrice(ptWeETHMock.address)).to.equal(parseUnits("3140.2448353733447812", 18));
+    it("should get correct price for PT_TO_ASSET rate kind", async () => {
+      const pendleOracle = await deploy(PendleRateKind.PT_TO_ASSET);
+      expect(await pendleOracle.getPrice(ptToken.address)).to.equal(parseUnits("3140.2448353733447812", 18));
+    });
+
+    it("should get correct price for PT_TO_SY rate kind", async () => {
+      const pendleOracle = await deploy(PendleRateKind.PT_TO_SY);
+      expect(await pendleOracle.getPrice(ptToken.address)).to.equal(parseUnits("3162.0", 18));
+    });
+
+    it("should adjust for underlying decimals", async () => {
+      const underlyingTokenDecimals = 8;
+      const ptTokenDecimals = 16;
+      ptToken.decimals.returns(ptTokenDecimals);
+      underlyingToken.decimals.returns(underlyingTokenDecimals);
+      resilientOracleMock.getPrice.returns(parseUnits("3400", 36 - underlyingTokenDecimals));
+
+      const pendleOracle = await deploy(PendleRateKind.PT_TO_SY);
+      const expectedPriceDecimals = 36 - ptTokenDecimals;
+      expect(await pendleOracle.getPrice(ptToken.address)).to.equal(parseUnits("3162.0", expectedPriceDecimals));
     });
   });
 });
