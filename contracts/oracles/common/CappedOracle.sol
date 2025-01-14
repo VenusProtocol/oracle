@@ -44,7 +44,7 @@ abstract contract CappedOracle {
      * @notice Updates the snapshot price and timestamp
      */
     function updateSnapshot() public {
-        if (block.timestamp - snapshotTimestamp < SNAPSHOT_INTERVAL) return;
+        if (block.timestamp - snapshotTimestamp < SNAPSHOT_INTERVAL || SNAPSHOT_INTERVAL == 0) return;
 
         snapshotPrice = getPrice(CORRELATED_TOKEN);
         snapshotTimestamp = block.timestamp;
