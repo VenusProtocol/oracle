@@ -2,16 +2,13 @@
 pragma solidity ^0.8.25;
 
 library Transient {
-    /// Slot to cache the asset's price, used for transient storage
-    bytes32 public constant CACHE_SLOT = keccak256(abi.encode("venus-protocol/oracle/ResilientOracle/cache"));
-
     /**
      * @notice Cache the asset price into transient storage
      * @param key address of the asset
      * @param value asset price
      */
-    function cachePrice(address key, uint256 value) internal {
-        bytes32 slot = keccak256(abi.encode(CACHE_SLOT, key));
+    function cachePrice(bytes32 cacheSlot, address key, uint256 value) internal {
+        bytes32 slot = keccak256(abi.encode(cacheSlot, key));
         assembly ("memory-safe") {
             tstore(slot, value)
         }
@@ -22,8 +19,8 @@ library Transient {
      * @param key address of the asset
      * @return value cached asset price
      */
-    function readCachedPrice(address key) internal view returns (uint256 value) {
-        bytes32 slot = keccak256(abi.encode(CACHE_SLOT, key));
+    function readCachedPrice(bytes32 cacheSlot, address key) internal view returns (uint256 value) {
+        bytes32 slot = keccak256(abi.encode(cacheSlot, key));
         assembly ("memory-safe") {
             value := tload(slot)
         }

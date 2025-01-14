@@ -85,6 +85,8 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     /// and can serve as any underlying asset of a market that supports native tokens
     address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
+    bytes32 public constant CACHE_SLOT = keccak256(abi.encode("venus-protocol/oracle/ResilientOracle/cache"));
+
     /// @notice Bound validator contract address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     BoundValidatorInterface public immutable boundValidator;
@@ -330,7 +332,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @param asset asset address
      */
     function _updateAssetPrice(address asset) internal {
-        if (Transient.readCachedPrice(asset) != 0) {
+        if (Transient.readCachedPrice(CACHE_SLOT, asset) != 0) {
             return;
         }
 
@@ -341,14 +343,14 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         }
 
         uint256 price = _getPrice(asset);
-        Transient.cachePrice(asset, price);
+        Transient.cachePrice(CACHE_SLOT, asset, price);
     }
 
     function _getPrice(address asset) internal view returns (uint256) {
         uint256 pivotPrice = INVALID_PRICE;
         uint256 price;
 
-        price = Transient.readCachedPrice(asset);
+        price = Transient.readCachedPrice(CACHE_SLOT, asset);
         if (price != 0) {
             return price;
         }
