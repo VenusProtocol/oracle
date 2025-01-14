@@ -10,6 +10,9 @@ import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/I
  * @notice This oracle fetches the price of a correlated token and caps the growth rate
  */
 abstract contract CappedOracle is OracleInterface {
+    /// Slot to cache the asset's price, used for transient storage
+    bytes32 public constant CACHE_SLOT = keccak256(abi.encode("venus-protocol/oracle/common/CappedOracle/cache"));
+
     //// @notice Growth rate percentage in seconds. Ex: 1e18 is 100%
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     uint256 public immutable GROWTH_RATE_PER_SECOND;
@@ -50,10 +53,15 @@ abstract contract CappedOracle is OracleInterface {
      * @notice Updates the snapshot price and timestamp
      */
     function updateSnapshot() public {
+        address asset = token();
+        if (_readCachedPrice(asset) != 0) {
+            return;
+        }
         if (block.timestamp - snapshotTimestamp < SNAPSHOT_INTERVAL || SNAPSHOT_INTERVAL == 0) return;
 
-        snapshotPrice = getPrice(token());
+        snapshotPrice = getPrice(asset);
         snapshotTimestamp = block.timestamp;
+        _cachePrice(asset, snapshotPrice);
         emit SnapshotUpdated(snapshotPrice, snapshotTimestamp);
     }
 
@@ -63,13 +71,32 @@ abstract contract CappedOracle is OracleInterface {
      * @return price The price of the token in scaled decimal places
      */
     function getPrice(address asset) public view override returns (uint256) {
-        uint256 price = getUncappedPrice(asset);
+        uint price = _readCachedPrice(asset);
+        if (price != 0) {
+            return price;
+        }
 
-        if (SNAPSHOT_INTERVAL == 0) return price;
+        uint256 uncappedPrice = getUncappedPrice(asset);
+
+        if (SNAPSHOT_INTERVAL == 0) return uncappedPrice;
 
         uint256 maxAllowedPrice = _getMaxAllowedPrice();
 
-        return ((price > maxAllowedPrice) && (maxAllowedPrice != 0)) ? maxAllowedPrice : price;
+        price = ((uncappedPrice > maxAllowedPrice) && (maxAllowedPrice != 0)) ? maxAllowedPrice : uncappedPrice;
+
+        return price;
+    }
+
+    /**
+     * @notice Cache the asset price into transient storage
+     * @param key address of the asset
+     * @param value asset price
+     */
+    function _cachePrice(address key, uint256 value) internal {
+        bytes32 slot = keccak256(abi.encode(CACHE_SLOT, key));
+        assembly ("memory-safe") {
+            tstore(slot, value)
+        }
     }
 
     /**
@@ -93,5 +120,17 @@ abstract contract CappedOracle is OracleInterface {
         uint256 timeElapsed = block.timestamp - snapshotTimestamp;
         uint256 maxPrice = snapshotPrice + (snapshotPrice * GROWTH_RATE_PER_SECOND * timeElapsed) / 1e18;
         return maxPrice;
+    }
+
+    /**
+     * @notice Read cached price from transient storage
+     * @param key address of the asset
+     * @return value cached asset price
+     */
+    function _readCachedPrice(address key) internal view returns (uint256 value) {
+        bytes32 slot = keccak256(abi.encode(CACHE_SLOT, key));
+        assembly ("memory-safe") {
+            value := tload(slot)
+        }
     }
 }
