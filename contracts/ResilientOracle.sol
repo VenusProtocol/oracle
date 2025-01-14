@@ -6,6 +6,7 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./interfaces/VBep20Interface.sol";
 import "./interfaces/OracleInterface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
+import "./lib/Transient.sol";
 
 /**
  * @title ResilientOracle
@@ -44,6 +45,8 @@ isValid = anchorRatio <= upperBoundAnchorRatio && anchorRatio >= lowerBoundAncho
  * oracle to be stagnant and treat it like it's disabled.
  */
 contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOracleInterface {
+    using Transient for bytes32;
+
     /**
      * @dev Oracle roles:
      * **main**: The most trustworthy price source
@@ -85,9 +88,6 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     /// @notice Bound validator contract address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     BoundValidatorInterface public immutable boundValidator;
-
-    /// Slot to cache the asset's price, used for transient storage
-    bytes32 public constant CACHE_SLOT = keccak256(abi.encode("venus-protocol/oracle/ResilientOracle/cache"));
 
     mapping(address => TokenConfig) private tokenConfigs;
 
@@ -330,7 +330,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @param asset asset address
      */
     function _updateAssetPrice(address asset) internal {
-        if (_readCachedPrice(asset) != 0) {
+        if (Transient.readCachedPrice(asset) != 0) {
             return;
         }
 
@@ -341,38 +341,14 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         }
 
         uint256 price = _getPrice(asset);
-        _cachePrice(asset, price);
-    }
-
-    /**
-     * @notice Cache the asset price into transient storage
-     * @param key address of the asset
-     * @param value asset price
-     */
-    function _cachePrice(address key, uint256 value) internal {
-        bytes32 slot = keccak256(abi.encode(CACHE_SLOT, key));
-        assembly ("memory-safe") {
-            tstore(slot, value)
-        }
-    }
-
-    /**
-     * @notice Read cached price from transient storage
-     * @param key address of the asset
-     * @return value cached asset price
-     */
-    function _readCachedPrice(address key) internal view returns (uint256 value) {
-        bytes32 slot = keccak256(abi.encode(CACHE_SLOT, key));
-        assembly ("memory-safe") {
-            value := tload(slot)
-        }
+        Transient.cachePrice(asset, price);
     }
 
     function _getPrice(address asset) internal view returns (uint256) {
         uint256 pivotPrice = INVALID_PRICE;
         uint256 price;
 
-        price = _readCachedPrice(asset);
+        price = Transient.readCachedPrice(asset);
         if (price != 0) {
             return price;
         }
