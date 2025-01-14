@@ -45,6 +45,9 @@ abstract contract CorrelatedTokenOracle is OracleInterface, CappedOracle {
      */
     function getPrice(address asset) public view override(CappedOracle, OracleInterface) returns (uint256) {
         uint256 price = getUncappedPrice(asset);
+
+        if (SNAPSHOT_INTERVAL == 0) return price;
+
         uint256 maxAllowedPrice = _getMaxAllowedPrice();
 
         return ((price > maxAllowedPrice) && (maxAllowedPrice != 0)) ? maxAllowedPrice : price;
