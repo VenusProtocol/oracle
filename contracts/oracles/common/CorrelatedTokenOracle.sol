@@ -22,7 +22,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     OracleInterface public immutable RESILIENT_ORACLE;
 
-    //// @notice Growth rate percentage in seconds. Ex: 1e18 is 100%
+    //// @notice Max growth rate percentage per second allowed. Ex: 1e18 is 100%
     uint256 public immutable GROWTH_RATE_PER_SECOND;
 
     /// @notice Snapshot update interval
