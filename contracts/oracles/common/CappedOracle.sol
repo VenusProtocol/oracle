@@ -9,15 +9,13 @@ import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/I
  * @title CappedOracle
  * @notice This oracle fetches the price of a correlated token and caps the growth rate
  */
-abstract contract CappedOracle {
-    /// @notice Address of the correlated token
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    address public immutable CORRELATED_TOKEN;
-
+abstract contract CappedOracle is OracleInterface {
     //// @notice Growth rate percentage in seconds. Ex: 1e18 is 100%
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     uint256 public immutable GROWTH_RATE_PER_SECOND;
 
     /// @notice Snapshot update interval
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     uint256 public immutable SNAPSHOT_INTERVAL;
 
     /// @notice Last stored snapshot price
@@ -31,11 +29,7 @@ abstract contract CappedOracle {
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address correlatedToken, uint256 annualGrowthRate, uint256 snapshotInterval) {
-        ensureNonzeroAddress(correlatedToken);
-
-        CORRELATED_TOKEN = correlatedToken;
-
+    constructor(uint256 annualGrowthRate, uint256 snapshotInterval) {
         SNAPSHOT_INTERVAL = snapshotInterval;
         GROWTH_RATE_PER_SECOND = (annualGrowthRate) / (365 * 24 * 60 * 60);
     }
@@ -44,7 +38,13 @@ abstract contract CappedOracle {
      * @notice Returns if the price is capped
      * @return isCapped Boolean indicating if the price is capped
      */
-    function isCapped() external view virtual returns (bool);
+    function isCapped() external view virtual returns (bool) {
+        uint256 price = getUncappedPrice(token());
+
+        uint256 maxAllowedPrice = _getMaxAllowedPrice();
+
+        return ((price > maxAllowedPrice) && (maxAllowedPrice != 0)) ? true : false;
+    }
 
     /**
      * @notice Updates the snapshot price and timestamp
@@ -52,27 +52,41 @@ abstract contract CappedOracle {
     function updateSnapshot() public {
         if (block.timestamp - snapshotTimestamp < SNAPSHOT_INTERVAL || SNAPSHOT_INTERVAL == 0) return;
 
-        snapshotPrice = getPrice(CORRELATED_TOKEN);
+        snapshotPrice = getPrice(token());
         snapshotTimestamp = block.timestamp;
         emit SnapshotUpdated(snapshotPrice, snapshotTimestamp);
     }
 
     /**
-     * @notice Fetches the price of the correlated token
-     * @param asset Address of the correlated token
-     * @return price The price of the correlated token in scaled decimal places
+     * @notice Fetches the price of the token
+     * @param asset Address of the token
+     * @return price The price of the token in scaled decimal places
      */
-    function getPrice(address asset) public view virtual returns (uint256);
+    function getPrice(address asset) public view override returns (uint256) {
+        uint256 price = getUncappedPrice(asset);
+
+        if (SNAPSHOT_INTERVAL == 0) return price;
+
+        uint256 maxAllowedPrice = _getMaxAllowedPrice();
+
+        return ((price > maxAllowedPrice) && (maxAllowedPrice != 0)) ? maxAllowedPrice : price;
+    }
 
     /**
-     * @notice Fetches the uncapped price of the correlated token
-     * @param asset Address of the correlated token
-     * @return price The price of the correlated token in scaled decimal places
+     * @notice Fetches the uncapped price of the token
+     * @param asset Address of the token
+     * @return price The price of the token in scaled decimal places
      */
     function getUncappedPrice(address asset) internal view virtual returns (uint256);
 
     /**
-     * @notice Gets the maximum allowed price for correlated token
+     * @notice Address of the token
+     * @return token The address of the token
+     */
+    function token() internal view virtual returns (address);
+
+    /**
+     * @notice Gets the maximum allowed price for token
      * @return maxPrice Maximum allowed price
      */
     function _getMaxAllowedPrice() internal view returns (uint256) {

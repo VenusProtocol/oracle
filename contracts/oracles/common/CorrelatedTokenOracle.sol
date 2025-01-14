@@ -10,7 +10,11 @@ import { CappedOracle } from "./CappedOracle.sol";
  * @title CorrelatedTokenOracle
  * @notice This oracle fetches the price of a token that is correlated to another token.
  */
-abstract contract CorrelatedTokenOracle is OracleInterface, CappedOracle {
+abstract contract CorrelatedTokenOracle is CappedOracle {
+    /// @notice Address of the correlated token
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    address public immutable CORRELATED_TOKEN;
+
     /// @notice Address of the underlying token
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable UNDERLYING_TOKEN;
@@ -30,35 +34,14 @@ abstract contract CorrelatedTokenOracle is OracleInterface, CappedOracle {
         address resilientOracle,
         uint256 annualGrowthRate,
         uint256 snapshotInterval
-    ) CappedOracle(correlatedToken, annualGrowthRate, snapshotInterval) {
+    ) CappedOracle(annualGrowthRate, snapshotInterval) {
+        ensureNonzeroAddress(correlatedToken);
         ensureNonzeroAddress(underlyingToken);
         ensureNonzeroAddress(resilientOracle);
 
+        CORRELATED_TOKEN = correlatedToken;
         UNDERLYING_TOKEN = underlyingToken;
         RESILIENT_ORACLE = OracleInterface(resilientOracle);
-    }
-
-    function isCapped() external view override returns (bool) {
-        uint256 price = getUncappedPrice(CORRELATED_TOKEN);
-
-        uint256 maxAllowedPrice = _getMaxAllowedPrice();
-
-        return ((price > maxAllowedPrice) && (maxAllowedPrice != 0)) ? true : false;
-    }
-
-    /**
-     * @notice Fetches the price of the correlated token
-     * @param asset Address of the correlated token
-     * @return price The price of the correlated token in scaled decimal places
-     */
-    function getPrice(address asset) public view override(CappedOracle, OracleInterface) returns (uint256) {
-        uint256 price = getUncappedPrice(asset);
-
-        if (SNAPSHOT_INTERVAL == 0) return price;
-
-        uint256 maxAllowedPrice = _getMaxAllowedPrice();
-
-        return ((price > maxAllowedPrice) && (maxAllowedPrice != 0)) ? maxAllowedPrice : price;
     }
 
     /**
@@ -76,6 +59,14 @@ abstract contract CorrelatedTokenOracle is OracleInterface, CappedOracle {
         uint256 decimals = token.decimals();
 
         return (underlyingAmount * underlyingUSDPrice) / (10 ** decimals);
+    }
+
+    /**
+     * @notice Address of the correlated token
+     * @return address Address of the correlated token
+     */
+    function token() internal view override returns (address) {
+        return CORRELATED_TOKEN;
     }
 
     /**
