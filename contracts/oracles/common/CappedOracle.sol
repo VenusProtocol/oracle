@@ -59,6 +59,13 @@ abstract contract CappedOracle {
     function getPrice(address asset) public view virtual returns (uint256);
 
     /**
+     * @notice Fetches the uncapped price of the correlated token
+     * @param asset Address of the correlated token
+     * @return price The price of the correlated token in scaled decimal places
+     */
+    function getUncappedPrice(address asset) internal view virtual returns (uint256);
+
+    /**
      * @notice Gets the maximum allowed price for correlated token
      * @return maxPrice Maximum allowed price
      */

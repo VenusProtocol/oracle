@@ -44,22 +44,27 @@ abstract contract CorrelatedTokenOracle is OracleInterface, CappedOracle {
      * @return price The price of the correlated token in scaled decimal places
      */
     function getPrice(address asset) public view override(CappedOracle, OracleInterface) returns (uint256) {
+        uint256 price = getUncappedPrice(asset);
+        uint256 maxAllowedPrice = _getMaxAllowedPrice();
+
+        return ((price > maxAllowedPrice) && (maxAllowedPrice != 0)) ? maxAllowedPrice : price;
+    }
+
+    /**
+     * @notice Fetches the uncapped price of the correlated token
+     * @param asset Address of the correlated token
+     * @return price The price of the correlated token in scaled decimal places
+     */
+    function getUncappedPrice(address asset) internal view override returns (uint256) {
         if (asset != CORRELATED_TOKEN) revert InvalidTokenAddress();
 
-        // get underlying token amount for 1 correlated token scaled by underlying token decimals
         uint256 underlyingAmount = _getUnderlyingAmount();
-
-        // oracle returns (36 - asset decimal) scaled price
         uint256 underlyingUSDPrice = RESILIENT_ORACLE.getPrice(UNDERLYING_TOKEN);
 
         IERC20Metadata token = IERC20Metadata(CORRELATED_TOKEN);
         uint256 decimals = token.decimals();
 
-        // underlyingAmount (for 1 correlated token) * underlyingUSDPrice / decimals(correlated token)
-        uint256 price = (underlyingAmount * underlyingUSDPrice) / (10 ** decimals);
-        uint256 maxAllowedPrice = _getMaxAllowedPrice();
-
-        return ((price > maxAllowedPrice) && (maxAllowedPrice != 0)) ? maxAllowedPrice : price;
+        return (underlyingAmount * underlyingUSDPrice) / (10 ** decimals);
     }
 
     /**
