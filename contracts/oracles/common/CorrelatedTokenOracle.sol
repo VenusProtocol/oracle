@@ -38,6 +38,14 @@ abstract contract CorrelatedTokenOracle is OracleInterface, CappedOracle {
         RESILIENT_ORACLE = OracleInterface(resilientOracle);
     }
 
+    function isCapped() external view override returns (bool) {
+        uint256 price = getUncappedPrice(asset);
+
+        uint256 maxAllowedPrice = _getMaxAllowedPrice();
+
+        return ((price > maxAllowedPrice) && (maxAllowedPrice != 0)) ? true : false;
+    }
+
     /**
      * @notice Fetches the price of the correlated token
      * @param asset Address of the correlated token

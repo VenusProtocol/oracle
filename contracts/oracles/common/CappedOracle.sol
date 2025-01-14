@@ -41,6 +41,12 @@ abstract contract CappedOracle {
     }
 
     /**
+     * @notice Returns if the price is capped
+     * @return isCapped Boolean indicating if the price is capped
+     */
+    function isCapped() external pure virtual returns (bool);
+
+    /**
      * @notice Updates the snapshot price and timestamp
      */
     function updateSnapshot() public {
