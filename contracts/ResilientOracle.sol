@@ -7,6 +7,7 @@ import "./interfaces/VBep20Interface.sol";
 import "./interfaces/OracleInterface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 import "./interfaces/ICappedOracle.sol";
+import "./lib/Transient.sol";
 
 /**
  * @title ResilientOracle
@@ -45,6 +46,8 @@ isValid = anchorRatio <= upperBoundAnchorRatio && anchorRatio >= lowerBoundAncho
  * oracle to be stagnant and treat it like it's disabled.
  */
 contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOracleInterface {
+    using Transient for bytes32;
+
     /**
      * @dev Oracle roles:
      * **main**: The most trustworthy price source
@@ -83,14 +86,13 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     /// and can serve as any underlying asset of a market that supports native tokens
     address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
+    bytes32 public constant CACHE_SLOT = keccak256(abi.encode("venus-protocol/oracle/ResilientOracle/cache"));
+
     /// @notice Bound validator contract address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     BoundValidatorInterface public immutable boundValidator;
 
     mapping(address => TokenConfig) private tokenConfigs;
-
-    /// Slot to cache the asset's price, used for transient storage
-    bytes32 constant CACHE_SLOT = keccak256(abi.encode("venus-protocol/oracle/ResilientOracle/cache"));
 
     event TokenConfigAdded(
         address indexed asset,
@@ -331,7 +333,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @param asset asset address
      */
     function _updateAssetPrice(address asset) internal {
-        if (_readCachedPrice(asset) != 0) {
+        if (Transient.readCachedPrice(CACHE_SLOT, asset) != 0) {
             return;
         }
 
@@ -348,35 +350,17 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         }
 
         uint256 price = _getPrice(asset);
-        _cachePrice(asset, price);
-    }
-
-    /**
-     * @notice Cache the asset price into transient storage
-     * @param key address of the asset
-     * @param value asset price
-     */
-    function _cachePrice(address key, uint256 value) internal {
-        bytes32 slot = keccak256(abi.encode(CACHE_SLOT, key));
-        assembly ("memory-safe") {
-            tstore(slot, value)
-        }
-    }
-
-    /**
-     * @notice Read cached price from transient storage
-     * @param key address of the asset
-     * @return value cached asset price
-     */
-    function _readCachedPrice(address key) internal view returns (uint256 value) {
-        bytes32 slot = keccak256(abi.encode(CACHE_SLOT, key));
-        assembly ("memory-safe") {
-            value := tload(slot)
-        }
+        Transient.cachePrice(CACHE_SLOT, asset, price);
     }
 
     function _getPrice(address asset) internal view returns (uint256) {
         uint256 pivotPrice = INVALID_PRICE;
+        uint256 price;
+
+        price = Transient.readCachedPrice(CACHE_SLOT, asset);
+        if (price != 0) {
+            return price;
+        }
 
         // Get pivot oracle price, Invalid price if not available or error
         (address pivotOracle, bool pivotOracleEnabled) = getOracle(asset, OracleRole.PIVOT);

@@ -3,6 +3,9 @@ pragma solidity 0.8.25;
 
 interface IPendlePtOracle {
     function getPtToAssetRate(address market, uint32 duration) external view returns (uint256);
+
+    function getPtToSyRate(address market, uint32 duration) external view returns (uint256);
+
     function getOracleState(
         address market,
         uint32 duration
