@@ -50,7 +50,7 @@ abstract contract CappedOracle is OracleInterface {
 
         uint256 maxAllowedPrice = _getMaxAllowedPrice();
 
-        return ((price > maxAllowedPrice) && (maxAllowedPrice != 0)) ? true : false;
+        return (price > maxAllowedPrice) && (maxAllowedPrice != 0);
     }
 
     /**
