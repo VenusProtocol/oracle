@@ -75,7 +75,7 @@ abstract contract CappedOracle is OracleInterface {
      * @return price The price of the token in scaled decimal places
      */
     function getPrice(address asset) public view override returns (uint256) {
-        uint price = Transient.readCachedPrice(CACHE_SLOT, asset);
+        uint256 price = Transient.readCachedPrice(CACHE_SLOT, asset);
         if (price != 0) {
             return price;
         }
