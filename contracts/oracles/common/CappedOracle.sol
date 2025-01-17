@@ -12,8 +12,6 @@ import { Transient } from "../../lib/Transient.sol";
  * @notice This oracle fetches the price of a correlated token and caps the growth rate
  */
 abstract contract CappedOracle is OracleInterface {
-    using Transient for bytes32;
-
     /// Slot to cache the asset's price, used for transient storage
     bytes32 public constant CACHE_SLOT = keccak256(abi.encode("venus-protocol/oracle/common/CappedOracle/cache"));
 
@@ -34,9 +32,14 @@ abstract contract CappedOracle is OracleInterface {
     /// @notice Emitted when the snapshot is updated
     event SnapshotUpdated(uint256 price, uint256 timestamp);
 
-    /// @notice Constructor for the implementation contract.
+    /**
+     * @notice Constructor for the implementation contract.
+     * @param annualGrowthRate Annual growth rate in percentage
+     * @param snapshotInterval Snapshot update interval. snapshotInterval = 0 means no caps are disabled
+     */
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(uint256 annualGrowthRate, uint256 snapshotInterval) {
+        if (annualGrowthRate == 0 && snapshotInterval > 0) revert("Invalid growth rate");
         SNAPSHOT_INTERVAL = snapshotInterval;
         GROWTH_RATE_PER_SECOND = (annualGrowthRate) / (365 * 24 * 60 * 60);
     }
@@ -72,7 +75,8 @@ abstract contract CappedOracle is OracleInterface {
     /**
      * @notice Fetches the price of the token
      * @param asset Address of the token
-     * @return price The price of the token in scaled decimal places
+     * @return price The price of the token in scaled decimal places. It can be capped
+     * to a maximum value taking into account the growth rate
      */
     function getPrice(address asset) public view override returns (uint256) {
         uint256 price = Transient.readCachedPrice(CACHE_SLOT, asset);
@@ -89,18 +93,6 @@ abstract contract CappedOracle is OracleInterface {
         price = ((uncappedPrice > maxAllowedPrice) && (maxAllowedPrice != 0)) ? maxAllowedPrice : uncappedPrice;
 
         return price;
-    }
-
-    /**
-     * @notice Cache the asset price into transient storage
-     * @param key address of the asset
-     * @param value asset price
-     */
-    function _cachePrice(address key, uint256 value) internal {
-        bytes32 slot = keccak256(abi.encode(CACHE_SLOT, key));
-        assembly ("memory-safe") {
-            tstore(slot, value)
-        }
     }
 
     /**
