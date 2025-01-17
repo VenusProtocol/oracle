@@ -4,12 +4,16 @@ pragma solidity 0.8.25;
 import { OracleInterface } from "../../interfaces/OracleInterface.sol";
 import { ensureNonzeroAddress, ensureNonzeroValue } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import { CappedOracle } from "./CappedOracle.sol";
+import { Transient } from "../../lib/Transient.sol";
 
 /**
  * @title CappedOracle
  * @notice This oracle fetches the price of a correlated token and caps the growth rate
  */
 abstract contract CappedOracle is OracleInterface {
+    using Transient for bytes32;
+
     /// Slot to cache the asset's price, used for transient storage
     bytes32 public constant CACHE_SLOT = keccak256(abi.encode("venus-protocol/oracle/common/CappedOracle/cache"));
 
@@ -54,14 +58,14 @@ abstract contract CappedOracle is OracleInterface {
      */
     function updateSnapshot() public {
         address asset = token();
-        if (_readCachedPrice(asset) != 0) {
+        if (Transient.readCachedPrice(CACHE_SLOT, asset) != 0) {
             return;
         }
         if (block.timestamp - snapshotTimestamp < SNAPSHOT_INTERVAL || SNAPSHOT_INTERVAL == 0) return;
 
         snapshotPrice = getPrice(asset);
         snapshotTimestamp = block.timestamp;
-        _cachePrice(asset, snapshotPrice);
+        Transient.cachePrice(CACHE_SLOT, asset, snapshotPrice);
         emit SnapshotUpdated(snapshotPrice, snapshotTimestamp);
     }
 
@@ -71,7 +75,7 @@ abstract contract CappedOracle is OracleInterface {
      * @return price The price of the token in scaled decimal places
      */
     function getPrice(address asset) public view override returns (uint256) {
-        uint price = _readCachedPrice(asset);
+        uint price = Transient.readCachedPrice(CACHE_SLOT, asset);
         if (price != 0) {
             return price;
         }
@@ -120,17 +124,5 @@ abstract contract CappedOracle is OracleInterface {
         uint256 timeElapsed = block.timestamp - snapshotTimestamp;
         uint256 maxPrice = snapshotPrice + (snapshotPrice * GROWTH_RATE_PER_SECOND * timeElapsed) / 1e18;
         return maxPrice;
-    }
-
-    /**
-     * @notice Read cached price from transient storage
-     * @param key address of the asset
-     * @return value cached asset price
-     */
-    function _readCachedPrice(address key) internal view returns (uint256 value) {
-        bytes32 slot = keccak256(abi.encode(CACHE_SLOT, key));
-        assembly ("memory-safe") {
-            value := tload(slot)
-        }
     }
 }
