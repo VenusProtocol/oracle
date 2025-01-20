@@ -45,8 +45,6 @@ isValid = anchorRatio <= upperBoundAnchorRatio && anchorRatio >= lowerBoundAncho
  * oracle to be stagnant and treat it like it's disabled.
  */
 contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOracleInterface {
-    using Transient for bytes32;
-
     /**
      * @dev Oracle roles:
      * **main**: The most trustworthy price source
