@@ -35,7 +35,7 @@ abstract contract CappedOracle is OracleInterface {
     /**
      * @notice Constructor for the implementation contract.
      * @param annualGrowthRate Annual growth rate in percentage
-     * @param snapshotInterval Snapshot update interval. snapshotInterval = 0 means no caps are disabled
+     * @param snapshotInterval Snapshot update interval. snapshotInterval = 0 means caps are disabled
      */
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(uint256 annualGrowthRate, uint256 snapshotInterval) {
