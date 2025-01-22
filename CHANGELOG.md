@@ -1,3 +1,11 @@
+## [2.8.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.8.0-dev.3...v2.8.0-dev.4) (2025-01-22)
+
+
+### Features
+
+* add oracle deployment for wUSDM on zkSync ([a50a770](https://github.com/VenusProtocol/oracle/commit/a50a7703eaa6297bb8b1288ec1f3f52d90551ef9))
+* updating deployment files ([6188f2c](https://github.com/VenusProtocol/oracle/commit/6188f2c9a9f3e16aa6a071dd665f0d40dc647c24))
+
 ## [2.8.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.8.0-dev.2...v2.8.0-dev.3) (2024-12-30)
 
 
