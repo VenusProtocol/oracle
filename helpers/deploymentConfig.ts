@@ -223,6 +223,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: zksyncsepoliaGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0xa2f83de95E9F28eD443132C331B6a9C9B7a9F866", // Zksync sepolia Multisig
+    USDM: "0x5d5334dBa9C727eD81b549b6106aE37Ea137076D",
+    wUSDM: "0x0b3C8fB109f144f6296bF4Ac52F191181bEa003a",
   },
   zksyncmainnet: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -230,6 +232,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: "0x526159A92A82afE5327d37Ef446b68FD9a5cA914", // To-do: use node modules
     timelock: "0x751Aa759cfBB6CE71A43b48e40e1cCcFC66Ba4aa", // Zksync mainnet Multisig
+    USDM: "0x7715c206A14Ac93Cb1A6c0316A6E5f8aD7c9Dc31",
+    wUSDM: "0xA900cbE7739c96D2B153a273953620A701d5442b",
   },
   opsepolia: {
     vBNBAddress: ethers.constants.AddressZero,
