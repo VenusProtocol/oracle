@@ -6,6 +6,7 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./interfaces/VBep20Interface.sol";
 import "./interfaces/OracleInterface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
+import "./interfaces/ICappedOracle.sol";
 import "./lib/Transient.sol";
 
 /**
@@ -332,6 +333,12 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     function _updateAssetPrice(address asset) internal {
         if (Transient.readCachedPrice(CACHE_SLOT, asset) != 0) {
             return;
+        }
+
+        (address mainOracle, bool mainOracleEnabled) = getOracle(asset, OracleRole.MAIN);
+        if (mainOracle != address(0) && mainOracleEnabled) {
+            //if main oracle is not CorrelatedTokenOracle it will revert so we need to catch the revert
+            try ICappedOracle(mainOracle).updateSnapshot() {} catch {}
         }
 
         (address pivotOracle, bool pivotOracleEnabled) = getOracle(asset, OracleRole.PIVOT);

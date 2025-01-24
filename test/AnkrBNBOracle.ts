@@ -12,6 +12,9 @@ chai.use(smock.matchers);
 const BNB_AMOUNT_FOR_ONE_ANKRBNB = parseUnits("1.075370795716558975", 18);
 const ANKRBNB_USD_PRICE_DENOMINATOR = parseUnits("1", 18);
 const BNB_USD_PRICE = parseUnits("300", 18); // 300 USD for 1 BNB
+const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
+const SNAPSHOT_UPDATE_INTERVAL = 10;
+const ANKRBNB_USD_PRICE = BNB_USD_PRICE.mul(BNB_AMOUNT_FOR_ONE_ANKRBNB).div(ANKRBNB_USD_PRICE_DENOMINATOR);
 
 describe("AnkrBNBOracle unit tests", () => {
   let ankrBNBMock;
@@ -33,17 +36,41 @@ describe("AnkrBNBOracle unit tests", () => {
 
   describe("deployment", () => {
     it("revert if ankrBNB address is 0", async () => {
-      await expect(ankrBNBOracleFactory.deploy(addr0000, resilientOracleMock.address)).to.be.reverted;
+      await expect(
+        ankrBNBOracleFactory.deploy(
+          addr0000,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+        ),
+      ).to.be.reverted;
     });
+
     it("revert if ResilientOracle address is 0", async () => {
-      await expect(ankrBNBOracleFactory.deploy(ankrBNBMock.address, addr0000)).to.be.reverted;
+      await expect(
+        ankrBNBOracleFactory.deploy(ankrBNBMock.address, addr0000, ANNUAL_GROWTH_RATE, SNAPSHOT_UPDATE_INTERVAL),
+      ).to.be.reverted;
     });
+
     it("should deploy contract", async () => {
-      ankrBNBOracle = await ankrBNBOracleFactory.deploy(ankrBNBMock.address, resilientOracleMock.address);
+      ankrBNBOracle = await ankrBNBOracleFactory.deploy(
+        ankrBNBMock.address,
+        resilientOracleMock.address,
+        ANNUAL_GROWTH_RATE,
+        SNAPSHOT_UPDATE_INTERVAL,
+      );
     });
   });
 
   describe("getPrice", () => {
+    before(async () => {
+      ankrBNBOracle = await ankrBNBOracleFactory.deploy(
+        ankrBNBMock.address,
+        resilientOracleMock.address,
+        ANNUAL_GROWTH_RATE,
+        SNAPSHOT_UPDATE_INTERVAL,
+      );
+    });
     it("revert if ankrBNB address is wrong", async () => {
       await expect(ankrBNBOracle.getPrice(addr0000)).to.be.revertedWithCustomError(
         ankrBNBOracle,
@@ -52,8 +79,7 @@ describe("AnkrBNBOracle unit tests", () => {
     });
 
     it("should get correct price", async () => {
-      const expectedPrice = BNB_USD_PRICE.mul(BNB_AMOUNT_FOR_ONE_ANKRBNB).div(ANKRBNB_USD_PRICE_DENOMINATOR);
-      expect(await ankrBNBOracle.getPrice(ankrBNBMock.address)).to.equal(expectedPrice);
+      expect(await ankrBNBOracle.getPrice(ankrBNBMock.address)).to.equal(ANKRBNB_USD_PRICE);
     });
   });
 });

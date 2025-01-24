@@ -6,13 +6,14 @@ import { ensureNonzeroAddress, ensureNonzeroValue } from "@venusprotocol/solidit
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 import { AccessControlledV8 } from "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 import { OracleInterface } from "../interfaces/OracleInterface.sol";
+import { CappedOracle } from "./common/CappedOracle.sol";
 
 /**
  * @title SFrxETHOracle
  * @author Venus
  * @notice This oracle fetches the price of sfrxETH
  */
-contract SFrxETHOracle is AccessControlledV8, OracleInterface {
+contract SFrxETHOracle is AccessControlledV8, OracleInterface, CappedOracle {
     /// @notice Address of SfrxEthFraxOracle
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     ISfrxEthFraxOracle public immutable SFRXETH_FRAX_ORACLE;
@@ -39,7 +40,12 @@ contract SFrxETHOracle is AccessControlledV8, OracleInterface {
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     /// @custom:error ZeroAddressNotAllowed is thrown when `_sfrxEthFraxOracle` or `_sfrxETH` are the zero address
-    constructor(address _sfrxEthFraxOracle, address _sfrxETH) {
+    constructor(
+        address _sfrxEthFraxOracle,
+        address _sfrxETH,
+        uint256 annualGrowthRate,
+        uint256 snapshotInterval
+    ) CappedOracle(annualGrowthRate, snapshotInterval) {
         ensureNonzeroAddress(_sfrxEthFraxOracle);
         ensureNonzeroAddress(_sfrxETH);
 
@@ -76,15 +82,23 @@ contract SFrxETHOracle is AccessControlledV8, OracleInterface {
     }
 
     /**
-     * @notice Fetches the USD price of sfrxETH
-     * @param asset Address of the sfrxETH token
-     * @return price The price scaled by 1e18
+     * @notice Address of the token
+     * @return token The address of the token
+     */
+    function token() internal view override returns (address) {
+        return SFRXETH;
+    }
+
+    /**
+     * @notice Fetches the uncapped price of the token
+     * @param asset Address of the token
+     * @return price The price of the token in scaled decimal places
      * @custom:error InvalidTokenAddress is thrown when the `asset` is not the sfrxETH token (`SFRXETH`)
      * @custom:error BadPriceData is thrown if the `SFRXETH_FRAX_ORACLE` oracle informs it has bad data
      * @custom:error ZeroValueNotAllowed is thrown if the prices (low or high, in USD) are zero
      * @custom:error PriceDifferenceExceeded is thrown if priceHigh/priceLow is greater than `maxAllowedPriceDifference`
      */
-    function getPrice(address asset) external view returns (uint256) {
+    function getUncappedPrice(address asset) internal view override returns (uint256) {
         if (asset != SFRXETH) revert InvalidTokenAddress();
 
         (bool isBadData, uint256 priceLow, uint256 priceHigh) = SFRXETH_FRAX_ORACLE.getPrices();

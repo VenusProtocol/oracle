@@ -24,8 +24,10 @@ contract BNBxOracle is CorrelatedTokenOracle {
     constructor(
         address stakeManager,
         address bnbx,
-        address resilientOracle
-    ) CorrelatedTokenOracle(bnbx, NATIVE_TOKEN_ADDR, resilientOracle) {
+        address resilientOracle,
+        uint256 annualGrowthRate,
+        uint256 snapshotInterval
+    ) CorrelatedTokenOracle(bnbx, NATIVE_TOKEN_ADDR, resilientOracle, annualGrowthRate, snapshotInterval) {
         ensureNonzeroAddress(stakeManager);
         STAKE_MANAGER = IStaderStakeManager(stakeManager);
     }

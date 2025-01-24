@@ -12,6 +12,9 @@ chai.use(smock.matchers);
 
 const { FRAX, sFRAX } = ADDRESSES.ethereum;
 const FRAX_USD_PRICE = parseUnits("0.9979", 18); // 0.99 USD for 1 FRAX
+const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
+const FRAX_MAX_USD_PRICE = parseUnits("1", 18);
+const SNAPSHOT_UPDATE_INTERVAL = 10;
 
 describe("SFraxOracle unit tests", () => {
   let sFraxMock;
@@ -36,13 +39,37 @@ describe("SFraxOracle unit tests", () => {
 
   describe("deployment", () => {
     it("revert if FRAX address is 0", async () => {
-      await expect(SFraxOracleFactory.deploy(sFraxMock.address, addr0000, resilientOracleMock.address)).to.be.reverted;
+      await expect(
+        SFraxOracleFactory.deploy(
+          sFraxMock.address,
+          addr0000,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+        ),
+      ).to.be.reverted;
     });
+
     it("revert if sFRAX address is 0", async () => {
-      await expect(SFraxOracleFactory.deploy(addr0000, fraxMock.address, resilientOracleMock.address)).to.be.reverted;
+      await expect(
+        SFraxOracleFactory.deploy(
+          addr0000,
+          fraxMock.address,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+        ),
+      ).to.be.reverted;
     });
+
     it("should deploy contract", async () => {
-      SFraxOracle = await SFraxOracleFactory.deploy(sFraxMock.address, fraxMock.address, resilientOracleMock.address);
+      SFraxOracle = await SFraxOracleFactory.deploy(
+        sFraxMock.address,
+        fraxMock.address,
+        resilientOracleMock.address,
+        ANNUAL_GROWTH_RATE,
+        SNAPSHOT_UPDATE_INTERVAL,
+      );
     });
   });
 

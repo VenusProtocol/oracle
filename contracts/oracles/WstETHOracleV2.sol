@@ -16,8 +16,10 @@ contract WstETHOracleV2 is CorrelatedTokenOracle {
     constructor(
         address wstETH,
         address stETH,
-        address resilientOracle
-    ) CorrelatedTokenOracle(wstETH, stETH, resilientOracle) {}
+        address resilientOracle,
+        uint256 annualGrowthRate,
+        uint256 snapshotInterval
+    ) CorrelatedTokenOracle(wstETH, stETH, resilientOracle, annualGrowthRate, snapshotInterval) {}
 
     /**
      * @notice Gets the stETH for 1 wstETH
