@@ -255,6 +255,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
     WETH: "0x4200000000000000000000000000000000000006",
+    wsuperOETHb: "0x02B1136d9E223333E0083aeAB76bC441f230a033",
     timelock: "0xdf3b635d2b535f906BB02abb22AED71346E36a00", // Base sepolia Multisig
   },
   basemainnet: {
