@@ -16,7 +16,7 @@ type OracleConfig = {
   underlyingToken: string;
   ptOracle: string;
   TWAPDuration: number;
-  pendleRateKind: PendleRateKind;
+  primaryRateKind: PendleRateKind;
 }[];
 
 const deployPendleOracle = async (
@@ -34,14 +34,6 @@ const deployPendleOracle = async (
     log: true,
     deterministicDeployment: false,
     args,
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentUpgradeableProxy",
-      viaAdminContract: {
-        name: "DefaultProxyAdmin",
-        artifact: defaultProxyAdmin,
-      },
-    },
     skipIfAlreadyDeployed: true,
   });
 };
@@ -63,9 +55,17 @@ const func: DeployFunction = async ({
   const addresses = ADDRESSES[network.name];
   const fallbackAddress = "0x0000000000000000000000000000000000000001";
 
+  const getReferenceRateKind = (primaryRateKind: PendleRateKind): { referenceRateKind: PendleRateKind, referenceTag: string } => {
+    if (primaryRateKind == PendleRateKind.PT_TO_ASSET) {
+      return { referenceRateKind: PendleRateKind.PT_TO_SY, referenceTag: "PtToSy" };
+    } else {
+      return { referenceRateKind: PendleRateKind.PT_TO_ASSET, referenceTag: "PtToAsset" };
+    }
+  }
+
   const deployOracles = async (oracleConfig: OracleConfig) => {
     await Promise.all(
-      oracleConfig.map(async ({ name, market, ptToken, underlyingToken, ptOracle, TWAPDuration, pendleRateKind }) => {
+      oracleConfig.map(async ({ name, market, ptToken, underlyingToken, ptOracle, TWAPDuration, primaryRateKind }) => {
         const ptOracleAddress = ptOracle || (await ethers.getContract("MockPendlePtOracle")).address;
         await deployPendleOracle(
           deployments,
@@ -74,7 +74,25 @@ const func: DeployFunction = async ({
           [
             market || fallbackAddress,
             ptOracleAddress,
-            pendleRateKind,
+            primaryRateKind,
+            ptToken,
+            underlyingToken,
+            oracle.address,
+            TWAPDuration,
+          ],
+          proxyOwnerAddress,
+          defaultProxyAdmin,
+        );
+
+        const { referenceRateKind, referenceTag } = getReferenceRateKind(primaryRateKind);
+        await deployPendleOracle(
+          deployments,
+          deployer,
+          `${name}_${referenceTag}`,
+          [
+            market || fallbackAddress,
+            ptOracleAddress,
+            referenceRateKind,
             ptToken,
             underlyingToken,
             oracle.address,
@@ -95,7 +113,7 @@ const func: DeployFunction = async ({
       underlyingToken: addresses.WETH,
       ptOracle: addresses.PTOracle || (await ethers.getContract("MockPendleOracle")).address,
       TWAPDuration: 1800,
-      pendleRateKind: PendleRateKind.PT_TO_ASSET,
+      primaryRateKind: PendleRateKind.PT_TO_ASSET,
     },
     {
       name: "PendleOracle_PT_USDe_27MAR2025",
@@ -107,7 +125,7 @@ const func: DeployFunction = async ({
           ? (await ethers.getContract("MockPendleOracle_PT_USDe_27MAR2025")).address
           : addresses.PTOracle,
       TWAPDuration: 1800,
-      pendleRateKind: PendleRateKind.PT_TO_ASSET,
+      primaryRateKind: PendleRateKind.PT_TO_ASSET,
     },
     {
       name: "PendleOracle_PT_sUSDe_27MAR2025",
@@ -119,7 +137,7 @@ const func: DeployFunction = async ({
           ? (await ethers.getContract("MockPendleOracle_PT_sUSDe_27MAR2025")).address
           : addresses.PTOracle,
       TWAPDuration: 1800,
-      pendleRateKind: PendleRateKind.PT_TO_ASSET,
+      primaryRateKind: PendleRateKind.PT_TO_ASSET,
     },
   ];
 

@@ -53,6 +53,27 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     },
     skipIfAlreadyDeployed: true,
   });
+
+  await deploy("PendleOracle-PT-SolvBTC.BBN-27MAR2025_PtToAsset", {
+    contract: "PendleOracle",
+    from: deployer,
+    log: true,
+    deterministicDeployment: false,
+    args: [
+      addresses["PT-SolvBTC.BBN-27MAR2025_Market"] || "0x0000000000000000000000000000000000000001",
+      ptOracleAddress,
+      PendleRateKind.PT_TO_ASSET,
+      addresses["PT-SolvBTC.BBN-27MAR2025"],
+      addresses["SolvBTC.BBN"],
+      oracle.address,
+      900,
+    ],
+    proxy: {
+      owner: proxyOwnerAddress,
+      proxyContract: "OptimizedTransparentUpgradeableProxy",
+    },
+    skipIfAlreadyDeployed: true,
+  });
 };
 
 export default func;
