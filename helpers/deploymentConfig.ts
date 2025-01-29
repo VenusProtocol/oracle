@@ -254,6 +254,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
+    WETH: "0x4200000000000000000000000000000000000006",
+    wsuperOETHb: "0x02B1136d9E223333E0083aeAB76bC441f230a033",
     timelock: "0xdf3b635d2b535f906BB02abb22AED71346E36a00", // Base sepolia Multisig
   },
   basemainnet: {
@@ -261,6 +263,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
+    WETH: "0x4200000000000000000000000000000000000006",
+    wsuperOETHb: "0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6",
     timelock: "0x1803Cf1D3495b43cC628aa1d8638A981F8CD341C", // Base mainnet Multisig
   },
 };
