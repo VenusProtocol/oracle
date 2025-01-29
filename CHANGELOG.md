@@ -1,3 +1,17 @@
+## [2.8.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v2.8.0-dev.4...v2.8.0-dev.5) (2025-01-29)
+
+
+### Features
+
+* added deployment code ([0c39b1b](https://github.com/VenusProtocol/oracle/commit/0c39b1ba9d74e6ec97c3e9ba5d22e4c1e2e155d4))
+* updating deployment files ([d3bac16](https://github.com/VenusProtocol/oracle/commit/d3bac16605a2d9f2c88c6d7d9b5bafe8781de8f9))
+
+
+### Bug Fixes
+
+* added deployments ([94f5843](https://github.com/VenusProtocol/oracle/commit/94f5843f5c2e1791c604a7b7cc1be82435689c36))
+* revert config ([03148d4](https://github.com/VenusProtocol/oracle/commit/03148d43a1605af0ec7e40af10a4f745e6bb2b70))
+
 ## [2.8.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.8.0-dev.3...v2.8.0-dev.4) (2025-01-22)
 
 
