@@ -142,6 +142,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     USDe: "0x8bAe3E12870a002A0D4b6Eb0F0CBf91b29d9806F",
     PTsUSDe_27MAR2025: "0x3EBa2Aa29eC2498c2124523634324d4ce89c8579",
     sUSDe: "0xA3A3e5ecEA56940a4Ae32d0927bfd8821DdA848A",
+    USDS: "0xfB287f9A45E54df6AADad95C6F37b1471e744762",
+    sUSDS: "0xE9E34fd81982438E96Bd945f5810F910e35F0165",
   },
   ethereum: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -178,6 +180,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     PTsUSDe_27MAR2025_Market: "0xcDd26Eb5EB2Ce0f203a84553853667aE69Ca29Ce",
     PTsUSDe_27MAR2025: "0xe00bd3df25fb187d6abbb620b3dfd19839947b81",
     sUSDe: "0x9D39A5DE30e57443BfF2A8307A4256c8797A3497",
+    USDS: "0xdC035D45d973E3EC169d2276DDab16f1e407384F",
+    sUSDS: "0xa3931d71877C0E7a3148CB7Eb4463524FEc27fbD",
   },
   opbnbtestnet: {
     vBNBAddress: ethers.constants.AddressZero,
