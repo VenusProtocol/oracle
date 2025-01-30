@@ -45,20 +45,17 @@ abstract contract CorrelatedTokenOracle is CappedOracle {
     }
 
     /**
-     * @notice Fetches the uncapped price of the correlated token
-     * @param asset Address of the correlated token
-     * @return price The price of the correlated token in scaled decimal places
+     * @notice Fetches price of the token based on an underlying exchange rate
+     * @param exchangeRate The underlying exchange rate to use
+     * @return price The price of the token in scaled decimal places
      */
-    function getUncappedPrice(address asset) internal view override returns (uint256) {
-        if (asset != CORRELATED_TOKEN) revert InvalidTokenAddress();
-
-        uint256 underlyingAmount = _getUnderlyingAmount();
+    function calculatePrice(uint256 exchangeRate) internal view override returns (uint256) {
         uint256 underlyingUSDPrice = RESILIENT_ORACLE.getPrice(UNDERLYING_TOKEN);
 
         IERC20Metadata token = IERC20Metadata(CORRELATED_TOKEN);
         uint256 decimals = token.decimals();
 
-        return (underlyingAmount * underlyingUSDPrice) / (10 ** decimals);
+        return (exchangeRate * underlyingUSDPrice) / (10 ** decimals);
     }
 
     /**
@@ -68,10 +65,4 @@ abstract contract CorrelatedTokenOracle is CappedOracle {
     function token() internal view override returns (address) {
         return CORRELATED_TOKEN;
     }
-
-    /**
-     * @notice Gets the underlying amount for correlated token
-     * @return underlyingAmount Amount of underlying token
-     */
-    function _getUnderlyingAmount() internal view virtual returns (uint256);
 }

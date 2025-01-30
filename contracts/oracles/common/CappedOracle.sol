@@ -49,11 +49,10 @@ abstract contract CappedOracle is OracleInterface {
      * @return isCapped Boolean indicating if the price is capped
      */
     function isCapped() external view virtual returns (bool) {
-        uint256 price = getUncappedPrice(token());
+        uint256 exchangeRate = _getUnderlyingAmount();
+        uint256 maxAllowedExchangeRate = _getMaxAllowedExchangeRate();
 
-        uint256 maxAllowedPrice = _getMaxAllowedPrice();
-
-        return (price > maxAllowedPrice) && (maxAllowedPrice != 0);
+        return (exchangeRate > maxAllowedExchangeRate) && (maxAllowedExchangeRate != 0);
     }
 
     /**
@@ -66,7 +65,10 @@ abstract contract CappedOracle is OracleInterface {
         }
         if (block.timestamp - snapshotTimestamp < SNAPSHOT_INTERVAL || SNAPSHOT_INTERVAL == 0) return;
 
-        snapshotPrice = getPrice(asset);
+        uint256 exchangeRate = _getUnderlyingAmount();
+        uint256 maxAllowedExchangeRate = _getMaxAllowedExchangeRate();
+
+        snapshotPrice = exchangeRate > maxAllowedExchangeRate ? maxAllowedExchangeRate : exchangeRate;
         snapshotTimestamp = block.timestamp;
         Transient.cachePrice(CACHE_SLOT, asset, snapshotPrice);
         emit SnapshotUpdated(snapshotPrice, snapshotTimestamp);
@@ -84,23 +86,25 @@ abstract contract CappedOracle is OracleInterface {
             return price;
         }
 
-        uint256 uncappedPrice = getUncappedPrice(asset);
+        uint256 exchangeRate = _getUnderlyingAmount();
 
-        if (SNAPSHOT_INTERVAL == 0) return uncappedPrice;
+        if (SNAPSHOT_INTERVAL == 0) {
+            return calculatePrice(exchangeRate);
+        }
 
-        uint256 maxAllowedPrice = _getMaxAllowedPrice();
+        uint256 maxAllowedExchangeRate = _getMaxAllowedExchangeRate();
 
-        price = ((uncappedPrice > maxAllowedPrice) && (maxAllowedPrice != 0)) ? maxAllowedPrice : uncappedPrice;
+        price = ((exchangeRate > maxAllowedExchangeRate) && (maxAllowedExchangeRate != 0)) ? calculatePrice(maxAllowedExchangeRate) : calculatePrice(exchangeRate);
 
         return price;
     }
 
     /**
-     * @notice Fetches the uncapped price of the token
-     * @param asset Address of the token
+     * @notice Fetches price of the token based on an underlying exchange rate
+     * @param exchangeRate The underlying exchange rate to use
      * @return price The price of the token in scaled decimal places
      */
-    function getUncappedPrice(address asset) internal view virtual returns (uint256);
+    function calculatePrice(uint256 exchangeRate) internal view virtual returns (uint256);
 
     /**
      * @notice Address of the token
@@ -109,12 +113,18 @@ abstract contract CappedOracle is OracleInterface {
     function token() internal view virtual returns (address);
 
     /**
-     * @notice Gets the maximum allowed price for token
+     * @notice Gets the maximum allowed exchange rate for token
      * @return maxPrice Maximum allowed price
      */
-    function _getMaxAllowedPrice() internal view returns (uint256) {
+    function _getMaxAllowedExchangeRate() internal view returns (uint256) {
         uint256 timeElapsed = block.timestamp - snapshotTimestamp;
         uint256 maxPrice = snapshotPrice + (snapshotPrice * GROWTH_RATE_PER_SECOND * timeElapsed) / 1e18;
         return maxPrice;
     }
+
+    /**
+     * @notice Gets the underlying amount for correlated token
+     * @return underlyingAmount Amount of underlying token
+     */
+    function _getUnderlyingAmount() internal view virtual returns (uint256);
 }
