@@ -89,22 +89,25 @@ abstract contract CappedOracle is OracleInterface {
         uint256 exchangeRate = _getUnderlyingAmount();
 
         if (SNAPSHOT_INTERVAL == 0) {
-            return calculatePrice(exchangeRate);
+            return calculatePrice(asset, exchangeRate);
         }
 
         uint256 maxAllowedExchangeRate = _getMaxAllowedExchangeRate();
 
-        price = ((exchangeRate > maxAllowedExchangeRate) && (maxAllowedExchangeRate != 0)) ? calculatePrice(maxAllowedExchangeRate) : calculatePrice(exchangeRate);
-
-        return price;
+        if ((exchangeRate > maxAllowedExchangeRate) && (maxAllowedExchangeRate != 0)) {
+            return calculatePrice(asset, maxAllowedExchangeRate);
+        } else {
+            return calculatePrice(asset, exchangeRate);
+        }
     }
 
     /**
      * @notice Fetches price of the token based on an underlying exchange rate
+     * @param asset The address of the asset
      * @param exchangeRate The underlying exchange rate to use
      * @return price The price of the token in scaled decimal places
      */
-    function calculatePrice(uint256 exchangeRate) internal view virtual returns (uint256);
+    function calculatePrice(address asset, uint256 exchangeRate) internal view virtual returns (uint256);
 
     /**
      * @notice Address of the token

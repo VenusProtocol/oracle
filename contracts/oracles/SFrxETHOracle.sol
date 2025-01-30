@@ -91,14 +91,16 @@ contract SFrxETHOracle is AccessControlledV8, OracleInterface, CappedOracle {
 
     /**
      * @notice Fetches price of the token based on an underlying exchange rate
+     * @param asset The address of the asset
      * @param exchangeRate The underlying exchange rate to use
      * @return price The price of the token in scaled decimal places
      */
-    function calculatePrice(uint256 exchangeRate) internal view override returns (uint256) {
+    function calculatePrice(address asset, uint256 exchangeRate) internal view override returns (uint256) {
+        if (asset != SFRXETH) revert InvalidTokenAddress();
         return exchangeRate;
     }
 
-     /**
+    /**
      * @notice Fetches the price of SFRXETH
      * @custom:error InvalidTokenAddress is thrown when the `asset` is not the sfrxETH token (`SFRXETH`)
      * @custom:error BadPriceData is thrown if the `SFRXETH_FRAX_ORACLE` oracle informs it has bad data
