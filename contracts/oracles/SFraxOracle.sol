@@ -16,8 +16,10 @@ contract SFraxOracle is CorrelatedTokenOracle {
     constructor(
         address sFrax,
         address frax,
-        address resilientOracle
-    ) CorrelatedTokenOracle(sFrax, frax, resilientOracle) {}
+        address resilientOracle,
+        uint256 annualGrowthRate,
+        uint256 snapshotInterval
+    ) CorrelatedTokenOracle(sFrax, frax, resilientOracle, annualGrowthRate, snapshotInterval) {}
 
     /**
      * @notice Fetches the amount of FRAX for 1 sFrax
