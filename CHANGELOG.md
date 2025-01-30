@@ -1,3 +1,13 @@
+## [2.8.0-dev.6](https://github.com/VenusProtocol/oracle/compare/v2.8.0-dev.5...v2.8.0-dev.6) (2025-01-30)
+
+
+### Features
+
+* add sUSDS oracle deployment ([e48654d](https://github.com/VenusProtocol/oracle/commit/e48654d16910f78d1a6aea55ac0b357b9f095fd4))
+* deploy sUSDS oracle on ethereum ([3c249fb](https://github.com/VenusProtocol/oracle/commit/3c249fbe7bcf50f03e4e2cb2b351d35bee62838e))
+* updating deployment files ([878f634](https://github.com/VenusProtocol/oracle/commit/878f6348e26dad7ffaeeef999ee6f5c05393525f))
+* updating deployment files ([0034b52](https://github.com/VenusProtocol/oracle/commit/0034b520b107aa6d0bcd02d2d6ece40983e525e9))
+
 ## [2.8.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v2.8.0-dev.4...v2.8.0-dev.5) (2025-01-29)
 
 
