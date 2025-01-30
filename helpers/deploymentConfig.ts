@@ -180,6 +180,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     PTsUSDe_27MAR2025_Market: "0xcDd26Eb5EB2Ce0f203a84553853667aE69Ca29Ce",
     PTsUSDe_27MAR2025: "0xe00bd3df25fb187d6abbb620b3dfd19839947b81",
     sUSDe: "0x9D39A5DE30e57443BfF2A8307A4256c8797A3497",
+    USDS: "0xdC035D45d973E3EC169d2276DDab16f1e407384F",
+    sUSDS: "0xa3931d71877C0E7a3148CB7Eb4463524FEc27fbD",
   },
   opbnbtestnet: {
     vBNBAddress: ethers.constants.AddressZero,
