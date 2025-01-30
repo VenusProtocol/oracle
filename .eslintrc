@@ -18,6 +18,8 @@
     "camelcase": 1,
     "no-await-in-loop": 1,
     "no-restricted-syntax": 1,
+    "no-shadow": 0,
+    "@typescript-eslint/no-shadow": 2,
     "import/no-extraneous-dependencies": [
       "error",
       {

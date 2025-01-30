@@ -4760,6 +4760,100 @@
           "type": "receive"
         }
       ]
+    },
+    "wsuperOETHb_ERC4626Oracle": {
+      "address": "0x72050243b23a7f0f74D37e1B85Df9D6486D1a331",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "correlatedToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "underlyingToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "resilientOracle",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidTokenAddress",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "ZeroAddressNotAllowed",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "CORRELATED_TOKEN",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "RESILIENT_ORACLE",
+          "outputs": [
+            {
+              "internalType": "contract OracleInterface",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "UNDERLYING_TOKEN",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            }
+          ],
+          "name": "getPrice",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
     }
   }
 }
