@@ -49,10 +49,14 @@ abstract contract CappedOracle is OracleInterface {
      * @return isCapped Boolean indicating if the price is capped
      */
     function isCapped() external view virtual returns (bool) {
-        uint256 exchangeRate = _getUnderlyingAmount();
         uint256 maxAllowedExchangeRate = _getMaxAllowedExchangeRate();
+        if (maxAllowedExchangeRate == 0) {
+            return false;
+        }
 
-        return (exchangeRate > maxAllowedExchangeRate) && (maxAllowedExchangeRate != 0);
+        uint256 exchangeRate = _getUnderlyingAmount();
+
+        return exchangeRate > maxAllowedExchangeRate;
     }
 
     /**
