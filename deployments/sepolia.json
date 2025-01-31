@@ -13925,6 +13925,382 @@
           "type": "function"
         }
       ]
+    },
+    "yvUSDC-1_ERC4626Oracle": {
+      "address": "0x7Eb15B11650671Ff4717cc5C711008Da89bb6637",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "correlatedToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "underlyingToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "resilientOracle",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidTokenAddress",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "ZeroAddressNotAllowed",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "CORRELATED_TOKEN",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "RESILIENT_ORACLE",
+          "outputs": [
+            {
+              "internalType": "contract OracleInterface",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "UNDERLYING_TOKEN",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            }
+          ],
+          "name": "getPrice",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "yvUSDS-1_ERC4626Oracle": {
+      "address": "0xBC0d7422B06d231F85071A83d2fed0e3AB9442aA",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "correlatedToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "underlyingToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "resilientOracle",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidTokenAddress",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "ZeroAddressNotAllowed",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "CORRELATED_TOKEN",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "RESILIENT_ORACLE",
+          "outputs": [
+            {
+              "internalType": "contract OracleInterface",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "UNDERLYING_TOKEN",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            }
+          ],
+          "name": "getPrice",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "yvUSDT-1_ERC4626Oracle": {
+      "address": "0x636995d82Dc01Ea4E61f4b524274f358AbE960dB",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "correlatedToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "underlyingToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "resilientOracle",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidTokenAddress",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "ZeroAddressNotAllowed",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "CORRELATED_TOKEN",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "RESILIENT_ORACLE",
+          "outputs": [
+            {
+              "internalType": "contract OracleInterface",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "UNDERLYING_TOKEN",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            }
+          ],
+          "name": "getPrice",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "yvWETH-1_ERC4626Oracle": {
+      "address": "0x795C686f24998145c0Ce55cB204Aa948ECCd5bF7",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "correlatedToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "underlyingToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "resilientOracle",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidTokenAddress",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "ZeroAddressNotAllowed",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "CORRELATED_TOKEN",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "RESILIENT_ORACLE",
+          "outputs": [
+            {
+              "internalType": "contract OracleInterface",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "UNDERLYING_TOKEN",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            }
+          ],
+          "name": "getPrice",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
     }
   }
 }
