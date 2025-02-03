@@ -2,7 +2,7 @@
 pragma solidity 0.8.25;
 
 import { OracleInterface } from "../../interfaces/OracleInterface.sol";
-import { ensureNonzeroAddress, ensureNonzeroValue } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
+import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { Transient } from "../../lib/Transient.sol";
 
@@ -46,6 +46,9 @@ abstract contract CorrelatedTokenOracle {
     /// @notice Thrown if the token address is invalid
     error InvalidTokenAddress();
 
+    /// @notice Thrown if the growth rate is invalid
+    error InvalidGrowthRate();
+
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
@@ -55,7 +58,8 @@ abstract contract CorrelatedTokenOracle {
         uint256 annualGrowthRate,
         uint256 snapshotInterval
     ) {
-        if (annualGrowthRate == 0 && snapshotInterval > 0) revert("Invalid growth rate");
+        if ((annualGrowthRate == 0 && snapshotInterval > 0) || (annualGrowthRate > 0 && snapshotInterval == 0))
+            revert InvalidGrowthRate();
 
         ensureNonzeroAddress(correlatedToken);
         ensureNonzeroAddress(underlyingToken);
