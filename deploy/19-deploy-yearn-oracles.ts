@@ -44,7 +44,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 };
 
 func.tags = ["yearn"];
-func.skip = async (hre: HardhatRuntimeEnvironment) =>
-  hre.network.name !== "ethereum" && hre.network.name !== "sepolia";
+func.skip = async (hre: HardhatRuntimeEnvironment) => hre.network.name !== "ethereum" && hre.network.name !== "sepolia";
 
 export default func;
