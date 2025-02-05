@@ -13,6 +13,8 @@ const UNDERLYING_PRICE = parseUnits("3400", 18);
 const PT_TO_ASSET_RATE = parseUnits("0.923601422168630818", 18);
 const PT_TO_SY_RATE = parseUnits("0.93", 18);
 const DURATION = 3600; // 1 hour
+const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
+const SNAPSHOT_UPDATE_INTERVAL = 10;
 
 enum PendleRateKind {
   PT_TO_ASSET,
@@ -58,6 +60,8 @@ describe("PendleOracle unit tests", () => {
           underlyingToken.address,
           resilientOracleMock.address,
           DURATION,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -71,6 +75,8 @@ describe("PendleOracle unit tests", () => {
           underlyingToken.address,
           resilientOracleMock.address,
           DURATION,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -84,6 +90,8 @@ describe("PendleOracle unit tests", () => {
           underlyingToken.address,
           resilientOracleMock.address,
           DURATION,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -97,6 +105,8 @@ describe("PendleOracle unit tests", () => {
           addr0000,
           resilientOracleMock.address,
           DURATION,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -110,6 +120,8 @@ describe("PendleOracle unit tests", () => {
           underlyingToken.address,
           addr0000,
           DURATION,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -123,6 +135,8 @@ describe("PendleOracle unit tests", () => {
           underlyingToken.address,
           resilientOracleMock.address,
           0,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
     });
@@ -139,6 +153,8 @@ describe("PendleOracle unit tests", () => {
           underlyingToken.address,
           resilientOracleMock.address,
           DURATION,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
         ),
       ).to.be.reverted;
 
@@ -156,6 +172,8 @@ describe("PendleOracle unit tests", () => {
         underlyingToken.address,
         resilientOracleMock.address,
         DURATION,
+        ANNUAL_GROWTH_RATE,
+        SNAPSHOT_UPDATE_INTERVAL,
       );
 
     it("revert if getPrice argument is not the configured PT token", async () => {
