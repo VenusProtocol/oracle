@@ -13546,7 +13546,7 @@
       ]
     },
     "yvUSDC-1_ERC4626Oracle": {
-      "address": "0x64725823f70dcE89d17e4dDE9C5D53Fe47ce507c",
+      "address": "0x42639d253aFbf9D4F5be2f36E264bb1482f6C646",
       "abi": [
         {
           "inputs": [
@@ -13587,6 +13587,19 @@
               "internalType": "address",
               "name": "",
               "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "EXP_SCALE",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -13640,7 +13653,7 @@
       ]
     },
     "yvUSDS-1_ERC4626Oracle": {
-      "address": "0x9026cDC8c08652C6130182772aC197b0367A71C5",
+      "address": "0x969B22505F85f79cD9694c253d027e6e22De7643",
       "abi": [
         {
           "inputs": [
@@ -13681,6 +13694,19 @@
               "internalType": "address",
               "name": "",
               "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "EXP_SCALE",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -13734,7 +13760,7 @@
       ]
     },
     "yvUSDT-1_ERC4626Oracle": {
-      "address": "0x591a4124cE63C3d42e80B60E80DeD7F6e383b6F9",
+      "address": "0x10eBAe69cab0ec7af6dB5a509593a487e668f6D9",
       "abi": [
         {
           "inputs": [
@@ -13775,6 +13801,19 @@
               "internalType": "address",
               "name": "",
               "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "EXP_SCALE",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -13828,7 +13867,7 @@
       ]
     },
     "yvWETH-1_ERC4626Oracle": {
-      "address": "0x6aC823911fA2939FD015281dF77A61B3bFaAa2EE",
+      "address": "0x6DC7A5711D3Df8C4E61b34b6DBCc8eb1e99f2944",
       "abi": [
         {
           "inputs": [
@@ -13869,6 +13908,19 @@
               "internalType": "address",
               "name": "",
               "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "EXP_SCALE",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
             }
           ],
           "stateMutability": "view",
