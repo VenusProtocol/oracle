@@ -10,7 +10,7 @@ import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
  * @notice This oracle fetches the price of ERC4626 tokens
  */
 contract ERC4626Oracle is CorrelatedTokenOracle {
-    uint256 public immutable EXP_SCALE;
+    uint256 public immutable ONE_CORRELATED_TOKEN;
 
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -19,7 +19,7 @@ contract ERC4626Oracle is CorrelatedTokenOracle {
         address underlyingToken,
         address resilientOracle
     ) CorrelatedTokenOracle(correlatedToken, underlyingToken, resilientOracle) {
-        EXP_SCALE = 10 ** IERC4626(correlatedToken).decimals();
+        ONE_CORRELATED_TOKEN = 10 ** IERC4626(correlatedToken).decimals();
     }
 
     /**
@@ -27,6 +27,6 @@ contract ERC4626Oracle is CorrelatedTokenOracle {
      * @return amount The amount of underlying token for correlated token
      */
     function _getUnderlyingAmount() internal view override returns (uint256) {
-        return IERC4626(CORRELATED_TOKEN).convertToAssets(EXP_SCALE);
+        return IERC4626(CORRELATED_TOKEN).convertToAssets(ONE_CORRELATED_TOKEN);
     }
 }
