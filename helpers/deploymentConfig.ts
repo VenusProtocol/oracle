@@ -271,6 +271,14 @@ export const ADDRESSES: PreconfiguredAddresses = {
     wsuperOETHb: "0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6",
     timelock: "0x1803Cf1D3495b43cC628aa1d8638A981F8CD341C", // Base mainnet Multisig
   },
+  unichainmainnet: {
+    acm: "0x1f12014c497a9d905155eB9BfDD9FaC6885e61d0",
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    WETH: "0x4200000000000000000000000000000000000006",
+    timelock: "0x1803Cf1D3495b43cC628aa1d8638A981F8CD341C", // Unichain mainnet guardian
+  },
 };
 
 export const chainlinkFeed: Config = {
@@ -415,6 +423,13 @@ export const redstoneFeed: Config = {
   },
   basemainnet: {
     XVS: "0x5ED849a45B4608952161f45483F4B95BCEa7f8f0",
+  },
+  unichainmainnet: {
+    USDC: "",
+    USDT: "",
+    cbBTC: "",
+    WETH: "",
+    XVS: "",
   },
 };
 
@@ -1303,6 +1318,33 @@ export const assets: Assets = {
     {
       token: "XVS",
       address: "0xebB7873213c8d1d9913D8eA39Aa12d74cB107995",
+      oracle: "redstone",
+    },
+  ],
+  unichainmainnet: [
+    {
+      token: "USDC",
+      address: "",
+      oracle: "redstone",
+    },
+    {
+      token: "USDT",
+      address: "",
+      oracle: "redstone",
+    },
+    {
+      token: "WETH",
+      address: "0x4200000000000000000000000000000000000006",
+      oracle: "redstone",
+    },
+    {
+      token: "cbBTC",
+      address: "",
+      oracle: "redstone",
+    },
+    {
+      token: "XVS",
+      address: "",
       oracle: "redstone",
     },
   ],

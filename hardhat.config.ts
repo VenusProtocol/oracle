@@ -184,6 +184,13 @@ const config: HardhatUserConfig = {
       live: true,
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
+
+    unichainmainnet: {
+      url: process.env.ARCHIVE_NODE_basemainnet || "https://mainnet.base.org",
+      chainId: 130,
+      live: true,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
+    },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
