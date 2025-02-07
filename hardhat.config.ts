@@ -186,7 +186,7 @@ const config: HardhatUserConfig = {
     },
 
     unichainmainnet: {
-      url: process.env.ARCHIVE_NODE_basemainnet || "https://mainnet.base.org",
+      url: process.env.ARCHIVE_NODE_unichainmainnet || "https://mainnet.unichain.org",
       chainId: 130,
       live: true,
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
