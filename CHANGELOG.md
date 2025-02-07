@@ -1,3 +1,11 @@
+## [2.9.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.8.0...v2.9.0-dev.1) (2025-02-07)
+
+
+### Features
+
+* oracle deployments on unichainsepolia ([7ff74ca](https://github.com/VenusProtocol/oracle/commit/7ff74ca488d4bea43a2b94999911d04921f96a69))
+* updating deployment files ([48a9c05](https://github.com/VenusProtocol/oracle/commit/48a9c0551b23c35679ebeccc21d66c2af2bf76ed))
+
 ## [2.8.0](https://github.com/VenusProtocol/oracle/compare/v2.7.0...v2.8.0) (2025-01-30)
 
 
