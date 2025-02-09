@@ -144,6 +144,12 @@ export const ADDRESSES: PreconfiguredAddresses = {
     sUSDe: "0xA3A3e5ecEA56940a4Ae32d0927bfd8821DdA848A",
     USDS: "0xfB287f9A45E54df6AADad95C6F37b1471e744762",
     sUSDS: "0xE9E34fd81982438E96Bd945f5810F910e35F0165",
+    yvUSDC_1: "0x9fE6052B9534F134171F567dAC9c9B22556c1DDb",
+    yvUSDT_1: "0x5cBA66C5415E56CC0Ace55148ffC63f61327478B",
+    yvUSDS_1: "0xC6A0e98B8D9E9F1160E9cE1f2E0172F41FB06BC2",
+    yvWETH_1: "0x99AD7ecf9b1C5aC2A11BB00D7D8a7C54fCd41517",
+    USDC: "0x772d68929655ce7234C8C94256526ddA66Ef641E",
+    USDT: "0x8d412FD0bc5d826615065B931171Eed10F5AF266",
   },
   ethereum: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -182,6 +188,12 @@ export const ADDRESSES: PreconfiguredAddresses = {
     sUSDe: "0x9D39A5DE30e57443BfF2A8307A4256c8797A3497",
     USDS: "0xdC035D45d973E3EC169d2276DDab16f1e407384F",
     sUSDS: "0xa3931d71877C0E7a3148CB7Eb4463524FEc27fbD",
+    yvUSDC_1: "0xBe53A109B494E5c9f97b9Cd39Fe969BE68BF6204",
+    yvUSDT_1: "0x310B7Ea7475A0B449Cfd73bE81522F1B88eFAFaa",
+    yvUSDS_1: "0x182863131F9a4630fF9E27830d945B1413e347E8",
+    yvWETH_1: "0xc56413869c6CDf96496f2b1eF801fEDBdFA7dDB0",
+    USDC: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+    USDT: "0xdac17f958d2ee523a2206206994597c13d831ec7",
   },
   opbnbtestnet: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -270,6 +282,13 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WETH: "0x4200000000000000000000000000000000000006",
     wsuperOETHb: "0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6",
     timelock: "0x1803Cf1D3495b43cC628aa1d8638A981F8CD341C", // Base mainnet Multisig
+  },
+  unichainsepolia: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: "0x854C064EA6b503A97980F481FA3B7279012fdeDd",
+    timelock: "0x9831D3A641E8c7F082EEA75b8249c99be9D09a34", // Unichain sepolia Multisig
   },
   unichainmainnet: {
     acm: "0x1f12014c497a9d905155eB9BfDD9FaC6885e61d0",
@@ -424,10 +443,13 @@ export const redstoneFeed: Config = {
   basemainnet: {
     XVS: "0x5ED849a45B4608952161f45483F4B95BCEa7f8f0",
   },
+  unichainsepolia: {
+    USDC: "0x197225B3B017eb9b72Ac356D6B3c267d0c04c57c",
+    USDT: "0x3fd49f2146FE0e10c4AE7E3fE04b3d5126385Ac4",
+    WETH: "0x4BAD96DD1C7D541270a0C92e1D4e5f12EEEA7a57",
+  },
   unichainmainnet: {
     USDC: "",
-    USDT: "",
-    cbBTC: "",
     WETH: "",
     XVS: "",
   },
@@ -1321,15 +1343,10 @@ export const assets: Assets = {
       oracle: "redstone",
     },
   ],
-  unichainmainnet: [
+  unichainsepolia: [
     {
-      token: "USDC",
-      address: "",
-      oracle: "redstone",
-    },
-    {
-      token: "USDT",
-      address: "",
+      token: "cbBTC",
+      address: "0x2979ef1676bb28192ac304173C717D7322b3b586",
       oracle: "redstone",
     },
     {
@@ -1338,13 +1355,35 @@ export const assets: Assets = {
       oracle: "redstone",
     },
     {
-      token: "cbBTC",
-      address: "",
+      token: "USDC",
+      address: "0xf16d4774893eB578130a645d5c69E9c4d183F3A5",
+      oracle: "redstone",
+    },
+    {
+      token: "USDT",
+      address: "0x7bc1b67fde923fd3667Fde59684c6c354C8EbFdA",
       oracle: "redstone",
     },
     {
       token: "XVS",
-      address: "",
+      address: "0xC0e51E865bc9Fed0a32Cc0B2A65449567Bc5c741",
+      oracle: "redstone",
+    },
+  ],
+  unichainmainnet: [
+    {
+      token: "USDC",
+      address: "0x078D782b760474a361dDA0AF3839290b0EF57AD6",
+      oracle: "redstone",
+    },
+    {
+      token: "WETH",
+      address: "0x4200000000000000000000000000000000000006",
+      oracle: "redstone",
+    },
+    {
+      token: "XVS",
+      address: "0x81908BBaad3f6fC74093540Ab2E9B749BB62aA0d",
       oracle: "redstone",
     },
   ],
