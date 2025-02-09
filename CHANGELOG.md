@@ -1,3 +1,29 @@
+## [2.10.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.9.0...v2.10.0-dev.1) (2025-02-09)
+
+
+### Features
+
+* deployed on ethereum ([e7093e7](https://github.com/VenusProtocol/oracle/commit/e7093e7b8ef5517d7557f122cb934d8fcd8f67e6))
+* deployed yearn oracles ([f20d1a5](https://github.com/VenusProtocol/oracle/commit/f20d1a52dac1fe0f415792d7e445ac7ca8f308e4))
+* redeployed sepolia and ethereum ([058701e](https://github.com/VenusProtocol/oracle/commit/058701eaafbc7e093518a665ea5dc67a4ce8e285))
+* updating deployment files ([26ce2b4](https://github.com/VenusProtocol/oracle/commit/26ce2b4ad4867230cb667b4bda9d864e5164a6d5))
+* updating deployment files ([0d6489e](https://github.com/VenusProtocol/oracle/commit/0d6489edb09260b0cad318e5bd4cd620880384c0))
+* updating deployment files ([eb6a32b](https://github.com/VenusProtocol/oracle/commit/eb6a32bab10a6a5b7fdcda33c8fbcf99fde6d904))
+* updating deployment files ([816cca1](https://github.com/VenusProtocol/oracle/commit/816cca199f7e763cd75f5904ac541a939c41b7ba))
+* updating deployment files ([e8056c5](https://github.com/VenusProtocol/oracle/commit/e8056c587d6b77175c288d937c932ececf1380ab))
+* updating deployment files ([6151df4](https://github.com/VenusProtocol/oracle/commit/6151df4e9298c056e66ed370fc77e54b78b1d9ab))
+
+
+### Bug Fixes
+
+* change var name ([e72fce7](https://github.com/VenusProtocol/oracle/commit/e72fce77ca9e430b70ac0e93b44838ebea3ddcdf))
+* fixed ERC4626 oracle to use asset decimals ([2bcfdb1](https://github.com/VenusProtocol/oracle/commit/2bcfdb18810e6043887129d31a71f2802c2c25ec))
+* fixed lint ([467b676](https://github.com/VenusProtocol/oracle/commit/467b6762c584bfdc41b8f6d9995c7854ecb9da84))
+* merge conflict ([092dd3d](https://github.com/VenusProtocol/oracle/commit/092dd3db10aadfc696be02665faa67a6d70d97d9))
+* redeployed contracts ([2253d09](https://github.com/VenusProtocol/oracle/commit/2253d0912ca59f04510805ff9792337c7b25c80b))
+* reverted deployments ([2509691](https://github.com/VenusProtocol/oracle/commit/25096918b811928002b3a73053c98ebf6663dbe3))
+* reverted deployments ([5434ab8](https://github.com/VenusProtocol/oracle/commit/5434ab8a71c31ac00efac41a9aa4a6ac213ca005))
+
 ## [2.9.0](https://github.com/VenusProtocol/oracle/compare/v2.8.0...v2.9.0) (2025-02-07)
 
 
