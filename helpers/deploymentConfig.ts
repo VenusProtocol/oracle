@@ -449,9 +449,9 @@ export const redstoneFeed: Config = {
     WETH: "0x4BAD96DD1C7D541270a0C92e1D4e5f12EEEA7a57",
   },
   unichainmainnet: {
-    USDC: "",
-    WETH: "",
-    XVS: "",
+    USDC: "0xD15862FC3D5407A03B696548b6902D6464A69b8c",
+    WETH: "0xe8D9FbC10e00ecc9f0694617075fDAF657a76FB2",
+    XVS: "0xb4fe9028A4D4D8B3d00e52341F2BB0798860532C",
   },
 };
 
