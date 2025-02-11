@@ -190,6 +190,12 @@ const config: HardhatUserConfig = {
       live: true,
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
+    unichainmainnet: {
+      url: process.env.ARCHIVE_NODE_unichainmainnet || "https://mainnet.unichain.org",
+      chainId: 130,
+      live: true,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
+    },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
@@ -210,6 +216,7 @@ const config: HardhatUserConfig = {
       basesepolia: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       basemainnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       unichainsepolia: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
+      unichainmainnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
     },
     customChains: [
       {
@@ -314,6 +321,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: `https://api-sepolia.uniscan.xyz/api/`,
           browserURL: "https://sepolia.uniscan.xyz/",
+        },
+      },
+      {
+        network: "unichainmainnet",
+        chainId: 130,
+        urls: {
+          apiURL: `https://api.uniscan.xyz/api/`,
+          browserURL: "https://uniscan.xyz/",
         },
       },
     ],
