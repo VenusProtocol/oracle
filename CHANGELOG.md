@@ -1,3 +1,13 @@
+## [2.10.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.10.0-dev.1...v2.10.0-dev.2) (2025-02-11)
+
+
+### Features
+
+* add config for unichain mainnet ([67a3258](https://github.com/VenusProtocol/oracle/commit/67a32584d9e35d8d4ddb5f632efc1f8d2445d03a))
+* add deployments for oracles on unichain ([2f9bd65](https://github.com/VenusProtocol/oracle/commit/2f9bd65be71347586b7f41300c14ce37c62bc137))
+* add missing addresses ([365e5b7](https://github.com/VenusProtocol/oracle/commit/365e5b7152f0c2c3b984fa022ea23ba31a9d466b))
+* updating deployment files ([dd8e159](https://github.com/VenusProtocol/oracle/commit/dd8e159cc171ec417de3d034dff35851d0d1a15b))
+
 ## [2.10.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.9.0...v2.10.0-dev.1) (2025-02-09)
 
 
