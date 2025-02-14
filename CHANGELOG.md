@@ -1,3 +1,10 @@
+## [2.11.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.10.0...v2.11.0-dev.1) (2025-02-14)
+
+
+### Features
+
+* update dependencies ([84c95e9](https://github.com/VenusProtocol/oracle/commit/84c95e921823ca4aa360ccee8f051b23b0cdf7f8))
+
 ## [2.10.0](https://github.com/VenusProtocol/oracle/compare/v2.9.0...v2.10.0) (2025-02-11)
 
 
