@@ -100,6 +100,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     sidRegistryAddress: "0x08CEd32a7f3eeC915Ba84415e9C07a7286977956",
     acm: bscmainnetGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: bscmainnetGovernanceDeployments.contracts.NormalTimelock.address,
+    devMultisig: "0x16A623C5a73E335a089C2B5AcDe167C4d749FC05",
     PTOracle: "0x9a9fa8338dd5e5b2188006f1cd2ef26d921650c2",
     BNBxStakeManager: "0x3b961e83400D51e6E1AF5c450d3C7d7b80588d28",
     BNBx: "0x1bdd3cf7f79cfb8edbb955f20ad99211551ba275",
@@ -159,6 +160,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: ethereumGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x285960C5B22fD66A736C7136967A3eB15e93CC67", // Ethereum Multisig
+    devMultisig: "0x0033c829188Ea77143e228104352A7ed8aBb5182",
     sFRAX: "0xA663B02CF0a4b149d2aD41910CB81e23e1c41c32",
     sfrxETH: "0xac3e018457b222d93114458476f3e3416abbe38f",
     FRAX: "0x853d955aCEf822Db058eb8505911ED77F175b99e",
@@ -229,6 +231,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: arbitrumoneGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x14e0E151b33f9802b3e75b621c1457afc44DcAA0", // Arbitrum One Multisig
+    devMultisig: "0xdE493Eb75d2c5834b17134620399024D8Ac87a02",
     wstETH: "0x5979D7b546E38E414F7E9822514be443A4800529",
     weETH: "0x35751007a407ca6FEFfE80b3cB397736D2cf4dbe",
     WETH: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
@@ -248,6 +251,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: "0x526159A92A82afE5327d37Ef446b68FD9a5cA914", // To-do: use node modules
     timelock: "0x751Aa759cfBB6CE71A43b48e40e1cCcFC66Ba4aa", // Zksync mainnet Multisig
+    devMultisig: "0x9049076b49B1f6c330200A8A816E7aDcc215Ec84",
     USDM: "0x7715c206A14Ac93Cb1A6c0316A6E5f8aD7c9Dc31",
     wUSDM: "0xA900cbE7739c96D2B153a273953620A701d5442b",
   },

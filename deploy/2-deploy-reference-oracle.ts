@@ -9,9 +9,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const proxyOwnerAddress = network.live ? ADDRESSES[network.name].devMultisig : deployer;
   const devMultisig = network.live ? ADDRESSES[network.name].devMultisig : deployer;
-
   const proxyAdminArtifact = await hre.artifacts.readArtifact(
     "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
   );
@@ -26,7 +24,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     skipIfAlreadyDeployed: true,
     args: [resilientOracle.address],
     proxy: {
-      owner: proxyOwnerAddress,
+      owner: devMultisig,
       proxyContract: "OptimizedTransparentUpgradeableProxy",
       execute: {
         methodName: "initialize",
@@ -38,6 +36,14 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       },
     },
   });
+
+  const devProxyAdmin = await hre.ethers.getContract("DevProxyAdmin");
+  const devProxyAdminOwner = await devProxyAdmin.owner();
+
+  if (devProxyAdminOwner === deployer) {
+    await devProxyAdmin.transferOwnership(devMultisig);
+    console.log(`Ownership of DevProxyAdmin transfered from deployer to dev multisig (${devMultisig})`);
+  }
 
   const referenceOracle = await hre.ethers.getContract("ReferenceOracle");
   const referenceOracleOwner = await referenceOracle.owner();
