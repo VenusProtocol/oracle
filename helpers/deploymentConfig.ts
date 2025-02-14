@@ -277,11 +277,11 @@ export const ADDRESSES: PreconfiguredAddresses = {
     timelock: basemainnetGovernanceDeployments.contracts.NormalTimelock.address,
   },
   berachainbartio: {
-    acm: "0x92A6BCD9987Eb8689152C5A89BCC5c03305139E3",
+    acm: "0xEf368e4c1f9ACC9241E66CD67531FEB195fF7536",
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
-    timelock: "0x08Cf9d51df988F1E69174D22b7f93f97e1aAEbeE",
+    timelock: "0x8699D418D8bae5CFdc566E4fce897B08bd9B03B0",
   },
 };
 
