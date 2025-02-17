@@ -159,7 +159,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     wstETHAddress: "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
     VAIAddress: ethers.constants.AddressZero,
     acm: ethereumGovernanceDeployments.contracts.AccessControlManager.address,
-    timelock: "0x285960C5B22fD66A736C7136967A3eB15e93CC67", // Ethereum Multisig
+    timelock: ethereumGovernanceDeployments.contracts.NormalTimelock.address,
     devMultisig: "0x0033c829188Ea77143e228104352A7ed8aBb5182",
     sFRAX: "0xA663B02CF0a4b149d2aD41910CB81e23e1c41c32",
     sfrxETH: "0xac3e018457b222d93114458476f3e3416abbe38f",
