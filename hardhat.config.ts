@@ -114,6 +114,7 @@ const config: HardhatUserConfig = {
       url: process.env.ARCHIVE_NODE_bsctestnet || "https://data-seed-prebsc-1-s1.binance.org:8545",
       chainId: 97,
       live: true,
+      tags: ["testnet"],
       gasPrice: 20000000000,
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
@@ -128,6 +129,7 @@ const config: HardhatUserConfig = {
       url: process.env.ARCHIVE_NODE_sepolia || "https://ethereum-sepolia.blockpi.network/v1/rpc/public",
       chainId: 11155111,
       live: true,
+      tags: ["testnet"],
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
     ethereum: {
@@ -140,6 +142,7 @@ const config: HardhatUserConfig = {
       url: process.env.ARCHIVE_NODE_opbnbtestnet || "https://opbnb-testnet-rpc.bnbchain.org",
       chainId: 5611,
       live: true,
+      tags: ["testnet"],
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
     opbnbmainnet: {
@@ -152,6 +155,7 @@ const config: HardhatUserConfig = {
       url: process.env.ARCHIVE_NODE_arbitrumsepolia || "https://sepolia-rollup.arbitrum.io/rpc",
       chainId: 421614,
       live: true,
+      tags: ["testnet"],
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
     arbitrumone: {
@@ -164,6 +168,7 @@ const config: HardhatUserConfig = {
       url: process.env.ARCHIVE_NODE_opsepolia || "https://sepolia.optimism.io",
       chainId: 11155420,
       live: true,
+      tags: ["testnet"],
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
     opmainnet: {
@@ -176,6 +181,7 @@ const config: HardhatUserConfig = {
       url: process.env.ARCHIVE_NODE_basesepolia || "https://sepolia.base.org",
       chainId: 84532,
       live: true,
+      tags: ["testnet"],
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
     basemainnet: {
@@ -188,6 +194,7 @@ const config: HardhatUserConfig = {
       url: process.env.ARCHIVE_NODE_unichainsepolia || "https://sepolia.unichain.org",
       chainId: 1301,
       live: true,
+      tags: ["testnet"],
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
     unichainmainnet: {
