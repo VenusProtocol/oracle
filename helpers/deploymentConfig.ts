@@ -242,6 +242,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     timelock: zksyncsepoliaGovernanceDeployments.contracts.NormalTimelock.address,
     USDM: "0x5d5334dBa9C727eD81b549b6106aE37Ea137076D",
     wUSDM: "0x0b3C8fB109f144f6296bF4Ac52F191181bEa003a",
+    WETH: "0x53F7e72C7ac55b44c7cd73cC13D4EF4b121678e6",
+    zkETH: "0x13231E8B60BE0900fB3a3E9dc52C2b39FA4794df",
   },
   zksyncmainnet: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -251,6 +253,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     timelock: zksyncmainnetGovernanceDeployments.contracts.NormalTimelock.address,
     USDM: "0x7715c206A14Ac93Cb1A6c0316A6E5f8aD7c9Dc31",
     wUSDM: "0xA900cbE7739c96D2B153a273953620A701d5442b",
+    WETH: "0x5aea5775959fbc2557cc8789bc1bf90a239d9a91",
+    zkETH: "0xb72207E1FB50f341415999732A20B6D25d8127aa",
   },
   opsepolia: {
     vBNBAddress: ethers.constants.AddressZero,
