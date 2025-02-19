@@ -49,6 +49,6 @@ const func: DeployFunction = async function ({
   });
 };
 
-func.skip = async () => !["bscmainnet", "bsctestnet", "zksyncsepolia", "zksyncmainnet"].includes(hre.network.name);
+func.skip = async () => !["basemainnet", "basetestnet", "zksyncsepolia", "zksyncmainnet"].includes(hre.network.name);
 func.tags = ["wstETH_OneJumpOracle"];
 export default func;

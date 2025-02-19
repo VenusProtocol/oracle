@@ -238,7 +238,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
     acm: zksyncsepoliaGovernanceDeployments.contracts.AccessControlManager.address,
-    timelock: "0x1730527a0f0930269313D77A317361b42971a67E",
+    timelock: "0xa2f83de95E9F28eD443132C331B6a9C9B7a9F866", // Zksync sepolia Multisig
     USDM: "0x5d5334dBa9C727eD81b549b6106aE37Ea137076D",
     wUSDM: "0x0b3C8fB109f144f6296bF4Ac52F191181bEa003a",
     wstETH: "0x8507bb4F4f0915D05432011E384850B65a7FCcD1",
@@ -249,7 +249,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
     acm: "0x526159A92A82afE5327d37Ef446b68FD9a5cA914", // To-do: use node modules
-    timelock: "0x093565Bc20AA326F4209eBaF3a26089272627613",
+    timelock: "0x751Aa759cfBB6CE71A43b48e40e1cCcFC66Ba4aa", // Zksync mainnet Multisig
     USDM: "0x7715c206A14Ac93Cb1A6c0316A6E5f8aD7c9Dc31",
     wUSDM: "0xA900cbE7739c96D2B153a273953620A701d5442b",
     wstETH: "0x703b52F2b28fEbcB60E1372858AF5b18849FE867",
@@ -277,6 +277,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WETH: "0x4200000000000000000000000000000000000006",
     wsuperOETHb: "0x02B1136d9E223333E0083aeAB76bC441f230a033",
     timelock: "0xdf3b635d2b535f906BB02abb22AED71346E36a00", // Base sepolia Multisig
+    wstETH: "0xAd69AA3811fE0EE7dBd4e25C4bae40e6422c76C8",
   },
   basemainnet: {
     acm: "0x9E6CeEfDC6183e4D0DF8092A9B90cDF659687daB",
@@ -286,6 +287,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WETH: "0x4200000000000000000000000000000000000006",
     wsuperOETHb: "0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6",
     timelock: "0x1803Cf1D3495b43cC628aa1d8638A981F8CD341C", // Base mainnet Multisig
+    wstETH: "0xc1cba3fcea344f92d9239c08c0568f6f2f0ee452",
   },
   unichainsepolia: {
     vBNBAddress: ethers.constants.AddressZero,
