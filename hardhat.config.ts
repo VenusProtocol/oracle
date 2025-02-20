@@ -345,7 +345,7 @@ const config: HardhatUserConfig = {
           apiURL: "https://api.routescan.io/v2/network/testnet/evm/80084/etherscan",
           browserURL: "https://bartio.beratrail.io",
         },
-      }
+      },
     ],
   },
   paths: {
