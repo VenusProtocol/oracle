@@ -112,12 +112,12 @@ abstract contract CorrelatedTokenOracle {
      * to a maximum value taking into account the growth rate
      */
     function getPrice(address asset) public view returns (uint256) {
-        uint256 price = Transient.readCachedPrice(CACHE_SLOT, asset);
-        if (price != 0) {
-            return price;
+        uint256 exchangeRate = Transient.readCachedPrice(CACHE_SLOT, asset);
+        if (exchangeRate != 0) {
+            return calculatePrice(asset, exchangeRate);
         }
 
-        uint256 exchangeRate = _getUnderlyingAmount();
+        exchangeRate = _getUnderlyingAmount();
 
         if (SNAPSHOT_INTERVAL == 0) {
             return calculatePrice(asset, exchangeRate);
