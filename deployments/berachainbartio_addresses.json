@@ -1,0 +1,19 @@
+{
+  "name": "berachainbartio",
+  "chainId": "80084",
+  "addresses": {
+    "BoundValidator": "0x24C815d92f5F084E3679ceD7c51c2033784AaC06",
+    "BoundValidator_Implementation": "0x50898eA0555D193CAd348cF000fd9376529Ebd01",
+    "BoundValidator_Proxy": "0x24C815d92f5F084E3679ceD7c51c2033784AaC06",
+    "ChainlinkOracle": "0x54568071437BcF7D7F1C004D0561B3aCa89E2132",
+    "ChainlinkOracle_Implementation": "0xc8186630Da2ca71E4d677E204F6c8E24D6035fD5",
+    "ChainlinkOracle_Proxy": "0x54568071437BcF7D7F1C004D0561B3aCa89E2132",
+    "DefaultProxyAdmin": "0xccF1655d49bD9f94106524Cc416277135A811815",
+    "RedStoneOracle": "0x2E9aC3e161359d572E1F0cBe177fc5E84651D962",
+    "RedStoneOracle_Implementation": "0xd9d177F14f57E90dAFBFCD4813215a5112666463",
+    "RedStoneOracle_Proxy": "0x2E9aC3e161359d572E1F0cBe177fc5E84651D962",
+    "ResilientOracle": "0x279Bd38D27247BFb28064cab434f71816BD4aF4B",
+    "ResilientOracle_Implementation": "0xCf0A64F07558475dC63f5ffDE0F6c864ACe9f21f",
+    "ResilientOracle_Proxy": "0x279Bd38D27247BFb28064cab434f71816BD4aF4B"
+  }
+}
