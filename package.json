@@ -1,7 +1,7 @@
 {
   "name": "@venusprotocol/oracle",
   "description": "Venus Protocol Price Oracle",
-  "version": "2.11.0",
+  "version": "2.12.0-dev.2",
   "author": "Venus",
   "engines": {
     "node": ">=18.x.x"
@@ -31,11 +31,12 @@
     "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
     "build": "rm -rf dist && hardhat compile && hardhat compile --config hardhat.config.zksync.ts && tsc --declaration",
     "docgen": "hardhat docgen",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "postinstall": "yarn patch-package"
   },
   "dependencies": {
     "@chainlink/contracts": "^0.5.1",
-    "@defi-wonderland/smock": "2.3.5",
+    "@defi-wonderland/smock": "2.4.0",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
     "@openzeppelin/contracts": "^4.6.0",
     "@openzeppelin/contracts-upgradeable": "^4.7.3",
@@ -43,9 +44,10 @@
     "@venusprotocol/solidity-utilities": "^2.0.0",
     "@venusprotocol/venus-protocol": "^9.7.0",
     "ethers": "^5.6.8",
-    "hardhat": "2.19.5",
+    "hardhat": "2.22.15",
     "hardhat-deploy": "^0.12.4",
     "module-alias": "^2.2.2",
+    "patch-package": "^8.0.0",
     "solidity-docgen": "^0.6.0-beta.29"
   },
   "devDependencies": {
@@ -117,5 +119,9 @@
   },
   "_moduleAliases": {
     "@nomiclabs/hardhat-ethers": "node_modules/hardhat-deploy-ethers"
+  },
+  "resolutions": {
+    "hardhat": "2.22.15",
+    "@defi-wonderland/smock": "2.4.0"
   }
 }
