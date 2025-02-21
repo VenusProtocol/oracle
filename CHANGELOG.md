@@ -1,3 +1,11 @@
+## [2.12.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.12.0-dev.1...v2.12.0-dev.2) (2025-02-21)
+
+
+### Features
+
+* add deployments for Pendle oracles used as a reference ([39e82df](https://github.com/VenusProtocol/oracle/commit/39e82df3b40de2031e73176289abd9b4d396a701))
+* updating deployment files ([eb9cee1](https://github.com/VenusProtocol/oracle/commit/eb9cee1879960e95b7bfc6c93c7c6092a6f7e3f9))
+
 ## [2.12.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.11.0...v2.12.0-dev.1) (2025-02-21)
 
 
