@@ -15,6 +15,9 @@
     "ResilientOracle": "0xcBBf58bD5bAdE357b634419B70b215D5E9d6FbeD",
     "ResilientOracle_Implementation": "0xb87c9c8fB47B10960c43EBbaf37F4a2e222ec9E3",
     "ResilientOracle_Proxy": "0xcBBf58bD5bAdE357b634419B70b215D5E9d6FbeD",
+    "wstETHOneJumpChainlinkOracle": "0x007e6Bd6993892b39210a7116506D6eA417B7565",
+    "wstETHOneJumpChainlinkOracle_Implementation": "0x285a2577030ce7a791c36a58b278DAA94b982041",
+    "wstETHOneJumpChainlinkOracle_Proxy": "0x007e6Bd6993892b39210a7116506D6eA417B7565",
     "wsuperOETHb_ERC4626Oracle": "0x2ad7dFf3380A0b75dC0bB1f3B38C105AB5B6D818"
   }
 }
