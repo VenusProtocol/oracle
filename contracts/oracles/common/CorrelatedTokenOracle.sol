@@ -34,14 +34,14 @@ abstract contract CorrelatedTokenOracle {
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     OracleInterface public immutable RESILIENT_ORACLE;
 
-    /// @notice Last stored snapshot price
-    uint256 public snapshotPrice;
+    /// @notice Last stored snapshot exchange rate
+    uint256 public snapshotExchangeRate;
 
     /// @notice Last stored snapshot timestamp
     uint256 public snapshotTimestamp;
 
     /// @notice Emitted when the snapshot is updated
-    event SnapshotUpdated(uint256 price, uint256 timestamp);
+    event SnapshotUpdated(uint256 exchangeRate, uint256 timestamp);
 
     /// @notice Thrown if the token address is invalid
     error InvalidTokenAddress();
@@ -99,10 +99,10 @@ abstract contract CorrelatedTokenOracle {
         uint256 exchangeRate = _getUnderlyingAmount();
         uint256 maxAllowedExchangeRate = _getMaxAllowedExchangeRate();
 
-        snapshotPrice = exchangeRate > maxAllowedExchangeRate ? maxAllowedExchangeRate : exchangeRate;
+        snapshotExchangeRate = exchangeRate > maxAllowedExchangeRate ? maxAllowedExchangeRate : exchangeRate;
         snapshotTimestamp = block.timestamp;
-        Transient.cachePrice(CACHE_SLOT, CORRELATED_TOKEN, snapshotPrice);
-        emit SnapshotUpdated(snapshotPrice, snapshotTimestamp);
+        Transient.cachePrice(CACHE_SLOT, CORRELATED_TOKEN, snapshotExchangeRate);
+        emit SnapshotUpdated(snapshotExchangeRate, snapshotTimestamp);
     }
 
     /**
@@ -155,7 +155,7 @@ abstract contract CorrelatedTokenOracle {
      */
     function _getMaxAllowedExchangeRate() internal view returns (uint256) {
         uint256 timeElapsed = block.timestamp - snapshotTimestamp;
-        uint256 maxPrice = snapshotPrice + (snapshotPrice * GROWTH_RATE_PER_SECOND * timeElapsed) / 1e18;
+        uint256 maxPrice = snapshotExchangeRate + (snapshotExchangeRate * GROWTH_RATE_PER_SECOND * timeElapsed) / 1e18;
         return maxPrice;
     }
 
