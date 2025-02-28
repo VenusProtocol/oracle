@@ -1,3 +1,219 @@
+## [2.12.0](https://github.com/VenusProtocol/oracle/compare/v2.11.0...v2.12.0) (2025-02-21)
+
+
+### Features
+
+* add deployments for Pendle oracles used as a reference ([39e82df](https://github.com/VenusProtocol/oracle/commit/39e82df3b40de2031e73176289abd9b4d396a701))
+* add reference oracle conract ([cfa31eb](https://github.com/VenusProtocol/oracle/commit/cfa31eb97a956fc914daa6fd3ff0dd7b31aadd3c))
+* add reference oracle deployment for bsc and eth ([0f0cc33](https://github.com/VenusProtocol/oracle/commit/0f0cc33fa90ff85fb475dd046fa6f4ef8f7fcd4a))
+* add testnet tags and helpers to dispatch testnets ([8576fe9](https://github.com/VenusProtocol/oracle/commit/8576fe961dc65805ad50617d705748cdca03945d))
+* replace multisig with timelock on Ethereum ([6bbff81](https://github.com/VenusProtocol/oracle/commit/6bbff818a8db2869ea630dd0fee34b82b4f1b2f5))
+* support compiling for cancun ([5a22e67](https://github.com/VenusProtocol/oracle/commit/5a22e6754daeea2a9c759bec02dfb62457384b02))
+* updating deployment files ([eb9cee1](https://github.com/VenusProtocol/oracle/commit/eb9cee1879960e95b7bfc6c93c7c6092a6f7e3f9))
+* updating deployment files ([9f378c5](https://github.com/VenusProtocol/oracle/commit/9f378c53caf231cc6120c6c671a3c1ad886a19e3))
+
+
+### Bug Fixes
+
+* patch smock package to check if provider has init ([2f86269](https://github.com/VenusProtocol/oracle/commit/2f86269c94f370f3841d851a7f6f965584b9f66b))
+
+## [2.12.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.12.0-dev.1...v2.12.0-dev.2) (2025-02-21)
+
+
+### Features
+
+* add deployments for Pendle oracles used as a reference ([39e82df](https://github.com/VenusProtocol/oracle/commit/39e82df3b40de2031e73176289abd9b4d396a701))
+* updating deployment files ([eb9cee1](https://github.com/VenusProtocol/oracle/commit/eb9cee1879960e95b7bfc6c93c7c6092a6f7e3f9))
+
+## [2.12.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.11.0...v2.12.0-dev.1) (2025-02-21)
+
+
+### Features
+
+* add reference oracle conract ([cfa31eb](https://github.com/VenusProtocol/oracle/commit/cfa31eb97a956fc914daa6fd3ff0dd7b31aadd3c))
+* add reference oracle deployment for bsc and eth ([0f0cc33](https://github.com/VenusProtocol/oracle/commit/0f0cc33fa90ff85fb475dd046fa6f4ef8f7fcd4a))
+* add testnet tags and helpers to dispatch testnets ([8576fe9](https://github.com/VenusProtocol/oracle/commit/8576fe961dc65805ad50617d705748cdca03945d))
+* replace multisig with timelock on Ethereum ([6bbff81](https://github.com/VenusProtocol/oracle/commit/6bbff818a8db2869ea630dd0fee34b82b4f1b2f5))
+* support compiling for cancun ([5a22e67](https://github.com/VenusProtocol/oracle/commit/5a22e6754daeea2a9c759bec02dfb62457384b02))
+* updating deployment files ([9f378c5](https://github.com/VenusProtocol/oracle/commit/9f378c53caf231cc6120c6c671a3c1ad886a19e3))
+
+
+### Bug Fixes
+
+* patch smock package to check if provider has init ([2f86269](https://github.com/VenusProtocol/oracle/commit/2f86269c94f370f3841d851a7f6f965584b9f66b))
+
+## [2.11.0](https://github.com/VenusProtocol/oracle/compare/v2.10.0...v2.11.0) (2025-02-14)
+
+
+### Features
+
+* update dependencies ([84c95e9](https://github.com/VenusProtocol/oracle/commit/84c95e921823ca4aa360ccee8f051b23b0cdf7f8))
+
+## [2.11.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.10.0...v2.11.0-dev.1) (2025-02-14)
+
+
+### Features
+
+* update dependencies ([84c95e9](https://github.com/VenusProtocol/oracle/commit/84c95e921823ca4aa360ccee8f051b23b0cdf7f8))
+
+## [2.10.0](https://github.com/VenusProtocol/oracle/compare/v2.9.0...v2.10.0) (2025-02-11)
+
+
+### Features
+
+* add config for unichain mainnet ([67a3258](https://github.com/VenusProtocol/oracle/commit/67a32584d9e35d8d4ddb5f632efc1f8d2445d03a))
+* add deployments for oracles on unichain ([2f9bd65](https://github.com/VenusProtocol/oracle/commit/2f9bd65be71347586b7f41300c14ce37c62bc137))
+* add missing addresses ([365e5b7](https://github.com/VenusProtocol/oracle/commit/365e5b7152f0c2c3b984fa022ea23ba31a9d466b))
+* deployed on ethereum ([e7093e7](https://github.com/VenusProtocol/oracle/commit/e7093e7b8ef5517d7557f122cb934d8fcd8f67e6))
+* deployed yearn oracles ([f20d1a5](https://github.com/VenusProtocol/oracle/commit/f20d1a52dac1fe0f415792d7e445ac7ca8f308e4))
+* redeployed sepolia and ethereum ([058701e](https://github.com/VenusProtocol/oracle/commit/058701eaafbc7e093518a665ea5dc67a4ce8e285))
+* updating deployment files ([dd8e159](https://github.com/VenusProtocol/oracle/commit/dd8e159cc171ec417de3d034dff35851d0d1a15b))
+* updating deployment files ([26ce2b4](https://github.com/VenusProtocol/oracle/commit/26ce2b4ad4867230cb667b4bda9d864e5164a6d5))
+* updating deployment files ([0d6489e](https://github.com/VenusProtocol/oracle/commit/0d6489edb09260b0cad318e5bd4cd620880384c0))
+* updating deployment files ([eb6a32b](https://github.com/VenusProtocol/oracle/commit/eb6a32bab10a6a5b7fdcda33c8fbcf99fde6d904))
+* updating deployment files ([816cca1](https://github.com/VenusProtocol/oracle/commit/816cca199f7e763cd75f5904ac541a939c41b7ba))
+* updating deployment files ([e8056c5](https://github.com/VenusProtocol/oracle/commit/e8056c587d6b77175c288d937c932ececf1380ab))
+* updating deployment files ([6151df4](https://github.com/VenusProtocol/oracle/commit/6151df4e9298c056e66ed370fc77e54b78b1d9ab))
+
+
+### Bug Fixes
+
+* change var name ([e72fce7](https://github.com/VenusProtocol/oracle/commit/e72fce77ca9e430b70ac0e93b44838ebea3ddcdf))
+* fixed ERC4626 oracle to use asset decimals ([2bcfdb1](https://github.com/VenusProtocol/oracle/commit/2bcfdb18810e6043887129d31a71f2802c2c25ec))
+* fixed lint ([467b676](https://github.com/VenusProtocol/oracle/commit/467b6762c584bfdc41b8f6d9995c7854ecb9da84))
+* merge conflict ([092dd3d](https://github.com/VenusProtocol/oracle/commit/092dd3db10aadfc696be02665faa67a6d70d97d9))
+* redeployed contracts ([2253d09](https://github.com/VenusProtocol/oracle/commit/2253d0912ca59f04510805ff9792337c7b25c80b))
+* reverted deployments ([2509691](https://github.com/VenusProtocol/oracle/commit/25096918b811928002b3a73053c98ebf6663dbe3))
+* reverted deployments ([5434ab8](https://github.com/VenusProtocol/oracle/commit/5434ab8a71c31ac00efac41a9aa4a6ac213ca005))
+
+## [2.10.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.10.0-dev.1...v2.10.0-dev.2) (2025-02-11)
+
+
+### Features
+
+* add config for unichain mainnet ([67a3258](https://github.com/VenusProtocol/oracle/commit/67a32584d9e35d8d4ddb5f632efc1f8d2445d03a))
+* add deployments for oracles on unichain ([2f9bd65](https://github.com/VenusProtocol/oracle/commit/2f9bd65be71347586b7f41300c14ce37c62bc137))
+* add missing addresses ([365e5b7](https://github.com/VenusProtocol/oracle/commit/365e5b7152f0c2c3b984fa022ea23ba31a9d466b))
+* updating deployment files ([dd8e159](https://github.com/VenusProtocol/oracle/commit/dd8e159cc171ec417de3d034dff35851d0d1a15b))
+
+## [2.10.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.9.0...v2.10.0-dev.1) (2025-02-09)
+
+
+### Features
+
+* deployed on ethereum ([e7093e7](https://github.com/VenusProtocol/oracle/commit/e7093e7b8ef5517d7557f122cb934d8fcd8f67e6))
+* deployed yearn oracles ([f20d1a5](https://github.com/VenusProtocol/oracle/commit/f20d1a52dac1fe0f415792d7e445ac7ca8f308e4))
+* redeployed sepolia and ethereum ([058701e](https://github.com/VenusProtocol/oracle/commit/058701eaafbc7e093518a665ea5dc67a4ce8e285))
+* updating deployment files ([26ce2b4](https://github.com/VenusProtocol/oracle/commit/26ce2b4ad4867230cb667b4bda9d864e5164a6d5))
+* updating deployment files ([0d6489e](https://github.com/VenusProtocol/oracle/commit/0d6489edb09260b0cad318e5bd4cd620880384c0))
+* updating deployment files ([eb6a32b](https://github.com/VenusProtocol/oracle/commit/eb6a32bab10a6a5b7fdcda33c8fbcf99fde6d904))
+* updating deployment files ([816cca1](https://github.com/VenusProtocol/oracle/commit/816cca199f7e763cd75f5904ac541a939c41b7ba))
+* updating deployment files ([e8056c5](https://github.com/VenusProtocol/oracle/commit/e8056c587d6b77175c288d937c932ececf1380ab))
+* updating deployment files ([6151df4](https://github.com/VenusProtocol/oracle/commit/6151df4e9298c056e66ed370fc77e54b78b1d9ab))
+
+
+### Bug Fixes
+
+* change var name ([e72fce7](https://github.com/VenusProtocol/oracle/commit/e72fce77ca9e430b70ac0e93b44838ebea3ddcdf))
+* fixed ERC4626 oracle to use asset decimals ([2bcfdb1](https://github.com/VenusProtocol/oracle/commit/2bcfdb18810e6043887129d31a71f2802c2c25ec))
+* fixed lint ([467b676](https://github.com/VenusProtocol/oracle/commit/467b6762c584bfdc41b8f6d9995c7854ecb9da84))
+* merge conflict ([092dd3d](https://github.com/VenusProtocol/oracle/commit/092dd3db10aadfc696be02665faa67a6d70d97d9))
+* redeployed contracts ([2253d09](https://github.com/VenusProtocol/oracle/commit/2253d0912ca59f04510805ff9792337c7b25c80b))
+* reverted deployments ([2509691](https://github.com/VenusProtocol/oracle/commit/25096918b811928002b3a73053c98ebf6663dbe3))
+* reverted deployments ([5434ab8](https://github.com/VenusProtocol/oracle/commit/5434ab8a71c31ac00efac41a9aa4a6ac213ca005))
+
+## [2.9.0](https://github.com/VenusProtocol/oracle/compare/v2.8.0...v2.9.0) (2025-02-07)
+
+
+### Features
+
+* oracle deployments on unichainsepolia ([7ff74ca](https://github.com/VenusProtocol/oracle/commit/7ff74ca488d4bea43a2b94999911d04921f96a69))
+* update dependencies ([756db8e](https://github.com/VenusProtocol/oracle/commit/756db8e965ce26c05189196129458c79de7a9a69))
+* updating deployment files ([48a9c05](https://github.com/VenusProtocol/oracle/commit/48a9c0551b23c35679ebeccc21d66c2af2bf76ed))
+
+## [2.9.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.9.0-dev.1...v2.9.0-dev.2) (2025-02-07)
+
+
+### Features
+
+* update dependencies ([756db8e](https://github.com/VenusProtocol/oracle/commit/756db8e965ce26c05189196129458c79de7a9a69))
+
+## [2.9.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.8.0...v2.9.0-dev.1) (2025-02-07)
+
+
+### Features
+
+* oracle deployments on unichainsepolia ([7ff74ca](https://github.com/VenusProtocol/oracle/commit/7ff74ca488d4bea43a2b94999911d04921f96a69))
+* updating deployment files ([48a9c05](https://github.com/VenusProtocol/oracle/commit/48a9c0551b23c35679ebeccc21d66c2af2bf76ed))
+
+## [2.8.0](https://github.com/VenusProtocol/oracle/compare/v2.7.0...v2.8.0) (2025-01-30)
+
+
+### Features
+
+* add config of Ethena's oracles on ethereum ([cbc04b7](https://github.com/VenusProtocol/oracle/commit/cbc04b7ef83eb732a897630a096fdcc5304662bb))
+* add deployments for ethereum ([dcbf3e9](https://github.com/VenusProtocol/oracle/commit/dcbf3e9cc4cef2872ab8b85a99636a6ef5f44adb))
+* add oracle deployment for wUSDM on zkSync ([a50a770](https://github.com/VenusProtocol/oracle/commit/a50a7703eaa6297bb8b1288ec1f3f52d90551ef9))
+* add oracles for PT-SolvBTC.BBN-27MAR2025 ([1dde098](https://github.com/VenusProtocol/oracle/commit/1dde0980333e3cacc8fb9b4e66ce13a592f4efff))
+* add support for pendle's getPtToSyRate ([97d3797](https://github.com/VenusProtocol/oracle/commit/97d37973628a56f8bbd1a8c6d0b3301602fe4aae))
+* add sUSDS oracle deployment ([e48654d](https://github.com/VenusProtocol/oracle/commit/e48654d16910f78d1a6aea55ac0b357b9f095fd4))
+* added deployment code ([0c39b1b](https://github.com/VenusProtocol/oracle/commit/0c39b1ba9d74e6ec97c3e9ba5d22e4c1e2e155d4))
+* deploy oracle for Ethena pool on sepolia ([ff00fa3](https://github.com/VenusProtocol/oracle/commit/ff00fa37fde81265913745b8d99334e92ec08f9d))
+* deploy sUSDS oracle on ethereum ([3c249fb](https://github.com/VenusProtocol/oracle/commit/3c249fbe7bcf50f03e4e2cb2b351d35bee62838e))
+* update sUSDe_ERC4626 deployment ([f4389fa](https://github.com/VenusProtocol/oracle/commit/f4389fabbe0b6a4a246cbbcca582eaf5f342a163))
+* updating deployment files ([878f634](https://github.com/VenusProtocol/oracle/commit/878f6348e26dad7ffaeeef999ee6f5c05393525f))
+* updating deployment files ([d3bac16](https://github.com/VenusProtocol/oracle/commit/d3bac16605a2d9f2c88c6d7d9b5bafe8781de8f9))
+* updating deployment files ([0034b52](https://github.com/VenusProtocol/oracle/commit/0034b520b107aa6d0bcd02d2d6ece40983e525e9))
+* updating deployment files ([6188f2c](https://github.com/VenusProtocol/oracle/commit/6188f2c9a9f3e16aa6a071dd665f0d40dc647c24))
+* updating deployment files ([7fdbfcd](https://github.com/VenusProtocol/oracle/commit/7fdbfcd6b6281c1a59b753c252ec58512cce026d))
+* updating deployment files ([5704a69](https://github.com/VenusProtocol/oracle/commit/5704a69168541339488c675102910a23862d57fa))
+* updating deployment files ([918f708](https://github.com/VenusProtocol/oracle/commit/918f708264b6f799ec21968f3a614581186868d3))
+* updating deployment files ([c165d72](https://github.com/VenusProtocol/oracle/commit/c165d72d91a1f310615ec8cd8c92f500934209e6))
+* updating deployment files ([05a83f3](https://github.com/VenusProtocol/oracle/commit/05a83f3bfecd41d30325e3c36faf04d75d340f47))
+
+
+### Bug Fixes
+
+* added deployments ([94f5843](https://github.com/VenusProtocol/oracle/commit/94f5843f5c2e1791c604a7b7cc1be82435689c36))
+* address and redeploy sUSDe_ERC4626Oracle ([fdd16e0](https://github.com/VenusProtocol/oracle/commit/fdd16e018915ef492d086087620a6e4efc7f736d))
+* adjust PT price for underlying decimals ([f2a439c](https://github.com/VenusProtocol/oracle/commit/f2a439cd8876b8bfc9fc769f110e9003cf65e25a))
+* PR comments ([d671512](https://github.com/VenusProtocol/oracle/commit/d67151210f0286255d1461867fda2f7f39ff6f39))
+* prettier issues ([ca3811c](https://github.com/VenusProtocol/oracle/commit/ca3811c4f56aefb49b0c649f95bd177606d25179))
+* replace old pt oracle with new address ([299d4fd](https://github.com/VenusProtocol/oracle/commit/299d4fd460fe74727e2246801542f7b30ef15de5))
+* revert config ([03148d4](https://github.com/VenusProtocol/oracle/commit/03148d43a1605af0ec7e40af10a4f745e6bb2b70))
+
+## [2.8.0-dev.6](https://github.com/VenusProtocol/oracle/compare/v2.8.0-dev.5...v2.8.0-dev.6) (2025-01-30)
+
+
+### Features
+
+* add sUSDS oracle deployment ([e48654d](https://github.com/VenusProtocol/oracle/commit/e48654d16910f78d1a6aea55ac0b357b9f095fd4))
+* deploy sUSDS oracle on ethereum ([3c249fb](https://github.com/VenusProtocol/oracle/commit/3c249fbe7bcf50f03e4e2cb2b351d35bee62838e))
+* updating deployment files ([878f634](https://github.com/VenusProtocol/oracle/commit/878f6348e26dad7ffaeeef999ee6f5c05393525f))
+* updating deployment files ([0034b52](https://github.com/VenusProtocol/oracle/commit/0034b520b107aa6d0bcd02d2d6ece40983e525e9))
+
+## [2.8.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v2.8.0-dev.4...v2.8.0-dev.5) (2025-01-29)
+
+
+### Features
+
+* added deployment code ([0c39b1b](https://github.com/VenusProtocol/oracle/commit/0c39b1ba9d74e6ec97c3e9ba5d22e4c1e2e155d4))
+* updating deployment files ([d3bac16](https://github.com/VenusProtocol/oracle/commit/d3bac16605a2d9f2c88c6d7d9b5bafe8781de8f9))
+
+
+### Bug Fixes
+
+* added deployments ([94f5843](https://github.com/VenusProtocol/oracle/commit/94f5843f5c2e1791c604a7b7cc1be82435689c36))
+* revert config ([03148d4](https://github.com/VenusProtocol/oracle/commit/03148d43a1605af0ec7e40af10a4f745e6bb2b70))
+
+## [2.8.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.8.0-dev.3...v2.8.0-dev.4) (2025-01-22)
+
+
+### Features
+
+* add oracle deployment for wUSDM on zkSync ([a50a770](https://github.com/VenusProtocol/oracle/commit/a50a7703eaa6297bb8b1288ec1f3f52d90551ef9))
+* updating deployment files ([6188f2c](https://github.com/VenusProtocol/oracle/commit/6188f2c9a9f3e16aa6a071dd665f0d40dc647c24))
+
 ## [2.8.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.8.0-dev.2...v2.8.0-dev.3) (2024-12-30)
 
 
