@@ -11,8 +11,6 @@ const { expect } = chai;
 chai.use(smock.matchers);
 
 const { sfrxETH } = ADDRESSES.ethereum;
-const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
-const SNAPSHOT_UPDATE_INTERVAL = 10;
 
 describe("SFrxETHOracle unit tests", () => {
   let sfrxETHMock;
@@ -48,26 +46,21 @@ describe("SFrxETHOracle unit tests", () => {
     it("revert if SfrxEthFraxOracle address is 0", async () => {
       await expect(
         upgrades.deployProxy(SFrxETHOracleFactory, [fakeAccessControlManager.address], {
-          constructorArgs: [addr0000, sfrxETHMock.address, ANNUAL_GROWTH_RATE, SNAPSHOT_UPDATE_INTERVAL],
+          constructorArgs: [addr0000, sfrxETHMock.address],
         }),
       ).to.be.reverted;
     });
     it("revert if sfrxETH address is 0", async () => {
       await expect(
         upgrades.deployProxy(SFrxETHOracleFactory, [fakeAccessControlManager.address], {
-          constructorArgs: [sfrxEthFraxOracleMock.address, addr0000, ANNUAL_GROWTH_RATE, SNAPSHOT_UPDATE_INTERVAL],
+          constructorArgs: [sfrxEthFraxOracleMock.address, addr0000],
         }),
       ).to.be.reverted;
     });
     it("revert if price different is 0", async () => {
       await expect(
         upgrades.deployProxy(SFrxETHOracleFactory, [fakeAccessControlManager.address, 0], {
-          constructorArgs: [
-            sfrxEthFraxOracleMock.address,
-            sfrxETHMock.address,
-            ANNUAL_GROWTH_RATE,
-            SNAPSHOT_UPDATE_INTERVAL,
-          ],
+          constructorArgs: [sfrxEthFraxOracleMock.address, sfrxETHMock.address],
         }),
       ).to.be.reverted;
     });
@@ -76,12 +69,7 @@ describe("SFrxETHOracle unit tests", () => {
         SFrxETHOracleFactory,
         [fakeAccessControlManager.address, priceDifference],
         {
-          constructorArgs: [
-            sfrxEthFraxOracleMock.address,
-            sfrxETHMock.address,
-            ANNUAL_GROWTH_RATE,
-            SNAPSHOT_UPDATE_INTERVAL,
-          ],
+          constructorArgs: [sfrxEthFraxOracleMock.address, sfrxETHMock.address],
         },
       );
     });
