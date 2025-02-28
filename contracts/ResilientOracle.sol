@@ -6,6 +6,8 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./interfaces/VBep20Interface.sol";
 import "./interfaces/OracleInterface.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
+import "./interfaces/ICappedOracle.sol";
+import "./lib/Transient.sol";
 
 /**
  * @title ResilientOracle
@@ -81,6 +83,8 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     /// @notice Set this as asset address for Native token on each chain.This is the underlying for vBNB (on bsc)
     /// and can serve as any underlying asset of a market that supports native tokens
     address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
+
+    bytes32 public constant CACHE_SLOT = keccak256(abi.encode("venus-protocol/oracle/ResilientOracle/cache"));
 
     /// @notice Bound validator contract address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
@@ -233,11 +237,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      */
     function updatePrice(address vToken) external override {
         address asset = _getUnderlyingAsset(vToken);
-        (address pivotOracle, bool pivotOracleEnabled) = getOracle(asset, OracleRole.PIVOT);
-        if (pivotOracle != address(0) && pivotOracleEnabled) {
-            //if pivot oracle is not TwapOracle it will revert so we need to catch the revert
-            try TwapInterface(pivotOracle).updateTwap(asset) {} catch {}
-        }
+        _updateAssetPrice(asset);
     }
 
     /**
@@ -246,11 +246,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @param asset asset address
      */
     function updateAssetPrice(address asset) external {
-        (address pivotOracle, bool pivotOracleEnabled) = getOracle(asset, OracleRole.PIVOT);
-        if (pivotOracle != address(0) && pivotOracleEnabled) {
-            //if pivot oracle is not TwapOracle it will revert so we need to catch the revert
-            try TwapInterface(pivotOracle).updateTwap(asset) {} catch {}
-        }
+        _updateAssetPrice(asset);
     }
 
     /**
@@ -329,8 +325,40 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         enabled = tokenConfigs[asset].enableFlagsForOracles[uint256(role)];
     }
 
+    /**
+     * @notice Updates the pivot oracle price. Currently using TWAP
+     * @dev Cache the asset price and return if already cached
+     * @param asset asset address
+     */
+    function _updateAssetPrice(address asset) internal {
+        if (Transient.readCachedPrice(CACHE_SLOT, asset) != 0) {
+            return;
+        }
+
+        (address mainOracle, bool mainOracleEnabled) = getOracle(asset, OracleRole.MAIN);
+        if (mainOracle != address(0) && mainOracleEnabled) {
+            //if main oracle is not CorrelatedTokenOracle it will revert so we need to catch the revert
+            try ICappedOracle(mainOracle).updateSnapshot() {} catch {}
+        }
+
+        (address pivotOracle, bool pivotOracleEnabled) = getOracle(asset, OracleRole.PIVOT);
+        if (pivotOracle != address(0) && pivotOracleEnabled) {
+            //if pivot oracle is not TwapOracle it will revert so we need to catch the revert
+            try TwapInterface(pivotOracle).updateTwap(asset) {} catch {}
+        }
+
+        uint256 price = _getPrice(asset);
+        Transient.cachePrice(CACHE_SLOT, asset, price);
+    }
+
     function _getPrice(address asset) internal view returns (uint256) {
         uint256 pivotPrice = INVALID_PRICE;
+        uint256 price;
+
+        price = Transient.readCachedPrice(CACHE_SLOT, asset);
+        if (price != 0) {
+            return price;
+        }
 
         // Get pivot oracle price, Invalid price if not available or error
         (address pivotOracle, bool pivotOracleEnabled) = getOracle(asset, OracleRole.PIVOT);

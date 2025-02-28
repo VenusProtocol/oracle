@@ -8,7 +8,6 @@ import "@typechain/hardhat";
 import * as dotenv from "dotenv";
 import "hardhat-dependency-compiler";
 import "hardhat-deploy";
-import "hardhat-gas-reporter";
 import { HardhatUserConfig, extendConfig } from "hardhat/config";
 import { HardhatConfig } from "hardhat/types";
 import "solidity-coverage";

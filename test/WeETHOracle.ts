@@ -12,6 +12,8 @@ chai.use(smock.matchers);
 
 const { weETH, eETH } = ADDRESSES.ethereum;
 const ETH_USD_PRICE = parseUnits("3100", 18); // 3100 USD for 1 ETH
+const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
+const SNAPSHOT_UPDATE_INTERVAL = 10;
 
 describe("WeETHOracle unit tests", () => {
   let weETHMock;
@@ -35,37 +37,70 @@ describe("WeETHOracle unit tests", () => {
     const MockLiquidityPoolFactory = await ethers.getContractFactory("MockEtherFiLiquidityPool");
     mockLiquidityPool = await MockLiquidityPoolFactory.deploy();
     await mockLiquidityPool.setAmountPerShare(parseUnits("1.032226887617316822", 18));
-
     WeETHOracleFactory = await ethers.getContractFactory("WeETHOracle");
   });
 
   describe("deployment", () => {
     it("revert if liquidity pool address is 0", async () => {
       await expect(
-        WeETHOracleFactory.deploy(addr0000, weETHMock.address, eETHMock.address, resilientOracleMock.address),
+        WeETHOracleFactory.deploy(
+          addr0000,
+          weETHMock.address,
+          eETHMock.address,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+        ),
       ).to.be.reverted;
     });
 
     it("revert if weETH address is 0", async () => {
       await expect(
-        WeETHOracleFactory.deploy(mockLiquidityPool.address, addr0000, eETHMock.address, resilientOracleMock.address),
+        WeETHOracleFactory.deploy(
+          mockLiquidityPool.address,
+          addr0000,
+          eETHMock.address,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+        ),
       ).to.be.reverted;
     });
+
     it("revert if eETH address is 0", async () => {
       await expect(
-        WeETHOracleFactory.deploy(mockLiquidityPool.address, weETHMock.address, addr0000, resilientOracleMock.address),
+        WeETHOracleFactory.deploy(
+          mockLiquidityPool.address,
+          weETHMock.address,
+          addr0000,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+        ),
       ).to.be.reverted;
     });
+
     it("revert if resilient oracle address is 0", async () => {
-      await expect(WeETHOracleFactory.deploy(mockLiquidityPool.address, weETHMock.address, eETHMock.address, addr0000))
-        .to.be.reverted;
+      await expect(
+        WeETHOracleFactory.deploy(
+          mockLiquidityPool.address,
+          weETHMock.address,
+          eETHMock.address,
+          addr0000,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+        ),
+      ).to.be.reverted;
     });
+
     it("should deploy contract", async () => {
       WeETHOracle = await WeETHOracleFactory.deploy(
         mockLiquidityPool.address,
         weETHMock.address,
         eETHMock.address,
         resilientOracleMock.address,
+        ANNUAL_GROWTH_RATE,
+        SNAPSHOT_UPDATE_INTERVAL,
       );
     });
   });
@@ -77,7 +112,6 @@ describe("WeETHOracle unit tests", () => {
 
     it("should get correct price of weETH", async () => {
       const price = await WeETHOracle.getPrice(weETHMock.address);
-      // 1.032226887617316822 (weETH to eETH exchange rate) * 3100 (eETH price) = 3199.9033516136821482
       expect(price).to.equal(parseUnits("3199.9033516136821482", 18));
     });
   });
