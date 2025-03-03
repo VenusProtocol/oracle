@@ -6,10 +6,6 @@ import "../../interfaces/OracleInterface.sol";
 contract MockResilientOracle is OracleInterface {
     mapping(address => uint256) public prices;
 
-    constructor() {
-        //
-    }
-
     function getUnderlyingPrice(address vToken) external view returns (uint256) {
         return prices[vToken];
     }
