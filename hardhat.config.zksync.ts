@@ -136,10 +136,6 @@ const config: HardhatUserConfig = {
       live: true,
     },
   },
-  gasReporter: {
-    enabled: process.env.REPORT_GAS !== undefined,
-    currency: "USD",
-  },
   // Hardhat deploy
   namedAccounts: {
     deployer: 0,
