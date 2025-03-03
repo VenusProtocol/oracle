@@ -130,12 +130,11 @@ abstract contract CorrelatedTokenOracle {
 
         uint256 maxAllowedExchangeRate = _getMaxAllowedExchangeRate();
 
-   uint256 finalExchangeRate = (exchangeRate > maxAllowedExchangeRate && maxAllowedExchangeRate != 0)
-        ? maxAllowedExchangeRate
-        : exchangeRate;
+        uint256 finalExchangeRate = (exchangeRate > maxAllowedExchangeRate && maxAllowedExchangeRate != 0)
+            ? maxAllowedExchangeRate
+            : exchangeRate;
 
-    return calculatePrice(asset, finalExchangeRate);
-        }
+        return calculatePrice(asset, finalExchangeRate);
     }
 
     /**
