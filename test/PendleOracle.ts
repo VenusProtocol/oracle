@@ -31,7 +31,7 @@ describe("PendleOracle unit tests", () => {
   let timestamp;
 
   before(async () => {
-    timestamp = await ethers.provider.getBlock("latest");
+    ({ timestamp } = await ethers.provider.getBlock("latest"));
 
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();

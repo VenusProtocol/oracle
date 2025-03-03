@@ -19,7 +19,7 @@ describe("CorrelatedTokenOracle", () => {
   const exchangeRate = ethers.utils.parseUnits("1", 18);
 
   beforeEach(async () => {
-    timestamp = await ethers.provider.getBlock("latest");
+    ({ timestamp } = await ethers.provider.getBlock("latest"));
 
     // Deploy mock tokens (ERC20) for correlated and underlying tokens
     const MockERC20 = await ethers.getContractFactory("MockERC20");
