@@ -3,6 +3,7 @@ import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
+import { isMainnet } from "../helpers/deploymentUtils";
 
 enum PendleRateKind {
   PT_TO_ASSET = 0,
@@ -53,6 +54,34 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     },
     skipIfAlreadyDeployed: true,
   });
+
+  if (isMainnet(network)) {
+    const referenceOracle = await ethers.getContract("ReferenceOracle");
+    const { devMultisig } = addresses;
+    await deploy("PendleOracle-PT-SolvBTC.BBN-27MAR2025_Reference_PtToAsset", {
+      contract: "PendleOracle",
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [
+        addresses["PT-SolvBTC.BBN-27MAR2025_Market"] || "0x0000000000000000000000000000000000000001",
+        ptOracleAddress,
+        PendleRateKind.PT_TO_ASSET,
+        addresses["PT-SolvBTC.BBN-27MAR2025"],
+        addresses.BTCB,
+        referenceOracle.address,
+        900,
+      ],
+      proxy: {
+        owner: devMultisig,
+        proxyContract: "OptimizedTransparentUpgradeableProxy",
+        viaAdminContract: {
+          name: "DevProxyAdmin",
+        },
+      },
+      skipIfAlreadyDeployed: true,
+    });
+  }
 };
 
 export default func;

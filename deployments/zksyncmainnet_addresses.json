@@ -14,6 +14,7 @@
     "RedStoneOracle_Proxy": "0xFa1e65e714CDfefDC9729130496AB5b5f3708fdA",
     "ResilientOracle": "0xDe564a4C887d5ad315a19a96DC81991c98b12182",
     "ResilientOracle_Implementation": "0x88DcFE18AcE5a75659177c9F980C2771D9736e66",
-    "ResilientOracle_Proxy": "0xDe564a4C887d5ad315a19a96DC81991c98b12182"
+    "ResilientOracle_Proxy": "0xDe564a4C887d5ad315a19a96DC81991c98b12182",
+    "wUSDM_ERC4626Oracle": "0x7Fb95a0B7b933A9F3Fe3Ead4b69B0267BD8Fe55F"
   }
 }

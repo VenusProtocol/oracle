@@ -100,6 +100,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     sidRegistryAddress: "0x08CEd32a7f3eeC915Ba84415e9C07a7286977956",
     acm: bscmainnetGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: bscmainnetGovernanceDeployments.contracts.NormalTimelock.address,
+    devMultisig: "0x16A623C5a73E335a089C2B5AcDe167C4d749FC05",
     PTOracle: "0x9a9fa8338dd5e5b2188006f1cd2ef26d921650c2",
     BNBxStakeManager: "0x3b961e83400D51e6E1AF5c450d3C7d7b80588d28",
     BNBx: "0x1bdd3cf7f79cfb8edbb955f20ad99211551ba275",
@@ -142,6 +143,14 @@ export const ADDRESSES: PreconfiguredAddresses = {
     USDe: "0x8bAe3E12870a002A0D4b6Eb0F0CBf91b29d9806F",
     PTsUSDe_27MAR2025: "0x3EBa2Aa29eC2498c2124523634324d4ce89c8579",
     sUSDe: "0xA3A3e5ecEA56940a4Ae32d0927bfd8821DdA848A",
+    USDS: "0xfB287f9A45E54df6AADad95C6F37b1471e744762",
+    sUSDS: "0xE9E34fd81982438E96Bd945f5810F910e35F0165",
+    yvUSDC_1: "0x9fE6052B9534F134171F567dAC9c9B22556c1DDb",
+    yvUSDT_1: "0x5cBA66C5415E56CC0Ace55148ffC63f61327478B",
+    yvUSDS_1: "0xC6A0e98B8D9E9F1160E9cE1f2E0172F41FB06BC2",
+    yvWETH_1: "0x99AD7ecf9b1C5aC2A11BB00D7D8a7C54fCd41517",
+    USDC: "0x772d68929655ce7234C8C94256526ddA66Ef641E",
+    USDT: "0x8d412FD0bc5d826615065B931171Eed10F5AF266",
   },
   ethereum: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -150,7 +159,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     wstETHAddress: "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
     VAIAddress: ethers.constants.AddressZero,
     acm: ethereumGovernanceDeployments.contracts.AccessControlManager.address,
-    timelock: "0x285960C5B22fD66A736C7136967A3eB15e93CC67", // Ethereum Multisig
+    timelock: ethereumGovernanceDeployments.contracts.NormalTimelock.address,
+    devMultisig: "0x0033c829188Ea77143e228104352A7ed8aBb5182",
     sFRAX: "0xA663B02CF0a4b149d2aD41910CB81e23e1c41c32",
     sfrxETH: "0xac3e018457b222d93114458476f3e3416abbe38f",
     FRAX: "0x853d955aCEf822Db058eb8505911ED77F175b99e",
@@ -178,6 +188,14 @@ export const ADDRESSES: PreconfiguredAddresses = {
     PTsUSDe_27MAR2025_Market: "0xcDd26Eb5EB2Ce0f203a84553853667aE69Ca29Ce",
     PTsUSDe_27MAR2025: "0xe00bd3df25fb187d6abbb620b3dfd19839947b81",
     sUSDe: "0x9D39A5DE30e57443BfF2A8307A4256c8797A3497",
+    USDS: "0xdC035D45d973E3EC169d2276DDab16f1e407384F",
+    sUSDS: "0xa3931d71877C0E7a3148CB7Eb4463524FEc27fbD",
+    yvUSDC_1: "0xBe53A109B494E5c9f97b9Cd39Fe969BE68BF6204",
+    yvUSDT_1: "0x310B7Ea7475A0B449Cfd73bE81522F1B88eFAFaa",
+    yvUSDS_1: "0x182863131F9a4630fF9E27830d945B1413e347E8",
+    yvWETH_1: "0xc56413869c6CDf96496f2b1eF801fEDBdFA7dDB0",
+    USDC: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+    USDT: "0xdac17f958d2ee523a2206206994597c13d831ec7",
   },
   opbnbtestnet: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -213,6 +231,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: arbitrumoneGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0x14e0E151b33f9802b3e75b621c1457afc44DcAA0", // Arbitrum One Multisig
+    devMultisig: "0xdE493Eb75d2c5834b17134620399024D8Ac87a02",
     wstETH: "0x5979D7b546E38E414F7E9822514be443A4800529",
     weETH: "0x35751007a407ca6FEFfE80b3cB397736D2cf4dbe",
     WETH: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
@@ -223,6 +242,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: zksyncsepoliaGovernanceDeployments.contracts.AccessControlManager.address,
     timelock: "0xa2f83de95E9F28eD443132C331B6a9C9B7a9F866", // Zksync sepolia Multisig
+    USDM: "0x5d5334dBa9C727eD81b549b6106aE37Ea137076D",
+    wUSDM: "0x0b3C8fB109f144f6296bF4Ac52F191181bEa003a",
   },
   zksyncmainnet: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -230,6 +251,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: "0x526159A92A82afE5327d37Ef446b68FD9a5cA914", // To-do: use node modules
     timelock: "0x751Aa759cfBB6CE71A43b48e40e1cCcFC66Ba4aa", // Zksync mainnet Multisig
+    devMultisig: "0x9049076b49B1f6c330200A8A816E7aDcc215Ec84",
+    USDM: "0x7715c206A14Ac93Cb1A6c0316A6E5f8aD7c9Dc31",
+    wUSDM: "0xA900cbE7739c96D2B153a273953620A701d5442b",
   },
   opsepolia: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -250,6 +274,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
+    WETH: "0x4200000000000000000000000000000000000006",
+    wsuperOETHb: "0x02B1136d9E223333E0083aeAB76bC441f230a033",
     timelock: "0xdf3b635d2b535f906BB02abb22AED71346E36a00", // Base sepolia Multisig
   },
   basemainnet: {
@@ -257,7 +283,24 @@ export const ADDRESSES: PreconfiguredAddresses = {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
+    WETH: "0x4200000000000000000000000000000000000006",
+    wsuperOETHb: "0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6",
     timelock: "0x1803Cf1D3495b43cC628aa1d8638A981F8CD341C", // Base mainnet Multisig
+  },
+  unichainsepolia: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: "0x854C064EA6b503A97980F481FA3B7279012fdeDd",
+    timelock: "0x9831D3A641E8c7F082EEA75b8249c99be9D09a34", // Unichain sepolia Multisig
+  },
+  unichainmainnet: {
+    acm: "0x1f12014c497a9d905155eB9BfDD9FaC6885e61d0",
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    WETH: "0x4200000000000000000000000000000000000006",
+    timelock: "0x1803Cf1D3495b43cC628aa1d8638A981F8CD341C", // Unichain mainnet guardian
   },
 };
 
@@ -403,6 +446,16 @@ export const redstoneFeed: Config = {
   },
   basemainnet: {
     XVS: "0x5ED849a45B4608952161f45483F4B95BCEa7f8f0",
+  },
+  unichainsepolia: {
+    USDC: "0x197225B3B017eb9b72Ac356D6B3c267d0c04c57c",
+    USDT: "0x3fd49f2146FE0e10c4AE7E3fE04b3d5126385Ac4",
+    WETH: "0x4BAD96DD1C7D541270a0C92e1D4e5f12EEEA7a57",
+  },
+  unichainmainnet: {
+    USDC: "0xD15862FC3D5407A03B696548b6902D6464A69b8c",
+    WETH: "0xe8D9FbC10e00ecc9f0694617075fDAF657a76FB2",
+    XVS: "0xb4fe9028A4D4D8B3d00e52341F2BB0798860532C",
   },
 };
 
@@ -1291,6 +1344,50 @@ export const assets: Assets = {
     {
       token: "XVS",
       address: "0xebB7873213c8d1d9913D8eA39Aa12d74cB107995",
+      oracle: "redstone",
+    },
+  ],
+  unichainsepolia: [
+    {
+      token: "cbBTC",
+      address: "0x2979ef1676bb28192ac304173C717D7322b3b586",
+      oracle: "redstone",
+    },
+    {
+      token: "WETH",
+      address: "0x4200000000000000000000000000000000000006",
+      oracle: "redstone",
+    },
+    {
+      token: "USDC",
+      address: "0xf16d4774893eB578130a645d5c69E9c4d183F3A5",
+      oracle: "redstone",
+    },
+    {
+      token: "USDT",
+      address: "0x7bc1b67fde923fd3667Fde59684c6c354C8EbFdA",
+      oracle: "redstone",
+    },
+    {
+      token: "XVS",
+      address: "0xC0e51E865bc9Fed0a32Cc0B2A65449567Bc5c741",
+      oracle: "redstone",
+    },
+  ],
+  unichainmainnet: [
+    {
+      token: "USDC",
+      address: "0x078D782b760474a361dDA0AF3839290b0EF57AD6",
+      oracle: "redstone",
+    },
+    {
+      token: "WETH",
+      address: "0x4200000000000000000000000000000000000006",
+      oracle: "redstone",
+    },
+    {
+      token: "XVS",
+      address: "0x81908BBaad3f6fC74093540Ab2E9B749BB62aA0d",
       oracle: "redstone",
     },
   ],
