@@ -337,7 +337,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
 
         (address mainOracle, bool mainOracleEnabled) = getOracle(asset, OracleRole.MAIN);
         if (mainOracle != address(0) && mainOracleEnabled) {
-            //if main oracle is not CorrelatedTokenOracle it will revert so we need to catch the revert
+            // if main oracle is not CorrelatedTokenOracle it will revert so we need to catch the revert
             try ICappedOracle(mainOracle).updateSnapshot() {} catch {}
         }
 
