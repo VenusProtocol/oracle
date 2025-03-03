@@ -15,6 +15,7 @@ const FRAX_USD_PRICE = parseUnits("0.9979", 18); // 0.99 USD for 1 FRAX
 const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
 const FRAX_MAX_USD_PRICE = parseUnits("1", 18);
 const SNAPSHOT_UPDATE_INTERVAL = 10;
+const exchangeRate = parseUnits("1.019194969966192602", 18);
 
 describe("SFraxOracle unit tests", () => {
   let sFraxMock;
@@ -22,13 +23,16 @@ describe("SFraxOracle unit tests", () => {
   let SFraxOracleFactory;
   let SFraxOracle;
   let fraxMock;
+  let timestamp;
   before(async () => {
+    timestamp = await ethers.provider.getBlock("latest");
+
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
     resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
 
     sFraxMock = await smock.fake<ISFrax>("ISFrax", { address: sFRAX });
-    sFraxMock.convertToAssets.returns(parseUnits("1.019194969966192602", 18));
+    sFraxMock.convertToAssets.returns(exchangeRate);
     sFraxMock.decimals.returns(18);
 
     fraxMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: FRAX });
@@ -46,6 +50,8 @@ describe("SFraxOracle unit tests", () => {
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          exchangeRate,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -58,6 +64,8 @@ describe("SFraxOracle unit tests", () => {
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          exchangeRate,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -69,6 +77,8 @@ describe("SFraxOracle unit tests", () => {
         resilientOracleMock.address,
         ANNUAL_GROWTH_RATE,
         SNAPSHOT_UPDATE_INTERVAL,
+        exchangeRate,
+        timestamp,
       );
     });
   });

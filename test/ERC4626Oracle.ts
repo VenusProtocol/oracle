@@ -14,6 +14,7 @@ const { FRAX, sFRAX } = ADDRESSES.ethereum;
 const FRAX_USD_PRICE = parseUnits("0.9979", 18); // 0.99 USD for 1 FRAX
 const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
 const SNAPSHOT_UPDATE_INTERVAL = 10;
+const exchangeRate = parseUnits("1.019194969966192602", 18);
 
 describe("ERC4626Oracle unit tests", () => {
   let sFraxMock;
@@ -21,13 +22,16 @@ describe("ERC4626Oracle unit tests", () => {
   let ERC4626OracleFactory;
   let ERC4626Oracle;
   let fraxMock;
+  let timestamp;
   before(async () => {
+    timestamp = await ethers.provider.getBlock("latest");
+
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
     resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
 
     sFraxMock = await smock.fake<IERC4626>("IERC4626", { address: sFRAX });
-    sFraxMock.convertToAssets.returns(parseUnits("1.019194969966192602", 18));
+    sFraxMock.convertToAssets.returns(exchangeRate);
     sFraxMock.decimals.returns(18);
 
     fraxMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: FRAX });
@@ -45,6 +49,8 @@ describe("ERC4626Oracle unit tests", () => {
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          exchangeRate,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -56,6 +62,8 @@ describe("ERC4626Oracle unit tests", () => {
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          exchangeRate,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -66,6 +74,8 @@ describe("ERC4626Oracle unit tests", () => {
         resilientOracleMock.address,
         ANNUAL_GROWTH_RATE,
         SNAPSHOT_UPDATE_INTERVAL,
+        exchangeRate,
+        timestamp,
       );
     });
   });
@@ -82,6 +92,21 @@ describe("ERC4626Oracle unit tests", () => {
       resilientOracleMock.getPrice.returns(FRAX_USD_PRICE);
       const price = await ERC4626Oracle.getPrice(sFraxMock.address);
       expect(price).to.equal(parseUnits("1.017054660529263597", 18));
+    });
+
+    it("cache exchange rate in transient storage", async () => {
+      const MockCallPrice = await ethers.getContractFactory("MockCallPrice");
+      const mockCallPrice = await MockCallPrice.deploy();
+
+      let prev = parseUnits("1.019194969966192602", 18);
+      sFraxMock.convertToAssets.returns(() => {
+        prev = prev.add(parseUnits("1", 18));
+        return prev;
+      });
+
+      const prices = await mockCallPrice.callStatic.getMultiPrice(ERC4626Oracle.address, sFraxMock.address);
+      expect(prices[0]).to.equal(parseUnits("1.017054663754322768", 18));
+      expect(prices[1]).to.equal(parseUnits("1.017054663754322768", 18));
     });
   });
 });

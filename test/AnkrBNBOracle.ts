@@ -21,7 +21,10 @@ describe("AnkrBNBOracle unit tests", () => {
   let resilientOracleMock;
   let ankrBNBOracle;
   let ankrBNBOracleFactory;
+  let timestamp;
   before(async () => {
+    timestamp = await ethers.provider.getBlock("latest");
+
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
     resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
@@ -42,13 +45,22 @@ describe("AnkrBNBOracle unit tests", () => {
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          BNB_AMOUNT_FOR_ONE_ANKRBNB,
+          timestamp,
         ),
       ).to.be.reverted;
     });
 
     it("revert if ResilientOracle address is 0", async () => {
       await expect(
-        ankrBNBOracleFactory.deploy(ankrBNBMock.address, addr0000, ANNUAL_GROWTH_RATE, SNAPSHOT_UPDATE_INTERVAL),
+        ankrBNBOracleFactory.deploy(
+          ankrBNBMock.address,
+          addr0000,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+          BNB_AMOUNT_FOR_ONE_ANKRBNB,
+          timestamp,
+        ),
       ).to.be.reverted;
     });
 
@@ -58,6 +70,8 @@ describe("AnkrBNBOracle unit tests", () => {
         resilientOracleMock.address,
         ANNUAL_GROWTH_RATE,
         SNAPSHOT_UPDATE_INTERVAL,
+        BNB_AMOUNT_FOR_ONE_ANKRBNB,
+        timestamp,
       );
     });
   });
@@ -69,6 +83,8 @@ describe("AnkrBNBOracle unit tests", () => {
         resilientOracleMock.address,
         ANNUAL_GROWTH_RATE,
         SNAPSHOT_UPDATE_INTERVAL,
+        BNB_AMOUNT_FOR_ONE_ANKRBNB,
+        timestamp,
       );
     });
     it("revert if ankrBNB address is wrong", async () => {

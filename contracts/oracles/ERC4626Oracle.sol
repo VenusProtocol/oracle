@@ -18,8 +18,20 @@ contract ERC4626Oracle is CorrelatedTokenOracle {
         address underlyingToken,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 snapshotInterval
-    ) CorrelatedTokenOracle(correlatedToken, underlyingToken, resilientOracle, annualGrowthRate, snapshotInterval) {}
+        uint256 snapshotInterval,
+        uint256 initialSnapshotExchangeRate,
+        uint256 initialSnapshotTimestamp
+    )
+        CorrelatedTokenOracle(
+            correlatedToken,
+            underlyingToken,
+            resilientOracle,
+            annualGrowthRate,
+            snapshotInterval,
+            initialSnapshotExchangeRate,
+            initialSnapshotTimestamp
+        )
+    {}
 
     /**
      * @notice Fetches the amount of underlying token for 1 correlated token

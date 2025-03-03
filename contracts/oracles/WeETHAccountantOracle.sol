@@ -23,8 +23,20 @@ contract WeETHAccountantOracle is CorrelatedTokenOracle {
         address weth,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 snapshotInterval
-    ) CorrelatedTokenOracle(weethLRT, weth, resilientOracle, annualGrowthRate, snapshotInterval) {
+        uint256 snapshotInterval,
+        uint256 initialSnapshotExchangeRate,
+        uint256 initialSnapshotTimestamp
+    )
+        CorrelatedTokenOracle(
+            weethLRT,
+            weth,
+            resilientOracle,
+            annualGrowthRate,
+            snapshotInterval,
+            initialSnapshotExchangeRate,
+            initialSnapshotTimestamp
+        )
+    {
         ensureNonzeroAddress(accountant);
         ACCOUNTANT = IAccountant(accountant);
     }

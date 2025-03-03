@@ -24,7 +24,10 @@ describe("WstETHOracleV2 unit tests", () => {
   let wstETHOracle;
   let WsETHOracleFactory;
   let wstETHMock;
+  let timestamp;
   before(async () => {
+    timestamp = await ethers.provider.getBlock("latest");
+
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
     resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
@@ -49,6 +52,8 @@ describe("WstETHOracleV2 unit tests", () => {
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          STETH_AMOUNT_FOR_ONE_WSTETH,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -61,13 +66,23 @@ describe("WstETHOracleV2 unit tests", () => {
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          STETH_AMOUNT_FOR_ONE_WSTETH,
+          timestamp,
         ),
       ).to.be.reverted;
     });
 
     it("revert if ResilientOracle address is 0", async () => {
       await expect(
-        WsETHOracleFactory.deploy(WSTETH, stETHMock.address, addr0000, ANNUAL_GROWTH_RATE, SNAPSHOT_UPDATE_INTERVAL),
+        WsETHOracleFactory.deploy(
+          WSTETH,
+          stETHMock.address,
+          addr0000,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+          STETH_AMOUNT_FOR_ONE_WSTETH,
+          timestamp,
+        ),
       ).to.be.reverted;
     });
 
@@ -78,6 +93,8 @@ describe("WstETHOracleV2 unit tests", () => {
         resilientOracleMock.address,
         ANNUAL_GROWTH_RATE,
         SNAPSHOT_UPDATE_INTERVAL,
+        STETH_AMOUNT_FOR_ONE_WSTETH,
+        timestamp,
       );
     });
   });

@@ -28,8 +28,11 @@ describe("PendleOracle unit tests", () => {
   let resilientOracleMock: FakeContract<ResilientOracleInterface>;
   let pendleOracleFactory: PendleOracle__factory;
   let ptOracleMock: FakeContract<IPendlePtOracle>;
+  let timestamp;
 
   before(async () => {
+    timestamp = await ethers.provider.getBlock("latest");
+
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
     resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
@@ -62,6 +65,8 @@ describe("PendleOracle unit tests", () => {
           DURATION,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          PT_TO_ASSET_RATE,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -77,6 +82,8 @@ describe("PendleOracle unit tests", () => {
           DURATION,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          PT_TO_ASSET_RATE,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -92,6 +99,8 @@ describe("PendleOracle unit tests", () => {
           DURATION,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          PT_TO_ASSET_RATE,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -107,6 +116,8 @@ describe("PendleOracle unit tests", () => {
           DURATION,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          PT_TO_ASSET_RATE,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -122,6 +133,8 @@ describe("PendleOracle unit tests", () => {
           DURATION,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          PT_TO_ASSET_RATE,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -137,6 +150,8 @@ describe("PendleOracle unit tests", () => {
           0,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          PT_TO_ASSET_RATE,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -155,6 +170,8 @@ describe("PendleOracle unit tests", () => {
           DURATION,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          PT_TO_ASSET_RATE,
+          timestamp,
         ),
       ).to.be.reverted;
 
@@ -174,6 +191,8 @@ describe("PendleOracle unit tests", () => {
         DURATION,
         ANNUAL_GROWTH_RATE,
         SNAPSHOT_UPDATE_INTERVAL,
+        kind === PendleRateKind.PT_TO_ASSET ? PT_TO_ASSET_RATE : PT_TO_SY_RATE,
+        timestamp,
       );
 
     it("revert if getPrice argument is not the configured PT token", async () => {

@@ -29,8 +29,20 @@ contract StkBNBOracle is CorrelatedTokenOracle {
         address stkBNB,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 snapshotInterval
-    ) CorrelatedTokenOracle(stkBNB, NATIVE_TOKEN_ADDR, resilientOracle, annualGrowthRate, snapshotInterval) {
+        uint256 snapshotInterval,
+        uint256 initialSnapshotExchangeRate,
+        uint256 initialSnapshotTimestamp
+    )
+        CorrelatedTokenOracle(
+            stkBNB,
+            NATIVE_TOKEN_ADDR,
+            resilientOracle,
+            annualGrowthRate,
+            snapshotInterval,
+            initialSnapshotExchangeRate,
+            initialSnapshotTimestamp
+        )
+    {
         ensureNonzeroAddress(stakePool);
         STAKE_POOL = IPStakePool(stakePool);
     }

@@ -14,6 +14,7 @@ const { weETH, eETH } = ADDRESSES.ethereum;
 const ETH_USD_PRICE = parseUnits("3100", 18); // 3100 USD for 1 ETH
 const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
 const SNAPSHOT_UPDATE_INTERVAL = 10;
+const exchangeRate = parseUnits("1.032226887617316822", 18);
 
 describe("WeETHOracle unit tests", () => {
   let weETHMock;
@@ -22,7 +23,10 @@ describe("WeETHOracle unit tests", () => {
   let WeETHOracle;
   let eETHMock;
   let mockLiquidityPool;
+  let timestamp;
   before(async () => {
+    timestamp = await ethers.provider.getBlock("latest");
+
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
     resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
@@ -36,7 +40,7 @@ describe("WeETHOracle unit tests", () => {
 
     const MockLiquidityPoolFactory = await ethers.getContractFactory("MockEtherFiLiquidityPool");
     mockLiquidityPool = await MockLiquidityPoolFactory.deploy();
-    await mockLiquidityPool.setAmountPerShare(parseUnits("1.032226887617316822", 18));
+    await mockLiquidityPool.setAmountPerShare(exchangeRate);
     WeETHOracleFactory = await ethers.getContractFactory("WeETHOracle");
   });
 
@@ -50,6 +54,8 @@ describe("WeETHOracle unit tests", () => {
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          exchangeRate,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -63,6 +69,8 @@ describe("WeETHOracle unit tests", () => {
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          exchangeRate,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -76,6 +84,8 @@ describe("WeETHOracle unit tests", () => {
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          exchangeRate,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -89,6 +99,8 @@ describe("WeETHOracle unit tests", () => {
           addr0000,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          exchangeRate,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -101,6 +113,8 @@ describe("WeETHOracle unit tests", () => {
         resilientOracleMock.address,
         ANNUAL_GROWTH_RATE,
         SNAPSHOT_UPDATE_INTERVAL,
+        exchangeRate,
+        timestamp,
       );
     });
   });

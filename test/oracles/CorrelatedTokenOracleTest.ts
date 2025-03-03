@@ -10,13 +10,17 @@ describe("CorrelatedTokenOracle", () => {
   let underlyingToken;
   let resilientOracle;
   let correlatedTokenOracle;
+  let timestamp;
 
   // 5% annual growth rate
   const growthRate = ethers.utils.parseUnits("0.05", 18); // 5% annual growth
   // Snapshot update interval = 10 seconds
   const snapshotUpdateInterval = 10;
+  const exchangeRate = ethers.utils.parseUnits("1", 18);
 
   beforeEach(async () => {
+    timestamp = await ethers.provider.getBlock("latest");
+
     // Deploy mock tokens (ERC20) for correlated and underlying tokens
     const MockERC20 = await ethers.getContractFactory("MockERC20");
     correlatedToken = await MockERC20.deploy("Correlated Token", "C-TOKEN", 18);
@@ -34,9 +38,11 @@ describe("CorrelatedTokenOracle", () => {
       resilientOracle.address,
       growthRate,
       snapshotUpdateInterval,
+      exchangeRate,
+      timestamp,
     );
 
-    await correlatedTokenOracle.setMockUnderlyingAmount(ethers.utils.parseUnits("1", 18));
+    await correlatedTokenOracle.setMockUnderlyingAmount(exchangeRate);
 
     // Set mock price in resilient oracle for testing
     await resilientOracle.setPrice(underlyingToken.address, ethers.utils.parseUnits("10", 18)); // 10 USD

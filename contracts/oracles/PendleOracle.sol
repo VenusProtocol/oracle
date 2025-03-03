@@ -76,8 +76,20 @@ contract PendleOracle is CorrelatedTokenOracle {
         address resilientOracle,
         uint32 twapDuration,
         uint256 annualGrowthRate,
-        uint256 snapshotInterval
-    ) CorrelatedTokenOracle(ptToken, underlyingToken, resilientOracle, annualGrowthRate, snapshotInterval) {
+        uint256 snapshotInterval,
+        uint256 initialSnapshotExchangeRate,
+        uint256 initialSnapshotTimestamp
+    )
+        CorrelatedTokenOracle(
+            ptToken,
+            underlyingToken,
+            resilientOracle,
+            annualGrowthRate,
+            snapshotInterval,
+            initialSnapshotExchangeRate,
+            initialSnapshotTimestamp
+        )
+    {
         ensureNonzeroAddress(market);
         ensureNonzeroAddress(ptOracle);
         ensureNonzeroValue(twapDuration);

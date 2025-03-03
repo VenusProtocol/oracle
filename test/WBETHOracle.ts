@@ -24,7 +24,10 @@ describe("WBETHOracle unit tests", () => {
   let WBETHOracle;
   let WBETHOracleFactory;
   let wethMock;
+  let timestamp;
   before(async () => {
+    timestamp = await ethers.provider.getBlock("latest");
+
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
     resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
@@ -48,6 +51,8 @@ describe("WBETHOracle unit tests", () => {
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          ETH_FOR_ONE_WBETH,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -60,6 +65,8 @@ describe("WBETHOracle unit tests", () => {
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          ETH_FOR_ONE_WBETH,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -72,6 +79,8 @@ describe("WBETHOracle unit tests", () => {
           addr0000,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          ETH_FOR_ONE_WBETH,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -83,6 +92,8 @@ describe("WBETHOracle unit tests", () => {
         resilientOracleMock.address,
         ANNUAL_GROWTH_RATE,
         SNAPSHOT_UPDATE_INTERVAL,
+        ETH_FOR_ONE_WBETH,
+        timestamp,
       );
     });
   });

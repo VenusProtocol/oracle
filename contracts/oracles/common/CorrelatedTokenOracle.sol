@@ -56,7 +56,9 @@ abstract contract CorrelatedTokenOracle {
         address underlyingToken,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 snapshotInterval
+        uint256 snapshotInterval,
+        uint256 initialSnapshotExchangeRate,
+        uint256 initialSnapshotTimestamp
     ) {
         if ((annualGrowthRate == 0 && snapshotInterval > 0) || (annualGrowthRate > 0 && snapshotInterval == 0))
             revert InvalidGrowthRate();
@@ -70,6 +72,9 @@ abstract contract CorrelatedTokenOracle {
         RESILIENT_ORACLE = OracleInterface(resilientOracle);
         SNAPSHOT_INTERVAL = snapshotInterval;
         GROWTH_RATE_PER_SECOND = (annualGrowthRate) / (365 * 24 * 60 * 60);
+
+        snapshotExchangeRate = initialSnapshotExchangeRate;
+        snapshotTimestamp = initialSnapshotTimestamp;
     }
 
     /**

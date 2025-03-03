@@ -24,8 +24,20 @@ contract WeETHOracle is CorrelatedTokenOracle {
         address eETH,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 snapshotInterval
-    ) CorrelatedTokenOracle(weETH, eETH, resilientOracle, annualGrowthRate, snapshotInterval) {
+        uint256 snapshotInterval,
+        uint256 initialSnapshotExchangeRate,
+        uint256 initialSnapshotTimestamp
+    )
+        CorrelatedTokenOracle(
+            weETH,
+            eETH,
+            resilientOracle,
+            annualGrowthRate,
+            snapshotInterval,
+            initialSnapshotExchangeRate,
+            initialSnapshotTimestamp
+        )
+    {
         ensureNonzeroAddress(liquidityPool);
         LIQUIDITY_POOL = IEtherFiLiquidityPool(liquidityPool);
     }

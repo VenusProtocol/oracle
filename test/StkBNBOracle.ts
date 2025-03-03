@@ -18,6 +18,7 @@ const POOL_TOKEN_SUPPLY = parseUnits("16497.681117925810757967", 18);
 const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
 const StkBNB_USD_PRICE = BNB_USD_PRICE.mul(POOL_TOKEN_SUPPLY).div(EXP_SCALE);
 const SNAPSHOT_UPDATE_INTERVAL = 10;
+const INITIAL_EXCHANGE_RATE = parseUnits("1.040992158", 18);
 
 describe("StkBNBOracle unit tests", () => {
   let stkBNBStakePoolMock;
@@ -25,7 +26,10 @@ describe("StkBNBOracle unit tests", () => {
   let StkBNBOracle;
   let StkBNBOracleFactory;
   let stkBNBMock;
+  let timestamp;
   before(async () => {
+    timestamp = await ethers.provider.getBlock("latest");
+
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
     resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
@@ -51,6 +55,8 @@ describe("StkBNBOracle unit tests", () => {
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          INITIAL_EXCHANGE_RATE,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -63,6 +69,8 @@ describe("StkBNBOracle unit tests", () => {
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          INITIAL_EXCHANGE_RATE,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -75,6 +83,8 @@ describe("StkBNBOracle unit tests", () => {
           addr0000,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          INITIAL_EXCHANGE_RATE,
+          timestamp,
         ),
       ).to.be.reverted;
     });
@@ -86,6 +96,8 @@ describe("StkBNBOracle unit tests", () => {
         resilientOracleMock.address,
         ANNUAL_GROWTH_RATE,
         SNAPSHOT_UPDATE_INTERVAL,
+        INITIAL_EXCHANGE_RATE,
+        timestamp,
       );
     });
   });

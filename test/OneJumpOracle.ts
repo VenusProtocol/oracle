@@ -11,8 +11,8 @@ chai.use(smock.matchers);
 
 const LDO_ETH_PRICE = parseUnits("0.000945180903526149", 18); // 3.30 USD for 1 LDO
 const ETH_USD_PRICE = parseUnits("3496.14", 18); // 3,496.14 USD for 1 ETH
-const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
-const SNAPSHOT_UPDATE_INTERVAL = 10;
+const ANNUAL_GROWTH_RATE = parseUnits("0", 18); // 5% growth
+const SNAPSHOT_UPDATE_INTERVAL = 0;
 
 describe("OneJumpOracle unit tests", () => {
   let ldoMock;
@@ -49,6 +49,8 @@ describe("OneJumpOracle unit tests", () => {
           chainlinkOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          0,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -62,6 +64,8 @@ describe("OneJumpOracle unit tests", () => {
           chainlinkOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          0,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -75,6 +79,8 @@ describe("OneJumpOracle unit tests", () => {
           chainlinkOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          0,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -88,6 +94,8 @@ describe("OneJumpOracle unit tests", () => {
           addr0000,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
+          0,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -100,6 +108,8 @@ describe("OneJumpOracle unit tests", () => {
         chainlinkOracleMock.address,
         ANNUAL_GROWTH_RATE,
         SNAPSHOT_UPDATE_INTERVAL,
+        0,
+        0,
       );
     });
   });
