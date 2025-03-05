@@ -16,14 +16,12 @@ contract StkBNBOracle is CorrelatedTokenOracle {
     address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
     /// @notice Address of StakePool
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IPStakePool public immutable STAKE_POOL;
 
     /// @notice Thrown if the pool token supply is zero
     error PoolTokenSupplyIsZero();
 
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address stakePool,
         address stkBNB,

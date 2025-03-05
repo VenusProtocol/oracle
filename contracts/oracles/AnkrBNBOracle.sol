@@ -15,7 +15,6 @@ contract AnkrBNBOracle is CorrelatedTokenOracle {
     address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address ankrBNB,
         address resilientOracle,

@@ -13,7 +13,6 @@ contract ERC4626Oracle is CorrelatedTokenOracle {
     uint256 public immutable ONE_CORRELATED_TOKEN;
 
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address correlatedToken,
         address underlyingToken,

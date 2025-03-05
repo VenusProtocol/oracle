@@ -13,11 +13,9 @@ import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contract
  */
 contract WeETHOracle is CorrelatedTokenOracle {
     /// @notice Address of Liqiudity pool
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IEtherFiLiquidityPool public immutable LIQUIDITY_POOL;
 
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address liquidityPool,
         address weETH,

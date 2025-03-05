@@ -13,11 +13,9 @@ import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/I
  */
 contract OneJumpOracle is CorrelatedTokenOracle {
     /// @notice Address of the intermediate oracle
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     OracleInterface public immutable INTERMEDIATE_ORACLE;
 
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address correlatedToken,
         address underlyingToken,

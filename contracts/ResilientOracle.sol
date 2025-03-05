@@ -231,7 +231,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Updates the TWAP pivot oracle price.
+     * @notice Updates the TWAP pivot oracle price and the capped main oracle snapshot .
      * @dev This function should always be called before calling getUnderlyingPrice
      * @param vToken vToken address
      */
@@ -241,7 +241,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Updates the pivot oracle price. Currently using TWAP
+     * @notice Updates the TWAP pivot oracle price and the capped main oracle snapshot.
      * @dev This function should always be called before calling getPrice
      * @param asset asset address
      */
@@ -326,7 +326,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Updates the pivot oracle price. Currently using TWAP
+     * @notice Updates the TWAP oracle price and capped oracle snapshot.
      * @dev Cache the asset price and return if already cached
      * @param asset asset address
      */

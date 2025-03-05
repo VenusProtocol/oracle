@@ -10,28 +10,23 @@ import { Transient } from "../../lib/Transient.sol";
  * @title CorrelatedTokenOracle
  * @notice This oracle fetches the price of a token that is correlated to another token.
  */
-abstract contract CorrelatedTokenOracle {
+abstract contract CorrelatedTokenOracle is OracleInterface {
     /// Slot to cache the asset's price, used for transient storage
     bytes32 public constant CACHE_SLOT = keccak256(abi.encode("venus-protocol/oracle/common/CappedOracle/cache"));
 
     /// @notice Address of the correlated token
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable CORRELATED_TOKEN;
 
     /// @notice Address of the underlying token
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable UNDERLYING_TOKEN;
 
     //// @notice Growth rate percentage in seconds. Ex: 1e18 is 100%
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     uint256 public immutable GROWTH_RATE_PER_SECOND;
 
     /// @notice Snapshot update interval
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     uint256 public immutable SNAPSHOT_INTERVAL;
 
     /// @notice Address of Resilient Oracle
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     OracleInterface public immutable RESILIENT_ORACLE;
 
     /// @notice Last stored snapshot exchange rate
@@ -56,7 +51,6 @@ abstract contract CorrelatedTokenOracle {
     error InvalidSnapshotExchangeRate();
 
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address correlatedToken,
         address underlyingToken,
@@ -136,7 +130,7 @@ abstract contract CorrelatedTokenOracle {
      * @return price The price of the token in scaled decimal places. It can be capped
      * to a maximum value taking into account the growth rate
      */
-    function getPrice(address asset) public view returns (uint256) {
+    function getPrice(address asset) public view override returns (uint256) {
         uint256 exchangeRate = Transient.readCachedPrice(CACHE_SLOT, asset);
         if (exchangeRate != 0) {
             return calculatePrice(asset, exchangeRate);
@@ -176,12 +170,14 @@ abstract contract CorrelatedTokenOracle {
 
     /**
      * @notice Gets the maximum allowed exchange rate for token
-     * @return maxPrice Maximum allowed price
+     * @return maxExchangeRate Maximum allowed exchange rate
      */
     function _getMaxAllowedExchangeRate() internal view returns (uint256) {
         uint256 timeElapsed = block.timestamp - snapshotTimestamp;
-        uint256 maxPrice = snapshotExchangeRate + (snapshotExchangeRate * GROWTH_RATE_PER_SECOND * timeElapsed) / 1e18;
-        return maxPrice;
+        uint256 maxExchangeRate = snapshotExchangeRate +
+            (snapshotExchangeRate * GROWTH_RATE_PER_SECOND * timeElapsed) /
+            1e18;
+        return maxExchangeRate;
     }
 
     /**

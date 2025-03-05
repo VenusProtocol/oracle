@@ -12,7 +12,6 @@ import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants
  */
 contract WstETHOracleV2 is CorrelatedTokenOracle {
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address wstETH,
         address stETH,

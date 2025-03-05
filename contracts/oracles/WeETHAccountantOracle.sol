@@ -12,11 +12,9 @@ import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contract
  */
 contract WeETHAccountantOracle is CorrelatedTokenOracle {
     /// @notice Address of Accountant
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IAccountant public immutable ACCOUNTANT;
 
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address accountant,
         address weethLRT,

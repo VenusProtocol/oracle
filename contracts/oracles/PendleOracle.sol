@@ -33,33 +33,27 @@ contract PendleOracle is CorrelatedTokenOracle {
     }
 
     /// @notice Address of the PT oracle
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IPendlePtOracle public immutable PT_ORACLE;
 
     /// @notice Whether to use PT/SY (standardized yield token) rate
     /// or PT/market asset rate
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     RateKind public immutable RATE_KIND;
 
     /// @notice Address of the market
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address public immutable MARKET;
 
     /// @notice Twap duration for the oracle
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     uint32 public immutable TWAP_DURATION;
 
     /// @notice Decimals of the underlying token
     /// @dev We make an assumption that the underlying decimals will
     /// not change throughout the lifetime of the Pendle market
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     uint8 public immutable UNDERLYING_DECIMALS;
 
     /// @notice Thrown if the duration is invalid
     error InvalidDuration();
 
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     /// @param market Pendle market
     /// @param ptOracle Pendle oracle
     /// @param rateKind Either PT_TO_ASSET or PT_TO_SY

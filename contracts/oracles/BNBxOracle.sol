@@ -16,11 +16,9 @@ contract BNBxOracle is CorrelatedTokenOracle {
     address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
     /// @notice Address of StakeManager
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IStaderStakeManager public immutable STAKE_MANAGER;
 
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address stakeManager,
         address bnbx,

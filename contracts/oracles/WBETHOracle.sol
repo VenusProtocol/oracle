@@ -11,7 +11,6 @@ import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
  */
 contract WBETHOracle is CorrelatedTokenOracle {
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address wbeth,
         address eth,
