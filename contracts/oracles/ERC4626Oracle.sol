@@ -32,7 +32,9 @@ contract ERC4626Oracle is CorrelatedTokenOracle {
             initialSnapshotExchangeRate,
             initialSnapshotTimestamp
         )
-    {}
+    {
+        ONE_CORRELATED_TOKEN = 10 ** IERC4626(correlatedToken).decimals();
+    }
 
     /**
      * @notice Fetches the amount of underlying token for 1 correlated token
