@@ -49,6 +49,12 @@ abstract contract CorrelatedTokenOracle {
     /// @notice Thrown if the growth rate is invalid
     error InvalidGrowthRate();
 
+    /// @notice Thrown if the initial snapshot is invalid
+    error InvalidInitialSnapshot();
+
+    /// @notice Thrown if the snapshot exchange rate is invalid
+    error InvalidSnapshotExchangeRate();
+
     /// @notice Constructor for the implementation contract.
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
@@ -66,6 +72,10 @@ abstract contract CorrelatedTokenOracle {
             (GROWTH_RATE_PER_SECOND == 0 && snapshotInterval > 0) ||
             (GROWTH_RATE_PER_SECOND > 0 && snapshotInterval == 0)
         ) revert InvalidGrowthRate();
+
+        if ((initialSnapshotExchangeRate == 0 || initialSnapshotTimestamp == 0) && snapshotInterval > 0) {
+            revert InvalidInitialSnapshot();
+        }
 
         ensureNonzeroAddress(correlatedToken);
         ensureNonzeroAddress(underlyingToken);
@@ -113,6 +123,9 @@ abstract contract CorrelatedTokenOracle {
 
         snapshotExchangeRate = exchangeRate > maxAllowedExchangeRate ? maxAllowedExchangeRate : exchangeRate;
         snapshotTimestamp = block.timestamp;
+
+        if (snapshotExchangeRate == 0) revert InvalidSnapshotExchangeRate();
+
         Transient.cachePrice(CACHE_SLOT, CORRELATED_TOKEN, snapshotExchangeRate);
         emit SnapshotUpdated(snapshotExchangeRate, snapshotTimestamp);
     }
