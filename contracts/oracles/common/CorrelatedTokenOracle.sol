@@ -12,7 +12,10 @@ import { Transient } from "../../lib/Transient.sol";
  */
 abstract contract CorrelatedTokenOracle is OracleInterface {
     /// @notice Slot to cache the asset's price, used for transient storage
-    bytes32 public constant CACHE_SLOT = keccak256(abi.encode("venus-protocol/oracle/common/CappedOracle/cache"));
+    /// custom:storage-location erc7201:venus-protocol/oracle/common/CorrelatedTokenOracle/cache
+    /// keccak256(abi.encode(uint256(keccak256("venus-protocol/oracle/common/CorrelatedTokenOracle/cache")) - 1))
+    ///  & ~bytes32(uint256(0xff)
+    bytes32 public constant CACHE_SLOT = 0x285ac4cf3d7b1e95dc20783e633728d23869c1e2c096067904f13d824ae1fb00;
 
     /// @notice Address of the correlated token
     address public immutable CORRELATED_TOKEN;

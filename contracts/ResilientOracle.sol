@@ -85,7 +85,10 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
     /// @notice Slot to cache the asset's price, used for transient storage
-    bytes32 public constant CACHE_SLOT = keccak256(abi.encode("venus-protocol/oracle/ResilientOracle/cache"));
+    /// custom:storage-location erc7201:venus-protocol/oracle/ResilientOracle/cache
+    /// keccak256(abi.encode(uint256(keccak256("venus-protocol/oracle/ResilientOracle/cache")) - 1))
+    ///   & ~bytes32(uint256(0xff)
+    bytes32 public constant CACHE_SLOT = 0x4e99ec55972332f5e0ef9c6623192c0401b609161bffae64d9ccdd7ad6cc7800;
 
     /// @notice Bound validator contract address
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
