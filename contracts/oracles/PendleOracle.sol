@@ -61,6 +61,7 @@ contract PendleOracle is CorrelatedTokenOracle {
     /// @param underlyingToken Underlying token, can be either the market's asset or the interest bearing token
     /// @param resilientOracle Venus Oracle to get the underlying token price from
     /// @param twapDuration TWAP duration to call Pendle oracle with
+    /// @custom:error InvalidDuration error is thrown if the duration is invalid
     constructor(
         address market,
         address ptOracle,

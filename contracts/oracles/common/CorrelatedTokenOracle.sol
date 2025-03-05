@@ -11,7 +11,7 @@ import { Transient } from "../../lib/Transient.sol";
  * @notice This oracle fetches the price of a token that is correlated to another token.
  */
 abstract contract CorrelatedTokenOracle is OracleInterface {
-    /// Slot to cache the asset's price, used for transient storage
+    /// @notice Slot to cache the asset's price, used for transient storage
     bytes32 public constant CACHE_SLOT = keccak256(abi.encode("venus-protocol/oracle/common/CappedOracle/cache"));
 
     /// @notice Address of the correlated token
@@ -50,7 +50,11 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
     /// @notice Thrown if the snapshot exchange rate is invalid
     error InvalidSnapshotExchangeRate();
 
-    /// @notice Constructor for the implementation contract.
+    /**
+     * @notice Constructor for the implementation contract.
+     * @custom:error InvalidGrowthRate error is thrown if the growth rate is invalid
+     * @custom:error InvalidInitialSnapshot error is thrown if the initial snapshot values are invalid
+     */
     constructor(
         address correlatedToken,
         address underlyingToken,
@@ -105,6 +109,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
 
     /**
      * @notice Updates the snapshot price and timestamp
+     * @custom:event Emits SnapshotUpdated event on successful update of the snapshot
      */
     function updateSnapshot() public {
         if (Transient.readCachedPrice(CACHE_SLOT, CORRELATED_TOKEN) != 0) {
@@ -156,6 +161,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
      * @param asset The address of the asset
      * @param exchangeRate The underlying exchange rate to use
      * @return price The price of the token in scaled decimal places
+     * @custom:error InvalidTokenAddress error is thrown if the token address is invalid
      */
     function calculatePrice(address asset, uint256 exchangeRate) internal view returns (uint256) {
         if (asset != CORRELATED_TOKEN) revert InvalidTokenAddress();

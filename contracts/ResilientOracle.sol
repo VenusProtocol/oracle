@@ -84,6 +84,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     /// and can serve as any underlying asset of a market that supports native tokens
     address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
+    /// @notice Slot to cache the asset's price, used for transient storage
     bytes32 public constant CACHE_SLOT = keccak256(abi.encode("venus-protocol/oracle/ResilientOracle/cache"));
 
     /// @notice Bound validator contract address
@@ -219,6 +220,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @custom:access Only Governance
      * @custom:error NotNullAddress error is thrown if asset address is null
      * @custom:error TokenConfigExistance error is thrown if token config is not set
+     * @custom:event Emits OracleEnabled event with asset address, role of the oracle and enabled flag
      */
     function enableOracle(
         address asset,
@@ -351,6 +353,12 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         Transient.cachePrice(CACHE_SLOT, asset, price);
     }
 
+    /**
+     * @notice Gets price for the provided asset
+     * @param asset asset address
+     * @return price USD price in scaled decimal places.
+     * @custom:error Invalid resilient oracle price error is thrown if fetched prices from oracle is invalid
+     */
     function _getPrice(address asset) internal view returns (uint256) {
         uint256 pivotPrice = INVALID_PRICE;
         uint256 price;
