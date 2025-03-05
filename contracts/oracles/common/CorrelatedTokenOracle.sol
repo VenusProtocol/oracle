@@ -85,6 +85,10 @@ abstract contract CorrelatedTokenOracle {
      * @return isCapped Boolean indicating if the price is capped
      */
     function isCapped() external view virtual returns (bool) {
+        if (SNAPSHOT_INTERVAL == 0) {
+            return false;
+        }
+
         uint256 maxAllowedExchangeRate = _getMaxAllowedExchangeRate();
         if (maxAllowedExchangeRate == 0) {
             return false;
