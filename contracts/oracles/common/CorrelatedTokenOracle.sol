@@ -4,13 +4,14 @@ pragma solidity 0.8.25;
 import { OracleInterface } from "../../interfaces/OracleInterface.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import { ICappedOracle } from "../../interfaces/ICappedOracle.sol";
 import { Transient } from "../../lib/Transient.sol";
 
 /**
  * @title CorrelatedTokenOracle
  * @notice This oracle fetches the price of a token that is correlated to another token.
  */
-abstract contract CorrelatedTokenOracle is OracleInterface {
+abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     /// @notice Slot to cache the asset's price, used for transient storage
     /// custom:storage-location erc7201:venus-protocol/oracle/common/CorrelatedTokenOracle/cache
     /// keccak256(abi.encode(uint256(keccak256("venus-protocol/oracle/common/CorrelatedTokenOracle/cache")) - 1))
@@ -114,7 +115,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface {
      * @notice Updates the snapshot price and timestamp
      * @custom:event Emits SnapshotUpdated event on successful update of the snapshot
      */
-    function updateSnapshot() public {
+    function updateSnapshot() public override {
         if (Transient.readCachedPrice(CACHE_SLOT, CORRELATED_TOKEN) != 0) {
             return;
         }
