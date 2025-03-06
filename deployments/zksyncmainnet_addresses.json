@@ -15,6 +15,9 @@
     "ResilientOracle": "0xDe564a4C887d5ad315a19a96DC81991c98b12182",
     "ResilientOracle_Implementation": "0x88DcFE18AcE5a75659177c9F980C2771D9736e66",
     "ResilientOracle_Proxy": "0xDe564a4C887d5ad315a19a96DC81991c98b12182",
-    "wUSDM_ERC4626Oracle": "0x7Fb95a0B7b933A9F3Fe3Ead4b69B0267BD8Fe55F"
+    "wUSDM_ERC4626Oracle": "0x7Fb95a0B7b933A9F3Fe3Ead4b69B0267BD8Fe55F",
+    "wstETHOneJumpChainlinkOracle": "0xd2b4352A3C1C452D9D4D11B4F19e28476128798f",
+    "wstETHOneJumpChainlinkOracle_Implementation": "0xFc8f37ae8f36bB74606fC3E140460be98d1b4d00",
+    "wstETHOneJumpChainlinkOracle_Proxy": "0xd2b4352A3C1C452D9D4D11B4F19e28476128798f"
   }
 }
