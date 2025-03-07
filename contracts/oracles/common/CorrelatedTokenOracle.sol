@@ -40,7 +40,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     uint256 public snapshotTimestamp;
 
     /// @notice Emitted when the snapshot is updated
-    event SnapshotUpdated(uint256 exchangeRate, uint256 timestamp);
+    event SnapshotUpdated(uint256 indexed exchangeRate, uint256 indexed timestamp);
 
     /// @notice Thrown if the token address is invalid
     error InvalidTokenAddress();
