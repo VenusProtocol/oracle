@@ -72,19 +72,24 @@ const func: DeployFunction = async ({
 
   const ankrBNBAddress = ankrBNB || (await ethers.getContract("MockAnkrBNB")).address;
 
+  const ankr_BNB_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.007", 18);
+  const ankr_BNB_SNAPSHOT_UPDATE_INTERVAL = 24 * 60 * 60;
+  const block = await ethers.provider.getBlock("latest");
+  const ankrBNBContract = await ethers.getContractAt("IAnkrBNB", ankrBNBAddress);
+  const exchangeRate = await ankrBNBContract.sharesToBonds(ethers.utils.parseUnits("1", 18));
+
   await deploy("AnkrBNBOracle", {
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [ankrBNBAddress, oracle.address],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentUpgradeableProxy",
-      viaAdminContract: {
-        name: "DefaultProxyAdmin",
-        artifact: defaultProxyAdmin,
-      },
-    },
+    args: [
+      ankrBNBAddress,
+      oracle.address,
+      ankr_BNB_ANNUAL_GROWTH_RATE,
+      ankr_BNB_SNAPSHOT_UPDATE_INTERVAL,
+      exchangeRate,
+      block.timestamp,
+    ],
     skipIfAlreadyDeployed: true,
   });
 
