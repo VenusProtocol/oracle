@@ -1,3 +1,60 @@
+## [2.13.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.12.0...v2.13.0-dev.1) (2025-03-06)
+
+
+### Features
+
+* add script to deploy wstETH one jump oracle ([d360542](https://github.com/VenusProtocol/oracle/commit/d3605427103e3a6ce2067e3e624421468f2b87e5))
+* deployment files for oneJump oracle on base mainnet for wstETH ([e1967d2](https://github.com/VenusProtocol/oracle/commit/e1967d2167db310997cdea0970e90368a0bba5c4))
+* deployment files for oneJump oracle on base sepolia for wstETH ([3df4b08](https://github.com/VenusProtocol/oracle/commit/3df4b0876bc6933268c48fb2b0fb03f2937dd2bf))
+* deployment files for wstETH one-jump oracle on zksync mainnet ([3161bc7](https://github.com/VenusProtocol/oracle/commit/3161bc7e48937b94f4f4bcc7d9eb8ad2f5845e50))
+* deployment files for wstETH one-jump oracle on zksync sepolia ([265a6ee](https://github.com/VenusProtocol/oracle/commit/265a6ee07eebf0e3e08d5fa508eb69f371bf76ee))
+* updating deployment files ([fe0b114](https://github.com/VenusProtocol/oracle/commit/fe0b1146c6c7f5244774431f14a0ed68f64ea84f))
+* updating deployment files ([6ec9ea8](https://github.com/VenusProtocol/oracle/commit/6ec9ea8ca189852974839bcdd78bf508391dd6fa))
+
+## [2.12.0](https://github.com/VenusProtocol/oracle/compare/v2.11.0...v2.12.0) (2025-02-21)
+
+
+### Features
+
+* add deployments for Pendle oracles used as a reference ([39e82df](https://github.com/VenusProtocol/oracle/commit/39e82df3b40de2031e73176289abd9b4d396a701))
+* add reference oracle conract ([cfa31eb](https://github.com/VenusProtocol/oracle/commit/cfa31eb97a956fc914daa6fd3ff0dd7b31aadd3c))
+* add reference oracle deployment for bsc and eth ([0f0cc33](https://github.com/VenusProtocol/oracle/commit/0f0cc33fa90ff85fb475dd046fa6f4ef8f7fcd4a))
+* add testnet tags and helpers to dispatch testnets ([8576fe9](https://github.com/VenusProtocol/oracle/commit/8576fe961dc65805ad50617d705748cdca03945d))
+* replace multisig with timelock on Ethereum ([6bbff81](https://github.com/VenusProtocol/oracle/commit/6bbff818a8db2869ea630dd0fee34b82b4f1b2f5))
+* support compiling for cancun ([5a22e67](https://github.com/VenusProtocol/oracle/commit/5a22e6754daeea2a9c759bec02dfb62457384b02))
+* updating deployment files ([eb9cee1](https://github.com/VenusProtocol/oracle/commit/eb9cee1879960e95b7bfc6c93c7c6092a6f7e3f9))
+* updating deployment files ([9f378c5](https://github.com/VenusProtocol/oracle/commit/9f378c53caf231cc6120c6c671a3c1ad886a19e3))
+
+
+### Bug Fixes
+
+* patch smock package to check if provider has init ([2f86269](https://github.com/VenusProtocol/oracle/commit/2f86269c94f370f3841d851a7f6f965584b9f66b))
+
+## [2.12.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.12.0-dev.1...v2.12.0-dev.2) (2025-02-21)
+
+
+### Features
+
+* add deployments for Pendle oracles used as a reference ([39e82df](https://github.com/VenusProtocol/oracle/commit/39e82df3b40de2031e73176289abd9b4d396a701))
+* updating deployment files ([eb9cee1](https://github.com/VenusProtocol/oracle/commit/eb9cee1879960e95b7bfc6c93c7c6092a6f7e3f9))
+
+## [2.12.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.11.0...v2.12.0-dev.1) (2025-02-21)
+
+
+### Features
+
+* add reference oracle conract ([cfa31eb](https://github.com/VenusProtocol/oracle/commit/cfa31eb97a956fc914daa6fd3ff0dd7b31aadd3c))
+* add reference oracle deployment for bsc and eth ([0f0cc33](https://github.com/VenusProtocol/oracle/commit/0f0cc33fa90ff85fb475dd046fa6f4ef8f7fcd4a))
+* add testnet tags and helpers to dispatch testnets ([8576fe9](https://github.com/VenusProtocol/oracle/commit/8576fe961dc65805ad50617d705748cdca03945d))
+* replace multisig with timelock on Ethereum ([6bbff81](https://github.com/VenusProtocol/oracle/commit/6bbff818a8db2869ea630dd0fee34b82b4f1b2f5))
+* support compiling for cancun ([5a22e67](https://github.com/VenusProtocol/oracle/commit/5a22e6754daeea2a9c759bec02dfb62457384b02))
+* updating deployment files ([9f378c5](https://github.com/VenusProtocol/oracle/commit/9f378c53caf231cc6120c6c671a3c1ad886a19e3))
+
+
+### Bug Fixes
+
+* patch smock package to check if provider has init ([2f86269](https://github.com/VenusProtocol/oracle/commit/2f86269c94f370f3841d851a7f6f965584b9f66b))
+
 ## [2.11.0](https://github.com/VenusProtocol/oracle/compare/v2.10.0...v2.11.0) (2025-02-14)
 
 
