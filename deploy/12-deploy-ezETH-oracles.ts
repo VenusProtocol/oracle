@@ -19,7 +19,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [ezETH, WETH, resilientOracle.address, redStoneOracle.address],
+    args: [ezETH, WETH, resilientOracle.address, redStoneOracle.address, 0, 0, 0, 0],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
@@ -32,7 +32,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [ezETH, WETH, resilientOracle.address, chainlinkOracle.address],
+    args: [ezETH, WETH, resilientOracle.address, chainlinkOracle.address, 0, 0, 0, 0],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",

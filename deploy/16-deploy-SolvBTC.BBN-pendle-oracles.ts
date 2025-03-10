@@ -26,7 +26,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [addresses["SolvBTC.BBN"], addresses.BTCB, resilientOracle.address, redStoneOracle.address],
+    args: [addresses["SolvBTC.BBN"], addresses.BTCB, resilientOracle.address, redStoneOracle.address, 0, 0, 0, 0],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",

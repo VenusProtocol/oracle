@@ -46,13 +46,13 @@ const func: DeployFunction = async function ({
 
   await deploy("wstETHOneJumpChainlinkOracle", {
     contract: "OneJumpOracle",
-    args: [wstETH, WETH, resilientOracle.address, chainlinkOracle.address],
+    args: [wstETH, WETH, resilientOracle.address, chainlinkOracle.address, 0, 0, 0, 0],
     ...commonParams,
   });
 
   await deploy("weETHOneJumpChainlinkOracle", {
     contract: "OneJumpOracle",
-    args: [weETH, WETH, resilientOracle.address, chainlinkOracle.address],
+    args: [weETH, WETH, resilientOracle.address, chainlinkOracle.address, 0, 0, 0, 0],
     ...commonParams,
   });
 
@@ -61,13 +61,13 @@ const func: DeployFunction = async function ({
 
     await deploy("wstETHOneJumpRedstoneOracle", {
       contract: "OneJumpOracle",
-      args: [wstETH, WETH, resilientOracle.address, redstoneOracle.address],
+      args: [wstETH, WETH, resilientOracle.address, redstoneOracle.address, 0, 0, 0, 0],
       ...commonParams,
     });
 
     await deploy("weETHOneJumpRedstoneOracle", {
       contract: "OneJumpOracle",
-      args: [weETH, WETH, resilientOracle.address, redstoneOracle.address],
+      args: [weETH, WETH, resilientOracle.address, redstoneOracle.address, 0, 0, 0, 0],
       ...commonParams,
     });
   }

@@ -18,7 +18,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [LBTC, WBTC, resilientOracle.address, redstoneOracle.address],
+    args: [LBTC, WBTC, resilientOracle.address, redstoneOracle.address, 0, 0, 0, 0],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",

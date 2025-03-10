@@ -63,7 +63,7 @@ const func: DeployFunction = async ({
       from: deployer,
       log: true,
       deterministicDeployment: false,
-      args: [weETH, WETH, resilientOracle.address, chainlinkOracle.address],
+      args: [weETH, WETH, resilientOracle.address, chainlinkOracle.address, 0, 0, 0, 0],
       proxy: {
         owner: proxyOwnerAddress,
         proxyContract: "OptimizedTransparentUpgradeableProxy",
