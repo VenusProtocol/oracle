@@ -1,3 +1,13 @@
+## [2.13.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.13.0-dev.1...v2.13.0-dev.2) (2025-03-10)
+
+
+### Features
+
+* add a custom ZkETH oracle ([2c38558](https://github.com/VenusProtocol/oracle/commit/2c38558e2d8aaf1909cef4b8d1653b2b55bf118e))
+* deploy ZkETH oracle for zksync mainnet and sepolia ([4780e91](https://github.com/VenusProtocol/oracle/commit/4780e91b7c515d99ea50fe85db233e71fa8fcd41))
+* updating deployment files ([5667a9f](https://github.com/VenusProtocol/oracle/commit/5667a9f01326f4a6d09648f242954a527bc87854))
+* use governance timelocks for zksync ([800f4df](https://github.com/VenusProtocol/oracle/commit/800f4df63eb9538f5a5630380c89860d495e79b2))
+
 ## [2.13.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.12.0...v2.13.0-dev.1) (2025-03-06)
 
 
