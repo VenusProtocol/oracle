@@ -47,17 +47,16 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       addresses["SolvBTC.BBN"],
       oracle.address,
       900,
+      0,
+      0,
+      0,
+      0,
     ],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentUpgradeableProxy",
-    },
     skipIfAlreadyDeployed: true,
   });
 
   if (isMainnet(network)) {
     const referenceOracle = await ethers.getContract("ReferenceOracle");
-    const { devMultisig } = addresses;
     await deploy("PendleOracle-PT-SolvBTC.BBN-27MAR2025_Reference_PtToAsset", {
       contract: "PendleOracle",
       from: deployer,
@@ -71,14 +70,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
         addresses.BTCB,
         referenceOracle.address,
         900,
+        0,
+        0,
+        0,
+        0,
       ],
-      proxy: {
-        owner: devMultisig,
-        proxyContract: "OptimizedTransparentUpgradeableProxy",
-        viaAdminContract: {
-          name: "DevProxyAdmin",
-        },
-      },
       skipIfAlreadyDeployed: true,
     });
   }

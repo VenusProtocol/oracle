@@ -21,20 +21,11 @@ type OracleConfig = {
   primaryRateKind: PendleRateKind;
 }[];
 
-const func: DeployFunction = async ({
-  getNamedAccounts,
-  deployments,
-  network,
-  artifacts,
-}: HardhatRuntimeEnvironment) => {
+const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
   const { deployer } = await getNamedAccounts();
   const { deploy } = deployments;
 
   const oracle = await ethers.getContract("ResilientOracle");
-  const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
-  const proxyAdminArtifact = await artifacts.readArtifact(
-    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
-  );
   const addresses = ADDRESSES[network.name];
   const fallbackAddress = "0x0000000000000000000000000000000000000001";
 
@@ -61,15 +52,11 @@ const func: DeployFunction = async ({
               primaryRateKind === PendleRateKind.PT_TO_ASSET ? underlyingToken : yieldToken,
               oracle.address,
               TWAPDuration,
+              0,
+              0,
+              0,
+              0,
             ],
-            proxy: {
-              owner: proxyOwnerAddress,
-              proxyContract: "OptimizedTransparentUpgradeableProxy",
-              viaAdminContract: {
-                name: "DefaultProxyAdmin",
-                artifact: proxyAdminArtifact,
-              },
-            },
           });
         },
       ),
@@ -100,15 +87,11 @@ const func: DeployFunction = async ({
           referenceRateKind === PendleRateKind.PT_TO_ASSET ? underlyingToken : yieldToken,
           referenceOracle.address,
           TWAPDuration,
+          0,
+          0,
+          0,
+          0,
         ],
-        proxy: {
-          owner: devMultisig,
-          proxyContract: "OptimizedTransparentUpgradeableProxy",
-          viaAdminContract: {
-            name: "DevProxyAdmin",
-            artifact: proxyAdminArtifact,
-          },
-        },
       });
     }
   };
