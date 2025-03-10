@@ -12,6 +12,9 @@ chai.use(smock.matchers);
 
 const { WETH, zkETH } = ADDRESSES.zksyncmainnet;
 const WETH_USD_PRICE = parseUnits("2700", 18);
+const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
+const SNAPSHOT_UPDATE_INTERVAL = 10;
+const exchangeRate = parseUnits("1.1", 18);
 
 describe("ZkETHOracle", () => {
   let zkETHMock: FakeContract<IZkETH>;
@@ -19,6 +22,7 @@ describe("ZkETHOracle", () => {
   let zkETHOracleFactory: ZkETHOracle__factory;
   let zkETHOracle: ZkETHOracle;
   let wethMock: FakeContract<BEP20Harness>;
+  let timestamp;
 
   before(async () => {
     //  To initialize the provider we need to hit the node with any request
@@ -33,19 +37,49 @@ describe("ZkETHOracle", () => {
     wethMock.decimals.returns(18);
 
     zkETHOracleFactory = <ZkETHOracle__factory>await ethers.getContractFactory("ZkETHOracle");
+
+    ({ timestamp } = await ethers.provider.getBlock("latest"));
   });
 
   describe("deployment", () => {
     it("revert if WETH address is 0", async () => {
-      await expect(zkETHOracleFactory.deploy(zkETHMock.address, addr0000, resilientOracleMock.address)).to.be.reverted;
+      await expect(
+        zkETHOracleFactory.deploy(
+          zkETHMock.address,
+          addr0000,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+          exchangeRate,
+          timestamp,
+        ),
+      ).to.be.reverted;
     });
 
     it("revert if zkETH address is 0", async () => {
-      await expect(zkETHOracleFactory.deploy(addr0000, wethMock.address, resilientOracleMock.address)).to.be.reverted;
+      await expect(
+        zkETHOracleFactory.deploy(
+          addr0000,
+          wethMock.address,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+          exchangeRate,
+          timestamp,
+        ),
+      ).to.be.reverted;
     });
 
     it("should deploy contract", async () => {
-      zkETHOracle = await zkETHOracleFactory.deploy(zkETHMock.address, wethMock.address, resilientOracleMock.address);
+      zkETHOracle = await zkETHOracleFactory.deploy(
+        zkETHMock.address,
+        wethMock.address,
+        resilientOracleMock.address,
+        ANNUAL_GROWTH_RATE,
+        SNAPSHOT_UPDATE_INTERVAL,
+        exchangeRate,
+        timestamp,
+      );
     });
   });
 

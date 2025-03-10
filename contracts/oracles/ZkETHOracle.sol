@@ -11,12 +11,25 @@ import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
  */
 contract ZkETHOracle is CorrelatedTokenOracle {
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address zkETH,
         address rzkETH,
-        address resilientOracle
-    ) CorrelatedTokenOracle(zkETH, rzkETH, resilientOracle) {}
+        address resilientOracle,
+        uint256 annualGrowthRate,
+        uint256 snapshotInterval,
+        uint256 initialSnapshotExchangeRate,
+        uint256 initialSnapshotTimestamp
+    )
+        CorrelatedTokenOracle(
+            zkETH,
+            rzkETH,
+            resilientOracle,
+            annualGrowthRate,
+            snapshotInterval,
+            initialSnapshotExchangeRate,
+            initialSnapshotTimestamp
+        )
+    {}
 
     /**
      * @notice Gets the amount of rzkETH for 1 zkETH
