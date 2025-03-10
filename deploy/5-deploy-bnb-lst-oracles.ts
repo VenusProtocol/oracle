@@ -16,7 +16,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const SNAPSHOT_UPDATE_INTERVAL = 24 * 60 * 60;
 
   // 1.1%
-  const BNBx_ANNUL_GROWTH_RATE = ethers.utils.parseUnits("0.011", 18);
+  const BNBx_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.011", 18);
   let block = await ethers.provider.getBlock("latest");
   const stakeManagerContract = await ethers.getContractAt("IStaderStakeManager", BNBxStakeManager);
   let exchangeRate = await stakeManagerContract.convertBnbXToBnb(ethers.utils.parseUnits("1", 18));
@@ -29,7 +29,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       BNBxStakeManager,
       BNBx,
       oracle.address,
-      BNBx_ANNUL_GROWTH_RATE,
+      BNBx_ANNUAL_GROWTH_RATE,
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,

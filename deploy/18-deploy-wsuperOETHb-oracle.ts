@@ -12,7 +12,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
   const SNAPSHOT_UPDATE_INTERVAL = 24 * 60 * 60;
   // 6.06%
-  const wsuperOETHb_ANNUL_GROWTH_RATE = ethers.utils.parseUnits("0.0606", 18);
+  const wsuperOETHb_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.0606", 18);
   const block = await ethers.provider.getBlock("latest");
   const vault = await ethers.getContractAt("IERC4626", wsuperOETHb);
   const exchangeRate = await vault.convertToAssets(parseUnits("1", 18));
@@ -27,7 +27,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       wsuperOETHb,
       WETH,
       resilientOracle.address,
-      wsuperOETHb_ANNUL_GROWTH_RATE,
+      wsuperOETHb_ANNUAL_GROWTH_RATE,
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,

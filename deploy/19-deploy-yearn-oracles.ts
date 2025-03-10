@@ -12,10 +12,10 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const resilientOracle = await ethers.getContract("ResilientOracle");
 
   const SNAPSHOT_UPDATE_INTERVAL = 24 * 60 * 60;
-  const yvUSDC_1_ANNUL_GROWTH_RATE = ethers.utils.parseUnits("0.082", 18);
-  const yvUSDT_1_ANNUL_GROWTH_RATE = ethers.utils.parseUnits("0.0732", 18);
-  const yvUSDS_1_ANNUL_GROWTH_RATE = ethers.utils.parseUnits("0.0382", 18);
-  const yvWETH_1_ANNUL_GROWTH_RATE = ethers.utils.parseUnits("0.0239", 18);
+  const yvUSDC_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.082", 18);
+  const yvUSDT_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.0732", 18);
+  const yvUSDS_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.0382", 18);
+  const yvWETH_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.0239", 18);
 
   let block = await ethers.provider.getBlock("latest");
   let vault = await ethers.getContractAt("IERC4626", yvUSDC_1);
@@ -30,7 +30,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       yvUSDC_1,
       USDC,
       resilientOracle.address,
-      yvUSDC_1_ANNUL_GROWTH_RATE,
+      yvUSDC_1_ANNUAL_GROWTH_RATE,
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,
@@ -50,7 +50,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       yvUSDT_1,
       USDT,
       resilientOracle.address,
-      yvUSDT_1_ANNUL_GROWTH_RATE,
+      yvUSDT_1_ANNUAL_GROWTH_RATE,
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,
@@ -70,7 +70,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       yvUSDS_1,
       USDS,
       resilientOracle.address,
-      yvUSDS_1_ANNUL_GROWTH_RATE,
+      yvUSDS_1_ANNUAL_GROWTH_RATE,
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,
@@ -90,7 +90,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       yvWETH_1,
       WETH,
       resilientOracle.address,
-      yvWETH_1_ANNUL_GROWTH_RATE,
+      yvWETH_1_ANNUAL_GROWTH_RATE,
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,

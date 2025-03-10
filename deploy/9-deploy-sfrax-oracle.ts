@@ -1,3 +1,4 @@
+import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -9,20 +10,29 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const { deployer } = await getNamedAccounts();
 
   const oracle = await ethers.getContract("ResilientOracle");
-  const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
   const { sFRAX, FRAX } = ADDRESSES[network.name];
+
+  const SNAPSHOT_UPDATE_INTERVAL = 24 * 60 * 60;
+  const sFRAX_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.059", 18);
+  const block = await ethers.provider.getBlock("latest");
+  const vault = await ethers.getContractAt("IAccountant", sFRAX || (await ethers.getContract("MockSFrax")).address);
+  const exchangeRate = await vault.convertToAssets(parseUnits("1", 18));
 
   await deploy("SFraxOracle", {
     contract: "SFraxOracle",
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [sFRAX || (await ethers.getContract("MockSFrax")).address, FRAX, oracle.address],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
-    },
+    args: [
+      sFRAX || (await ethers.getContract("MockSFrax")).address,
+      FRAX,
+      oracle.address,
+      sFRAX_ANNUAL_GROWTH_RATE,
+      SNAPSHOT_UPDATE_INTERVAL,
+      exchangeRate,
+      block.timestamp,
+    ],
     skipIfAlreadyDeployed: true,
   });
 };
