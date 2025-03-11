@@ -35,7 +35,7 @@ contract WBETHOracle is CorrelatedTokenOracle {
      * @notice Fetches the amount of ETH for 1 wBETH
      * @return amount The amount of ETH for wBETH
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return IWBETH(CORRELATED_TOKEN).exchangeRate();
     }
 }

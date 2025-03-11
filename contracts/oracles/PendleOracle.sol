@@ -108,7 +108,7 @@ contract PendleOracle is CorrelatedTokenOracle {
     /// @return amount The amount of underlying token (either the market's asset
     /// or the yield token) for 1 PT, adjusted for decimals such that the result
     /// has the same precision as the underlying token
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         uint256 rate;
         if (RATE_KIND == RateKind.PT_TO_SY) {
             rate = PT_ORACLE.getPtToSyRate(MARKET, TWAP_DURATION);

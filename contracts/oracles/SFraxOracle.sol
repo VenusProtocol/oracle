@@ -36,7 +36,7 @@ contract SFraxOracle is CorrelatedTokenOracle {
      * @notice Fetches the amount of FRAX for 1 sFrax
      * @return amount The amount of FRAX for sFrax
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return ISFrax(CORRELATED_TOKEN).convertToAssets(EXP_SCALE);
     }
 }

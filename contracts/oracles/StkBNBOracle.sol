@@ -50,7 +50,7 @@ contract StkBNBOracle is CorrelatedTokenOracle {
      * @return price The amount of BNB for stkBNB
      * @custom:error PoolTokenSupplyIsZero error is thrown if the pool token supply is zero
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         IPStakePool.Data memory exchangeRateData = STAKE_POOL.exchangeRate();
 
         if (exchangeRateData.poolTokenSupply == 0) {

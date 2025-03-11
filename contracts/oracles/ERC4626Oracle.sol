@@ -39,7 +39,7 @@ contract ERC4626Oracle is CorrelatedTokenOracle {
      * @notice Fetches the amount of underlying token for 1 correlated token
      * @return amount The amount of underlying token for correlated token
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return IERC4626(CORRELATED_TOKEN).convertToAssets(ONE_CORRELATED_TOKEN);
     }
 }

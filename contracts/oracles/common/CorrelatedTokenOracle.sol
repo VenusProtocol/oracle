@@ -101,12 +101,12 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
             return false;
         }
 
-        uint256 maxAllowedExchangeRate = _getMaxAllowedExchangeRate();
+        uint256 maxAllowedExchangeRate = getMaxAllowedExchangeRate();
         if (maxAllowedExchangeRate == 0) {
             return false;
         }
 
-        uint256 exchangeRate = _getUnderlyingAmount();
+        uint256 exchangeRate = getUnderlyingAmount();
 
         return exchangeRate > maxAllowedExchangeRate;
     }
@@ -121,8 +121,8 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
         }
         if (block.timestamp - snapshotTimestamp < SNAPSHOT_INTERVAL || SNAPSHOT_INTERVAL == 0) return;
 
-        uint256 exchangeRate = _getUnderlyingAmount();
-        uint256 maxAllowedExchangeRate = _getMaxAllowedExchangeRate();
+        uint256 exchangeRate = getUnderlyingAmount();
+        uint256 maxAllowedExchangeRate = getMaxAllowedExchangeRate();
 
         snapshotExchangeRate = exchangeRate > maxAllowedExchangeRate ? maxAllowedExchangeRate : exchangeRate;
         snapshotTimestamp = block.timestamp;
@@ -145,13 +145,13 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
             return calculatePrice(asset, exchangeRate);
         }
 
-        exchangeRate = _getUnderlyingAmount();
+        exchangeRate = getUnderlyingAmount();
 
         if (SNAPSHOT_INTERVAL == 0) {
             return calculatePrice(asset, exchangeRate);
         }
 
-        uint256 maxAllowedExchangeRate = _getMaxAllowedExchangeRate();
+        uint256 maxAllowedExchangeRate = getMaxAllowedExchangeRate();
 
         uint256 finalExchangeRate = (exchangeRate > maxAllowedExchangeRate && maxAllowedExchangeRate != 0)
             ? maxAllowedExchangeRate
@@ -159,6 +159,24 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
 
         return calculatePrice(asset, finalExchangeRate);
     }
+
+    /**
+     * @notice Gets the maximum allowed exchange rate for token
+     * @return maxExchangeRate Maximum allowed exchange rate
+     */
+    function getMaxAllowedExchangeRate() public view returns (uint256) {
+        uint256 timeElapsed = block.timestamp - snapshotTimestamp;
+        uint256 maxExchangeRate = snapshotExchangeRate +
+            (snapshotExchangeRate * GROWTH_RATE_PER_SECOND * timeElapsed) /
+            1e18;
+        return maxExchangeRate;
+    }
+
+    /**
+     * @notice Gets the underlying amount for correlated token
+     * @return underlyingAmount Amount of underlying token
+     */
+    function getUnderlyingAmount() public view virtual returns (uint256);
 
     /**
      * @notice Fetches price of the token based on an underlying exchange rate
@@ -177,22 +195,4 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
 
         return (exchangeRate * underlyingUSDPrice) / (10 ** decimals);
     }
-
-    /**
-     * @notice Gets the maximum allowed exchange rate for token
-     * @return maxExchangeRate Maximum allowed exchange rate
-     */
-    function _getMaxAllowedExchangeRate() internal view returns (uint256) {
-        uint256 timeElapsed = block.timestamp - snapshotTimestamp;
-        uint256 maxExchangeRate = snapshotExchangeRate +
-            (snapshotExchangeRate * GROWTH_RATE_PER_SECOND * timeElapsed) /
-            1e18;
-        return maxExchangeRate;
-    }
-
-    /**
-     * @notice Gets the underlying amount for correlated token
-     * @return underlyingAmount Amount of underlying token
-     */
-    function _getUnderlyingAmount() internal view virtual returns (uint256);
 }

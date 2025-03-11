@@ -44,7 +44,7 @@ contract EtherfiAccountantOracle is CorrelatedTokenOracle {
      * @notice Fetches the conversion rate from the ACCOUNTANT contract
      * @return amount Amount of WBTC
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return ACCOUNTANT.getRateSafe();
     }
 }

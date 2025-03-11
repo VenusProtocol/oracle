@@ -43,7 +43,7 @@ contract WeETHAccountantOracle is CorrelatedTokenOracle {
      * @notice Gets the WETH for 1 weETH LRT
      * @return amount Amount of WETH
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return ACCOUNTANT.getRateSafe();
     }
 }

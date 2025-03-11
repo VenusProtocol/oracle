@@ -30,7 +30,7 @@ contract MockCorrelatedTokenOracle is CorrelatedTokenOracle {
         mockUnderlyingAmount = amount;
     }
 
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return mockUnderlyingAmount;
     }
 }
