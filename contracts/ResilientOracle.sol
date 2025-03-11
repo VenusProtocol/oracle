@@ -19,7 +19,7 @@ import "./lib/Transient.sol";
  * for attacking the protocol.
  *
  * The Resilient Oracle uses multiple sources and fallback mechanisms to provide accurate prices and protect
- * the protocol from oracle attacks. Currently it includes integrations with Chainlink, Pyth, Binance Oracle
+ * the protocol from oracle attacks. Currently it includes integrations with Chainlink, Binance Oracle
  * and TWAP (Time-Weighted Average Price) oracles. TWAP uses PancakeSwap as the on-chain price source.
  *
  * For every market (vToken) we configure the main, pivot and fallback oracles. The oracles are configured per
@@ -38,9 +38,9 @@ anchorRatio = anchorPrice/reporterPrice
 isValid = anchorRatio <= upperBoundAnchorRatio && anchorRatio >= lowerBoundAnchorRatio
 ```
 
- * In most cases, Chainlink is used as the main oracle, TWAP or Pyth oracles are used as the pivot oracle depending
+ * In most cases, Chainlink is used as the main oracle, TWAP or oracles are used as the pivot oracle depending
  * on which supports the given market and Binance oracle is used as the fallback oracle. For some markets we may
- * use Pyth or TWAP as the main oracle if the token price is not supported by Chainlink or Binance oracles.
+ * use TWAP as the main oracle if the token price is not supported by Chainlink or Binance oracles.
  *
  * For a fetched price to be valid it must be positive and not stagnant. If the price is invalid then we consider the
  * oracle to be stagnant and treat it like it's disabled.
