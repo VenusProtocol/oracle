@@ -15,7 +15,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     /// @notice Slot to cache the asset's price, used for transient storage
     /// custom:storage-location erc7201:venus-protocol/oracle/common/CorrelatedTokenOracle/cache
     /// keccak256(abi.encode(uint256(keccak256("venus-protocol/oracle/common/CorrelatedTokenOracle/cache")) - 1))
-    ///  & ~bytes32(uint256(0xff)
+    ///  & ~bytes32(uint256(0xff))
     bytes32 public constant CACHE_SLOT = 0x285ac4cf3d7b1e95dc20783e633728d23869c1e2c096067904f13d824ae1fb00;
 
     /// @notice Address of the correlated token
@@ -40,7 +40,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     uint256 public snapshotTimestamp;
 
     /// @notice Emitted when the snapshot is updated
-    event SnapshotUpdated(uint256 exchangeRate, uint256 timestamp);
+    event SnapshotUpdated(uint256 indexed exchangeRate, uint256 indexed timestamp);
 
     /// @notice Thrown if the token address is invalid
     error InvalidTokenAddress();
@@ -138,17 +138,20 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
      * @param asset Address of the token
      * @return price The price of the token in scaled decimal places. It can be capped
      * to a maximum value taking into account the growth rate
+     * @custom:error InvalidTokenAddress error is thrown if the token address is invalid
      */
     function getPrice(address asset) public view override returns (uint256) {
+        if (asset != CORRELATED_TOKEN) revert InvalidTokenAddress();
+
         uint256 exchangeRate = Transient.readCachedPrice(CACHE_SLOT, asset);
         if (exchangeRate != 0) {
-            return calculatePrice(asset, exchangeRate);
+            return _calculatePrice(asset, exchangeRate);
         }
 
         exchangeRate = getUnderlyingAmount();
 
         if (SNAPSHOT_INTERVAL == 0) {
-            return calculatePrice(asset, exchangeRate);
+            return _calculatePrice(asset, exchangeRate);
         }
 
         uint256 maxAllowedExchangeRate = getMaxAllowedExchangeRate();
@@ -157,7 +160,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
             ? maxAllowedExchangeRate
             : exchangeRate;
 
-        return calculatePrice(asset, finalExchangeRate);
+        return _calculatePrice(asset, finalExchangeRate);
     }
 
     /**
@@ -183,11 +186,8 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
      * @param asset The address of the asset
      * @param exchangeRate The underlying exchange rate to use
      * @return price The price of the token in scaled decimal places
-     * @custom:error InvalidTokenAddress error is thrown if the token address is invalid
      */
-    function calculatePrice(address asset, uint256 exchangeRate) internal view returns (uint256) {
-        if (asset != CORRELATED_TOKEN) revert InvalidTokenAddress();
-
+    function _calculatePrice(address asset, uint256 exchangeRate) internal view returns (uint256) {
         uint256 underlyingUSDPrice = RESILIENT_ORACLE.getPrice(UNDERLYING_TOKEN);
 
         IERC20Metadata token = IERC20Metadata(CORRELATED_TOKEN);

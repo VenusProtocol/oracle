@@ -3292,7 +3292,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@venusprotocol/oracle@^2.7.0, @venusprotocol/oracle@workspace:.":
+"@venusprotocol/oracle@npm:^2.7.0":
+  version: 2.12.0
+  resolution: "@venusprotocol/oracle@npm:2.12.0"
+  dependencies:
+    "@chainlink/contracts": ^0.5.1
+    "@defi-wonderland/smock": 2.4.0
+    "@nomicfoundation/hardhat-network-helpers": ^1.0.8
+    "@openzeppelin/contracts": ^4.6.0
+    "@openzeppelin/contracts-upgradeable": ^4.7.3
+    "@venusprotocol/governance-contracts": ^2.9.0
+    "@venusprotocol/solidity-utilities": ^2.0.0
+    "@venusprotocol/venus-protocol": ^9.7.0
+    ethers: ^5.6.8
+    hardhat: 2.22.15
+    hardhat-deploy: ^0.12.4
+    module-alias: ^2.2.2
+    patch-package: ^8.0.0
+    solidity-docgen: ^0.6.0-beta.29
+  checksum: 26b9b09878aa6cbc2fa677f3710dddf20ce760fb746b9ef8c0287a8dc88b7023ce6ff3e4380b918484ad2c698fac3de1ce45d4cc3d6cb50647081460843ca303
+  languageName: node
+  linkType: hard
+
+"@venusprotocol/oracle@workspace:.":
   version: 0.0.0-use.local
   resolution: "@venusprotocol/oracle@workspace:."
   dependencies:

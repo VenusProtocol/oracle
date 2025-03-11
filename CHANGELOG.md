@@ -1,3 +1,26 @@
+## [2.13.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.13.0-dev.1...v2.13.0-dev.2) (2025-03-10)
+
+
+### Features
+
+* add a custom ZkETH oracle ([2c38558](https://github.com/VenusProtocol/oracle/commit/2c38558e2d8aaf1909cef4b8d1653b2b55bf118e))
+* deploy ZkETH oracle for zksync mainnet and sepolia ([4780e91](https://github.com/VenusProtocol/oracle/commit/4780e91b7c515d99ea50fe85db233e71fa8fcd41))
+* updating deployment files ([5667a9f](https://github.com/VenusProtocol/oracle/commit/5667a9f01326f4a6d09648f242954a527bc87854))
+* use governance timelocks for zksync ([800f4df](https://github.com/VenusProtocol/oracle/commit/800f4df63eb9538f5a5630380c89860d495e79b2))
+
+## [2.13.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.12.0...v2.13.0-dev.1) (2025-03-06)
+
+
+### Features
+
+* add script to deploy wstETH one jump oracle ([d360542](https://github.com/VenusProtocol/oracle/commit/d3605427103e3a6ce2067e3e624421468f2b87e5))
+* deployment files for oneJump oracle on base mainnet for wstETH ([e1967d2](https://github.com/VenusProtocol/oracle/commit/e1967d2167db310997cdea0970e90368a0bba5c4))
+* deployment files for oneJump oracle on base sepolia for wstETH ([3df4b08](https://github.com/VenusProtocol/oracle/commit/3df4b0876bc6933268c48fb2b0fb03f2937dd2bf))
+* deployment files for wstETH one-jump oracle on zksync mainnet ([3161bc7](https://github.com/VenusProtocol/oracle/commit/3161bc7e48937b94f4f4bcc7d9eb8ad2f5845e50))
+* deployment files for wstETH one-jump oracle on zksync sepolia ([265a6ee](https://github.com/VenusProtocol/oracle/commit/265a6ee07eebf0e3e08d5fa508eb69f371bf76ee))
+* updating deployment files ([fe0b114](https://github.com/VenusProtocol/oracle/commit/fe0b1146c6c7f5244774431f14a0ed68f64ea84f))
+* updating deployment files ([6ec9ea8](https://github.com/VenusProtocol/oracle/commit/6ec9ea8ca189852974839bcdd78bf508391dd6fa))
+
 ## [2.12.0](https://github.com/VenusProtocol/oracle/compare/v2.11.0...v2.12.0) (2025-02-21)
 
 
