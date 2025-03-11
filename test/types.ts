@@ -1,5 +1,5 @@
-import { Contract } from "ethers";
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
+import { Contract } from "ethers";
 
 import { BoundValidator } from "../typechain-types";
 import { ResilientOracle } from "../typechain-types/contracts/ResilientOracle";

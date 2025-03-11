@@ -35,7 +35,7 @@ contract ZkETHOracle is CorrelatedTokenOracle {
      * @notice Gets the amount of rzkETH for 1 zkETH
      * @return amount Amount of rzkETH
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return IZkETH(CORRELATED_TOKEN).LSTPerToken();
     }
 }
