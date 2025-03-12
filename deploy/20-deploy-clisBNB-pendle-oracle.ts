@@ -28,7 +28,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       ptOracleAddress,
       PendleRateKind.PT_TO_SY,
       addresses["PT-clisBNB-24APR2025"],
-      addresses["slisBNB"],
+      addresses.slisBNB,
       oracle.address,
       900,
     ],
