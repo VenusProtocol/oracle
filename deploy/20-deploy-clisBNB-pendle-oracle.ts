@@ -3,6 +3,7 @@ import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
+import { isMainnet } from "../helpers/deploymentUtils";
 
 enum PendleRateKind {
   PT_TO_ASSET = 0,
@@ -30,7 +31,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       addresses["PT-clisBNB-24APR2025"],
       addresses.slisBNB,
       oracle.address,
-      900,
+      1800,
     ],
     proxy: {
       owner: proxyOwnerAddress,
@@ -38,6 +39,34 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     },
     skipIfAlreadyDeployed: true,
   });
+
+  if (isMainnet(network)) {
+    const referenceOracle = await ethers.getContract("ReferenceOracle");
+    const { devMultisig } = addresses;
+    await deploy("PendleOracle-PT-clisBNB-24APR2025_Reference_PtToAsset", {
+      contract: "PendleOracle",
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [
+        addresses["PT-clisBNB-24APR2025_Market"] || "0x0000000000000000000000000000000000000002",
+        ptOracleAddress,
+        PendleRateKind.PT_TO_ASSET,
+        addresses["PT-clisBNB-24APR2025"],
+        addresses.WBNBAddress,
+        referenceOracle.address,
+        1800,
+      ],
+      proxy: {
+        owner: devMultisig,
+        proxyContract: "OptimizedTransparentUpgradeableProxy",
+        viaAdminContract: {
+          name: "DevProxyAdmin",
+        },
+      },
+      skipIfAlreadyDeployed: true,
+    });
+  }
 };
 
 export default func;
