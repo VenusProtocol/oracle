@@ -118,6 +118,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     "SolvBTC.BBN": "0x1346b618dC92810EC74163e4c27004c921D446a5",
     "PT-SolvBTC.BBN-27MAR2025": "0x541b5eeac7d4434c8f87e2d32019d67611179606",
     "PT-SolvBTC.BBN-27MAR2025_Market": "0x9dAA2878A8739E66e08e7ad35316C5143c0ea7C7",
+    "PT-clisBNB-24APR2025": "0xe8f1c9804770e11ab73395be54686ad656601e9e",
+    "PT-clisBNB-24APR2025_Market": "0x1d9d27f0b89181cf1593ac2b36a37b444eb66bee",
   },
   sepolia: {
     vBNBAddress: ethers.constants.AddressZero,
