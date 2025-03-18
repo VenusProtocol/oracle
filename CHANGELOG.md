@@ -1,3 +1,19 @@
+## [2.13.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.13.0-dev.2...v2.13.0-dev.3) (2025-03-18)
+
+
+### Features
+
+* deployed oracle on mainnet ([44e284a](https://github.com/VenusProtocol/oracle/commit/44e284ae3c7df37b619083e874922a2cc2d5efd0))
+* deployed pt oracle for clisBNB ([43c687f](https://github.com/VenusProtocol/oracle/commit/43c687f9badde5f2f87217f332be114c29692944))
+* updating deployment files ([017ba49](https://github.com/VenusProtocol/oracle/commit/017ba499cc2392fb38fc4400291a8ddb6f608392))
+
+
+### Bug Fixes
+
+* fixed lint ([b0ef84a](https://github.com/VenusProtocol/oracle/commit/b0ef84a52cf6f2f76d9703028b0233b7b3ff38b0))
+* redeployed oracle ([225f93b](https://github.com/VenusProtocol/oracle/commit/225f93b78bc720ac5cf2e69dbe2613c1be51a161))
+* resolved comments ([08e88d2](https://github.com/VenusProtocol/oracle/commit/08e88d23b957e5d7b149f22caff59861a2cbd68f))
+
 ## [2.13.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.13.0-dev.1...v2.13.0-dev.2) (2025-03-10)
 
 
