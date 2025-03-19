@@ -12,7 +12,8 @@ import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
  * @notice This oracle fetches the price of asBNB asset
  */
 contract AsBNBOracle is CorrelatedTokenOracle {
-    /// @notice Constructor for the oracle contract.
+    /// @notice Constructor for the implementation contract.
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     constructor(
         address asBNB,
         address slisBNB,

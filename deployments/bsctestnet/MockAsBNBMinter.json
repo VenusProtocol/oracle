@@ -1,0 +1,60 @@
+{
+  "address": "0x0E35fe8594551Eba23f7BC191De20612a0f152F4",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "convertToTokens",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x77cf84b858230ded68ddb27ffd7ad24fb304e99626eb94c9fe1c5b372b71e257",
+  "receipt": {
+    "to": null,
+    "from": "0x9E10648855e2C873749855610e4CF96aa00e059B",
+    "contractAddress": "0x0E35fe8594551Eba23f7BC191De20612a0f152F4",
+    "transactionIndex": 0,
+    "gasUsed": "85883",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x47b14d39c51faa44c403b17226b612693af94f7a5e1c2624da69ba0e437ed8d7",
+    "transactionHash": "0x77cf84b858230ded68ddb27ffd7ad24fb304e99626eb94c9fe1c5b372b71e257",
+    "logs": [],
+    "blockNumber": 49220233,
+    "cumulativeGasUsed": "85883",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "53b07f2899bbd8256f79840e3cbeb06b",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.25+commit.b61c2a91\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"convertToTokens\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/test/MockAsBNBMinter.sol\":\"MockAsBNBMinter\"},\"evmVersion\":\"cancun\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/interfaces/IAsBNBMinter.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity 0.8.25;\\n\\ninterface IAsBNBMinter {\\n    function convertToTokens(uint256 amount) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0x3cf93eddba855443b20f0dcfd7938448c9b44caa866403f53b6cd5bcf4ec1003\",\"license\":\"BSD-3-Clause\"},\"contracts/test/MockAsBNBMinter.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.6.0) (token/ERC20/ERC20.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport { IAsBNBMinter } from \\\"../interfaces/IAsBNBMinter.sol\\\";\\n\\ncontract MockAsBNBMinter is IAsBNBMinter {\\n    function convertToTokens(uint256 _amount) external pure override returns (uint256) {\\n        return _amount;\\n    }\\n}\\n\",\"keccak256\":\"0x482bd87ace143267e000e3638fa5e55d963d31559acbe7ad4e7ed7fb09818a62\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x6080604052348015600e575f80fd5b50609680601a5f395ff3fe6080604052348015600e575f80fd5b50600436106026575f3560e01c80638590625614602a575b5f80fd5b60386035366004604a565b90565b60405190815260200160405180910390f35b5f602082840312156059575f80fd5b503591905056fea26469706673582212208a7635dd8cd95c67e26744960b212fcebcfafe7029de9d22535d0c4d62cc11e564736f6c63430008190033",
+  "deployedBytecode": "0x6080604052348015600e575f80fd5b50600436106026575f3560e01c80638590625614602a575b5f80fd5b60386035366004604a565b90565b60405190815260200160405180910390f35b5f602082840312156059575f80fd5b503591905056fea26469706673582212208a7635dd8cd95c67e26744960b212fcebcfafe7029de9d22535d0c4d62cc11e564736f6c63430008190033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}
