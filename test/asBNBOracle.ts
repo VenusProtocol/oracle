@@ -34,7 +34,7 @@ describe("BNBxOracle unit tests", () => {
     asBNBMock.decimals.returns(18);
     asBNBMock.minter.returns(asBNBMinterMock.address);
 
-    asBNBOracleFactory = await ethers.getContractFactory("asBNBOracle");
+    asBNBOracleFactory = await ethers.getContractFactory("AsBNBOracle");
 
     slisBNBMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: slisBNB });
     slisBNBMock.decimals.returns(18);

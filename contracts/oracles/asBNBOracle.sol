@@ -3,7 +3,6 @@ pragma solidity 0.8.25;
 
 import { IAsBNB } from "../interfaces/IAsBNB.sol";
 import { IAsBNBMinter } from "../interfaces/IAsBNBMinter.sol";
-import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
 
@@ -12,9 +11,8 @@ import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
  * @author Venus
  * @notice This oracle fetches the price of asBNB asset
  */
-contract asBNBOracle is CorrelatedTokenOracle {
-    /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
+contract AsBNBOracle is CorrelatedTokenOracle {
+    /// @notice Constructor for the oracle contract.
     constructor(
         address asBNB,
         address slisBNB,
