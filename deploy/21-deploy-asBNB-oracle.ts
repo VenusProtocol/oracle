@@ -22,7 +22,7 @@ const func: DeployFunction = async ({
   );
 
   // Deploy dependencies for testnet
-  if(network.name === "bsctestnet") {
+  if (network.name === "bsctestnet") {
     await deploy("MockAsBNBMinter", {
       from: deployer,
       contract: "MockAsBNBMinter",
@@ -31,9 +31,9 @@ const func: DeployFunction = async ({
       autoMine: true,
       skipIfAlreadyDeployed: true,
     });
-  
+
     const minter = await ethers.getContract("MockAsBNBMinter");
-  
+
     await deploy("MockAsBNB", {
       from: deployer,
       contract: "MockAsBNB",
