@@ -1,0 +1,177 @@
+{
+  "address": "0x7acfFE81be6AE829a5Ec90700108072338ebF6e9",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "asBNB",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "slisBNB",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "resilientOracle",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidTokenAddress",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ZeroAddressNotAllowed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "CORRELATED_TOKEN",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "RESILIENT_ORACLE",
+      "outputs": [
+        {
+          "internalType": "contract OracleInterface",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "UNDERLYING_TOKEN",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        }
+      ],
+      "name": "getPrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x51a698c16abd157c797bd7dcb7e07c402782c1cbf9c7013322544fbbeb3e7b3b",
+  "receipt": {
+    "to": null,
+    "from": "0x9E10648855e2C873749855610e4CF96aa00e059B",
+    "contractAddress": "0x7acfFE81be6AE829a5Ec90700108072338ebF6e9",
+    "transactionIndex": 0,
+    "gasUsed": "371418",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x7969f9b52c2e120cc7cad49bccca71aa7f37168c89bb584a0becc55a28fbcfd9",
+    "transactionHash": "0x51a698c16abd157c797bd7dcb7e07c402782c1cbf9c7013322544fbbeb3e7b3b",
+    "logs": [],
+    "blockNumber": 49220792,
+    "cumulativeGasUsed": "371418",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xc625f060ad25f4A6c2d9eBF30C133dB61B7AF072",
+    "0xd2aF6A916Bc77764dc63742BC30f71AF4cF423F4",
+    "0x3cD69251D04A28d887Ac14cbe2E14c52F3D57823"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "53b07f2899bbd8256f79840e3cbeb06b",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.25+commit.b61c2a91\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"asBNB\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"slisBNB\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"resilientOracle\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"InvalidTokenAddress\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ZeroAddressNotAllowed\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"CORRELATED_TOKEN\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"RESILIENT_ORACLE\",\"outputs\":[{\"internalType\":\"contract OracleInterface\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"UNDERLYING_TOKEN\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"}],\"name\":\"getPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"Venus\",\"kind\":\"dev\",\"methods\":{\"constructor\":{\"custom:oz-upgrades-unsafe-allow\":\"state-variable-immutable\"},\"getPrice(address)\":{\"params\":{\"asset\":\"Address of the correlated token\"},\"returns\":{\"_0\":\"price The price of the correlated token in scaled decimal places\"}}},\"title\":\"asBNBOracle\",\"version\":1},\"userdoc\":{\"errors\":{\"InvalidTokenAddress()\":[{\"notice\":\"Thrown if the token address is invalid\"}],\"ZeroAddressNotAllowed()\":[{\"notice\":\"Thrown if the supplied address is a zero address where it is not allowed\"}]},\"kind\":\"user\",\"methods\":{\"CORRELATED_TOKEN()\":{\"notice\":\"Address of the correlated token\"},\"RESILIENT_ORACLE()\":{\"notice\":\"Address of Resilient Oracle\"},\"UNDERLYING_TOKEN()\":{\"notice\":\"Address of the underlying token\"},\"constructor\":{\"notice\":\"Constructor for the implementation contract.\"},\"getPrice(address)\":{\"notice\":\"Fetches the price of the correlated token\"}},\"notice\":\"This oracle fetches the price of asBNB asset\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/oracles/AsBNBOracle.sol\":\"AsBNBOracle\"},\"evmVersion\":\"cancun\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.9.0) (token/ERC20/IERC20.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Interface of the ERC20 standard as defined in the EIP.\\n */\\ninterface IERC20 {\\n    /**\\n     * @dev Emitted when `value` tokens are moved from one account (`from`) to\\n     * another (`to`).\\n     *\\n     * Note that `value` may be zero.\\n     */\\n    event Transfer(address indexed from, address indexed to, uint256 value);\\n\\n    /**\\n     * @dev Emitted when the allowance of a `spender` for an `owner` is set by\\n     * a call to {approve}. `value` is the new allowance.\\n     */\\n    event Approval(address indexed owner, address indexed spender, uint256 value);\\n\\n    /**\\n     * @dev Returns the amount of tokens in existence.\\n     */\\n    function totalSupply() external view returns (uint256);\\n\\n    /**\\n     * @dev Returns the amount of tokens owned by `account`.\\n     */\\n    function balanceOf(address account) external view returns (uint256);\\n\\n    /**\\n     * @dev Moves `amount` tokens from the caller's account to `to`.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function transfer(address to, uint256 amount) external returns (bool);\\n\\n    /**\\n     * @dev Returns the remaining number of tokens that `spender` will be\\n     * allowed to spend on behalf of `owner` through {transferFrom}. This is\\n     * zero by default.\\n     *\\n     * This value changes when {approve} or {transferFrom} are called.\\n     */\\n    function allowance(address owner, address spender) external view returns (uint256);\\n\\n    /**\\n     * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * IMPORTANT: Beware that changing an allowance with this method brings the risk\\n     * that someone may use both the old and the new allowance by unfortunate\\n     * transaction ordering. One possible solution to mitigate this race\\n     * condition is to first reduce the spender's allowance to 0 and set the\\n     * desired value afterwards:\\n     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729\\n     *\\n     * Emits an {Approval} event.\\n     */\\n    function approve(address spender, uint256 amount) external returns (bool);\\n\\n    /**\\n     * @dev Moves `amount` tokens from `from` to `to` using the\\n     * allowance mechanism. `amount` is then deducted from the caller's\\n     * allowance.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function transferFrom(address from, address to, uint256 amount) external returns (bool);\\n}\\n\",\"keccak256\":\"0x287b55befed2961a7eabd7d7b1b2839cbca8a5b80ef8dcbb25ed3d4c2002c305\",\"license\":\"MIT\"},\"@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/IERC20Metadata.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../IERC20.sol\\\";\\n\\n/**\\n * @dev Interface for the optional metadata functions from the ERC20 standard.\\n *\\n * _Available since v4.1._\\n */\\ninterface IERC20Metadata is IERC20 {\\n    /**\\n     * @dev Returns the name of the token.\\n     */\\n    function name() external view returns (string memory);\\n\\n    /**\\n     * @dev Returns the symbol of the token.\\n     */\\n    function symbol() external view returns (string memory);\\n\\n    /**\\n     * @dev Returns the decimals places of the token.\\n     */\\n    function decimals() external view returns (uint8);\\n}\\n\",\"keccak256\":\"0x8de418a5503946cabe331f35fe242d3201a73f67f77aaeb7110acb1f30423aca\",\"license\":\"MIT\"},\"@venusprotocol/solidity-utilities/contracts/constants.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity ^0.8.25;\\n\\n/// @dev Base unit for computations, usually used in scaling (multiplications, divisions)\\nuint256 constant EXP_SCALE = 1e18;\\n\\n/// @dev A unit (literal one) in EXP_SCALE, usually used in additions/subtractions\\nuint256 constant MANTISSA_ONE = EXP_SCALE;\\n\\n/// @dev The approximate number of seconds per year\\nuint256 constant SECONDS_PER_YEAR = 31_536_000;\\n\",\"keccak256\":\"0x14de93ead464da249af31bea0e3bcfb62ec693bea3475fb4d90f055ac81dc5eb\",\"license\":\"BSD-3-Clause\"},\"@venusprotocol/solidity-utilities/contracts/validators.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity 0.8.25;\\n\\n/// @notice Thrown if the supplied address is a zero address where it is not allowed\\nerror ZeroAddressNotAllowed();\\n\\n/// @notice Thrown if the supplied value is 0 where it is not allowed\\nerror ZeroValueNotAllowed();\\n\\n/// @notice Checks if the provided address is nonzero, reverts otherwise\\n/// @param address_ Address to check\\n/// @custom:error ZeroAddressNotAllowed is thrown if the provided address is a zero address\\nfunction ensureNonzeroAddress(address address_) pure {\\n    if (address_ == address(0)) {\\n        revert ZeroAddressNotAllowed();\\n    }\\n}\\n\\n/// @notice Checks if the provided value is nonzero, reverts otherwise\\n/// @param value_ Value to check\\n/// @custom:error ZeroValueNotAllowed is thrown if the provided value is 0\\nfunction ensureNonzeroValue(uint256 value_) pure {\\n    if (value_ == 0) {\\n        revert ZeroValueNotAllowed();\\n    }\\n}\\n\",\"keccak256\":\"0xdb88e14d50dd21889ca3329d755673d022c47e8da005b6a545c7f69c2c4b7b86\",\"license\":\"BSD-3-Clause\"},\"contracts/interfaces/IAsBNB.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity 0.8.25;\\n\\ninterface IAsBNB {\\n    function minter() external view returns (address);\\n    function decimals() external view returns (uint8);\\n}\\n\",\"keccak256\":\"0x34a434d78d48a1c33f79740bab9454fb5eaf05eb38e3abddd3fe55e6f4b4c937\",\"license\":\"BSD-3-Clause\"},\"contracts/interfaces/IAsBNBMinter.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity 0.8.25;\\n\\ninterface IAsBNBMinter {\\n    function convertToTokens(uint256 amount) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0x3cf93eddba855443b20f0dcfd7938448c9b44caa866403f53b6cd5bcf4ec1003\",\"license\":\"BSD-3-Clause\"},\"contracts/interfaces/OracleInterface.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity ^0.8.25;\\n\\ninterface OracleInterface {\\n    function getPrice(address asset) external view returns (uint256);\\n}\\n\\ninterface ResilientOracleInterface is OracleInterface {\\n    function updatePrice(address vToken) external;\\n\\n    function updateAssetPrice(address asset) external;\\n\\n    function getUnderlyingPrice(address vToken) external view returns (uint256);\\n}\\n\\ninterface TwapInterface is OracleInterface {\\n    function updateTwap(address asset) external returns (uint256);\\n}\\n\\ninterface BoundValidatorInterface {\\n    function validatePriceWithAnchorPrice(\\n        address asset,\\n        uint256 reporterPrice,\\n        uint256 anchorPrice\\n    ) external view returns (bool);\\n}\\n\",\"keccak256\":\"0x2432799b0d824fc701beb4c30146e912b9aeecf77b5c1635dde6c5fbe6bfc3a7\",\"license\":\"BSD-3-Clause\"},\"contracts/oracles/AsBNBOracle.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity 0.8.25;\\n\\nimport { IAsBNB } from \\\"../interfaces/IAsBNB.sol\\\";\\nimport { IAsBNBMinter } from \\\"../interfaces/IAsBNBMinter.sol\\\";\\nimport { EXP_SCALE } from \\\"@venusprotocol/solidity-utilities/contracts/constants.sol\\\";\\nimport { CorrelatedTokenOracle } from \\\"./common/CorrelatedTokenOracle.sol\\\";\\n\\n/**\\n * @title asBNBOracle\\n * @author Venus\\n * @notice This oracle fetches the price of asBNB asset\\n */\\ncontract AsBNBOracle is CorrelatedTokenOracle {\\n    /// @notice Constructor for the implementation contract.\\n    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable\\n    constructor(\\n        address asBNB,\\n        address slisBNB,\\n        address resilientOracle\\n    ) CorrelatedTokenOracle(asBNB, slisBNB, resilientOracle) {}\\n\\n    /**\\n     * @notice Fetches the amount of slisBNB for 1 asBNB\\n     * @return price The amount of slisBNB for asBNB\\n     */\\n    function _getUnderlyingAmount() internal view override returns (uint256) {\\n        IAsBNBMinter minter = IAsBNBMinter(IAsBNB(CORRELATED_TOKEN).minter());\\n        return minter.convertToTokens(EXP_SCALE);\\n    }\\n}\\n\",\"keccak256\":\"0x9399b2eedc8646037148036ac353e96246de8a7c5e8938d4e6c0bb4699ba45f1\",\"license\":\"BSD-3-Clause\"},\"contracts/oracles/common/CorrelatedTokenOracle.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity 0.8.25;\\n\\nimport { OracleInterface } from \\\"../../interfaces/OracleInterface.sol\\\";\\nimport { ensureNonzeroAddress } from \\\"@venusprotocol/solidity-utilities/contracts/validators.sol\\\";\\nimport { IERC20Metadata } from \\\"@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol\\\";\\n\\n/**\\n * @title CorrelatedTokenOracle\\n * @notice This oracle fetches the price of a token that is correlated to another token.\\n */\\nabstract contract CorrelatedTokenOracle is OracleInterface {\\n    /// @notice Address of the correlated token\\n    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable\\n    address public immutable CORRELATED_TOKEN;\\n\\n    /// @notice Address of the underlying token\\n    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable\\n    address public immutable UNDERLYING_TOKEN;\\n\\n    /// @notice Address of Resilient Oracle\\n    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable\\n    OracleInterface public immutable RESILIENT_ORACLE;\\n\\n    /// @notice Thrown if the token address is invalid\\n    error InvalidTokenAddress();\\n\\n    /// @notice Constructor for the implementation contract.\\n    /// @custom:oz-upgrades-unsafe-allow constructor\\n    constructor(address correlatedToken, address underlyingToken, address resilientOracle) {\\n        ensureNonzeroAddress(correlatedToken);\\n        ensureNonzeroAddress(underlyingToken);\\n        ensureNonzeroAddress(resilientOracle);\\n        CORRELATED_TOKEN = correlatedToken;\\n        UNDERLYING_TOKEN = underlyingToken;\\n        RESILIENT_ORACLE = OracleInterface(resilientOracle);\\n    }\\n\\n    /**\\n     * @notice Fetches the price of the correlated token\\n     * @param asset Address of the correlated token\\n     * @return price The price of the correlated token in scaled decimal places\\n     */\\n    function getPrice(address asset) external view override returns (uint256) {\\n        if (asset != CORRELATED_TOKEN) revert InvalidTokenAddress();\\n\\n        // get underlying token amount for 1 correlated token scaled by underlying token decimals\\n        uint256 underlyingAmount = _getUnderlyingAmount();\\n\\n        // oracle returns (36 - asset decimal) scaled price\\n        uint256 underlyingUSDPrice = RESILIENT_ORACLE.getPrice(UNDERLYING_TOKEN);\\n\\n        IERC20Metadata token = IERC20Metadata(CORRELATED_TOKEN);\\n        uint256 decimals = token.decimals();\\n\\n        // underlyingAmount (for 1 correlated token) * underlyingUSDPrice / decimals(correlated token)\\n        return (underlyingAmount * underlyingUSDPrice) / (10 ** decimals);\\n    }\\n\\n    /**\\n     * @notice Gets the underlying amount for correlated token\\n     * @return underlyingAmount Amount of underlying token\\n     */\\n    function _getUnderlyingAmount() internal view virtual returns (uint256);\\n}\\n\",\"keccak256\":\"0x7053239c18747f7439e025cd4aab629f78dd6dbaadeedacf2393d74c4db317ca\",\"license\":\"BSD-3-Clause\"}},\"version\":1}",
+  "bytecode": "0x60e060405234801561000f575f80fd5b506040516106ec3803806106ec83398101604081905261002e916100b2565b82828261003a8361006d565b6100438261006d565b61004c8161006d565b6001600160a01b0392831660805290821660a0521660c052506100f2915050565b6001600160a01b038116610094576040516342bcdf7f60e11b815260040160405180910390fd5b50565b80516001600160a01b03811681146100ad575f80fd5b919050565b5f805f606084860312156100c4575f80fd5b6100cd84610097565b92506100db60208501610097565b91506100e960408501610097565b90509250925092565b60805160a05160c0516105b061013c5f395f818160df01526101a101525f81816053015261017401525f818160b8015281816101040152818161020f01526102c301526105b05ff3fe608060405234801561000f575f80fd5b506004361061004a575f3560e01c806329db1be61461004e57806341976e091461009257806369818a35146100b3578063a4edcd4c146100da575b5f80fd5b6100757f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b0390911681526020015b60405180910390f35b6100a56100a03660046103cf565b610101565b604051908152602001610089565b6100757f000000000000000000000000000000000000000000000000000000000000000081565b6100757f000000000000000000000000000000000000000000000000000000000000000081565b5f7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b0316826001600160a01b03161461015457604051630f58058360e11b815260040160405180910390fd5b5f61015d6102bf565b6040516341976e0960e01b81526001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000811660048301529192505f917f000000000000000000000000000000000000000000000000000000000000000016906341976e0990602401602060405180830381865afa1580156101e6573d5f803e3d5ffd5b505050506040513d601f19601f8201168201806040525081019061020a91906103f1565b90505f7f000000000000000000000000000000000000000000000000000000000000000090505f816001600160a01b031663313ce5676040518163ffffffff1660e01b8152600401602060405180830381865afa15801561026d573d5f803e3d5ffd5b505050506040513d601f19601f820116820180604052508101906102919190610408565b60ff1690506102a181600a61051e565b6102ab8486610529565b6102b59190610540565b9695505050505050565b5f807f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031663075461726040518163ffffffff1660e01b8152600401602060405180830381865afa15801561031d573d5f803e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610341919061055f565b6040516342c8312b60e11b8152670de0b6b3a764000060048201529091506001600160a01b03821690638590625690602401602060405180830381865afa15801561038e573d5f803e3d5ffd5b505050506040513d601f19601f820116820180604052508101906103b291906103f1565b91505090565b6001600160a01b03811681146103cc575f80fd5b50565b5f602082840312156103df575f80fd5b81356103ea816103b8565b9392505050565b5f60208284031215610401575f80fd5b5051919050565b5f60208284031215610418575f80fd5b815160ff811681146103ea575f80fd5b634e487b7160e01b5f52601160045260245ffd5b600181815b8085111561047657815f190482111561045c5761045c610428565b8085161561046957918102915b93841c9390800290610441565b509250929050565b5f8261048c57506001610518565b8161049857505f610518565b81600181146104ae57600281146104b8576104d4565b6001915050610518565b60ff8411156104c9576104c9610428565b50506001821b610518565b5060208310610133831016604e8410600b84101617156104f7575081810a610518565b610501838361043c565b805f190482111561051457610514610428565b0290505b92915050565b5f6103ea838361047e565b808202811582820484141761051857610518610428565b5f8261055a57634e487b7160e01b5f52601260045260245ffd5b500490565b5f6020828403121561056f575f80fd5b81516103ea816103b856fea26469706673582212204caa9d7aac2d2a9cd260c1f425c8a448a17423c8f06c0a798bc8783964769fca64736f6c63430008190033",
+  "deployedBytecode": "0x608060405234801561000f575f80fd5b506004361061004a575f3560e01c806329db1be61461004e57806341976e091461009257806369818a35146100b3578063a4edcd4c146100da575b5f80fd5b6100757f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b0390911681526020015b60405180910390f35b6100a56100a03660046103cf565b610101565b604051908152602001610089565b6100757f000000000000000000000000000000000000000000000000000000000000000081565b6100757f000000000000000000000000000000000000000000000000000000000000000081565b5f7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b0316826001600160a01b03161461015457604051630f58058360e11b815260040160405180910390fd5b5f61015d6102bf565b6040516341976e0960e01b81526001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000811660048301529192505f917f000000000000000000000000000000000000000000000000000000000000000016906341976e0990602401602060405180830381865afa1580156101e6573d5f803e3d5ffd5b505050506040513d601f19601f8201168201806040525081019061020a91906103f1565b90505f7f000000000000000000000000000000000000000000000000000000000000000090505f816001600160a01b031663313ce5676040518163ffffffff1660e01b8152600401602060405180830381865afa15801561026d573d5f803e3d5ffd5b505050506040513d601f19601f820116820180604052508101906102919190610408565b60ff1690506102a181600a61051e565b6102ab8486610529565b6102b59190610540565b9695505050505050565b5f807f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031663075461726040518163ffffffff1660e01b8152600401602060405180830381865afa15801561031d573d5f803e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610341919061055f565b6040516342c8312b60e11b8152670de0b6b3a764000060048201529091506001600160a01b03821690638590625690602401602060405180830381865afa15801561038e573d5f803e3d5ffd5b505050506040513d601f19601f820116820180604052508101906103b291906103f1565b91505090565b6001600160a01b03811681146103cc575f80fd5b50565b5f602082840312156103df575f80fd5b81356103ea816103b8565b9392505050565b5f60208284031215610401575f80fd5b5051919050565b5f60208284031215610418575f80fd5b815160ff811681146103ea575f80fd5b634e487b7160e01b5f52601160045260245ffd5b600181815b8085111561047657815f190482111561045c5761045c610428565b8085161561046957918102915b93841c9390800290610441565b509250929050565b5f8261048c57506001610518565b8161049857505f610518565b81600181146104ae57600281146104b8576104d4565b6001915050610518565b60ff8411156104c9576104c9610428565b50506001821b610518565b5060208310610133831016604e8410600b84101617156104f7575081810a610518565b610501838361043c565b805f190482111561051457610514610428565b0290505b92915050565b5f6103ea838361047e565b808202811582820484141761051857610518610428565b5f8261055a57634e487b7160e01b5f52601260045260245ffd5b500490565b5f6020828403121561056f575f80fd5b81516103ea816103b856fea26469706673582212204caa9d7aac2d2a9cd260c1f425c8a448a17423c8f06c0a798bc8783964769fca64736f6c63430008190033",
+  "devdoc": {
+    "author": "Venus",
+    "kind": "dev",
+    "methods": {
+      "constructor": {
+        "custom:oz-upgrades-unsafe-allow": "state-variable-immutable"
+      },
+      "getPrice(address)": {
+        "params": {
+          "asset": "Address of the correlated token"
+        },
+        "returns": {
+          "_0": "price The price of the correlated token in scaled decimal places"
+        }
+      }
+    },
+    "title": "asBNBOracle",
+    "version": 1
+  },
+  "userdoc": {
+    "errors": {
+      "InvalidTokenAddress()": [
+        {
+          "notice": "Thrown if the token address is invalid"
+        }
+      ],
+      "ZeroAddressNotAllowed()": [
+        {
+          "notice": "Thrown if the supplied address is a zero address where it is not allowed"
+        }
+      ]
+    },
+    "kind": "user",
+    "methods": {
+      "CORRELATED_TOKEN()": {
+        "notice": "Address of the correlated token"
+      },
+      "RESILIENT_ORACLE()": {
+        "notice": "Address of Resilient Oracle"
+      },
+      "UNDERLYING_TOKEN()": {
+        "notice": "Address of the underlying token"
+      },
+      "constructor": {
+        "notice": "Constructor for the implementation contract."
+      },
+      "getPrice(address)": {
+        "notice": "Fetches the price of the correlated token"
+      }
+    },
+    "notice": "This oracle fetches the price of asBNB asset",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}
