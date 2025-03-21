@@ -1,3 +1,22 @@
+## [2.13.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.13.0-dev.3...v2.13.0-dev.4) (2025-03-21)
+
+
+### Features
+
+* added asBNB oracle ([b88b277](https://github.com/VenusProtocol/oracle/commit/b88b277dbb0543409b66facd4a1a4325a7e079de))
+* deploy mainnet asBNBOracle ([a8025bc](https://github.com/VenusProtocol/oracle/commit/a8025bc48fbc8648a1c7da4b5fd88d8d57a46296))
+* deploy mock asBnb and asBnb oracle ([f11bea8](https://github.com/VenusProtocol/oracle/commit/f11bea86491f69ab21de9a0a0594c08c4e0d8fda))
+* updating deployment files ([686ed4c](https://github.com/VenusProtocol/oracle/commit/686ed4cbf003388c0323bbd01a470941ff579885))
+* updating deployment files ([ab27d99](https://github.com/VenusProtocol/oracle/commit/ab27d99137e06b323e9cb8b9e6f6027aed7943e0))
+
+
+### Bug Fixes
+
+* BNB-01, BNB-02 ([68e2e0d](https://github.com/VenusProtocol/oracle/commit/68e2e0d3f932e48051aa2b54caa324950d3e1596))
+* BNB-02 ([d2da769](https://github.com/VenusProtocol/oracle/commit/d2da7696bf009ee7ba1d5f6c868e75a63afd3243))
+* lint issues ([d0500e9](https://github.com/VenusProtocol/oracle/commit/d0500e98f6de30588694962b5c29ba4126ff8227))
+* lint prettier issues ([eb52f2c](https://github.com/VenusProtocol/oracle/commit/eb52f2c980176e58133086979893eebbde62a83f))
+
 ## [2.13.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.13.0-dev.2...v2.13.0-dev.3) (2025-03-18)
 
 
