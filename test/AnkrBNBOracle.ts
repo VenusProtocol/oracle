@@ -3,7 +3,7 @@ import chai from "chai";
 import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
-import { IAnkrBNB, ResilientOracleInterface } from "../typechain-types";
+import { AccessControlManager, IAnkrBNB, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -22,6 +22,7 @@ describe("AnkrBNBOracle unit tests", () => {
   let ankrBNBOracle;
   let ankrBNBOracleFactory;
   let timestamp;
+  let acm;
   before(async () => {
     ({ timestamp } = await ethers.provider.getBlock("latest"));
 
@@ -35,6 +36,11 @@ describe("AnkrBNBOracle unit tests", () => {
     ankrBNBMock.decimals.returns(18);
 
     ankrBNBOracleFactory = await ethers.getContractFactory("AnkrBNBOracle");
+
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+    acm = fakeAccessControlManager.address;
   });
 
   describe("deployment", () => {
@@ -47,6 +53,8 @@ describe("AnkrBNBOracle unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           BNB_AMOUNT_FOR_ONE_ANKRBNB,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -60,6 +68,8 @@ describe("AnkrBNBOracle unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           BNB_AMOUNT_FOR_ONE_ANKRBNB,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -72,6 +82,8 @@ describe("AnkrBNBOracle unit tests", () => {
         SNAPSHOT_UPDATE_INTERVAL,
         BNB_AMOUNT_FOR_ONE_ANKRBNB,
         timestamp,
+        acm,
+        0,
       );
     });
   });
@@ -85,6 +97,8 @@ describe("AnkrBNBOracle unit tests", () => {
         SNAPSHOT_UPDATE_INTERVAL,
         BNB_AMOUNT_FOR_ONE_ANKRBNB,
         timestamp,
+        acm,
+        0,
       );
     });
     it("revert if ankrBNB address is wrong", async () => {

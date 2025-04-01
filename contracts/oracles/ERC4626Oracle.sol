@@ -20,7 +20,9 @@ contract ERC4626Oracle is CorrelatedTokenOracle {
         uint256 annualGrowthRate,
         uint256 snapshotInterval,
         uint256 initialSnapshotExchangeRate,
-        uint256 initialSnapshotTimestamp
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 snapshotGap
     )
         CorrelatedTokenOracle(
             correlatedToken,
@@ -29,7 +31,9 @@ contract ERC4626Oracle is CorrelatedTokenOracle {
             annualGrowthRate,
             snapshotInterval,
             initialSnapshotExchangeRate,
-            initialSnapshotTimestamp
+            initialSnapshotTimestamp,
+            accessControlManager,
+            snapshotGap
         )
     {
         ONE_CORRELATED_TOKEN = 10 ** IERC4626(correlatedToken).decimals();
