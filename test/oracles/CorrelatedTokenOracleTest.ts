@@ -2,6 +2,8 @@ import { smock } from "@defi-wonderland/smock";
 import chai from "chai";
 import { ethers } from "hardhat";
 
+import { AccessControlManager } from "../../typechain-types";
+
 const { expect } = chai;
 chai.use(smock.matchers);
 
@@ -30,6 +32,9 @@ describe("CorrelatedTokenOracle", () => {
     const MockResilientOracle = await ethers.getContractFactory("MockResilientOracle");
     resilientOracle = await MockResilientOracle.deploy();
 
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
     // Deploy the CorrelatedTokenOracle contract
     const MockCorrelatedTokenOracle = await ethers.getContractFactory("MockCorrelatedTokenOracle");
     correlatedTokenOracle = await MockCorrelatedTokenOracle.deploy(
@@ -40,6 +45,8 @@ describe("CorrelatedTokenOracle", () => {
       snapshotUpdateInterval,
       exchangeRate,
       timestamp,
+      fakeAccessControlManager.address,
+      1000,
     );
 
     await correlatedTokenOracle.setMockUnderlyingAmount(exchangeRate);
