@@ -6,13 +6,13 @@ import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contract
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { ICappedOracle } from "../../interfaces/ICappedOracle.sol";
 import { Transient } from "../../lib/Transient.sol";
-import { AccessControlledV8 } from "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
+import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
 
 /**
  * @title CorrelatedTokenOracle
  * @notice This oracle fetches the price of a token that is correlated to another token.
  */
-abstract contract CorrelatedTokenOracle is AccessControlledV8, OracleInterface, ICappedOracle {
+abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     /// @notice Slot to cache the asset's price, used for transient storage
     /// custom:storage-location erc7201:venus-protocol/oracle/common/CorrelatedTokenOracle/cache
     /// keccak256(abi.encode(uint256(keccak256("venus-protocol/oracle/common/CorrelatedTokenOracle/cache")) - 1))
@@ -27,6 +27,9 @@ abstract contract CorrelatedTokenOracle is AccessControlledV8, OracleInterface, 
 
     /// @notice Address of Resilient Oracle
     OracleInterface public immutable RESILIENT_ORACLE;
+
+    /// @notice Address of the AccessControlManager contract
+    IAccessControlManagerV8 public ACCESS_CONTROL_MANAGER;
 
     //// @notice Growth rate percentage in seconds. Ex: 1e18 is 100%
     uint256 public growthRatePerSecond;
@@ -73,7 +76,7 @@ abstract contract CorrelatedTokenOracle is AccessControlledV8, OracleInterface, 
         uint256 _initialSnapshotTimestamp,
         address _accessControlManager,
         uint256 _snapshotGap
-    ) initializer {
+    ) {
         growthRatePerSecond = (_annualGrowthRate) / (365 * 24 * 60 * 60);
 
         if ((growthRatePerSecond == 0 && _snapshotInterval > 0) || (growthRatePerSecond > 0 && _snapshotInterval == 0))
@@ -86,6 +89,7 @@ abstract contract CorrelatedTokenOracle is AccessControlledV8, OracleInterface, 
         ensureNonzeroAddress(_correlatedToken);
         ensureNonzeroAddress(_underlyingToken);
         ensureNonzeroAddress(_resilientOracle);
+        ensureNonzeroAddress(_accessControlManager);
 
         CORRELATED_TOKEN = _correlatedToken;
         UNDERLYING_TOKEN = _underlyingToken;
@@ -96,7 +100,7 @@ abstract contract CorrelatedTokenOracle is AccessControlledV8, OracleInterface, 
         snapshotTimestamp = _initialSnapshotTimestamp;
         snapshotGap = _snapshotGap;
 
-        __AccessControlled_init(_accessControlManager);
+        ACCESS_CONTROL_MANAGER = IAccessControlManagerV8(_accessControlManager);
     }
 
     /**

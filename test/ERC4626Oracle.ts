@@ -4,7 +4,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { BEP20Harness, IERC4626, ResilientOracleInterface } from "../typechain-types";
+import { AccessControlManager, BEP20Harness, IERC4626, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -23,6 +23,7 @@ describe("ERC4626Oracle unit tests", () => {
   let ERC4626Oracle;
   let fraxMock;
   let timestamp;
+  let acm;
   before(async () => {
     ({ timestamp } = await ethers.provider.getBlock("latest"));
 
@@ -38,35 +39,44 @@ describe("ERC4626Oracle unit tests", () => {
     fraxMock.decimals.returns(18);
 
     ERC4626OracleFactory = await ethers.getContractFactory("ERC4626Oracle");
+
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+    acm = fakeAccessControlManager.address;
   });
 
   describe("deployment", () => {
-    // it("revert if FRAX address is 0", async () => {
-    //   await expect(
-    //     ERC4626OracleFactory.deploy(
-    //       sFraxMock.address,
-    //       addr0000,
-    //       resilientOracleMock.address,
-    //       ANNUAL_GROWTH_RATE,
-    //       SNAPSHOT_UPDATE_INTERVAL,
-    //       exchangeRate,
-    //       timestamp,
-    //     ),
-    //   ).to.be.reverted;
-    // });
-    // it("revert if sFRAX address is 0", async () => {
-    //   await expect(
-    //     ERC4626OracleFactory.deploy(
-    //       addr0000,
-    //       fraxMock.address,
-    //       resilientOracleMock.address,
-    //       ANNUAL_GROWTH_RATE,
-    //       SNAPSHOT_UPDATE_INTERVAL,
-    //       exchangeRate,
-    //       timestamp,
-    //     ),
-    //   ).to.be.reverted;
-    // });
+    it("revert if FRAX address is 0", async () => {
+      await expect(
+        ERC4626OracleFactory.deploy(
+          sFraxMock.address,
+          addr0000,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+          exchangeRate,
+          timestamp,
+          acm,
+          0,
+        ),
+      ).to.be.reverted;
+    });
+    it("revert if sFRAX address is 0", async () => {
+      await expect(
+        ERC4626OracleFactory.deploy(
+          addr0000,
+          fraxMock.address,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+          exchangeRate,
+          timestamp,
+          acm,
+          0,
+        ),
+      ).to.be.reverted;
+    });
     it("should deploy contract", async () => {
       ERC4626Oracle = await ERC4626OracleFactory.deploy(
         sFraxMock.address,
@@ -76,6 +86,8 @@ describe("ERC4626Oracle unit tests", () => {
         SNAPSHOT_UPDATE_INTERVAL,
         exchangeRate,
         timestamp,
+        acm,
+        0,
       );
     });
   });

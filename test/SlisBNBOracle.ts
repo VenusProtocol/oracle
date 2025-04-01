@@ -4,7 +4,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { BEP20Harness, ISynclubStakeManager, ResilientOracleInterface } from "../typechain-types";
+import { AccessControlManager, BEP20Harness, ISynclubStakeManager, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -25,6 +25,7 @@ describe("SlisBNBOracle unit tests", () => {
   let SlisBNBOracleFactory;
   let slisBNBMock;
   let timestamp;
+  let acm;
   before(async () => {
     ({ timestamp } = await ethers.provider.getBlock("latest"));
 
@@ -39,6 +40,11 @@ describe("SlisBNBOracle unit tests", () => {
     SynclubManagerMock = await smock.fake<ISynclubStakeManager>("ISynclubStakeManager");
     SynclubManagerMock.convertSnBnbToBnb.returns(BNB_FOR_ONE_SLISBNB);
     SlisBNBOracleFactory = await ethers.getContractFactory("SlisBNBOracle");
+
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+    acm = fakeAccessControlManager.address;
   });
 
   describe("deployment", () => {
@@ -52,6 +58,8 @@ describe("SlisBNBOracle unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           BNB_FOR_ONE_SLISBNB,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -66,6 +74,8 @@ describe("SlisBNBOracle unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           BNB_FOR_ONE_SLISBNB,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -80,6 +90,8 @@ describe("SlisBNBOracle unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           BNB_FOR_ONE_SLISBNB,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -93,6 +105,8 @@ describe("SlisBNBOracle unit tests", () => {
         SNAPSHOT_UPDATE_INTERVAL,
         BNB_FOR_ONE_SLISBNB,
         timestamp,
+        acm,
+        0,
       );
     });
   });

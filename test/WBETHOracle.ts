@@ -4,7 +4,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { assets } from "../helpers/deploymentConfig";
-import { BEP20Harness, IWBETH, ResilientOracleInterface } from "../typechain-types";
+import { AccessControlManager, BEP20Harness, IWBETH, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -25,6 +25,7 @@ describe("WBETHOracle unit tests", () => {
   let WBETHOracleFactory;
   let wethMock;
   let timestamp;
+  let acm;
   before(async () => {
     ({ timestamp } = await ethers.provider.getBlock("latest"));
 
@@ -40,6 +41,11 @@ describe("WBETHOracle unit tests", () => {
     wBETH.exchangeRate.returns(ETH_FOR_ONE_WBETH);
     wBETH.decimals.returns(18);
     WBETHOracleFactory = await ethers.getContractFactory("WBETHOracle");
+
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+    acm = fakeAccessControlManager.address;
   });
 
   describe("deployment", () => {
@@ -53,6 +59,8 @@ describe("WBETHOracle unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           ETH_FOR_ONE_WBETH,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -67,6 +75,8 @@ describe("WBETHOracle unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           ETH_FOR_ONE_WBETH,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -81,6 +91,8 @@ describe("WBETHOracle unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           ETH_FOR_ONE_WBETH,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -94,6 +106,8 @@ describe("WBETHOracle unit tests", () => {
         SNAPSHOT_UPDATE_INTERVAL,
         ETH_FOR_ONE_WBETH,
         timestamp,
+        acm,
+        0,
       );
     });
   });

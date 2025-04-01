@@ -4,7 +4,14 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { BEP20Harness, IZkETH, ResilientOracleInterface, ZkETHOracle, ZkETHOracle__factory } from "../typechain-types";
+import {
+  AccessControlManager,
+  BEP20Harness,
+  IZkETH,
+  ResilientOracleInterface,
+  ZkETHOracle,
+  ZkETHOracle__factory,
+} from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -23,6 +30,7 @@ describe("ZkETHOracle", () => {
   let zkETHOracle: ZkETHOracle;
   let wethMock: FakeContract<BEP20Harness>;
   let timestamp;
+  let acm;
 
   before(async () => {
     //  To initialize the provider we need to hit the node with any request
@@ -39,6 +47,11 @@ describe("ZkETHOracle", () => {
     zkETHOracleFactory = <ZkETHOracle__factory>await ethers.getContractFactory("ZkETHOracle");
 
     ({ timestamp } = await ethers.provider.getBlock("latest"));
+
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+    acm = fakeAccessControlManager.address;
   });
 
   describe("deployment", () => {
@@ -52,6 +65,8 @@ describe("ZkETHOracle", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           exchangeRate,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -66,6 +81,8 @@ describe("ZkETHOracle", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           exchangeRate,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -79,6 +96,8 @@ describe("ZkETHOracle", () => {
         SNAPSHOT_UPDATE_INTERVAL,
         exchangeRate,
         timestamp,
+        acm,
+        0,
       );
     });
   });

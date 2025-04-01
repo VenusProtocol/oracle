@@ -3,7 +3,13 @@ import chai from "chai";
 import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
-import { BEP20Harness, IPendlePtOracle, PendleOracle__factory, ResilientOracleInterface } from "../typechain-types";
+import {
+  AccessControlManager,
+  BEP20Harness,
+  IPendlePtOracle,
+  PendleOracle__factory,
+  ResilientOracleInterface,
+} from "../typechain-types";
 import { addr0000, addr1111 } from "./utils/data";
 
 const { expect } = chai;
@@ -29,7 +35,7 @@ describe("PendleOracle unit tests", () => {
   let pendleOracleFactory: PendleOracle__factory;
   let ptOracleMock: FakeContract<IPendlePtOracle>;
   let timestamp;
-
+  let acm;
   before(async () => {
     ({ timestamp } = await ethers.provider.getBlock("latest"));
 
@@ -50,109 +56,126 @@ describe("PendleOracle unit tests", () => {
     ptOracleMock.getOracleState.returns([false, 0, true]);
 
     pendleOracleFactory = await ethers.getContractFactory("PendleOracle");
+
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+    acm = fakeAccessControlManager.address;
   });
 
   describe("deployment", () => {
     it("revert if market address is 0", async () => {
       await expect(
-        pendleOracleFactory.deploy(
-          addr0000,
-          ptOracleMock.address,
-          PendleRateKind.PT_TO_ASSET,
-          ptToken.address,
-          underlyingToken.address,
-          resilientOracleMock.address,
-          DURATION,
-          ANNUAL_GROWTH_RATE,
-          SNAPSHOT_UPDATE_INTERVAL,
-          PT_TO_ASSET_RATE,
-          timestamp,
-        ),
+        pendleOracleFactory.deploy({
+          market: addr0000,
+          ptOracle: ptOracleMock.address,
+          rateKind: PendleRateKind.PT_TO_ASSET,
+          ptToken: ptToken.address,
+          underlyingToken: underlyingToken.address,
+          resilientOracle: resilientOracleMock.address,
+          twapDuration: DURATION,
+          annualGrowthRate: ANNUAL_GROWTH_RATE,
+          snapshotInterval: SNAPSHOT_UPDATE_INTERVAL,
+          initialSnapshotExchangeRate: PT_TO_ASSET_RATE,
+          initialSnapshotTimestamp: timestamp,
+          accessControlManager: acm,
+          snapshotGap: 0,
+        }),
       ).to.be.reverted;
     });
     it("revert if ptOracle address is 0", async () => {
       await expect(
-        pendleOracleFactory.deploy(
+        pendleOracleFactory.deploy({
           market,
-          addr0000,
-          PendleRateKind.PT_TO_ASSET,
-          ptToken.address,
-          underlyingToken.address,
-          resilientOracleMock.address,
-          DURATION,
-          ANNUAL_GROWTH_RATE,
-          SNAPSHOT_UPDATE_INTERVAL,
-          PT_TO_ASSET_RATE,
-          timestamp,
-        ),
+          ptOracle: addr0000,
+          rateKind: PendleRateKind.PT_TO_ASSET,
+          ptToken: ptToken.address,
+          underlyingToken: underlyingToken.address,
+          resilientOracle: resilientOracleMock.address,
+          twapDuration: DURATION,
+          annualGrowthRate: ANNUAL_GROWTH_RATE,
+          snapshotInterval: SNAPSHOT_UPDATE_INTERVAL,
+          initialSnapshotExchangeRate: PT_TO_ASSET_RATE,
+          initialSnapshotTimestamp: timestamp,
+          accessControlManager: acm,
+          snapshotGap: 0,
+        }),
       ).to.be.reverted;
     });
     it("revert if PT token address is 0", async () => {
       await expect(
-        pendleOracleFactory.deploy(
+        pendleOracleFactory.deploy({
           market,
-          ptOracleMock.address,
-          PendleRateKind.PT_TO_ASSET,
-          addr0000,
-          underlyingToken.address,
-          resilientOracleMock.address,
-          DURATION,
-          ANNUAL_GROWTH_RATE,
-          SNAPSHOT_UPDATE_INTERVAL,
-          PT_TO_ASSET_RATE,
-          timestamp,
-        ),
+          ptOracle: ptOracleMock.address,
+          rateKind: PendleRateKind.PT_TO_ASSET,
+          ptToken: addr0000,
+          underlyingToken: underlyingToken.address,
+          resilientOracle: resilientOracleMock.address,
+          twapDuration: DURATION,
+          annualGrowthRate: ANNUAL_GROWTH_RATE,
+          snapshotInterval: SNAPSHOT_UPDATE_INTERVAL,
+          initialSnapshotExchangeRate: PT_TO_ASSET_RATE,
+          initialSnapshotTimestamp: timestamp,
+          accessControlManager: acm,
+          snapshotGap: 0,
+        }),
       ).to.be.reverted;
     });
     it("revert if underlying token address is 0", async () => {
       await expect(
-        pendleOracleFactory.deploy(
+        pendleOracleFactory.deploy({
           market,
-          ptOracleMock.address,
-          PendleRateKind.PT_TO_ASSET,
-          ptToken.address,
-          addr0000,
-          resilientOracleMock.address,
-          DURATION,
-          ANNUAL_GROWTH_RATE,
-          SNAPSHOT_UPDATE_INTERVAL,
-          PT_TO_ASSET_RATE,
-          timestamp,
-        ),
+          ptOracle: ptOracleMock.address,
+          rateKind: PendleRateKind.PT_TO_ASSET,
+          ptToken: ptToken.address,
+          underlyingToken: addr0000,
+          resilientOracle: resilientOracleMock.address,
+          twapDuration: DURATION,
+          annualGrowthRate: ANNUAL_GROWTH_RATE,
+          snapshotInterval: SNAPSHOT_UPDATE_INTERVAL,
+          initialSnapshotExchangeRate: PT_TO_ASSET_RATE,
+          initialSnapshotTimestamp: timestamp,
+          accessControlManager: acm,
+          snapshotGap: 0,
+        }),
       ).to.be.reverted;
     });
     it("revert if ResilientOracle address is 0", async () => {
       await expect(
-        pendleOracleFactory.deploy(
+        pendleOracleFactory.deploy({
           market,
-          ptOracleMock.address,
-          PendleRateKind.PT_TO_ASSET,
-          ptToken.address,
-          underlyingToken.address,
-          addr0000,
-          DURATION,
-          ANNUAL_GROWTH_RATE,
-          SNAPSHOT_UPDATE_INTERVAL,
-          PT_TO_ASSET_RATE,
-          timestamp,
-        ),
+          ptOracle: ptOracleMock.address,
+          rateKind: PendleRateKind.PT_TO_ASSET,
+          ptToken: ptToken.address,
+          underlyingToken: underlyingToken.address,
+          resilientOracle: addr0000,
+          twapDuration: DURATION,
+          annualGrowthRate: ANNUAL_GROWTH_RATE,
+          snapshotInterval: SNAPSHOT_UPDATE_INTERVAL,
+          initialSnapshotExchangeRate: PT_TO_ASSET_RATE,
+          initialSnapshotTimestamp: timestamp,
+          accessControlManager: acm,
+          snapshotGap: 0,
+        }),
       ).to.be.reverted;
     });
     it("revert if TWAP duration is 0", async () => {
       await expect(
-        pendleOracleFactory.deploy(
+        pendleOracleFactory.deploy({
           market,
-          ptOracleMock.address,
-          PendleRateKind.PT_TO_ASSET,
-          ptToken.address,
-          underlyingToken.address,
-          resilientOracleMock.address,
-          0,
-          ANNUAL_GROWTH_RATE,
-          SNAPSHOT_UPDATE_INTERVAL,
-          PT_TO_ASSET_RATE,
-          timestamp,
-        ),
+          ptOracle: ptOracleMock.address,
+          rateKind: PendleRateKind.PT_TO_ASSET,
+          ptToken: ptToken.address,
+          underlyingToken: underlyingToken.address,
+          resilientOracle: resilientOracleMock.address,
+          twapDuration: 0,
+          annualGrowthRate: ANNUAL_GROWTH_RATE,
+          snapshotInterval: SNAPSHOT_UPDATE_INTERVAL,
+          initialSnapshotExchangeRate: PT_TO_ASSET_RATE,
+          initialSnapshotTimestamp: timestamp,
+          accessControlManager: acm,
+          snapshotGap: 0,
+        }),
       ).to.be.reverted;
     });
 
@@ -160,19 +183,21 @@ describe("PendleOracle unit tests", () => {
       ptOracleMock.getOracleState.returns([true, 0, true]);
 
       await expect(
-        pendleOracleFactory.deploy(
+        pendleOracleFactory.deploy({
           market,
-          ptOracleMock.address,
-          PendleRateKind.PT_TO_ASSET,
-          ptToken.address,
-          underlyingToken.address,
-          resilientOracleMock.address,
-          DURATION,
-          ANNUAL_GROWTH_RATE,
-          SNAPSHOT_UPDATE_INTERVAL,
-          PT_TO_ASSET_RATE,
-          timestamp,
-        ),
+          ptOracle: ptOracleMock.address,
+          rateKind: PendleRateKind.PT_TO_ASSET,
+          ptToken: ptToken.address,
+          underlyingToken: underlyingToken.address,
+          resilientOracle: resilientOracleMock.address,
+          twapDuration: DURATION,
+          annualGrowthRate: ANNUAL_GROWTH_RATE,
+          snapshotInterval: SNAPSHOT_UPDATE_INTERVAL,
+          initialSnapshotExchangeRate: PT_TO_ASSET_RATE,
+          initialSnapshotTimestamp: timestamp,
+          accessControlManager: acm,
+          snapshotGap: 0,
+        }),
       ).to.be.reverted;
 
       ptOracleMock.getOracleState.returns([false, 0, true]);
@@ -181,19 +206,21 @@ describe("PendleOracle unit tests", () => {
 
   describe("getPrice", () => {
     const deploy = (kind: PendleRateKind) =>
-      pendleOracleFactory.deploy(
+      pendleOracleFactory.deploy({
         market,
-        ptOracleMock.address,
-        kind,
-        ptToken.address,
-        underlyingToken.address,
-        resilientOracleMock.address,
-        DURATION,
-        ANNUAL_GROWTH_RATE,
-        SNAPSHOT_UPDATE_INTERVAL,
-        kind === PendleRateKind.PT_TO_ASSET ? PT_TO_ASSET_RATE : PT_TO_SY_RATE,
-        timestamp,
-      );
+        ptOracle: ptOracleMock.address,
+        rateKind: kind,
+        ptToken: ptToken.address,
+        underlyingToken: underlyingToken.address,
+        resilientOracle: resilientOracleMock.address,
+        twapDuration: DURATION,
+        annualGrowthRate: ANNUAL_GROWTH_RATE,
+        snapshotInterval: SNAPSHOT_UPDATE_INTERVAL,
+        initialSnapshotExchangeRate: kind === PendleRateKind.PT_TO_ASSET ? PT_TO_ASSET_RATE : PT_TO_SY_RATE,
+        initialSnapshotTimestamp: timestamp,
+        accessControlManager: acm,
+        snapshotGap: 0,
+      });
 
     it("revert if getPrice argument is not the configured PT token", async () => {
       const pendleOracle = await deploy(PendleRateKind.PT_TO_ASSET);
