@@ -226,13 +226,13 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
 
         uint256 exchangeRate = Transient.readCachedPrice(CACHE_SLOT, asset);
         if (exchangeRate != 0) {
-            return _calculatePrice(asset, exchangeRate);
+            return _calculatePrice(exchangeRate);
         }
 
         exchangeRate = getUnderlyingAmount();
 
         if (snapshotInterval == 0) {
-            return _calculatePrice(asset, exchangeRate);
+            return _calculatePrice(exchangeRate);
         }
 
         uint256 maxAllowedExchangeRate = getMaxAllowedExchangeRate();
@@ -241,7 +241,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
             ? maxAllowedExchangeRate
             : exchangeRate;
 
-        return _calculatePrice(asset, finalExchangeRate);
+        return _calculatePrice(finalExchangeRate);
     }
 
     /**
@@ -264,11 +264,10 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
 
     /**
      * @notice Fetches price of the token based on an underlying exchange rate
-     * @param asset The address of the asset
      * @param exchangeRate The underlying exchange rate to use
      * @return price The price of the token in scaled decimal places
      */
-    function _calculatePrice(address asset, uint256 exchangeRate) internal view returns (uint256) {
+    function _calculatePrice(uint256 exchangeRate) internal view returns (uint256) {
         uint256 underlyingUSDPrice = RESILIENT_ORACLE.getPrice(UNDERLYING_TOKEN);
 
         IERC20Metadata token = IERC20Metadata(CORRELATED_TOKEN);
