@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.25;
 
-import { OracleInterface } from "../../interfaces/OracleInterface.sol";
+import { OracleInterface, ResilientOracleInterface } from "../../interfaces/OracleInterface.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { ICappedOracle } from "../../interfaces/ICappedOracle.sol";
@@ -26,7 +26,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     address public immutable UNDERLYING_TOKEN;
 
     /// @notice Address of Resilient Oracle
-    OracleInterface public immutable RESILIENT_ORACLE;
+    ResilientOracleInterface public immutable RESILIENT_ORACLE;
 
     /// @notice Address of the AccessControlManager contract
     IAccessControlManagerV8 public ACCESS_CONTROL_MANAGER;
@@ -102,7 +102,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
 
         CORRELATED_TOKEN = _correlatedToken;
         UNDERLYING_TOKEN = _underlyingToken;
-        RESILIENT_ORACLE = OracleInterface(_resilientOracle);
+        RESILIENT_ORACLE = ResilientOracleInterface(_resilientOracle);
         snapshotInterval = _snapshotInterval;
 
         snapshotExchangeRate = _initialSnapshotExchangeRate;
@@ -210,6 +210,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
 
         if (snapshotExchangeRate == 0) revert InvalidSnapshotExchangeRate();
 
+        RESILIENT_ORACLE.updateAssetPrice(UNDERLYING_TOKEN);
         Transient.cachePrice(CACHE_SLOT, CORRELATED_TOKEN, snapshotExchangeRate);
         emit SnapshotUpdated(snapshotExchangeRate, snapshotTimestamp);
     }
