@@ -49,6 +49,12 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     /// @notice Emitted when the snapshot is updated
     event SnapshotUpdated(uint256 indexed exchangeRate, uint256 indexed timestamp);
 
+    /// @notice Emitted when the growth rate is updated
+    event GrowthRateUpdated(uint256 indexed annualGrowthRate, uint256 indexed snapshotInterval);
+
+    /// @notice Emitted when the snapshot gap is updated
+    event SnapshotGapUpdated(uint256 indexed snapshotGap);
+
     /// @notice Thrown if the token address is invalid
     error InvalidTokenAddress();
 
@@ -60,6 +66,9 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
 
     /// @notice Thrown if the snapshot exchange rate is invalid
     error InvalidSnapshotExchangeRate();
+
+    /// @notice @notice Thrown when the action is prohibited by AccessControlManager
+    error Unauthorized(address sender, address calledContract, string methodSignature);
 
     /**
      * @notice Constructor for the implementation contract.
@@ -101,6 +110,65 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
         snapshotGap = _snapshotGap;
 
         ACCESS_CONTROL_MANAGER = IAccessControlManagerV8(_accessControlManager);
+    }
+
+    /**
+     * @notice Directly sets the snapshot exchange rate and timestamp
+     * @param _snapshotExchangeRate The exchange rate to set
+     * @param _snapshotTimestamp The timestamp to set
+     */
+    function setSnapshot(uint256 _snapshotExchangeRate, uint256 _snapshotTimestamp) external {
+        string memory signature = "setSnapshot(uint256,uint256)";
+        bool isAllowedToCall = ACCESS_CONTROL_MANAGER.isAllowedToCall(msg.sender, signature);
+
+        if (!isAllowedToCall) {
+            revert Unauthorized(msg.sender, address(this), signature);
+        }
+
+        snapshotExchangeRate = _snapshotExchangeRate;
+        snapshotTimestamp = _snapshotTimestamp;
+
+        emit SnapshotUpdated(snapshotExchangeRate, snapshotTimestamp);
+    }
+
+    /**
+     * @notice Sets the growth rate and snapshot interval
+     * @param _annualGrowthRate The annual growth rate to set
+     * @param _snapshotInterval The snapshot interval to set
+     */
+    function setGrowthRate(uint256 _annualGrowthRate, uint256 _snapshotInterval) external {
+        string memory signature = "setGrowthRate(uint256,uint256)";
+        bool isAllowedToCall = ACCESS_CONTROL_MANAGER.isAllowedToCall(msg.sender, signature);
+
+        if (!isAllowedToCall) {
+            revert Unauthorized(msg.sender, address(this), signature);
+        }
+
+        growthRatePerSecond = (_annualGrowthRate) / (365 * 24 * 60 * 60);
+
+        if ((growthRatePerSecond == 0 && _snapshotInterval > 0) || (growthRatePerSecond > 0 && _snapshotInterval == 0))
+            revert InvalidGrowthRate();
+
+        snapshotInterval = _snapshotInterval;
+
+        emit GrowthRateUpdated(_annualGrowthRate, _snapshotInterval);
+    }
+
+    /**
+     * @notice Sets the snapshot gap
+     * @param _snapshotGap The snapshot gap to set
+     */
+    function setSnapshotGap(uint256 _snapshotGap) external {
+        string memory signature = "setSnapshotGap(uint256)";
+        bool isAllowedToCall = ACCESS_CONTROL_MANAGER.isAllowedToCall(msg.sender, signature);
+
+        if (!isAllowedToCall) {
+            revert Unauthorized(msg.sender, address(this), signature);
+        }
+
+        snapshotGap = _snapshotGap;
+
+        emit SnapshotGapUpdated(_snapshotGap);
     }
 
     /**
