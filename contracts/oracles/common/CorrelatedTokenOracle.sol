@@ -6,7 +6,7 @@ import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contract
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { ICappedOracle } from "../../interfaces/ICappedOracle.sol";
 import { Transient } from "../../lib/Transient.sol";
-import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
+import { IAccessControlManagerV8 } from "@venusprotocol/governance-contracts/contracts/Governance/IAccessControlManagerV8.sol";
 
 /**
  * @title CorrelatedTokenOracle
