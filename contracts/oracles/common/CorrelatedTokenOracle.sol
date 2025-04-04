@@ -3,6 +3,7 @@ pragma solidity 0.8.25;
 
 import { OracleInterface, ResilientOracleInterface } from "../../interfaces/OracleInterface.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
+import { SECONDS_PER_YEAR } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { ICappedOracle } from "../../interfaces/ICappedOracle.sol";
 import { Transient } from "../../lib/Transient.sol";
@@ -51,8 +52,8 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
 
     /// @notice Emitted when the growth rate is updated
     event GrowthRateUpdated(
-        uint256 indexed oldAnnualGrowthRate,
-        uint256 indexed newAnnualGrowthRate,
+        uint256 indexed oldGrowthRatePerSecond,
+        uint256 indexed newGrowthRatePerSecond,
         uint256 indexed oldSnapshotInterval,
         uint256 newSnapshotInterval
     );
@@ -91,7 +92,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
         address _accessControlManager,
         uint256 _snapshotGap
     ) {
-        growthRatePerSecond = (_annualGrowthRate) / (365 * 24 * 60 * 60);
+        growthRatePerSecond = _annualGrowthRate / SECONDS_PER_YEAR;
 
         if ((growthRatePerSecond == 0 && _snapshotInterval > 0) || (growthRatePerSecond > 0 && _snapshotInterval == 0))
             revert InvalidGrowthRate();
@@ -138,13 +139,15 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
      */
     function setGrowthRate(uint256 _annualGrowthRate, uint256 _snapshotInterval) external {
         _checkAccessAllowed("setGrowthRate(uint256,uint256)");
+        uint256 oldGrowthRatePerSecond = growthRatePerSecond;
+
+        growthRatePerSecond = _annualGrowthRate / SECONDS_PER_YEAR;
 
         if ((growthRatePerSecond == 0 && _snapshotInterval > 0) || (growthRatePerSecond > 0 && _snapshotInterval == 0))
             revert InvalidGrowthRate();
 
-        emit GrowthRateUpdated(growthRatePerSecond, _annualGrowthRate, snapshotInterval, _snapshotInterval);
+        emit GrowthRateUpdated(oldGrowthRatePerSecond, growthRatePerSecond, snapshotInterval, _snapshotInterval);
 
-        growthRatePerSecond = (_annualGrowthRate) / (365 * 24 * 60 * 60);
         snapshotInterval = _snapshotInterval;
     }
 
