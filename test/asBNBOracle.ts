@@ -13,15 +13,21 @@ chai.use(smock.matchers);
 const { asBNB, slisBNB } = ADDRESSES.bscmainnet;
 const slisBNB_USD_PRICE = parseUnits("300", 18); // 300 USD for 1 slisBNB
 const slisBNB_FOR_ONE_asBNB = parseUnits("1.082798704659082054", 18);
+const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
+const SNAPSHOT_UPDATE_INTERVAL = 10;
 
-describe("BNBxOracle unit tests", () => {
+describe("AsBNBOracle unit tests", () => {
   let asBNBMinterMock;
   let resilientOracleMock;
   let asBNBOracle;
   let asBNBOracleFactory;
   let asBNBMock;
   let slisBNBMock;
+  let timestamp;
+  let acm;
   before(async () => {
+    ({ timestamp } = await ethers.provider.getBlock("latest"));
+
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
     resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
@@ -38,21 +44,55 @@ describe("BNBxOracle unit tests", () => {
 
     slisBNBMock = await smock.fake<BEP20Harness>("BEP20Harness", { address: slisBNB });
     slisBNBMock.decimals.returns(18);
+
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+    acm = fakeAccessControlManager.address;
   });
 
   describe("deployment", () => {
     it("revert if asBNB address is 0", async () => {
-      await expect(asBNBOracleFactory.deploy(addr0000, slisBNBMock.address, resilientOracleMock.address)).to.be
-        .reverted;
+      await expect(
+        asBNBOracleFactory.deploy(
+          addr0000,
+          slisBNBMock.address,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+          slisBNB_FOR_ONE_asBNB,
+          timestamp,
+          acm,
+          0,
+        ),
+      ).to.be.reverted;
     });
     it("revert if slisBNB address is 0", async () => {
-      await expect(asBNBOracleFactory.deploy(asBNBMock.address, addr0000, resilientOracleMock.address)).to.be.reverted;
+      await expect(
+        asBNBOracleFactory.deploy(
+          asBNBMock.address,
+          addr0000,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+          slisBNB_FOR_ONE_asBNB,
+          timestamp,
+          acm,
+          0,
+        ),
+      ).to.be.reverted;
     });
     it("should deploy contract", async () => {
       asBNBOracle = await asBNBOracleFactory.deploy(
         asBNBMock.address,
         slisBNBMock.address,
         resilientOracleMock.address,
+        ANNUAL_GROWTH_RATE,
+        SNAPSHOT_UPDATE_INTERVAL,
+        slisBNB_FOR_ONE_asBNB,
+        timestamp,
+        acm,
+        0,
       );
     });
   });
