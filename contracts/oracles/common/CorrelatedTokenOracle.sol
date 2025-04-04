@@ -6,7 +6,7 @@ import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contract
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { ICappedOracle } from "../../interfaces/ICappedOracle.sol";
 import { Transient } from "../../lib/Transient.sol";
-import { IAccessControlManagerV8 } from "@venusprotocol/governance-contracts/contracts/Governance/IAccessControlManagerV8.sol";
+import "@venusprotocol/governance-contracts/contracts/Governance/IAccessControlManagerV8.sol";
 
 /**
  * @title CorrelatedTokenOracle
@@ -50,10 +50,15 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     event SnapshotUpdated(uint256 indexed exchangeRate, uint256 indexed timestamp);
 
     /// @notice Emitted when the growth rate is updated
-    event GrowthRateUpdated(uint256 indexed annualGrowthRate, uint256 indexed snapshotInterval);
+    event GrowthRateUpdated(
+        uint256 indexed oldAnnualGrowthRate,
+        uint256 indexed newAnnualGrowthRate,
+        uint256 indexed oldSnapshotInterval,
+        uint256 newSnapshotInterval
+    );
 
     /// @notice Emitted when the snapshot gap is updated
-    event SnapshotGapUpdated(uint256 indexed snapshotGap);
+    event SnapshotGapUpdated(uint256 indexed oldSnapshotGap, uint256 indexed newSnapshotGap);
 
     /// @notice Thrown if the token address is invalid
     error InvalidTokenAddress();
@@ -118,12 +123,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
      * @param _snapshotTimestamp The timestamp to set
      */
     function setSnapshot(uint256 _snapshotExchangeRate, uint256 _snapshotTimestamp) external {
-        string memory signature = "setSnapshot(uint256,uint256)";
-        bool isAllowedToCall = ACCESS_CONTROL_MANAGER.isAllowedToCall(msg.sender, signature);
-
-        if (!isAllowedToCall) {
-            revert Unauthorized(msg.sender, address(this), signature);
-        }
+        _checkAccessAllowed("setSnapshot(uint256,uint256)");
 
         snapshotExchangeRate = _snapshotExchangeRate;
         snapshotTimestamp = _snapshotTimestamp;
@@ -137,21 +137,15 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
      * @param _snapshotInterval The snapshot interval to set
      */
     function setGrowthRate(uint256 _annualGrowthRate, uint256 _snapshotInterval) external {
-        string memory signature = "setGrowthRate(uint256,uint256)";
-        bool isAllowedToCall = ACCESS_CONTROL_MANAGER.isAllowedToCall(msg.sender, signature);
-
-        if (!isAllowedToCall) {
-            revert Unauthorized(msg.sender, address(this), signature);
-        }
-
-        growthRatePerSecond = (_annualGrowthRate) / (365 * 24 * 60 * 60);
+        _checkAccessAllowed("setGrowthRate(uint256,uint256)");
 
         if ((growthRatePerSecond == 0 && _snapshotInterval > 0) || (growthRatePerSecond > 0 && _snapshotInterval == 0))
             revert InvalidGrowthRate();
 
-        snapshotInterval = _snapshotInterval;
+        emit GrowthRateUpdated(growthRatePerSecond, _annualGrowthRate, snapshotInterval, _snapshotInterval);
 
-        emit GrowthRateUpdated(_annualGrowthRate, _snapshotInterval);
+        growthRatePerSecond = (_annualGrowthRate) / (365 * 24 * 60 * 60);
+        snapshotInterval = _snapshotInterval;
     }
 
     /**
@@ -159,16 +153,11 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
      * @param _snapshotGap The snapshot gap to set
      */
     function setSnapshotGap(uint256 _snapshotGap) external {
-        string memory signature = "setSnapshotGap(uint256)";
-        bool isAllowedToCall = ACCESS_CONTROL_MANAGER.isAllowedToCall(msg.sender, signature);
+        _checkAccessAllowed("setSnapshotGap(uint256)");
 
-        if (!isAllowedToCall) {
-            revert Unauthorized(msg.sender, address(this), signature);
-        }
+        emit SnapshotGapUpdated(snapshotGap, _snapshotGap);
 
         snapshotGap = _snapshotGap;
-
-        emit SnapshotGapUpdated(_snapshotGap);
     }
 
     /**
@@ -275,5 +264,17 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
         uint256 decimals = token.decimals();
 
         return (exchangeRate * underlyingUSDPrice) / (10 ** decimals);
+    }
+
+    /**
+     * @notice Reverts if the call is not allowed by AccessControlManager
+     * @param signature Method signature
+     */
+    function _checkAccessAllowed(string memory signature) internal view {
+        bool isAllowedToCall = ACCESS_CONTROL_MANAGER.isAllowedToCall(msg.sender, signature);
+
+        if (!isAllowedToCall) {
+            revert Unauthorized(msg.sender, address(this), signature);
+        }
     }
 }
