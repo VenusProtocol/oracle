@@ -94,6 +94,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     asBNB: "0xc625f060ad25f4A6c2d9eBF30C133dB61B7AF072",
     "PT-SolvBTC.BBN-27MAR2025": "0x964Ea3dC70Ee5b35Ea881cf8416B7a5F50E13f56",
     "PT-clisBNB-24APR2025": "0x14AECeEc177085fd09EA07348B4E1F7Fcc030fA1",
+    "PT-sUSDE-26JUN2025": "0x95e58161BA2423c3034658d957F3f5b94DeAbf81",
+    sUSDe: "0xcFec590e417Abb378cfEfE6296829E35fa25cEbd",
+    USDe: "0x986C30591f5aAb401ea3aa63aFA595608721B1B9",
   },
   bscmainnet: {
     vBNBAddress: mainnetDeployments.contracts.vBNB.address,
