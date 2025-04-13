@@ -19,7 +19,6 @@ const func: DeployFunction = async ({
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const oracle = await ethers.getContract("ResilientOracle");
   const proxyOwnerAddress = ADDRESSES[network.name].timelock;
   const redStoneOracle = await ethers.getContract("RedStoneOracle");
   const chainlinkOracle = await ethers.getContract("ChainlinkOracle");
@@ -61,23 +60,16 @@ const func: DeployFunction = async ({
 
   await deploy("PendleOracle-PT-sUSDe-26JUN2025", {
     contract: "PendleOracle",
-    from: deployer,
-    log: true,
-    deterministicDeployment: false,
     args: [
-      addresses["PT-sUSDe-26JUN2025_Market"] || "0x0000000000000000000000000000000000000003",
+      addresses["PT-sUSDE-26JUN2025_Market"] || "0x0000000000000000000000000000000000000003",
       ptOracleAddress,
       PendleRateKind.PT_TO_SY,
       addresses["PT-sUSDE-26JUN2025"],
       addresses.sUSDe,
-      oracle.address,
+      resilientOracle.address,
       1800,
     ],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentUpgradeableProxy",
-    },
-    skipIfAlreadyDeployed: true,
+    ...commonParams,
   });
 
   if (isMainnet(network)) {
@@ -89,10 +81,10 @@ const func: DeployFunction = async ({
       log: true,
       deterministicDeployment: false,
       args: [
-        addresses["PT-sUSDe-26JUN2025_Market"] || "0x0000000000000000000000000000000000000003",
+        addresses["PT-sUSDE-26JUN2025_Market"] || "0x0000000000000000000000000000000000000003",
         ptOracleAddress,
         PendleRateKind.PT_TO_ASSET,
-        addresses["PT-sUSDe-26JUN2025"],
+        addresses["PT-sUSDE-26JUN2025"],
         addresses.USDe,
         referenceOracle.address,
         1800,

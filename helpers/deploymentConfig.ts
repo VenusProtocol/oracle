@@ -126,6 +126,10 @@ export const ADDRESSES: PreconfiguredAddresses = {
     asBNB: "0x77734e70b6E88b4d82fE632a168EDf6e700912b6",
     "PT-clisBNB-24APR2025": "0xe8f1c9804770e11ab73395be54686ad656601e9e",
     "PT-clisBNB-24APR2025_Market": "0x1d9d27f0b89181cf1593ac2b36a37b444eb66bee",
+    "PT-sUSDE-26JUN2025": "0xDD809435ba6c9d6903730f923038801781cA66ce",
+    "PT-sUSDE-26JUN2025_Market": "0x8557D39d4BAB2b045ac5c2B7ea66d12139da9Af4",
+    sUSDe: "0x211Cc4DD073734dA055fbF44a2b4667d5E5fE5d2",
+    USDe: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34",
   },
   sepolia: {
     vBNBAddress: ethers.constants.AddressZero,
