@@ -5,7 +5,6 @@ import { OracleInterface, ResilientOracleInterface } from "../../interfaces/Orac
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { ICappedOracle } from "../../interfaces/ICappedOracle.sol";
-import { Transient } from "../../lib/Transient.sol";
 import "@venusprotocol/governance-contracts/contracts/Governance/IAccessControlManagerV8.sol";
 
 /**
@@ -13,12 +12,6 @@ import "@venusprotocol/governance-contracts/contracts/Governance/IAccessControlM
  * @notice This oracle fetches the price of a token that is correlated to another token.
  */
 abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
-    /// @notice Slot to cache the asset's price, used for transient storage
-    /// custom:storage-location erc7201:venus-protocol/oracle/common/CorrelatedTokenOracle/cache
-    /// keccak256(abi.encode(uint256(keccak256("venus-protocol/oracle/common/CorrelatedTokenOracle/cache")) - 1))
-    ///  & ~bytes32(uint256(0xff))
-    bytes32 public constant CACHE_SLOT = 0x285ac4cf3d7b1e95dc20783e633728d23869c1e2c096067904f13d824ae1fb00;
-
     /// @notice Address of the correlated token
     address public immutable CORRELATED_TOKEN;
 
@@ -184,9 +177,6 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
      * @custom:event Emits SnapshotUpdated event on successful update of the snapshot
      */
     function updateSnapshot() public override {
-        if (Transient.readCachedPrice(CACHE_SLOT, CORRELATED_TOKEN) != 0) {
-            return;
-        }
         if (block.timestamp - snapshotTimestamp < snapshotInterval || snapshotInterval == 0) return;
 
         uint256 exchangeRate = getUnderlyingAmount();
@@ -200,7 +190,6 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
         if (snapshotExchangeRate == 0) revert InvalidSnapshotExchangeRate();
 
         RESILIENT_ORACLE.updateAssetPrice(UNDERLYING_TOKEN);
-        Transient.cachePrice(CACHE_SLOT, CORRELATED_TOKEN, snapshotExchangeRate);
         emit SnapshotUpdated(snapshotExchangeRate, snapshotTimestamp);
     }
 
@@ -214,12 +203,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     function getPrice(address asset) public view override returns (uint256) {
         if (asset != CORRELATED_TOKEN) revert InvalidTokenAddress();
 
-        uint256 exchangeRate = Transient.readCachedPrice(CACHE_SLOT, asset);
-        if (exchangeRate != 0) {
-            return _calculatePrice(exchangeRate);
-        }
-
-        exchangeRate = getUnderlyingAmount();
+        uint256 exchangeRate = getUnderlyingAmount();
 
         if (snapshotInterval == 0) {
             return _calculatePrice(exchangeRate);

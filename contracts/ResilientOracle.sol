@@ -68,6 +68,8 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         /// @notice `enableFlagsForOracles` stores the enabled state
         /// for each oracle in the same order as `oracles`
         bool[3] enableFlagsForOracles;
+        /// @notice `cachingEnabled` is a flag that indicates whether the asset price should be cached
+        bool cachingEnabled;
     }
 
     uint256 public constant INVALID_PRICE = 0;
@@ -108,6 +110,9 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
 
     /// Event emitted when an oracle is enabled or disabled
     event OracleEnabled(address indexed asset, uint256 indexed role, bool indexed enable);
+
+    /// Event emitted when an asset cachingEnabled flag is set
+    event CachedEnabled(address indexed asset, bool indexed enabled);
 
     /**
      * @notice Checks whether an address is null or not
@@ -313,6 +318,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
             tokenConfig.oracles[uint256(OracleRole.PIVOT)],
             tokenConfig.oracles[uint256(OracleRole.FALLBACK)]
         );
+        emit CachedEnabled(tokenConfig.asset, tokenConfig.cachingEnabled);
     }
 
     /**
@@ -343,14 +349,10 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
             try ICappedOracle(mainOracle).updateSnapshot() {} catch {}
         }
 
-        (address pivotOracle, bool pivotOracleEnabled) = getOracle(asset, OracleRole.PIVOT);
-        if (pivotOracle != address(0) && pivotOracleEnabled) {
-            //if pivot oracle is not TwapOracle it will revert so we need to catch the revert
-            try TwapInterface(pivotOracle).updateTwap(asset) {} catch {}
+        if (_isCacheEnabled(asset)) {
+            uint256 price = _getPrice(asset);
+            Transient.cachePrice(CACHE_SLOT, asset, price);
         }
-
-        uint256 price = _getPrice(asset);
-        Transient.cachePrice(CACHE_SLOT, asset, price);
     }
 
     /**
@@ -486,5 +488,9 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         } else {
             asset = VBep20Interface(vToken).underlying();
         }
+    }
+
+    function _isCacheEnabled(address asset) private view returns (bool) {
+        return tokenConfigs[asset].cachingEnabled;
     }
 }
