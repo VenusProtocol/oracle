@@ -94,6 +94,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     asBNB: "0xc625f060ad25f4A6c2d9eBF30C133dB61B7AF072",
     "PT-SolvBTC.BBN-27MAR2025": "0x964Ea3dC70Ee5b35Ea881cf8416B7a5F50E13f56",
     "PT-clisBNB-24APR2025": "0x14AECeEc177085fd09EA07348B4E1F7Fcc030fA1",
+    "PT-sUSDE-26JUN2025": "0x95e58161BA2423c3034658d957F3f5b94DeAbf81",
+    sUSDe: "0xcFec590e417Abb378cfEfE6296829E35fa25cEbd",
+    USDe: "0x986C30591f5aAb401ea3aa63aFA595608721B1B9",
   },
   bscmainnet: {
     vBNBAddress: mainnetDeployments.contracts.vBNB.address,
@@ -123,6 +126,10 @@ export const ADDRESSES: PreconfiguredAddresses = {
     asBNB: "0x77734e70b6E88b4d82fE632a168EDf6e700912b6",
     "PT-clisBNB-24APR2025": "0xe8f1c9804770e11ab73395be54686ad656601e9e",
     "PT-clisBNB-24APR2025_Market": "0x1d9d27f0b89181cf1593ac2b36a37b444eb66bee",
+    "PT-sUSDE-26JUN2025": "0xDD809435ba6c9d6903730f923038801781cA66ce",
+    "PT-sUSDE-26JUN2025_Market": "0x8557D39d4BAB2b045ac5c2B7ea66d12139da9Af4",
+    sUSDe: "0x211Cc4DD073734dA055fbF44a2b4667d5E5fE5d2",
+    USDe: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34",
   },
   sepolia: {
     vBNBAddress: ethers.constants.AddressZero,
