@@ -3,12 +3,8 @@ pragma solidity 0.8.25;
 
 import "../../interfaces/OracleInterface.sol";
 
-contract MockResilientOracle is OracleInterface {
+contract MockOracle is OracleInterface {
     mapping(address => uint256) public prices;
-
-    function getUnderlyingPrice(address vToken) external view returns (uint256) {
-        return prices[vToken];
-    }
 
     function getPrice(address asset) external view returns (uint256) {
         return prices[asset];
