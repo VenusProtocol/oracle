@@ -90,7 +90,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
         if ((growthRatePerSecond == 0 && _snapshotInterval > 0) || (growthRatePerSecond > 0 && _snapshotInterval == 0))
             revert InvalidGrowthRate();
 
-        if ((_initialSnapshotExchangeRate == 0 || _initialSnapshotTimestamp == 0) && snapshotInterval > 0) {
+        if ((_initialSnapshotExchangeRate == 0 || _initialSnapshotTimestamp == 0) && _snapshotInterval > 0) {
             revert InvalidInitialSnapshot();
         }
 
