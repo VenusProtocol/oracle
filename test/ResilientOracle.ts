@@ -61,6 +61,7 @@ describe("Oracle plugin frame unit tests", () => {
             asset: addr0000,
             oracles: [addr1111, addr1111, addr1111],
             enableFlagsForOracles: [true, false, true],
+            cachingEnabled: true,
           }),
         ).to.be.revertedWith("can't be zero address");
 
@@ -69,6 +70,7 @@ describe("Oracle plugin frame unit tests", () => {
             asset: addr1111,
             oracles: [addr0000, addr1111, addr0000],
             enableFlagsForOracles: [true, false, true],
+            cachingEnabled: true,
           }),
         ).to.be.revertedWith("can't be zero address");
       });
@@ -81,12 +83,14 @@ describe("Oracle plugin frame unit tests", () => {
           asset,
           oracles: [addr1111, addr1111, addr1111],
           enableFlagsForOracles: [true, false, true],
+          cachingEnabled: true,
         });
         expect((await this.oracleBasement.getTokenConfig(asset)).enableFlagsForOracles[0]).to.equal(true);
         await this.oracleBasement.setTokenConfig({
           asset,
           oracles: [addr1111, addr0000, addr0000],
           enableFlagsForOracles: [false, false, true],
+          cachingEnabled: true,
         });
         expect((await this.oracleBasement.getTokenConfig(asset)).enableFlagsForOracles[0]).to.equal(false);
       });
@@ -99,6 +103,7 @@ describe("Oracle plugin frame unit tests", () => {
           asset,
           oracles: [addr1111, addr1111, addr1111],
           enableFlagsForOracles: [true, false, true],
+          cachingEnabled: true,
         });
         await expect(result)
           .to.emit(this.oracleBasement, "TokenConfigAdded")
@@ -177,6 +182,7 @@ describe("Oracle plugin frame unit tests", () => {
           asset,
           oracles: [addr1111, addr1111, addr0000],
           enableFlagsForOracles: [true, false, true],
+          cachingEnabled: true,
         });
 
         await this.oracleBasement.setOracle(asset, getSimpleAddress(2), 1);
@@ -197,6 +203,8 @@ describe("Oracle plugin frame unit tests", () => {
     let asset2;
     let token3;
     let asset3;
+    let token4;
+    let asset4;
 
     const token1FallbackPrice = 2222222;
     const token2FallbackPrice = 3333333;
@@ -213,21 +221,33 @@ describe("Oracle plugin frame unit tests", () => {
       token3 = this.vBnb;
       asset3 = this.bnbAddr;
 
+      token4 = this.vai;
+      asset4 = this.vai;
+
       await this.oracleBasement.setTokenConfigs([
         {
           asset: asset1,
           oracles: [this.mainOracle.address, this.pivotOracle.address, this.fallbackOracle.address],
           enableFlagsForOracles: [true, true, false],
+          cachingEnabled: true,
         },
         {
           asset: asset2,
           oracles: [this.mainOracle.address, this.pivotOracle.address, this.fallbackOracle.address],
           enableFlagsForOracles: [true, true, false],
+          cachingEnabled: true,
         },
         {
           asset: asset3,
           oracles: [this.mainOracle.address, this.pivotOracle.address, this.fallbackOracle.address],
           enableFlagsForOracles: [true, true, false],
+          cachingEnabled: true,
+        },
+        {
+          asset: asset4,
+          oracles: [this.mainOracle.address, addr0000, addr0000],
+          enableFlagsForOracles: [true, false, false],
+          cachingEnabled: false,
         },
       ]);
       this.fallbackOracle.getPrice.whenCalledWith(asset1).returns(token1FallbackPrice);
@@ -237,8 +257,10 @@ describe("Oracle plugin frame unit tests", () => {
     it("revert when protocol paused", async function () {
       await this.oracleBasement.pause();
       await expect(this.oracleBasement.getUnderlyingPrice(token1)).to.be.revertedWith("resilient oracle is paused");
+      await expect(this.oracleBasement.getPrice(asset1)).to.be.revertedWith("resilient oracle is paused");
       await this.oracleBasement.unpause();
       await expect(this.oracleBasement.getUnderlyingPrice(token1)).to.be.revertedWith("invalid resilient oracle price");
+      await expect(this.oracleBasement.getPrice(asset1)).to.be.revertedWith("invalid resilient oracle price");
     });
     it("revert price when main oracle is disabled and there is no fallback oracle", async function () {
       await this.oracleBasement.enableOracle(asset1, 0, false);
@@ -332,6 +354,34 @@ describe("Oracle plugin frame unit tests", () => {
       await this.oracleBasement.enableOracle(asset1, 2, true);
       await this.boundValidator.validatePriceWithAnchorPrice.returns(true);
       expect(await this.oracleBasement.getUnderlyingPrice(token1)).to.be.equal(2000);
+    });
+    it("Return VAI price", async function () {
+      await this.mainOracle.getPrice.whenCalledWith(asset4).returns(1000);
+      expect(await this.oracleBasement.getUnderlyingPrice(token4)).to.be.equal(1000);
+    });
+    it("Return cached price", async function () {
+      await this.mainOracle.getPrice.whenCalledWith(asset1).returns(2000);
+      // pivot oracle price is invalid
+      await this.pivotOracle.getPrice.whenCalledWith(asset1).returns(0);
+      await this.fallbackOracle.getPrice.whenCalledWith(asset1).returns(1000);
+      // fallback oracle is enabled
+      await this.oracleBasement.enableOracle(asset1, 2, true);
+      await this.boundValidator.validatePriceWithAnchorPrice.returns(true);
+
+      const MockCallPrice = await ethers.getContractFactory("MockCallPrice");
+      const mockCallPrice = await MockCallPrice.deploy();
+
+      let prices = await mockCallPrice.callStatic.getUnderlyingPriceResilientOracle(
+        this.oracleBasement.address,
+        token1,
+      );
+      expect(prices[0]).to.equal(2000);
+      expect(prices[1]).to.equal(2000);
+
+      prices = await mockCallPrice.callStatic.getAssetPriceResilientOracle(this.oracleBasement.address, asset1);
+
+      expect(prices[0]).to.equal(2000);
+      expect(prices[1]).to.equal(2000);
     });
   });
 });

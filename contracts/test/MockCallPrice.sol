@@ -3,7 +3,7 @@
 
 pragma solidity ^0.8.0;
 
-import { OracleInterface } from "../interfaces/OracleInterface.sol";
+import { OracleInterface, ResilientOracleInterface } from "../interfaces/OracleInterface.sol";
 
 interface CorrelatedTokenOracleInterface {
     function updateSnapshot() external;
@@ -13,6 +13,24 @@ interface CorrelatedTokenOracleInterface {
 contract MockCallPrice {
     function getMultiPrice(CorrelatedTokenOracleInterface oracle, address asset) public returns (uint256, uint256) {
         oracle.updateSnapshot();
+        return (oracle.getPrice(asset), oracle.getPrice(asset));
+    }
+
+    function getUnderlyingPriceResilientOracle(
+        ResilientOracleInterface oracle,
+        address vToken
+    ) public returns (uint256, uint256) {
+        oracle.updatePrice(vToken);
+        oracle.updatePrice(vToken);
+        return (oracle.getUnderlyingPrice(vToken), oracle.getUnderlyingPrice(vToken));
+    }
+
+    function getAssetPriceResilientOracle(
+        ResilientOracleInterface oracle,
+        address asset
+    ) public returns (uint256, uint256) {
+        oracle.updateAssetPrice(asset);
+        oracle.updateAssetPrice(asset);
         return (oracle.getPrice(asset), oracle.getPrice(asset));
     }
 }
