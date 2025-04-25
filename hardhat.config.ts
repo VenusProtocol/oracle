@@ -204,11 +204,14 @@ const config: HardhatUserConfig = {
       live: true,
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
-    berachainbartio: {
-      url: process.env.ARCHIVE_NODE_berachainbartio || "https://bartio.rpc.berachain.com",
-      chainId: 80084,
+    berachainbepolia: {
+      url: process.env.ARCHIVE_NODE_berachainbepolia || "https://bepolia.rpc.berachain.com",
+      chainId: 80069,
       live: true,
-      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
+      // accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
+      accounts: {
+        mnemonic: process.env.MNEMONIC || ""
+      }
     },
   },
   gasReporter: {
@@ -231,7 +234,7 @@ const config: HardhatUserConfig = {
       basemainnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       unichainsepolia: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       unichainmainnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
-      berachainbartio: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
+      berachainbepolia: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
     },
     customChains: [
       {
@@ -347,11 +350,11 @@ const config: HardhatUserConfig = {
         },
       },
       {
-        network: "berachainbartio",
-        chainId: 80084,
+        network: "berachainbepolia",
+        chainId: 80069,
         urls: {
           apiURL: "https://api.routescan.io/v2/network/testnet/evm/80084/etherscan",
-          browserURL: "https://bartio.beratrail.io",
+          browserURL: "https://bepolia.beratrail.io",
         },
       },
     ],
