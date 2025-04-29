@@ -23,7 +23,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     ResilientOracleInterface public immutable RESILIENT_ORACLE;
 
     /// @notice Address of the AccessControlManager contract
-    IAccessControlManagerV8 public ACCESS_CONTROL_MANAGER;
+    IAccessControlManagerV8 public immutable ACCESS_CONTROL_MANAGER;
 
     //// @notice Growth rate percentage in seconds. Ex: 1e18 is 100%
     uint256 public growthRatePerSecond;
