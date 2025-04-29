@@ -32,7 +32,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     uint256 public snapshotInterval;
 
     /// @notice Last stored snapshot exchange rate
-    uint256 public snapshotExchangeRate;
+    uint256 public snapshotMaxExchangeRate;
 
     /// @notice Last stored snapshot timestamp
     uint256 public snapshotTimestamp;
@@ -64,7 +64,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     error InvalidInitialSnapshot();
 
     /// @notice Thrown if the snapshot exchange rate is invalid
-    error InvalidSnapshotExchangeRate();
+    error InvalidSnapshotMaxExchangeRate();
 
     /// @notice @notice Thrown when the action is prohibited by AccessControlManager
     error Unauthorized(address sender, address calledContract, string methodSignature);
@@ -80,7 +80,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
         address _resilientOracle,
         uint256 _annualGrowthRate,
         uint256 _snapshotInterval,
-        uint256 _initialSnapshotExchangeRate,
+        uint256 _initialSnapshotMaxExchangeRate,
         uint256 _initialSnapshotTimestamp,
         address _accessControlManager,
         uint256 _snapshotGap
@@ -90,7 +90,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
         if ((growthRatePerSecond == 0 && _snapshotInterval > 0) || (growthRatePerSecond > 0 && _snapshotInterval == 0))
             revert InvalidGrowthRate();
 
-        if ((_initialSnapshotExchangeRate == 0 || _initialSnapshotTimestamp == 0) && _snapshotInterval > 0) {
+        if ((_initialSnapshotMaxExchangeRate == 0 || _initialSnapshotTimestamp == 0) && _snapshotInterval > 0) {
             revert InvalidInitialSnapshot();
         }
 
@@ -104,7 +104,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
         RESILIENT_ORACLE = ResilientOracleInterface(_resilientOracle);
         snapshotInterval = _snapshotInterval;
 
-        snapshotExchangeRate = _initialSnapshotExchangeRate;
+        snapshotMaxExchangeRate = _initialSnapshotMaxExchangeRate;
         snapshotTimestamp = _initialSnapshotTimestamp;
         snapshotGap = _snapshotGap;
 
@@ -113,16 +113,16 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
 
     /**
      * @notice Directly sets the snapshot exchange rate and timestamp
-     * @param _snapshotExchangeRate The exchange rate to set
+     * @param _snapshotMaxExchangeRate The exchange rate to set
      * @param _snapshotTimestamp The timestamp to set
      */
-    function setSnapshot(uint256 _snapshotExchangeRate, uint256 _snapshotTimestamp) external {
+    function setSnapshot(uint256 _snapshotMaxExchangeRate, uint256 _snapshotTimestamp) external {
         _checkAccessAllowed("setSnapshot(uint256,uint256)");
 
-        snapshotExchangeRate = _snapshotExchangeRate;
+        snapshotMaxExchangeRate = _snapshotMaxExchangeRate;
         snapshotTimestamp = _snapshotTimestamp;
 
-        emit SnapshotUpdated(snapshotExchangeRate, snapshotTimestamp);
+        emit SnapshotUpdated(snapshotMaxExchangeRate, snapshotTimestamp);
     }
 
     /**
@@ -185,15 +185,15 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
         uint256 exchangeRate = getUnderlyingAmount();
         uint256 maxAllowedExchangeRate = getMaxAllowedExchangeRate();
 
-        snapshotExchangeRate =
+        snapshotMaxExchangeRate =
             (exchangeRate > maxAllowedExchangeRate ? maxAllowedExchangeRate : exchangeRate) +
             snapshotGap;
         snapshotTimestamp = block.timestamp;
 
-        if (snapshotExchangeRate == 0) revert InvalidSnapshotExchangeRate();
+        if (snapshotMaxExchangeRate == 0) revert InvalidSnapshotMaxExchangeRate();
 
         RESILIENT_ORACLE.updateAssetPrice(UNDERLYING_TOKEN);
-        emit SnapshotUpdated(snapshotExchangeRate, snapshotTimestamp);
+        emit SnapshotUpdated(snapshotMaxExchangeRate, snapshotTimestamp);
     }
 
     /**
@@ -227,8 +227,8 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
      */
     function getMaxAllowedExchangeRate() public view returns (uint256) {
         uint256 timeElapsed = block.timestamp - snapshotTimestamp;
-        uint256 maxExchangeRate = snapshotExchangeRate +
-            (snapshotExchangeRate * growthRatePerSecond * timeElapsed) /
+        uint256 maxExchangeRate = snapshotMaxExchangeRate +
+            (snapshotMaxExchangeRate * growthRatePerSecond * timeElapsed) /
             1e18;
         return maxExchangeRate;
     }

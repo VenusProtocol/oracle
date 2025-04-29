@@ -25,7 +25,7 @@ contract SlisBNBOracle is CorrelatedTokenOracle {
         address resilientOracle,
         uint256 annualGrowthRate,
         uint256 _snapshotInterval,
-        uint256 initialSnapshotExchangeRate,
+        uint256 initialSnapshotMaxExchangeRate,
         uint256 initialSnapshotTimestamp,
         address accessControlManager,
         uint256 _snapshotGap
@@ -36,7 +36,7 @@ contract SlisBNBOracle is CorrelatedTokenOracle {
             resilientOracle,
             annualGrowthRate,
             _snapshotInterval,
-            initialSnapshotExchangeRate,
+            initialSnapshotMaxExchangeRate,
             initialSnapshotTimestamp,
             accessControlManager,
             _snapshotGap

@@ -43,7 +43,7 @@ contract PendleOracle is CorrelatedTokenOracle {
         /// @notice Snapshot interval for the oracle
         uint256 snapshotInterval;
         /// @notice Initial exchange rate of the underlying token
-        uint256 initialSnapshotExchangeRate;
+        uint256 initialSnapshotMaxExchangeRate;
         /// @notice Initial timestamp of the underlying token
         uint256 initialSnapshotTimestamp;
         /// @notice Access control manager
@@ -92,7 +92,7 @@ contract PendleOracle is CorrelatedTokenOracle {
             params.resilientOracle,
             params.annualGrowthRate,
             params.snapshotInterval,
-            params.initialSnapshotExchangeRate,
+            params.initialSnapshotMaxExchangeRate,
             params.initialSnapshotTimestamp,
             params.accessControlManager,
             params.snapshotGap

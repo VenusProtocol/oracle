@@ -12,7 +12,7 @@ contract MockCorrelatedTokenOracle is CorrelatedTokenOracle {
         address resilientOracle,
         uint256 annualGrowthRate,
         uint256 snapshotInterval,
-        uint256 initialSnapshotExchangeRate,
+        uint256 initialSnapshotMaxExchangeRate,
         uint256 initialSnapshotTimestamp,
         address accessControlManager,
         uint256 snapshotGap
@@ -23,7 +23,7 @@ contract MockCorrelatedTokenOracle is CorrelatedTokenOracle {
             resilientOracle,
             annualGrowthRate,
             snapshotInterval,
-            initialSnapshotExchangeRate,
+            initialSnapshotMaxExchangeRate,
             initialSnapshotTimestamp,
             accessControlManager,
             snapshotGap
