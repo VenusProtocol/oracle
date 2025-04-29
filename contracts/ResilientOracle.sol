@@ -19,8 +19,7 @@ import { Transient } from "./lib/Transient.sol";
  * for attacking the protocol.
  *
  * The Resilient Oracle uses multiple sources and fallback mechanisms to provide accurate prices and protect
- * the protocol from oracle attacks. Currently it includes integrations with Chainlink, Binance Oracle
- * and TWAP (Time-Weighted Average Price) oracles. TWAP uses PancakeSwap as the on-chain price source.
+ * the protocol from oracle attacks.
  *
  * For every market (vToken) we configure the main, pivot and fallback oracles. The oracles are configured per
  * vToken's underlying asset address. The main oracle oracle is the most trustworthy price source, the pivot
@@ -38,9 +37,8 @@ anchorRatio = anchorPrice/reporterPrice
 isValid = anchorRatio <= upperBoundAnchorRatio && anchorRatio >= lowerBoundAnchorRatio
 ```
 
- * In most cases, Chainlink is used as the main oracle, TWAP or oracles are used as the pivot oracle depending
- * on which supports the given market and Binance oracle is used as the fallback oracle. For some markets we may
- * use TWAP as the main oracle if the token price is not supported by Chainlink or Binance oracles.
+ * In most cases, Chainlink is used as the main oracle, other oracles are used as the pivot oracle depending
+ * on which supports the given market and Binance oracle is used as the fallback oracle.
  *
  * For a fetched price to be valid it must be positive and not stagnant. If the price is invalid then we consider the
  * oracle to be stagnant and treat it like it's disabled.
@@ -238,7 +236,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Updates the TWAP pivot oracle price and the capped main oracle snapshot .
+     * @notice Updates the capped main oracle snapshot.
      * @dev This function should always be called before calling getUnderlyingPrice
      * @param vToken vToken address
      */
@@ -248,7 +246,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Updates the TWAP pivot oracle price and the capped main oracle snapshot.
+     * @notice Updates the capped main oracle snapshot.
      * @dev This function should always be called before calling getPrice
      * @param asset asset address
      */
@@ -335,7 +333,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Updates the TWAP oracle price and capped oracle snapshot.
+     * @notice Updates the capped oracle snapshot.
      * @dev Cache the asset price and return if already cached
      * @param asset asset address
      */

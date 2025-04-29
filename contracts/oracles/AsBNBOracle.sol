@@ -13,7 +13,6 @@ import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
  */
 contract AsBNBOracle is CorrelatedTokenOracle {
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     constructor(
         address asBNB,
         address slisBNB,
