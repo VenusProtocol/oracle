@@ -31,7 +31,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     /// @notice Snapshot update interval
     uint256 public snapshotInterval;
 
-    /// @notice Last stored snapshot exchange rate
+    /// @notice Last stored snapshot maximum exchange rate
     uint256 public snapshotMaxExchangeRate;
 
     /// @notice Last stored snapshot timestamp
@@ -41,7 +41,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     uint256 public snapshotGap;
 
     /// @notice Emitted when the snapshot is updated
-    event SnapshotUpdated(uint256 indexed exchangeRate, uint256 indexed timestamp);
+    event SnapshotUpdated(uint256 indexed maxExchangeRate, uint256 indexed timestamp);
 
     /// @notice Emitted when the growth rate is updated
     event GrowthRateUpdated(
@@ -63,7 +63,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     /// @notice Thrown if the initial snapshot is invalid
     error InvalidInitialSnapshot();
 
-    /// @notice Thrown if the snapshot exchange rate is invalid
+    /// @notice Thrown if the max snapshot exchange rate is invalid
     error InvalidSnapshotMaxExchangeRate();
 
     /// @notice @notice Thrown when the action is prohibited by AccessControlManager
@@ -182,6 +182,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     /**
      * @notice Updates the snapshot price and timestamp
      * @custom:event Emits SnapshotUpdated event on successful update of the snapshot
+     * @custom:error InvalidSnapshotMaxExchangeRate error is thrown if the max snapshot exchange rate is zero
      */
     function updateSnapshot() public override {
         if (block.timestamp - snapshotTimestamp < snapshotInterval || snapshotInterval == 0) return;
