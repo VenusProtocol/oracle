@@ -57,11 +57,11 @@ contract BinanceOracle is AccessControlledV8, OracleInterface {
     /**
      * @notice Sets the contracts required to fetch prices
      * @param _sidRegistryAddress Address of SID registry
-     * @param _accessControlManager Address of the access control manager contract
+     * @param _acm Address of the access control manager contract
      */
-    function initialize(address _sidRegistryAddress, address _accessControlManager) external initializer {
+    function initialize(address _sidRegistryAddress, address _acm) external initializer {
         sidRegistryAddress = _sidRegistryAddress;
-        __AccessControlled_init(_accessControlManager);
+        __AccessControlled_init(_acm);
     }
 
     /**

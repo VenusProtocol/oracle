@@ -16,22 +16,22 @@ contract WBETHOracle is CorrelatedTokenOracle {
         address eth,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 snapshotInterval,
+        uint256 _snapshotInterval,
         uint256 initialSnapshotExchangeRate,
         uint256 initialSnapshotTimestamp,
         address accessControlManager,
-        uint256 snapshotGap
+        uint256 _snapshotGap
     )
         CorrelatedTokenOracle(
             wbeth,
             eth,
             resilientOracle,
             annualGrowthRate,
-            snapshotInterval,
+            _snapshotInterval,
             initialSnapshotExchangeRate,
             initialSnapshotTimestamp,
             accessControlManager,
-            snapshotGap
+            _snapshotGap
         )
     {}
 
