@@ -2,12 +2,12 @@
 // SPDX-FileCopyrightText: 2022 Venus
 pragma solidity 0.8.25;
 
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "./interfaces/VBep20Interface.sol";
-import "./interfaces/OracleInterface.sol";
-import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
-import "./interfaces/ICappedOracle.sol";
-import "./lib/Transient.sol";
+import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import { VBep20Interface } from "./interfaces/VBep20Interface.sol";
+import { OracleInterface, ResilientOracleInterface, BoundValidatorInterface } from "./interfaces/OracleInterface.sol";
+import { AccessControlledV8 } from "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
+import { ICappedOracle } from "./interfaces/ICappedOracle.sol";
+import { Transient } from "./lib/Transient.sol";
 
 /**
  * @title ResilientOracle
