@@ -305,6 +305,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @custom:error NotNullAddress is thrown if asset address is null
      * @custom:error NotNullAddress is thrown if main-role oracle address for asset is null
      * @custom:event Emits TokenConfigAdded event when the asset config is set successfully by the authorized account
+     * @custom:event Emits CachedEnabled event when the asset cachingEnabled flag is set successfully
      */
     function setTokenConfig(
         TokenConfig memory tokenConfig
@@ -490,6 +491,11 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         }
     }
 
+    /**
+     * @dev This function checks if the asset price should be cached
+     * @param asset asset address
+     * @return bool true if caching is enabled, false otherwise
+     */
     function _isCacheEnabled(address asset) private view returns (bool) {
         return tokenConfigs[asset].cachingEnabled;
     }

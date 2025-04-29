@@ -82,7 +82,10 @@ contract PendleOracle is CorrelatedTokenOracle {
     /// @notice Thrown if the duration is invalid
     error InvalidDuration();
 
-    /// @notice Constructor for the implementation contract.
+    /**
+     * @notice Constructor for the implementation contract.
+     * @custom:error InvalidDuration Thrown if the duration is invalid
+     */
     constructor(
         ConstructorParams memory params
     )

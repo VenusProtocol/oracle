@@ -115,6 +115,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
      * @notice Directly sets the snapshot exchange rate and timestamp
      * @param _snapshotMaxExchangeRate The exchange rate to set
      * @param _snapshotTimestamp The timestamp to set
+     * @custom:event Emits SnapshotUpdated event on successful update of the snapshot
      */
     function setSnapshot(uint256 _snapshotMaxExchangeRate, uint256 _snapshotTimestamp) external {
         _checkAccessAllowed("setSnapshot(uint256,uint256)");
@@ -129,6 +130,8 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
      * @notice Sets the growth rate and snapshot interval
      * @param _annualGrowthRate The annual growth rate to set
      * @param _snapshotInterval The snapshot interval to set
+     * @custom:error InvalidGrowthRate error is thrown if the growth rate is invalid
+     * @custom:event Emits GrowthRateUpdated event on successful update of the growth rate
      */
     function setGrowthRate(uint256 _annualGrowthRate, uint256 _snapshotInterval) external {
         _checkAccessAllowed("setGrowthRate(uint256,uint256)");
@@ -147,6 +150,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     /**
      * @notice Sets the snapshot gap
      * @param _snapshotGap The snapshot gap to set
+     * @custom:event Emits SnapshotGapUpdated event on successful update of the snapshot gap
      */
     function setSnapshotGap(uint256 _snapshotGap) external {
         _checkAccessAllowed("setSnapshotGap(uint256)");
@@ -256,6 +260,7 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     /**
      * @notice Reverts if the call is not allowed by AccessControlManager
      * @param signature Method signature
+     * @custom:error Unauthorized error is thrown if the call is not allowed
      */
     function _checkAccessAllowed(string memory signature) internal view {
         bool isAllowedToCall = ACCESS_CONTROL_MANAGER.isAllowedToCall(msg.sender, signature);
