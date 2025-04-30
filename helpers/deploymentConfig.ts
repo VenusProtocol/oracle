@@ -292,7 +292,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     timelock: opmainnetGovernanceDeployments.contracts.NormalTimelock.address,
   },
   basesepolia: {
-    acm: "0x724138223D8F76b519fdE715f60124E7Ce51e051",
+    acm: basesepoliaGovernanceDeployments.contracts.AccessControlManager.address,
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
@@ -302,7 +302,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     wstETH: "0xAd69AA3811fE0EE7dBd4e25C4bae40e6422c76C8",
   },
   basemainnet: {
-    acm: "0x9E6CeEfDC6183e4D0DF8092A9B90cDF659687daB",
+    acm: basemainnetGovernanceDeployments.contracts.AccessControlManager.address,
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
