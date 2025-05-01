@@ -1,3 +1,13 @@
+## [2.13.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v2.13.0-dev.4...v2.13.0-dev.5) (2025-04-15)
+
+
+### Features
+
+* add oracles for Ethena assets on BNB mainnet ([d2fe227](https://github.com/VenusProtocol/oracle/commit/d2fe227b6d04036795988e1d2d54fbd28c293d53))
+* add oracles for Ethena assets on BNB testnet ([a082643](https://github.com/VenusProtocol/oracle/commit/a082643796ac6e636ae1fcbcf630b3d838a54e44))
+* updating deployment files ([aa4544e](https://github.com/VenusProtocol/oracle/commit/aa4544ed57ad1a7cc7dea98b925933c852a30265))
+* updating deployment files ([6678130](https://github.com/VenusProtocol/oracle/commit/6678130563812d3cbbb8bd3af97a9c1df1d3a02d))
+
 ## [2.13.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.13.0-dev.3...v2.13.0-dev.4) (2025-03-21)
 
 
