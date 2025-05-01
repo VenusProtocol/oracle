@@ -21,20 +21,11 @@ type OracleConfig = {
   primaryRateKind: PendleRateKind;
 }[];
 
-const func: DeployFunction = async ({
-  getNamedAccounts,
-  deployments,
-  network,
-  artifacts,
-}: HardhatRuntimeEnvironment) => {
+const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
   const { deployer } = await getNamedAccounts();
   const { deploy } = deployments;
 
   const oracle = await ethers.getContract("ResilientOracle");
-  const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
-  const proxyAdminArtifact = await artifacts.readArtifact(
-    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
-  );
   const addresses = ADDRESSES[network.name];
   const fallbackAddress = "0x0000000000000000000000000000000000000001";
 
@@ -42,10 +33,6 @@ const func: DeployFunction = async ({
     await Promise.all(
       oracleConfig.map(
         async ({ name, market, ptToken, underlyingToken, yieldToken, ptOracle, TWAPDuration, primaryRateKind }) => {
-          const defaultProxyAdmin = await ethers.getContract("DefaultProxyAdmin");
-          console.log("default proxy admin owner", await defaultProxyAdmin.owner());
-          console.log("trying to set the owner to", proxyOwnerAddress);
-          console.log("Deploying main oracles");
           const ptOracleAddress = ptOracle || (await ethers.getContract("MockPendlePtOracle")).address;
           await deploy(name, {
             contract: "PendleOracle",
@@ -54,22 +41,22 @@ const func: DeployFunction = async ({
             deterministicDeployment: false,
             skipIfAlreadyDeployed: true,
             args: [
-              market || fallbackAddress,
-              ptOracleAddress,
-              primaryRateKind,
-              ptToken,
-              primaryRateKind === PendleRateKind.PT_TO_ASSET ? underlyingToken : yieldToken,
-              oracle.address,
-              TWAPDuration,
-            ],
-            proxy: {
-              owner: proxyOwnerAddress,
-              proxyContract: "OptimizedTransparentUpgradeableProxy",
-              viaAdminContract: {
-                name: "DefaultProxyAdmin",
-                artifact: proxyAdminArtifact,
+              {
+                market: market || fallbackAddress,
+                ptOracle: ptOracleAddress,
+                rateKind: primaryRateKind,
+                ptToken,
+                underlyingToken: primaryRateKind === PendleRateKind.PT_TO_ASSET ? underlyingToken : yieldToken,
+                resilientOracle: oracle.address,
+                twapDuration: TWAPDuration,
+                annualGrowthRate: 0,
+                snapshotInterval: 0,
+                initialSnapshotMaxExchangeRate: 0,
+                initialSnapshotTimestamp: 0,
+                accessControlManager: addresses.acm,
+                snapshotGap: 0,
               },
-            },
+            ],
           });
         },
       ),
@@ -77,8 +64,6 @@ const func: DeployFunction = async ({
   };
 
   const deployReferenceOracles = async (oracleConfig: OracleConfig) => {
-    const devMultisig = network.live ? ADDRESSES[network.name].devMultisig : deployer;
-    console.log(devMultisig);
     const referenceOracle = await ethers.getContract("ReferenceOracle");
     for (const config of oracleConfig) {
       const { name, market, ptToken, underlyingToken, yieldToken, ptOracle, TWAPDuration, primaryRateKind } = config;
@@ -93,22 +78,22 @@ const func: DeployFunction = async ({
         deterministicDeployment: false,
         skipIfAlreadyDeployed: true,
         args: [
-          market || fallbackAddress,
-          ptOracleAddress,
-          referenceRateKind,
-          ptToken,
-          referenceRateKind === PendleRateKind.PT_TO_ASSET ? underlyingToken : yieldToken,
-          referenceOracle.address,
-          TWAPDuration,
-        ],
-        proxy: {
-          owner: devMultisig,
-          proxyContract: "OptimizedTransparentUpgradeableProxy",
-          viaAdminContract: {
-            name: "DevProxyAdmin",
-            artifact: proxyAdminArtifact,
+          {
+            market: market || fallbackAddress,
+            ptOracle: ptOracleAddress,
+            rateKind: referenceRateKind,
+            ptToken,
+            underlyingToken: referenceRateKind === PendleRateKind.PT_TO_ASSET ? underlyingToken : yieldToken,
+            resilientOracle: referenceOracle.address,
+            twapDuration: TWAPDuration,
+            annualGrowthRate: 0,
+            snapshotInterval: 0,
+            initialSnapshotMaxExchangeRate: 0,
+            initialSnapshotTimestamp: 0,
+            accessControlManager: addresses.acm,
+            snapshotGap: 0,
           },
-        },
+        ],
       });
     }
   };

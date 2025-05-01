@@ -26,7 +26,18 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [addresses["SolvBTC.BBN"], addresses.BTCB, resilientOracle.address, redStoneOracle.address],
+    args: [
+      addresses["SolvBTC.BBN"],
+      addresses.BTCB,
+      resilientOracle.address,
+      redStoneOracle.address,
+      0,
+      0,
+      0,
+      0,
+      addresses.acm,
+      0,
+    ],
     proxy: {
       owner: proxyOwnerAddress,
       proxyContract: "OptimizedTransparentProxy",
@@ -40,45 +51,49 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     log: true,
     deterministicDeployment: false,
     args: [
-      addresses["PT-SolvBTC.BBN-27MAR2025_Market"] || "0x0000000000000000000000000000000000000001",
-      ptOracleAddress,
-      PendleRateKind.PT_TO_SY,
-      addresses["PT-SolvBTC.BBN-27MAR2025"],
-      addresses["SolvBTC.BBN"],
-      oracle.address,
-      900,
+      {
+        market: addresses["PT-SolvBTC.BBN-27MAR2025_Market"] || "0x0000000000000000000000000000000000000001",
+        ptOracle: ptOracleAddress,
+        rateKind: PendleRateKind.PT_TO_SY,
+        ptToken: addresses["PT-SolvBTC.BBN-27MAR2025"],
+        underlyingToken: addresses["SolvBTC.BBN"],
+        resilientOracle: oracle.address,
+        twapDuration: 900,
+        annualGrowthRate: 0,
+        snapshotInterval: 0,
+        initialSnapshotMaxExchangeRate: 0,
+        initialSnapshotTimestamp: 0,
+        accessControlManager: addresses.acm,
+        snapshotGap: 0,
+      },
     ],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentUpgradeableProxy",
-    },
     skipIfAlreadyDeployed: true,
   });
 
   if (isMainnet(network)) {
     const referenceOracle = await ethers.getContract("ReferenceOracle");
-    const { devMultisig } = addresses;
     await deploy("PendleOracle-PT-SolvBTC.BBN-27MAR2025_Reference_PtToAsset", {
       contract: "PendleOracle",
       from: deployer,
       log: true,
       deterministicDeployment: false,
       args: [
-        addresses["PT-SolvBTC.BBN-27MAR2025_Market"] || "0x0000000000000000000000000000000000000001",
-        ptOracleAddress,
-        PendleRateKind.PT_TO_ASSET,
-        addresses["PT-SolvBTC.BBN-27MAR2025"],
-        addresses.BTCB,
-        referenceOracle.address,
-        900,
-      ],
-      proxy: {
-        owner: devMultisig,
-        proxyContract: "OptimizedTransparentUpgradeableProxy",
-        viaAdminContract: {
-          name: "DevProxyAdmin",
+        {
+          market: addresses["PT-SolvBTC.BBN-27MAR2025_Market"] || "0x0000000000000000000000000000000000000001",
+          ptOracle: ptOracleAddress,
+          rateKind: PendleRateKind.PT_TO_ASSET,
+          ptToken: addresses["PT-SolvBTC.BBN-27MAR2025"],
+          underlyingToken: addresses.BTCB,
+          resilientOracle: referenceOracle.address,
+          twapDuration: 900,
+          annualGrowthRate: 0,
+          snapshotInterval: 0,
+          initialSnapshotMaxExchangeRate: 0,
+          initialSnapshotTimestamp: 0,
+          accessControlManager: addresses.acm,
+          snapshotGap: 0,
         },
-      },
+      ],
       skipIfAlreadyDeployed: true,
     });
   }
