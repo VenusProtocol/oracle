@@ -1,46 +1,58 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.25;
 
-import { OracleInterface } from "../../interfaces/OracleInterface.sol";
+import { OracleInterface, ResilientOracleInterface } from "../../interfaces/OracleInterface.sol";
 import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
+import { SECONDS_PER_YEAR } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { ICappedOracle } from "../../interfaces/ICappedOracle.sol";
-import { Transient } from "../../lib/Transient.sol";
+import { IAccessControlManagerV8 } from "@venusprotocol/governance-contracts/contracts/Governance/IAccessControlManagerV8.sol";
 
 /**
  * @title CorrelatedTokenOracle
  * @notice This oracle fetches the price of a token that is correlated to another token.
  */
 abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
-    /// @notice Slot to cache the asset's price, used for transient storage
-    /// custom:storage-location erc7201:venus-protocol/oracle/common/CorrelatedTokenOracle/cache
-    /// keccak256(abi.encode(uint256(keccak256("venus-protocol/oracle/common/CorrelatedTokenOracle/cache")) - 1))
-    ///  & ~bytes32(uint256(0xff)
-    bytes32 public constant CACHE_SLOT = 0x285ac4cf3d7b1e95dc20783e633728d23869c1e2c096067904f13d824ae1fb00;
-
     /// @notice Address of the correlated token
     address public immutable CORRELATED_TOKEN;
 
     /// @notice Address of the underlying token
     address public immutable UNDERLYING_TOKEN;
 
+    /// @notice Address of Resilient Oracle
+    ResilientOracleInterface public immutable RESILIENT_ORACLE;
+
+    /// @notice Address of the AccessControlManager contract
+    IAccessControlManagerV8 public immutable ACCESS_CONTROL_MANAGER;
+
     //// @notice Growth rate percentage in seconds. Ex: 1e18 is 100%
-    uint256 public immutable GROWTH_RATE_PER_SECOND;
+    uint256 public growthRatePerSecond;
 
     /// @notice Snapshot update interval
-    uint256 public immutable SNAPSHOT_INTERVAL;
+    uint256 public snapshotInterval;
 
-    /// @notice Address of Resilient Oracle
-    OracleInterface public immutable RESILIENT_ORACLE;
-
-    /// @notice Last stored snapshot exchange rate
-    uint256 public snapshotExchangeRate;
+    /// @notice Last stored snapshot maximum exchange rate
+    uint256 public snapshotMaxExchangeRate;
 
     /// @notice Last stored snapshot timestamp
     uint256 public snapshotTimestamp;
 
+    /// @notice Gap to add when updating the snapshot
+    uint256 public snapshotGap;
+
     /// @notice Emitted when the snapshot is updated
-    event SnapshotUpdated(uint256 exchangeRate, uint256 timestamp);
+    event SnapshotUpdated(uint256 indexed maxExchangeRate, uint256 indexed timestamp);
+
+    /// @notice Emitted when the growth rate is updated
+    event GrowthRateUpdated(
+        uint256 indexed oldGrowthRatePerSecond,
+        uint256 indexed newGrowthRatePerSecond,
+        uint256 indexed oldSnapshotInterval,
+        uint256 newSnapshotInterval
+    );
+
+    /// @notice Emitted when the snapshot gap is updated
+    event SnapshotGapUpdated(uint256 indexed oldSnapshotGap, uint256 indexed newSnapshotGap);
 
     /// @notice Thrown if the token address is invalid
     error InvalidTokenAddress();
@@ -51,8 +63,11 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     /// @notice Thrown if the initial snapshot is invalid
     error InvalidInitialSnapshot();
 
-    /// @notice Thrown if the snapshot exchange rate is invalid
-    error InvalidSnapshotExchangeRate();
+    /// @notice Thrown if the max snapshot exchange rate is invalid
+    error InvalidSnapshotMaxExchangeRate();
+
+    /// @notice @notice Thrown when the action is prohibited by AccessControlManager
+    error Unauthorized(address sender, address calledContract, string methodSignature);
 
     /**
      * @notice Constructor for the implementation contract.
@@ -60,36 +75,89 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
      * @custom:error InvalidInitialSnapshot error is thrown if the initial snapshot values are invalid
      */
     constructor(
-        address correlatedToken,
-        address underlyingToken,
-        address resilientOracle,
-        uint256 annualGrowthRate,
-        uint256 snapshotInterval,
-        uint256 initialSnapshotExchangeRate,
-        uint256 initialSnapshotTimestamp
+        address _correlatedToken,
+        address _underlyingToken,
+        address _resilientOracle,
+        uint256 _annualGrowthRate,
+        uint256 _snapshotInterval,
+        uint256 _initialSnapshotMaxExchangeRate,
+        uint256 _initialSnapshotTimestamp,
+        address _accessControlManager,
+        uint256 _snapshotGap
     ) {
-        GROWTH_RATE_PER_SECOND = (annualGrowthRate) / (365 * 24 * 60 * 60);
+        growthRatePerSecond = _annualGrowthRate / SECONDS_PER_YEAR;
 
-        if (
-            (GROWTH_RATE_PER_SECOND == 0 && snapshotInterval > 0) ||
-            (GROWTH_RATE_PER_SECOND > 0 && snapshotInterval == 0)
-        ) revert InvalidGrowthRate();
+        if ((growthRatePerSecond == 0 && _snapshotInterval > 0) || (growthRatePerSecond > 0 && _snapshotInterval == 0))
+            revert InvalidGrowthRate();
 
-        if ((initialSnapshotExchangeRate == 0 || initialSnapshotTimestamp == 0) && snapshotInterval > 0) {
+        if ((_initialSnapshotMaxExchangeRate == 0 || _initialSnapshotTimestamp == 0) && _snapshotInterval > 0) {
             revert InvalidInitialSnapshot();
         }
 
-        ensureNonzeroAddress(correlatedToken);
-        ensureNonzeroAddress(underlyingToken);
-        ensureNonzeroAddress(resilientOracle);
+        ensureNonzeroAddress(_correlatedToken);
+        ensureNonzeroAddress(_underlyingToken);
+        ensureNonzeroAddress(_resilientOracle);
+        ensureNonzeroAddress(_accessControlManager);
 
-        CORRELATED_TOKEN = correlatedToken;
-        UNDERLYING_TOKEN = underlyingToken;
-        RESILIENT_ORACLE = OracleInterface(resilientOracle);
-        SNAPSHOT_INTERVAL = snapshotInterval;
+        CORRELATED_TOKEN = _correlatedToken;
+        UNDERLYING_TOKEN = _underlyingToken;
+        RESILIENT_ORACLE = ResilientOracleInterface(_resilientOracle);
+        snapshotInterval = _snapshotInterval;
 
-        snapshotExchangeRate = initialSnapshotExchangeRate;
-        snapshotTimestamp = initialSnapshotTimestamp;
+        snapshotMaxExchangeRate = _initialSnapshotMaxExchangeRate;
+        snapshotTimestamp = _initialSnapshotTimestamp;
+        snapshotGap = _snapshotGap;
+
+        ACCESS_CONTROL_MANAGER = IAccessControlManagerV8(_accessControlManager);
+    }
+
+    /**
+     * @notice Directly sets the snapshot exchange rate and timestamp
+     * @param _snapshotMaxExchangeRate The exchange rate to set
+     * @param _snapshotTimestamp The timestamp to set
+     * @custom:event Emits SnapshotUpdated event on successful update of the snapshot
+     */
+    function setSnapshot(uint256 _snapshotMaxExchangeRate, uint256 _snapshotTimestamp) external {
+        _checkAccessAllowed("setSnapshot(uint256,uint256)");
+
+        snapshotMaxExchangeRate = _snapshotMaxExchangeRate;
+        snapshotTimestamp = _snapshotTimestamp;
+
+        emit SnapshotUpdated(snapshotMaxExchangeRate, snapshotTimestamp);
+    }
+
+    /**
+     * @notice Sets the growth rate and snapshot interval
+     * @param _annualGrowthRate The annual growth rate to set
+     * @param _snapshotInterval The snapshot interval to set
+     * @custom:error InvalidGrowthRate error is thrown if the growth rate is invalid
+     * @custom:event Emits GrowthRateUpdated event on successful update of the growth rate
+     */
+    function setGrowthRate(uint256 _annualGrowthRate, uint256 _snapshotInterval) external {
+        _checkAccessAllowed("setGrowthRate(uint256,uint256)");
+        uint256 oldGrowthRatePerSecond = growthRatePerSecond;
+
+        growthRatePerSecond = _annualGrowthRate / SECONDS_PER_YEAR;
+
+        if ((growthRatePerSecond == 0 && _snapshotInterval > 0) || (growthRatePerSecond > 0 && _snapshotInterval == 0))
+            revert InvalidGrowthRate();
+
+        emit GrowthRateUpdated(oldGrowthRatePerSecond, growthRatePerSecond, snapshotInterval, _snapshotInterval);
+
+        snapshotInterval = _snapshotInterval;
+    }
+
+    /**
+     * @notice Sets the snapshot gap
+     * @param _snapshotGap The snapshot gap to set
+     * @custom:event Emits SnapshotGapUpdated event on successful update of the snapshot gap
+     */
+    function setSnapshotGap(uint256 _snapshotGap) external {
+        _checkAccessAllowed("setSnapshotGap(uint256)");
+
+        emit SnapshotGapUpdated(snapshotGap, _snapshotGap);
+
+        snapshotGap = _snapshotGap;
     }
 
     /**
@@ -97,16 +165,16 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
      * @return isCapped Boolean indicating if the price is capped
      */
     function isCapped() external view virtual returns (bool) {
-        if (SNAPSHOT_INTERVAL == 0) {
+        if (snapshotInterval == 0) {
             return false;
         }
 
-        uint256 maxAllowedExchangeRate = _getMaxAllowedExchangeRate();
+        uint256 maxAllowedExchangeRate = getMaxAllowedExchangeRate();
         if (maxAllowedExchangeRate == 0) {
             return false;
         }
 
-        uint256 exchangeRate = _getUnderlyingAmount();
+        uint256 exchangeRate = getUnderlyingAmount();
 
         return exchangeRate > maxAllowedExchangeRate;
     }
@@ -114,23 +182,23 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     /**
      * @notice Updates the snapshot price and timestamp
      * @custom:event Emits SnapshotUpdated event on successful update of the snapshot
+     * @custom:error InvalidSnapshotMaxExchangeRate error is thrown if the max snapshot exchange rate is zero
      */
     function updateSnapshot() public override {
-        if (Transient.readCachedPrice(CACHE_SLOT, CORRELATED_TOKEN) != 0) {
-            return;
-        }
-        if (block.timestamp - snapshotTimestamp < SNAPSHOT_INTERVAL || SNAPSHOT_INTERVAL == 0) return;
+        if (block.timestamp - snapshotTimestamp < snapshotInterval || snapshotInterval == 0) return;
 
-        uint256 exchangeRate = _getUnderlyingAmount();
-        uint256 maxAllowedExchangeRate = _getMaxAllowedExchangeRate();
+        uint256 exchangeRate = getUnderlyingAmount();
+        uint256 maxAllowedExchangeRate = getMaxAllowedExchangeRate();
 
-        snapshotExchangeRate = exchangeRate > maxAllowedExchangeRate ? maxAllowedExchangeRate : exchangeRate;
+        snapshotMaxExchangeRate =
+            (exchangeRate > maxAllowedExchangeRate ? maxAllowedExchangeRate : exchangeRate) +
+            snapshotGap;
         snapshotTimestamp = block.timestamp;
 
-        if (snapshotExchangeRate == 0) revert InvalidSnapshotExchangeRate();
+        if (snapshotMaxExchangeRate == 0) revert InvalidSnapshotMaxExchangeRate();
 
-        Transient.cachePrice(CACHE_SLOT, CORRELATED_TOKEN, snapshotExchangeRate);
-        emit SnapshotUpdated(snapshotExchangeRate, snapshotTimestamp);
+        RESILIENT_ORACLE.updateAssetPrice(UNDERLYING_TOKEN);
+        emit SnapshotUpdated(snapshotMaxExchangeRate, snapshotTimestamp);
     }
 
     /**
@@ -138,38 +206,50 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
      * @param asset Address of the token
      * @return price The price of the token in scaled decimal places. It can be capped
      * to a maximum value taking into account the growth rate
+     * @custom:error InvalidTokenAddress error is thrown if the token address is invalid
      */
     function getPrice(address asset) public view override returns (uint256) {
-        uint256 exchangeRate = Transient.readCachedPrice(CACHE_SLOT, asset);
-        if (exchangeRate != 0) {
-            return calculatePrice(asset, exchangeRate);
+        if (asset != CORRELATED_TOKEN) revert InvalidTokenAddress();
+
+        uint256 exchangeRate = getUnderlyingAmount();
+
+        if (snapshotInterval == 0) {
+            return _calculatePrice(exchangeRate);
         }
 
-        exchangeRate = _getUnderlyingAmount();
-
-        if (SNAPSHOT_INTERVAL == 0) {
-            return calculatePrice(asset, exchangeRate);
-        }
-
-        uint256 maxAllowedExchangeRate = _getMaxAllowedExchangeRate();
+        uint256 maxAllowedExchangeRate = getMaxAllowedExchangeRate();
 
         uint256 finalExchangeRate = (exchangeRate > maxAllowedExchangeRate && maxAllowedExchangeRate != 0)
             ? maxAllowedExchangeRate
             : exchangeRate;
 
-        return calculatePrice(asset, finalExchangeRate);
+        return _calculatePrice(finalExchangeRate);
     }
 
     /**
+     * @notice Gets the maximum allowed exchange rate for token
+     * @return maxExchangeRate Maximum allowed exchange rate
+     */
+    function getMaxAllowedExchangeRate() public view returns (uint256) {
+        uint256 timeElapsed = block.timestamp - snapshotTimestamp;
+        uint256 maxExchangeRate = snapshotMaxExchangeRate +
+            (snapshotMaxExchangeRate * growthRatePerSecond * timeElapsed) /
+            1e18;
+        return maxExchangeRate;
+    }
+
+    /**
+     * @notice Gets the underlying amount for correlated token
+     * @return underlyingAmount Amount of underlying token
+     */
+    function getUnderlyingAmount() public view virtual returns (uint256);
+
+    /**
      * @notice Fetches price of the token based on an underlying exchange rate
-     * @param asset The address of the asset
      * @param exchangeRate The underlying exchange rate to use
      * @return price The price of the token in scaled decimal places
-     * @custom:error InvalidTokenAddress error is thrown if the token address is invalid
      */
-    function calculatePrice(address asset, uint256 exchangeRate) internal view returns (uint256) {
-        if (asset != CORRELATED_TOKEN) revert InvalidTokenAddress();
-
+    function _calculatePrice(uint256 exchangeRate) internal view returns (uint256) {
         uint256 underlyingUSDPrice = RESILIENT_ORACLE.getPrice(UNDERLYING_TOKEN);
 
         IERC20Metadata token = IERC20Metadata(CORRELATED_TOKEN);
@@ -179,20 +259,15 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     }
 
     /**
-     * @notice Gets the maximum allowed exchange rate for token
-     * @return maxExchangeRate Maximum allowed exchange rate
+     * @notice Reverts if the call is not allowed by AccessControlManager
+     * @param signature Method signature
+     * @custom:error Unauthorized error is thrown if the call is not allowed
      */
-    function _getMaxAllowedExchangeRate() internal view returns (uint256) {
-        uint256 timeElapsed = block.timestamp - snapshotTimestamp;
-        uint256 maxExchangeRate = snapshotExchangeRate +
-            (snapshotExchangeRate * GROWTH_RATE_PER_SECOND * timeElapsed) /
-            1e18;
-        return maxExchangeRate;
-    }
+    function _checkAccessAllowed(string memory signature) internal view {
+        bool isAllowedToCall = ACCESS_CONTROL_MANAGER.isAllowedToCall(msg.sender, signature);
 
-    /**
-     * @notice Gets the underlying amount for correlated token
-     * @return underlyingAmount Amount of underlying token
-     */
-    function _getUnderlyingAmount() internal view virtual returns (uint256);
+        if (!isAllowedToCall) {
+            revert Unauthorized(msg.sender, address(this), signature);
+        }
+    }
 }

@@ -2,12 +2,12 @@
 // SPDX-FileCopyrightText: 2022 Venus
 pragma solidity 0.8.25;
 
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "./interfaces/VBep20Interface.sol";
-import "./interfaces/OracleInterface.sol";
-import "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
-import "./interfaces/ICappedOracle.sol";
-import "./lib/Transient.sol";
+import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import { VBep20Interface } from "./interfaces/VBep20Interface.sol";
+import { OracleInterface, ResilientOracleInterface, BoundValidatorInterface } from "./interfaces/OracleInterface.sol";
+import { AccessControlledV8 } from "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
+import { ICappedOracle } from "./interfaces/ICappedOracle.sol";
+import { Transient } from "./lib/Transient.sol";
 
 /**
  * @title ResilientOracle
@@ -19,8 +19,7 @@ import "./lib/Transient.sol";
  * for attacking the protocol.
  *
  * The Resilient Oracle uses multiple sources and fallback mechanisms to provide accurate prices and protect
- * the protocol from oracle attacks. Currently it includes integrations with Chainlink, Pyth, Binance Oracle
- * and TWAP (Time-Weighted Average Price) oracles. TWAP uses PancakeSwap as the on-chain price source.
+ * the protocol from oracle attacks.
  *
  * For every market (vToken) we configure the main, pivot and fallback oracles. The oracles are configured per
  * vToken's underlying asset address. The main oracle oracle is the most trustworthy price source, the pivot
@@ -38,9 +37,8 @@ anchorRatio = anchorPrice/reporterPrice
 isValid = anchorRatio <= upperBoundAnchorRatio && anchorRatio >= lowerBoundAnchorRatio
 ```
 
- * In most cases, Chainlink is used as the main oracle, TWAP or Pyth oracles are used as the pivot oracle depending
- * on which supports the given market and Binance oracle is used as the fallback oracle. For some markets we may
- * use Pyth or TWAP as the main oracle if the token price is not supported by Chainlink or Binance oracles.
+ * In most cases, Chainlink is used as the main oracle, other oracles are used as the pivot oracle depending
+ * on which supports the given market and Binance oracle is used as the fallback oracle.
  *
  * For a fetched price to be valid it must be positive and not stagnant. If the price is invalid then we consider the
  * oracle to be stagnant and treat it like it's disabled.
@@ -68,6 +66,8 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         /// @notice `enableFlagsForOracles` stores the enabled state
         /// for each oracle in the same order as `oracles`
         bool[3] enableFlagsForOracles;
+        /// @notice `cachingEnabled` is a flag that indicates whether the asset price should be cached
+        bool cachingEnabled;
     }
 
     uint256 public constant INVALID_PRICE = 0;
@@ -87,7 +87,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     /// @notice Slot to cache the asset's price, used for transient storage
     /// custom:storage-location erc7201:venus-protocol/oracle/ResilientOracle/cache
     /// keccak256(abi.encode(uint256(keccak256("venus-protocol/oracle/ResilientOracle/cache")) - 1))
-    ///   & ~bytes32(uint256(0xff)
+    ///   & ~bytes32(uint256(0xff))
     bytes32 public constant CACHE_SLOT = 0x4e99ec55972332f5e0ef9c6623192c0401b609161bffae64d9ccdd7ad6cc7800;
 
     /// @notice Bound validator contract address
@@ -108,6 +108,9 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
 
     /// Event emitted when an oracle is enabled or disabled
     event OracleEnabled(address indexed asset, uint256 indexed role, bool indexed enable);
+
+    /// Event emitted when an asset cachingEnabled flag is set
+    event CachedEnabled(address indexed asset, bool indexed enabled);
 
     /**
      * @notice Checks whether an address is null or not
@@ -183,11 +186,8 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
         if (tokenConfigs_.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
-        for (uint256 i; i < numTokenConfigs; ) {
+        for (uint256 i; i < numTokenConfigs; ++i) {
             setTokenConfig(tokenConfigs_[i]);
-            unchecked {
-                ++i;
-            }
         }
     }
 
@@ -236,7 +236,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Updates the TWAP pivot oracle price and the capped main oracle snapshot .
+     * @notice Updates the capped main oracle snapshot.
      * @dev This function should always be called before calling getUnderlyingPrice
      * @param vToken vToken address
      */
@@ -246,7 +246,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Updates the TWAP pivot oracle price and the capped main oracle snapshot.
+     * @notice Updates the capped main oracle snapshot.
      * @dev This function should always be called before calling getPrice
      * @param asset asset address
      */
@@ -303,6 +303,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
      * @custom:error NotNullAddress is thrown if asset address is null
      * @custom:error NotNullAddress is thrown if main-role oracle address for asset is null
      * @custom:event Emits TokenConfigAdded event when the asset config is set successfully by the authorized account
+     * @custom:event Emits CachedEnabled event when the asset cachingEnabled flag is set successfully
      */
     function setTokenConfig(
         TokenConfig memory tokenConfig
@@ -316,6 +317,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
             tokenConfig.oracles[uint256(OracleRole.PIVOT)],
             tokenConfig.oracles[uint256(OracleRole.FALLBACK)]
         );
+        emit CachedEnabled(tokenConfig.asset, tokenConfig.cachingEnabled);
     }
 
     /**
@@ -331,7 +333,7 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
     }
 
     /**
-     * @notice Updates the TWAP oracle price and capped oracle snapshot.
+     * @notice Updates the capped oracle snapshot.
      * @dev Cache the asset price and return if already cached
      * @param asset asset address
      */
@@ -346,14 +348,10 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
             try ICappedOracle(mainOracle).updateSnapshot() {} catch {}
         }
 
-        (address pivotOracle, bool pivotOracleEnabled) = getOracle(asset, OracleRole.PIVOT);
-        if (pivotOracle != address(0) && pivotOracleEnabled) {
-            //if pivot oracle is not TwapOracle it will revert so we need to catch the revert
-            try TwapInterface(pivotOracle).updateTwap(asset) {} catch {}
+        if (_isCacheEnabled(asset)) {
+            uint256 price = _getPrice(asset);
+            Transient.cachePrice(CACHE_SLOT, asset, price);
         }
-
-        uint256 price = _getPrice(asset);
-        Transient.cachePrice(CACHE_SLOT, asset, price);
     }
 
     /**
@@ -489,5 +487,14 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
         } else {
             asset = VBep20Interface(vToken).underlying();
         }
+    }
+
+    /**
+     * @dev This function checks if the asset price should be cached
+     * @param asset asset address
+     * @return bool true if caching is enabled, false otherwise
+     */
+    function _isCacheEnabled(address asset) private view returns (bool) {
+        return tokenConfigs[asset].cachingEnabled;
     }
 }

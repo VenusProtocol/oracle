@@ -17,18 +17,22 @@ contract WstETHOracleV2 is CorrelatedTokenOracle {
         address stETH,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 snapshotInterval,
-        uint256 initialSnapshotExchangeRate,
-        uint256 initialSnapshotTimestamp
+        uint256 _snapshotInterval,
+        uint256 initialSnapshotMaxExchangeRate,
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 _snapshotGap
     )
         CorrelatedTokenOracle(
             wstETH,
             stETH,
             resilientOracle,
             annualGrowthRate,
-            snapshotInterval,
-            initialSnapshotExchangeRate,
-            initialSnapshotTimestamp
+            _snapshotInterval,
+            initialSnapshotMaxExchangeRate,
+            initialSnapshotTimestamp,
+            accessControlManager,
+            _snapshotGap
         )
     {}
 
@@ -36,7 +40,7 @@ contract WstETHOracleV2 is CorrelatedTokenOracle {
      * @notice Gets the stETH for 1 wstETH
      * @return amount Amount of stETH
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return IStETH(UNDERLYING_TOKEN).getPooledEthByShares(EXP_SCALE);
     }
 }

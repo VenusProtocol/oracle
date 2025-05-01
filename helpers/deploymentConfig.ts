@@ -6,6 +6,7 @@ import ethereumGovernanceDeployments from "@venusprotocol/governance-contracts/d
 import opbnbmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/opbnbmainnet.json";
 import opbnbtestnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/opbnbtestnet.json";
 import sepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/sepolia.json";
+import zksyncmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/zksyncmainnet.json";
 import zksyncsepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/zksyncsepolia.json";
 import mainnetDeployments from "@venusprotocol/venus-protocol/deployments/bscmainnet.json";
 import testnetDeployments from "@venusprotocol/venus-protocol/deployments/bsctestnet.json";
@@ -90,7 +91,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     weETH: "0x7df9372096c8ca2401f30B3dF931bEFF493f1FdC",
     BTCB: "0xA808e341e8e723DC6BA0Bb5204Bafc2330d7B8e4",
     "SolvBTC.BBN": "0x8FD14481C1616d9AdA7195Be60f9d8d0994b9AE1",
+    asBNB: "0xc625f060ad25f4A6c2d9eBF30C133dB61B7AF072",
     "PT-SolvBTC.BBN-27MAR2025": "0x964Ea3dC70Ee5b35Ea881cf8416B7a5F50E13f56",
+    "PT-clisBNB-24APR2025": "0x14AECeEc177085fd09EA07348B4E1F7Fcc030fA1",
   },
   bscmainnet: {
     vBNBAddress: mainnetDeployments.contracts.vBNB.address,
@@ -117,6 +120,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     "SolvBTC.BBN": "0x1346b618dC92810EC74163e4c27004c921D446a5",
     "PT-SolvBTC.BBN-27MAR2025": "0x541b5eeac7d4434c8f87e2d32019d67611179606",
     "PT-SolvBTC.BBN-27MAR2025_Market": "0x9dAA2878A8739E66e08e7ad35316C5143c0ea7C7",
+    asBNB: "0x77734e70b6E88b4d82fE632a168EDf6e700912b6",
+    "PT-clisBNB-24APR2025": "0xe8f1c9804770e11ab73395be54686ad656601e9e",
+    "PT-clisBNB-24APR2025_Market": "0x1d9d27f0b89181cf1593ac2b36a37b444eb66bee",
   },
   sepolia: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -241,19 +247,24 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
     acm: zksyncsepoliaGovernanceDeployments.contracts.AccessControlManager.address,
-    timelock: "0xa2f83de95E9F28eD443132C331B6a9C9B7a9F866", // Zksync sepolia Multisig
+    timelock: zksyncsepoliaGovernanceDeployments.contracts.NormalTimelock.address,
     USDM: "0x5d5334dBa9C727eD81b549b6106aE37Ea137076D",
     wUSDM: "0x0b3C8fB109f144f6296bF4Ac52F191181bEa003a",
+    WETH: "0x53F7e72C7ac55b44c7cd73cC13D4EF4b121678e6",
+    zkETH: "0x13231E8B60BE0900fB3a3E9dc52C2b39FA4794df",
+    wstETH: "0x8507bb4F4f0915D05432011E384850B65a7FCcD1",
   },
   zksyncmainnet: {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
-    acm: "0x526159A92A82afE5327d37Ef446b68FD9a5cA914", // To-do: use node modules
-    timelock: "0x751Aa759cfBB6CE71A43b48e40e1cCcFC66Ba4aa", // Zksync mainnet Multisig
-    devMultisig: "0x9049076b49B1f6c330200A8A816E7aDcc215Ec84",
+    acm: zksyncmainnetGovernanceDeployments.contracts.AccessControlManager.address,
+    timelock: zksyncmainnetGovernanceDeployments.contracts.NormalTimelock.address,
     USDM: "0x7715c206A14Ac93Cb1A6c0316A6E5f8aD7c9Dc31",
     wUSDM: "0xA900cbE7739c96D2B153a273953620A701d5442b",
+    WETH: "0x5aea5775959fbc2557cc8789bc1bf90a239d9a91",
+    wstETH: "0x703b52F2b28fEbcB60E1372858AF5b18849FE867",
+    zkETH: "0xb72207E1FB50f341415999732A20B6D25d8127aa",
   },
   opsepolia: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -277,6 +288,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WETH: "0x4200000000000000000000000000000000000006",
     wsuperOETHb: "0x02B1136d9E223333E0083aeAB76bC441f230a033",
     timelock: "0xdf3b635d2b535f906BB02abb22AED71346E36a00", // Base sepolia Multisig
+    wstETH: "0xAd69AA3811fE0EE7dBd4e25C4bae40e6422c76C8",
   },
   basemainnet: {
     acm: "0x9E6CeEfDC6183e4D0DF8092A9B90cDF659687daB",
@@ -286,6 +298,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WETH: "0x4200000000000000000000000000000000000006",
     wsuperOETHb: "0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6",
     timelock: "0x1803Cf1D3495b43cC628aa1d8638A981F8CD341C", // Base mainnet Multisig
+    wstETH: "0xc1cba3fcea344f92d9239c08c0568f6f2f0ee452",
   },
   unichainsepolia: {
     vBNBAddress: ethers.constants.AddressZero,

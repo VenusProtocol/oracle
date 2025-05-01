@@ -4,7 +4,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { BEP20Harness, IPStakePool, ResilientOracleInterface } from "../typechain-types";
+import { AccessControlManager, BEP20Harness, IPStakePool, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -27,6 +27,7 @@ describe("StkBNBOracle unit tests", () => {
   let StkBNBOracleFactory;
   let stkBNBMock;
   let timestamp;
+  let acm;
   before(async () => {
     ({ timestamp } = await ethers.provider.getBlock("latest"));
 
@@ -44,6 +45,11 @@ describe("StkBNBOracle unit tests", () => {
       poolTokenSupply: POOL_TOKEN_SUPPLY,
     });
     StkBNBOracleFactory = await ethers.getContractFactory("StkBNBOracle");
+
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+    acm = fakeAccessControlManager.address;
   });
 
   describe("deployment", () => {
@@ -57,6 +63,8 @@ describe("StkBNBOracle unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           INITIAL_EXCHANGE_RATE,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -71,6 +79,8 @@ describe("StkBNBOracle unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           INITIAL_EXCHANGE_RATE,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -85,6 +95,8 @@ describe("StkBNBOracle unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           INITIAL_EXCHANGE_RATE,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -98,6 +110,8 @@ describe("StkBNBOracle unit tests", () => {
         SNAPSHOT_UPDATE_INTERVAL,
         INITIAL_EXCHANGE_RATE,
         timestamp,
+        acm,
+        0,
       );
     });
   });

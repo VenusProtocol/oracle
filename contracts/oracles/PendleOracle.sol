@@ -23,6 +23,35 @@ import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/I
  * https://docs.pendle.finance/Developers/Contracts/StandardizedYield
  */
 contract PendleOracle is CorrelatedTokenOracle {
+    struct ConstructorParams {
+        /// @notice Pendle market
+        address market;
+        /// @notice Pendle oracle
+        address ptOracle;
+        /// @notice Either PT_TO_ASSET or PT_TO_SY
+        RateKind rateKind;
+        /// @notice Pendle PT token
+        address ptToken;
+        /// @notice Underlying token, can be either the market's asset or the interest bearing token
+        address underlyingToken;
+        /// @notice Resilient oracle to get the underlying token price from
+        address resilientOracle;
+        /// @notice TWAP duration to call Pendle oracle with
+        uint32 twapDuration;
+        /// @notice Annual growth rate of the underlying token
+        uint256 annualGrowthRate;
+        /// @notice Snapshot interval for the oracle
+        uint256 snapshotInterval;
+        /// @notice Initial exchange rate of the underlying token
+        uint256 initialSnapshotMaxExchangeRate;
+        /// @notice Initial timestamp of the underlying token
+        uint256 initialSnapshotTimestamp;
+        /// @notice Access control manager
+        address accessControlManager;
+        /// @notice Gap to add when updating the snapshot
+        uint256 snapshotGap;
+    }
+
     /// @notice Which asset to use as a base for the returned PT
     /// price. Can be either a standardized yield token (SY), in
     /// this case PT/SY price is returned, or the Pendle
@@ -53,46 +82,33 @@ contract PendleOracle is CorrelatedTokenOracle {
     /// @notice Thrown if the duration is invalid
     error InvalidDuration();
 
-    /// @notice Constructor for the implementation contract.
-    /// @param market Pendle market
-    /// @param ptOracle Pendle oracle
-    /// @param rateKind Either PT_TO_ASSET or PT_TO_SY
-    /// @param ptToken Pendle PT token
-    /// @param underlyingToken Underlying token, can be either the market's asset or the interest bearing token
-    /// @param resilientOracle Venus Oracle to get the underlying token price from
-    /// @param twapDuration TWAP duration to call Pendle oracle with
-    /// @custom:error InvalidDuration error is thrown if the duration is invalid
+    /**
+     * @notice Constructor for the implementation contract.
+     * @custom:error InvalidDuration Thrown if the duration is invalid
+     */
     constructor(
-        address market,
-        address ptOracle,
-        RateKind rateKind,
-        address ptToken,
-        address underlyingToken,
-        address resilientOracle,
-        uint32 twapDuration,
-        uint256 annualGrowthRate,
-        uint256 snapshotInterval,
-        uint256 initialSnapshotExchangeRate,
-        uint256 initialSnapshotTimestamp
+        ConstructorParams memory params
     )
         CorrelatedTokenOracle(
-            ptToken,
-            underlyingToken,
-            resilientOracle,
-            annualGrowthRate,
-            snapshotInterval,
-            initialSnapshotExchangeRate,
-            initialSnapshotTimestamp
+            params.ptToken,
+            params.underlyingToken,
+            params.resilientOracle,
+            params.annualGrowthRate,
+            params.snapshotInterval,
+            params.initialSnapshotMaxExchangeRate,
+            params.initialSnapshotTimestamp,
+            params.accessControlManager,
+            params.snapshotGap
         )
     {
-        ensureNonzeroAddress(market);
-        ensureNonzeroAddress(ptOracle);
-        ensureNonzeroValue(twapDuration);
+        ensureNonzeroAddress(params.market);
+        ensureNonzeroAddress(params.ptOracle);
+        ensureNonzeroValue(params.twapDuration);
 
-        MARKET = market;
-        PT_ORACLE = IPendlePtOracle(ptOracle);
-        RATE_KIND = rateKind;
-        TWAP_DURATION = twapDuration;
+        MARKET = params.market;
+        PT_ORACLE = IPendlePtOracle(params.ptOracle);
+        RATE_KIND = params.rateKind;
+        TWAP_DURATION = params.twapDuration;
         UNDERLYING_DECIMALS = IERC20Metadata(UNDERLYING_TOKEN).decimals();
 
         (bool increaseCardinalityRequired, , bool oldestObservationSatisfied) = PT_ORACLE.getOracleState(
@@ -108,7 +124,7 @@ contract PendleOracle is CorrelatedTokenOracle {
     /// @return amount The amount of underlying token (either the market's asset
     /// or the yield token) for 1 PT, adjusted for decimals such that the result
     /// has the same precision as the underlying token
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         uint256 rate;
         if (RATE_KIND == RateKind.PT_TO_SY) {
             rate = PT_ORACLE.getPtToSyRate(MARKET, TWAP_DURATION);

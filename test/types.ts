@@ -1,9 +1,9 @@
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
+import { Contract } from "ethers";
 
-import { BoundValidator, PythOracle } from "../typechain-types";
+import { BoundValidator } from "../typechain-types";
 import { ResilientOracle } from "../typechain-types/contracts/ResilientOracle";
 import { ChainlinkOracle } from "../typechain-types/contracts/oracles/ChainlinkOracle";
-import { MockPyth } from "../typechain-types/contracts/test/MockPyth";
 import { PancakePairHarness } from "../typechain-types/contracts/test/PancakePairHarness";
 
 declare module "mocha" {
@@ -21,7 +21,7 @@ declare module "mocha" {
     signers: SignerWithAddress[];
     admin: SignerWithAddress;
     // pyth oracle
-    pythOracle: PythOracle;
-    underlyingPythOracle: MockPyth;
+    pythOracle: Contract;
+    underlyingPythOracle: Contract;
   }
 }

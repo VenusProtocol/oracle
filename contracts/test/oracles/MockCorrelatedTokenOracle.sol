@@ -12,8 +12,10 @@ contract MockCorrelatedTokenOracle is CorrelatedTokenOracle {
         address resilientOracle,
         uint256 annualGrowthRate,
         uint256 snapshotInterval,
-        uint256 initialSnapshotExchangeRate,
-        uint256 initialSnapshotTimestamp
+        uint256 initialSnapshotMaxExchangeRate,
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 snapshotGap
     )
         CorrelatedTokenOracle(
             correlatedToken,
@@ -21,8 +23,10 @@ contract MockCorrelatedTokenOracle is CorrelatedTokenOracle {
             resilientOracle,
             annualGrowthRate,
             snapshotInterval,
-            initialSnapshotExchangeRate,
-            initialSnapshotTimestamp
+            initialSnapshotMaxExchangeRate,
+            initialSnapshotTimestamp,
+            accessControlManager,
+            snapshotGap
         )
     {}
 
@@ -30,7 +34,7 @@ contract MockCorrelatedTokenOracle is CorrelatedTokenOracle {
         mockUnderlyingAmount = amount;
     }
 
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return mockUnderlyingAmount;
     }
 }

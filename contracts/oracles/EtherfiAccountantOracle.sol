@@ -22,18 +22,22 @@ contract EtherfiAccountantOracle is CorrelatedTokenOracle {
         address underlyingToken,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 snapshotInterval,
-        uint256 initialSnapshotExchangeRate,
-        uint256 initialSnapshotTimestamp
+        uint256 _snapshotInterval,
+        uint256 initialSnapshotMaxExchangeRate,
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 _snapshotGap
     )
         CorrelatedTokenOracle(
             correlatedToken,
             underlyingToken,
             resilientOracle,
             annualGrowthRate,
-            snapshotInterval,
-            initialSnapshotExchangeRate,
-            initialSnapshotTimestamp
+            _snapshotInterval,
+            initialSnapshotMaxExchangeRate,
+            initialSnapshotTimestamp,
+            accessControlManager,
+            _snapshotGap
         )
     {
         ensureNonzeroAddress(accountant);
@@ -44,7 +48,7 @@ contract EtherfiAccountantOracle is CorrelatedTokenOracle {
      * @notice Fetches the conversion rate from the ACCOUNTANT contract
      * @return amount Amount of WBTC
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return ACCOUNTANT.getRateSafe();
     }
 }

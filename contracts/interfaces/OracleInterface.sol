@@ -13,10 +13,6 @@ interface ResilientOracleInterface is OracleInterface {
     function getUnderlyingPrice(address vToken) external view returns (uint256);
 }
 
-interface TwapInterface is OracleInterface {
-    function updateTwap(address asset) external returns (uint256);
-}
-
 interface BoundValidatorInterface {
     function validatePriceWithAnchorPrice(
         address asset,

@@ -1,3 +1,61 @@
+## [2.13.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.13.0-dev.3...v2.13.0-dev.4) (2025-03-21)
+
+
+### Features
+
+* added asBNB oracle ([b88b277](https://github.com/VenusProtocol/oracle/commit/b88b277dbb0543409b66facd4a1a4325a7e079de))
+* deploy mainnet asBNBOracle ([a8025bc](https://github.com/VenusProtocol/oracle/commit/a8025bc48fbc8648a1c7da4b5fd88d8d57a46296))
+* deploy mock asBnb and asBnb oracle ([f11bea8](https://github.com/VenusProtocol/oracle/commit/f11bea86491f69ab21de9a0a0594c08c4e0d8fda))
+* updating deployment files ([686ed4c](https://github.com/VenusProtocol/oracle/commit/686ed4cbf003388c0323bbd01a470941ff579885))
+* updating deployment files ([ab27d99](https://github.com/VenusProtocol/oracle/commit/ab27d99137e06b323e9cb8b9e6f6027aed7943e0))
+
+
+### Bug Fixes
+
+* BNB-01, BNB-02 ([68e2e0d](https://github.com/VenusProtocol/oracle/commit/68e2e0d3f932e48051aa2b54caa324950d3e1596))
+* BNB-02 ([d2da769](https://github.com/VenusProtocol/oracle/commit/d2da7696bf009ee7ba1d5f6c868e75a63afd3243))
+* lint issues ([d0500e9](https://github.com/VenusProtocol/oracle/commit/d0500e98f6de30588694962b5c29ba4126ff8227))
+* lint prettier issues ([eb52f2c](https://github.com/VenusProtocol/oracle/commit/eb52f2c980176e58133086979893eebbde62a83f))
+
+## [2.13.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.13.0-dev.2...v2.13.0-dev.3) (2025-03-18)
+
+
+### Features
+
+* deployed oracle on mainnet ([44e284a](https://github.com/VenusProtocol/oracle/commit/44e284ae3c7df37b619083e874922a2cc2d5efd0))
+* deployed pt oracle for clisBNB ([43c687f](https://github.com/VenusProtocol/oracle/commit/43c687f9badde5f2f87217f332be114c29692944))
+* updating deployment files ([017ba49](https://github.com/VenusProtocol/oracle/commit/017ba499cc2392fb38fc4400291a8ddb6f608392))
+
+
+### Bug Fixes
+
+* fixed lint ([b0ef84a](https://github.com/VenusProtocol/oracle/commit/b0ef84a52cf6f2f76d9703028b0233b7b3ff38b0))
+* redeployed oracle ([225f93b](https://github.com/VenusProtocol/oracle/commit/225f93b78bc720ac5cf2e69dbe2613c1be51a161))
+* resolved comments ([08e88d2](https://github.com/VenusProtocol/oracle/commit/08e88d23b957e5d7b149f22caff59861a2cbd68f))
+
+## [2.13.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.13.0-dev.1...v2.13.0-dev.2) (2025-03-10)
+
+
+### Features
+
+* add a custom ZkETH oracle ([2c38558](https://github.com/VenusProtocol/oracle/commit/2c38558e2d8aaf1909cef4b8d1653b2b55bf118e))
+* deploy ZkETH oracle for zksync mainnet and sepolia ([4780e91](https://github.com/VenusProtocol/oracle/commit/4780e91b7c515d99ea50fe85db233e71fa8fcd41))
+* updating deployment files ([5667a9f](https://github.com/VenusProtocol/oracle/commit/5667a9f01326f4a6d09648f242954a527bc87854))
+* use governance timelocks for zksync ([800f4df](https://github.com/VenusProtocol/oracle/commit/800f4df63eb9538f5a5630380c89860d495e79b2))
+
+## [2.13.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.12.0...v2.13.0-dev.1) (2025-03-06)
+
+
+### Features
+
+* add script to deploy wstETH one jump oracle ([d360542](https://github.com/VenusProtocol/oracle/commit/d3605427103e3a6ce2067e3e624421468f2b87e5))
+* deployment files for oneJump oracle on base mainnet for wstETH ([e1967d2](https://github.com/VenusProtocol/oracle/commit/e1967d2167db310997cdea0970e90368a0bba5c4))
+* deployment files for oneJump oracle on base sepolia for wstETH ([3df4b08](https://github.com/VenusProtocol/oracle/commit/3df4b0876bc6933268c48fb2b0fb03f2937dd2bf))
+* deployment files for wstETH one-jump oracle on zksync mainnet ([3161bc7](https://github.com/VenusProtocol/oracle/commit/3161bc7e48937b94f4f4bcc7d9eb8ad2f5845e50))
+* deployment files for wstETH one-jump oracle on zksync sepolia ([265a6ee](https://github.com/VenusProtocol/oracle/commit/265a6ee07eebf0e3e08d5fa508eb69f371bf76ee))
+* updating deployment files ([fe0b114](https://github.com/VenusProtocol/oracle/commit/fe0b1146c6c7f5244774431f14a0ed68f64ea84f))
+* updating deployment files ([6ec9ea8](https://github.com/VenusProtocol/oracle/commit/6ec9ea8ca189852974839bcdd78bf508391dd6fa))
+
 ## [2.12.0](https://github.com/VenusProtocol/oracle/compare/v2.11.0...v2.12.0) (2025-02-21)
 
 

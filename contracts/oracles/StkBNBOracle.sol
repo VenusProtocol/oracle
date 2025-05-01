@@ -27,18 +27,22 @@ contract StkBNBOracle is CorrelatedTokenOracle {
         address stkBNB,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 snapshotInterval,
-        uint256 initialSnapshotExchangeRate,
-        uint256 initialSnapshotTimestamp
+        uint256 _snapshotInterval,
+        uint256 initialSnapshotMaxExchangeRate,
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 _snapshotGap
     )
         CorrelatedTokenOracle(
             stkBNB,
             NATIVE_TOKEN_ADDR,
             resilientOracle,
             annualGrowthRate,
-            snapshotInterval,
-            initialSnapshotExchangeRate,
-            initialSnapshotTimestamp
+            _snapshotInterval,
+            initialSnapshotMaxExchangeRate,
+            initialSnapshotTimestamp,
+            accessControlManager,
+            _snapshotGap
         )
     {
         ensureNonzeroAddress(stakePool);
@@ -50,7 +54,7 @@ contract StkBNBOracle is CorrelatedTokenOracle {
      * @return price The amount of BNB for stkBNB
      * @custom:error PoolTokenSupplyIsZero error is thrown if the pool token supply is zero
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         IPStakePool.Data memory exchangeRateData = STAKE_POOL.exchangeRate();
 
         if (exchangeRateData.poolTokenSupply == 0) {

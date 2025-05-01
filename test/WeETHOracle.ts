@@ -4,7 +4,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { BEP20Harness, ResilientOracleInterface } from "../typechain-types";
+import { AccessControlManager, BEP20Harness, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -24,6 +24,7 @@ describe("WeETHOracle unit tests", () => {
   let eETHMock;
   let mockLiquidityPool;
   let timestamp;
+  let acm;
   before(async () => {
     ({ timestamp } = await ethers.provider.getBlock("latest"));
 
@@ -42,6 +43,11 @@ describe("WeETHOracle unit tests", () => {
     mockLiquidityPool = await MockLiquidityPoolFactory.deploy();
     await mockLiquidityPool.setAmountPerShare(exchangeRate);
     WeETHOracleFactory = await ethers.getContractFactory("WeETHOracle");
+
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+    acm = fakeAccessControlManager.address;
   });
 
   describe("deployment", () => {
@@ -56,6 +62,8 @@ describe("WeETHOracle unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           exchangeRate,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -71,6 +79,8 @@ describe("WeETHOracle unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           exchangeRate,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -86,6 +96,8 @@ describe("WeETHOracle unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           exchangeRate,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -101,6 +113,8 @@ describe("WeETHOracle unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           exchangeRate,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -115,6 +129,8 @@ describe("WeETHOracle unit tests", () => {
         SNAPSHOT_UPDATE_INTERVAL,
         exchangeRate,
         timestamp,
+        acm,
+        0,
       );
     });
   });

@@ -22,18 +22,22 @@ contract OneJumpOracle is CorrelatedTokenOracle {
         address resilientOracle,
         address intermediateOracle,
         uint256 annualGrowthRate,
-        uint256 snapshotInterval,
-        uint256 initialSnapshotExchangeRate,
-        uint256 initialSnapshotTimestamp
+        uint256 _snapshotInterval,
+        uint256 initialSnapshotMaxExchangeRate,
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 _snapshotGap
     )
         CorrelatedTokenOracle(
             correlatedToken,
             underlyingToken,
             resilientOracle,
             annualGrowthRate,
-            snapshotInterval,
-            initialSnapshotExchangeRate,
-            initialSnapshotTimestamp
+            _snapshotInterval,
+            initialSnapshotMaxExchangeRate,
+            initialSnapshotTimestamp,
+            accessControlManager,
+            _snapshotGap
         )
     {
         ensureNonzeroAddress(intermediateOracle);
@@ -44,7 +48,7 @@ contract OneJumpOracle is CorrelatedTokenOracle {
      * @notice Fetches the amount of the underlying token for 1 correlated token, using the intermediate oracle
      * @return amount The amount of the underlying token for 1 correlated token scaled by the underlying token decimals
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         uint256 underlyingDecimals = IERC20Metadata(UNDERLYING_TOKEN).decimals();
         uint256 correlatedDecimals = IERC20Metadata(CORRELATED_TOKEN).decimals();
 

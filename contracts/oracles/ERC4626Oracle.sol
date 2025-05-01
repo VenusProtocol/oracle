@@ -18,18 +18,22 @@ contract ERC4626Oracle is CorrelatedTokenOracle {
         address underlyingToken,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 snapshotInterval,
-        uint256 initialSnapshotExchangeRate,
-        uint256 initialSnapshotTimestamp
+        uint256 _snapshotInterval,
+        uint256 initialSnapshotMaxExchangeRate,
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 _snapshotGap
     )
         CorrelatedTokenOracle(
             correlatedToken,
             underlyingToken,
             resilientOracle,
             annualGrowthRate,
-            snapshotInterval,
-            initialSnapshotExchangeRate,
-            initialSnapshotTimestamp
+            _snapshotInterval,
+            initialSnapshotMaxExchangeRate,
+            initialSnapshotTimestamp,
+            accessControlManager,
+            _snapshotGap
         )
     {
         ONE_CORRELATED_TOKEN = 10 ** IERC4626(correlatedToken).decimals();
@@ -39,7 +43,7 @@ contract ERC4626Oracle is CorrelatedTokenOracle {
      * @notice Fetches the amount of underlying token for 1 correlated token
      * @return amount The amount of underlying token for correlated token
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return IERC4626(CORRELATED_TOKEN).convertToAssets(ONE_CORRELATED_TOKEN);
     }
 }

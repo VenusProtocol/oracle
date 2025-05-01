@@ -4,7 +4,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { BEP20Harness, IStETH, ResilientOracleInterface } from "../typechain-types";
+import { AccessControlManager, BEP20Harness, IStETH, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -25,6 +25,7 @@ describe("WstETHOracleV2 unit tests", () => {
   let WsETHOracleFactory;
   let wstETHMock;
   let timestamp;
+  let acm;
   before(async () => {
     ({ timestamp } = await ethers.provider.getBlock("latest"));
 
@@ -41,6 +42,11 @@ describe("WstETHOracleV2 unit tests", () => {
     WsETHOracleFactory = await ethers.getContractFactory("WstETHOracleV2");
 
     resilientOracleMock.getPrice.returns(STETH_USD_PRICE);
+
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+    acm = fakeAccessControlManager.address;
   });
 
   describe("deployment", () => {
@@ -54,6 +60,8 @@ describe("WstETHOracleV2 unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           STETH_AMOUNT_FOR_ONE_WSTETH,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -68,6 +76,8 @@ describe("WstETHOracleV2 unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           STETH_AMOUNT_FOR_ONE_WSTETH,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -82,6 +92,8 @@ describe("WstETHOracleV2 unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           STETH_AMOUNT_FOR_ONE_WSTETH,
           timestamp,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -95,6 +107,8 @@ describe("WstETHOracleV2 unit tests", () => {
         SNAPSHOT_UPDATE_INTERVAL,
         STETH_AMOUNT_FOR_ONE_WSTETH,
         timestamp,
+        acm,
+        0,
       );
     });
   });

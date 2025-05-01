@@ -3,7 +3,7 @@ import chai from "chai";
 import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
-import { BEP20Harness, OracleInterface, ResilientOracleInterface } from "../typechain-types";
+import { AccessControlManager, BEP20Harness, OracleInterface, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -21,6 +21,7 @@ describe("OneJumpOracle unit tests", () => {
   let OneJumpOracleFactory;
   let OneJumpOracle;
   let chainlinkOracleMock;
+  let acm;
   before(async () => {
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
@@ -37,6 +38,11 @@ describe("OneJumpOracle unit tests", () => {
     chainlinkOracleMock.getPrice.whenCalledWith(ldoMock.address).returns(LDO_ETH_PRICE.toString());
 
     OneJumpOracleFactory = await ethers.getContractFactory("OneJumpOracle");
+
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+    acm = fakeAccessControlManager.address;
   });
 
   describe("deployment", () => {
@@ -50,6 +56,8 @@ describe("OneJumpOracle unit tests", () => {
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
           0,
+          0,
+          acm,
           0,
         ),
       ).to.be.reverted;
@@ -66,6 +74,9 @@ describe("OneJumpOracle unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           0,
           0,
+
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -80,6 +91,8 @@ describe("OneJumpOracle unit tests", () => {
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
           0,
+          0,
+          acm,
           0,
         ),
       ).to.be.reverted;
@@ -96,6 +109,8 @@ describe("OneJumpOracle unit tests", () => {
           SNAPSHOT_UPDATE_INTERVAL,
           0,
           0,
+          acm,
+          0,
         ),
       ).to.be.reverted;
     });
@@ -109,6 +124,8 @@ describe("OneJumpOracle unit tests", () => {
         ANNUAL_GROWTH_RATE,
         SNAPSHOT_UPDATE_INTERVAL,
         0,
+        0,
+        acm,
         0,
       );
     });

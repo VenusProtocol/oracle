@@ -21,18 +21,22 @@ contract WeETHAccountantOracle is CorrelatedTokenOracle {
         address weth,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 snapshotInterval,
-        uint256 initialSnapshotExchangeRate,
-        uint256 initialSnapshotTimestamp
+        uint256 _snapshotInterval,
+        uint256 initialSnapshotMaxExchangeRate,
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 _snapshotGap
     )
         CorrelatedTokenOracle(
             weethLRT,
             weth,
             resilientOracle,
             annualGrowthRate,
-            snapshotInterval,
-            initialSnapshotExchangeRate,
-            initialSnapshotTimestamp
+            _snapshotInterval,
+            initialSnapshotMaxExchangeRate,
+            initialSnapshotTimestamp,
+            accessControlManager,
+            _snapshotGap
         )
     {
         ensureNonzeroAddress(accountant);
@@ -43,7 +47,7 @@ contract WeETHAccountantOracle is CorrelatedTokenOracle {
      * @notice Gets the WETH for 1 weETH LRT
      * @return amount Amount of WETH
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return ACCOUNTANT.getRateSafe();
     }
 }

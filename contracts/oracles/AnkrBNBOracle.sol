@@ -19,18 +19,22 @@ contract AnkrBNBOracle is CorrelatedTokenOracle {
         address ankrBNB,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 snapshotInterval,
-        uint256 initialSnapshotExchangeRate,
-        uint256 initialSnapshotTimestamp
+        uint256 _snapshotInterval,
+        uint256 initialSnapshotMaxExchangeRate,
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 _snapshotGap
     )
         CorrelatedTokenOracle(
             ankrBNB,
             NATIVE_TOKEN_ADDR,
             resilientOracle,
             annualGrowthRate,
-            snapshotInterval,
-            initialSnapshotExchangeRate,
-            initialSnapshotTimestamp
+            _snapshotInterval,
+            initialSnapshotMaxExchangeRate,
+            initialSnapshotTimestamp,
+            accessControlManager,
+            _snapshotGap
         )
     {}
 
@@ -38,7 +42,7 @@ contract AnkrBNBOracle is CorrelatedTokenOracle {
      * @notice Fetches the amount of BNB for 1 ankrBNB
      * @return amount The amount of BNB for ankrBNB
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return IAnkrBNB(CORRELATED_TOKEN).sharesToBonds(EXP_SCALE);
     }
 }

@@ -17,18 +17,22 @@ contract SFraxOracle is CorrelatedTokenOracle {
         address frax,
         address resilientOracle,
         uint256 annualGrowthRate,
-        uint256 snapshotInterval,
-        uint256 initialSnapshotExchangeRate,
-        uint256 initialSnapshotTimestamp
+        uint256 _snapshotInterval,
+        uint256 initialSnapshotMaxExchangeRate,
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 _snapshotGap
     )
         CorrelatedTokenOracle(
             sFrax,
             frax,
             resilientOracle,
             annualGrowthRate,
-            snapshotInterval,
-            initialSnapshotExchangeRate,
-            initialSnapshotTimestamp
+            _snapshotInterval,
+            initialSnapshotMaxExchangeRate,
+            initialSnapshotTimestamp,
+            accessControlManager,
+            _snapshotGap
         )
     {}
 
@@ -36,7 +40,7 @@ contract SFraxOracle is CorrelatedTokenOracle {
      * @notice Fetches the amount of FRAX for 1 sFrax
      * @return amount The amount of FRAX for sFrax
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return ISFrax(CORRELATED_TOKEN).convertToAssets(EXP_SCALE);
     }
 }
