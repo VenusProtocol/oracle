@@ -10,13 +10,12 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const oracle = await ethers.getContract("ResilientOracle");
 
-  const { ankrBNB, stkBNB, BNBx, BNBxStakeManager, slisBNBStakeManager, stkBNBStakePool, slisBNB, wBETH } =
+  const { ankrBNB, stkBNB, BNBx, BNBxStakeManager, slisBNBStakeManager, stkBNBStakePool, slisBNB, wBETH, acm } =
     ADDRESSES[network.name];
   const ETH = assets[network.name].find(asset => asset.token === "ETH");
-  const SNAPSHOT_UPDATE_INTERVAL = 24 * 60 * 60;
+  const SNAPSHOT_UPDATE_INTERVAL = ethers.constants.MaxUint256;
 
-  // 1.1%
-  const BNBx_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.011", 18);
+  const BNBx_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
   let block = await ethers.provider.getBlock("latest");
   const stakeManagerContract = await ethers.getContractAt("IStaderStakeManager", BNBxStakeManager);
   let exchangeRate = await stakeManagerContract.convertBnbXToBnb(ethers.utils.parseUnits("1", 18));
@@ -33,12 +32,13 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,
+      acm,
+      0,
     ],
     skipIfAlreadyDeployed: true,
   });
 
-  // 39.21%
-  const slis_BNB_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.3921", 18);
+  const slis_BNB_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
   block = await ethers.provider.getBlock("latest");
   const syncClubStakeManagerContract = await ethers.getContractAt("ISynclubStakeManager", slisBNBStakeManager);
   exchangeRate = await syncClubStakeManagerContract.convertSnBnbToBnb(ethers.utils.parseUnits("1", 18));
@@ -55,12 +55,13 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,
+      acm,
+      0,
     ],
     skipIfAlreadyDeployed: true,
   });
 
-  // 2.3%
-  const stk_BNB_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.023", 18);
+  const stk_BNB_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
   block = await ethers.provider.getBlock("latest");
   const stakePoolContract = await ethers.getContractAt("IPStakePool", stkBNBStakePool);
   const exchangeRateData = await stakePoolContract.exchangeRate();
@@ -78,14 +79,15 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,
+      acm,
+      0,
     ],
     skipIfAlreadyDeployed: true,
   });
 
   const ankrBNBAddress = ankrBNB || (await ethers.getContract("MockAnkrBNB")).address;
 
-  // 0.7%
-  const ankr_BNB_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.007", 18);
+  const ankr_BNB_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
 
   block = await ethers.provider.getBlock("latest");
   const ankrBNBContract = await ethers.getContractAt("IAnkrBNB", ankrBNBAddress);
@@ -102,14 +104,15 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,
+      acm,
+      0,
     ],
     skipIfAlreadyDeployed: true,
   });
 
   const wBETHAddress = wBETH || (await ethers.getContract("MockWBETH")).address;
 
-  // 2.79%
-  const wBETH_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.0279", 18);
+  const wBETH_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
   block = await ethers.provider.getBlock("latest");
   const wBETHContract = await ethers.getContractAt("IWBETH", wBETHAddress);
   exchangeRate = await wBETHContract.exchangeRate();
@@ -126,6 +129,8 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,
+      acm,
+      0,
     ],
     skipIfAlreadyDeployed: true,
   });

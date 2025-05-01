@@ -33,10 +33,6 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     await Promise.all(
       oracleConfig.map(
         async ({ name, market, ptToken, underlyingToken, yieldToken, ptOracle, TWAPDuration, primaryRateKind }) => {
-          const defaultProxyAdmin = await ethers.getContract("DefaultProxyAdmin");
-          console.log("default proxy admin owner", await defaultProxyAdmin.owner());
-          console.log("trying to set the owner to", proxyOwnerAddress);
-          console.log("Deploying main oracles");
           const ptOracleAddress = ptOracle || (await ethers.getContract("MockPendlePtOracle")).address;
           await deploy(name, {
             contract: "PendleOracle",
@@ -45,17 +41,21 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
             deterministicDeployment: false,
             skipIfAlreadyDeployed: true,
             args: [
-              market || fallbackAddress,
-              ptOracleAddress,
-              primaryRateKind,
-              ptToken,
-              primaryRateKind === PendleRateKind.PT_TO_ASSET ? underlyingToken : yieldToken,
-              oracle.address,
-              TWAPDuration,
-              0,
-              0,
-              0,
-              0,
+              {
+                market: market || fallbackAddress,
+                ptOracle: ptOracleAddress,
+                rateKind: primaryRateKind,
+                ptToken,
+                underlyingToken: primaryRateKind === PendleRateKind.PT_TO_ASSET ? underlyingToken : yieldToken,
+                resilientOracle: oracle.address,
+                twapDuration: TWAPDuration,
+                annualGrowthRate: 0,
+                snapshotInterval: 0,
+                initialSnapshotMaxExchangeRate: 0,
+                initialSnapshotTimestamp: 0,
+                accessControlManager: addresses.acm,
+                snapshotGap: 0,
+              },
             ],
           });
         },
@@ -64,8 +64,6 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   };
 
   const deployReferenceOracles = async (oracleConfig: OracleConfig) => {
-    const devMultisig = network.live ? ADDRESSES[network.name].devMultisig : deployer;
-    console.log(devMultisig);
     const referenceOracle = await ethers.getContract("ReferenceOracle");
     for (const config of oracleConfig) {
       const { name, market, ptToken, underlyingToken, yieldToken, ptOracle, TWAPDuration, primaryRateKind } = config;
@@ -80,17 +78,21 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
         deterministicDeployment: false,
         skipIfAlreadyDeployed: true,
         args: [
-          market || fallbackAddress,
-          ptOracleAddress,
-          referenceRateKind,
-          ptToken,
-          referenceRateKind === PendleRateKind.PT_TO_ASSET ? underlyingToken : yieldToken,
-          referenceOracle.address,
-          TWAPDuration,
-          0,
-          0,
-          0,
-          0,
+          {
+            market: market || fallbackAddress,
+            ptOracle: ptOracleAddress,
+            rateKind: referenceRateKind,
+            ptToken,
+            underlyingToken: referenceRateKind === PendleRateKind.PT_TO_ASSET ? underlyingToken : yieldToken,
+            resilientOracle: referenceOracle.address,
+            twapDuration: TWAPDuration,
+            annualGrowthRate: 0,
+            snapshotInterval: 0,
+            initialSnapshotMaxExchangeRate: 0,
+            initialSnapshotTimestamp: 0,
+            accessControlManager: addresses.acm,
+            snapshotGap: 0,
+          },
         ],
       });
     }

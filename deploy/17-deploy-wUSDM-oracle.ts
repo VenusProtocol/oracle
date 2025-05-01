@@ -8,11 +8,10 @@ import { ADDRESSES } from "../helpers/deploymentConfig";
 const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-  const { wUSDM, USDM } = ADDRESSES[network.name];
+  const { wUSDM, USDM, acm } = ADDRESSES[network.name];
 
-  const SNAPSHOT_UPDATE_INTERVAL = 24 * 60 * 60;
-  // 4.5%
-  const wUSDM_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.045", 18);
+  const SNAPSHOT_UPDATE_INTERVAL = ethers.constants.MaxUint256;
+  const wUSDM_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
   const resilientOracle = await ethers.getContract("ResilientOracle");
   const block = await ethers.provider.getBlock("latest");
   const vault = await ethers.getContractAt("IERC4626", wUSDM);
@@ -31,6 +30,8 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,
+      acm,
+      0,
     ],
   });
 };

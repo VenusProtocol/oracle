@@ -7,15 +7,15 @@ import { ADDRESSES } from "../helpers/deploymentConfig";
 const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-  const { WETH, USDC, USDT, USDS, yvUSDC_1, yvUSDT_1, yvUSDS_1, yvWETH_1 } = ADDRESSES[network.name];
+  const { WETH, USDC, USDT, USDS, yvUSDC_1, yvUSDT_1, yvUSDS_1, yvWETH_1, acm } = ADDRESSES[network.name];
 
   const resilientOracle = await ethers.getContract("ResilientOracle");
 
-  const SNAPSHOT_UPDATE_INTERVAL = 24 * 60 * 60;
-  const yvUSDC_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.082", 18);
-  const yvUSDT_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.0732", 18);
-  const yvUSDS_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.0382", 18);
-  const yvWETH_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.0239", 18);
+  const SNAPSHOT_UPDATE_INTERVAL = ethers.constants.MaxUint256;
+  const yvUSDC_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
+  const yvUSDT_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
+  const yvUSDS_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
+  const yvWETH_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
 
   let block = await ethers.provider.getBlock("latest");
   let vault = await ethers.getContractAt("IERC4626", yvUSDC_1);
@@ -34,6 +34,8 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,
+      acm,
+      0,
     ],
   });
 
@@ -54,6 +56,8 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,
+      acm,
+      0,
     ],
   });
 
@@ -74,6 +78,8 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,
+      acm,
+      0,
     ],
   });
 
@@ -94,6 +100,8 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,
+      acm,
+      0,
     ],
   });
 };

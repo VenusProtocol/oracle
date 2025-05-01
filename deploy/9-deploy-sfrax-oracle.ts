@@ -11,10 +11,10 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const oracle = await ethers.getContract("ResilientOracle");
 
-  const { sFRAX, FRAX } = ADDRESSES[network.name];
+  const { sFRAX, FRAX, acm } = ADDRESSES[network.name];
 
-  const SNAPSHOT_UPDATE_INTERVAL = 24 * 60 * 60;
-  const sFRAX_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.059", 18);
+  const SNAPSHOT_UPDATE_INTERVAL = ethers.constants.MaxUint256;
+  const sFRAX_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
   const block = await ethers.provider.getBlock("latest");
   const vault = await ethers.getContractAt("IAccountant", sFRAX || (await ethers.getContract("MockSFrax")).address);
   const exchangeRate = await vault.convertToAssets(parseUnits("1", 18));
@@ -32,6 +32,8 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,
+      acm,
+      0,
     ],
     skipIfAlreadyDeployed: true,
   });

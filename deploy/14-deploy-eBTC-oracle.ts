@@ -10,12 +10,12 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const resilientOracle = await ethers.getContract("ResilientOracle");
   let { eBTC_Accountant } = ADDRESSES[network.name];
-  const { WBTC, eBTC } = ADDRESSES[network.name];
+  const { WBTC, eBTC, acm } = ADDRESSES[network.name];
 
   eBTC_Accountant = eBTC_Accountant || (await ethers.getContract("MockAccountant_eBTC")).address;
 
-  const SNAPSHOT_UPDATE_INTERVAL = 24 * 60 * 60;
-  const eBTC_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.03", 18);
+  const SNAPSHOT_UPDATE_INTERVAL = ethers.constants.MaxUint256;
+  const eBTC_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
   const block = await ethers.provider.getBlock("latest");
   const accountant = await ethers.getContractAt("IAccountant", eBTC_Accountant);
   const exchangeRate = await accountant.getRateSafe();
@@ -34,6 +34,8 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,
+      acm,
+      0,
     ],
     skipIfAlreadyDeployed: true,
   });

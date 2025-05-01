@@ -8,11 +8,10 @@ import { ADDRESSES } from "../helpers/deploymentConfig";
 const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-  const { WETH, wsuperOETHb } = ADDRESSES[network.name];
+  const { WETH, wsuperOETHb, acm } = ADDRESSES[network.name];
 
-  const SNAPSHOT_UPDATE_INTERVAL = 24 * 60 * 60;
-  // 6.06%
-  const wsuperOETHb_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.0606", 18);
+  const SNAPSHOT_UPDATE_INTERVAL = ethers.constants.MaxUint256;
+  const wsuperOETHb_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
   const block = await ethers.provider.getBlock("latest");
   const vault = await ethers.getContractAt("IERC4626", wsuperOETHb);
   const exchangeRate = await vault.convertToAssets(parseUnits("1", 18));
@@ -31,6 +30,8 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       SNAPSHOT_UPDATE_INTERVAL,
       exchangeRate,
       block.timestamp,
+      acm,
+      0,
     ],
   });
 };

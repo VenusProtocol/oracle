@@ -13,7 +13,7 @@ const func: DeployFunction = async function ({
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
   const proxyOwnerAddress = ADDRESSES[network.name].timelock;
-  const { WETH, wstETH, weETH } = ADDRESSES[network.name];
+  const { WETH, wstETH, weETH, acm } = ADDRESSES[network.name];
 
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
 
@@ -46,13 +46,13 @@ const func: DeployFunction = async function ({
 
   await deploy("wstETHOneJumpChainlinkOracle", {
     contract: "OneJumpOracle",
-    args: [wstETH, WETH, resilientOracle.address, chainlinkOracle.address, 0, 0, 0, 0],
+    args: [wstETH, WETH, resilientOracle.address, chainlinkOracle.address, 0, 0, 0, 0, acm, 0],
     ...commonParams,
   });
 
   await deploy("weETHOneJumpChainlinkOracle", {
     contract: "OneJumpOracle",
-    args: [weETH, WETH, resilientOracle.address, chainlinkOracle.address, 0, 0, 0, 0],
+    args: [weETH, WETH, resilientOracle.address, chainlinkOracle.address, 0, 0, 0, 0, acm, 0],
     ...commonParams,
   });
 
@@ -61,13 +61,13 @@ const func: DeployFunction = async function ({
 
     await deploy("wstETHOneJumpRedstoneOracle", {
       contract: "OneJumpOracle",
-      args: [wstETH, WETH, resilientOracle.address, redstoneOracle.address, 0, 0, 0, 0],
+      args: [wstETH, WETH, resilientOracle.address, redstoneOracle.address, 0, 0, 0, 0, acm, 0],
       ...commonParams,
     });
 
     await deploy("weETHOneJumpRedstoneOracle", {
       contract: "OneJumpOracle",
-      args: [weETH, WETH, resilientOracle.address, redstoneOracle.address, 0, 0, 0, 0],
+      args: [weETH, WETH, resilientOracle.address, redstoneOracle.address, 0, 0, 0, 0, acm, 0],
       ...commonParams,
     });
   }
