@@ -50,6 +50,7 @@
     "WstETHOracle": "0x92E7F73B0d57902fDC453E8aef990EdEe827b0BF",
     "WstETHOracle_Implementation": "0xEf0F74FaBC69f32F9b73419726eeFa70F4E8d10F",
     "WstETHOracle_Proxy": "0x92E7F73B0d57902fDC453E8aef990EdEe827b0BF",
+    "eBTCAccountantOracle": "0x6561B76F70BCb5016cbb3F5780D8f7E09C437Eb8",
     "ezETHOneJumpChainlinkOracle": "0xdA0817d5626fC3dBc74B678e1DD0397591A39F5b",
     "ezETHOneJumpChainlinkOracle_Implementation": "0x80E6E14ACF30718361e23EE56196DaBAE0c368b8",
     "ezETHOneJumpChainlinkOracle_Proxy": "0xdA0817d5626fC3dBc74B678e1DD0397591A39F5b",
