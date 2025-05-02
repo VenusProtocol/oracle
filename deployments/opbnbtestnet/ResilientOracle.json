@@ -703,9 +703,7 @@
         "blockNumber": 61915956,
         "transactionHash": "0x90f3df6b704ef2eeb89ad311d3db1a562c0c3d760ee8160078aa03d72ee2d323",
         "address": "0xAF83f9C9d849B6FF3A33da059Bf14A0E85493eb4",
-        "topics": [
-          "0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"
-        ],
+        "topics": ["0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"],
         "data": "0x00000000000000000000000000000000000000000000000000000000000000ff",
         "logIndex": 0,
         "blockHash": "0xa06ee77b66f46a56817d70f8e779226b7f03ff20fac0dc8cf3a821598d9e50c8"
