@@ -11,7 +11,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const { WETH, wsuperOETHb, acm } = ADDRESSES[network.name];
 
   const SNAPSHOT_UPDATE_INTERVAL = ethers.constants.MaxUint256;
-  const wsuperOETHb_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
+  const wsuperOETHb_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.1426", 18);
   const block = await ethers.provider.getBlock("latest");
   const vault = await ethers.getContractAt("IERC4626", wsuperOETHb);
   const exchangeRate = await vault.convertToAssets(parseUnits("1", 18));
