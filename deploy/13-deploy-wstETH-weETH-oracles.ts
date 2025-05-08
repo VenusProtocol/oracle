@@ -32,14 +32,6 @@ const func: DeployFunction = async function ({
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentUpgradeableProxy",
-      viaAdminContract: {
-        name: "DefaultProxyAdmin",
-        artifact: defaultProxyAdmin,
-      },
-    },
     skipIfAlreadyDeployed: true,
     waitConfirmations: 1,
   };

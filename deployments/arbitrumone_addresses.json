@@ -14,12 +14,6 @@
     "ResilientOracle_Proxy": "0xd55A98150e0F9f5e3F6280FC25617A5C93d96007",
     "SequencerChainlinkOracle": "0x9cd9Fcc7E3dEDA360de7c080590AaD377ac9F113",
     "SequencerChainlinkOracle_Implementation": "0x9E52EFCAD3db5191B4Cb69CaBdCe4F356119F8d8",
-    "SequencerChainlinkOracle_Proxy": "0x9cd9Fcc7E3dEDA360de7c080590AaD377ac9F113",
-    "weETHOneJumpChainlinkOracle": "0x09eA4825a5e2FB2CB9a44F317c22e7D65053ea9d",
-    "weETHOneJumpChainlinkOracle_Implementation": "0x73fBdF1cBEeccC8bc11564527f5E8B49A64D95dA",
-    "weETHOneJumpChainlinkOracle_Proxy": "0x09eA4825a5e2FB2CB9a44F317c22e7D65053ea9d",
-    "wstETHOneJumpChainlinkOracle": "0x748DeFdbaE5215cdF0C436c538804823b55D76bc",
-    "wstETHOneJumpChainlinkOracle_Implementation": "0x546149415DA22B6A53CD82254ad0c4cd03671312",
-    "wstETHOneJumpChainlinkOracle_Proxy": "0x748DeFdbaE5215cdF0C436c538804823b55D76bc"
+    "SequencerChainlinkOracle_Proxy": "0x9cd9Fcc7E3dEDA360de7c080590AaD377ac9F113"
   }
 }
