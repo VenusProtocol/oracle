@@ -122,7 +122,9 @@ const config: HardhatUserConfig = {
       url: process.env.ARCHIVE_NODE_zksyncsepolia || "https://sepolia.era.zksync.dev",
       ethNetwork: "sepolia",
       verifyURL: "https://explorer.sepolia.era.zksync.dev/contract_verification",
-      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
+      accounts: {
+        mnemonic: process.env.MNEMONIC || ""
+      },
       zksync: true,
       live: true,
       gasPrice: 2000000000, // 20 gwei
@@ -131,7 +133,9 @@ const config: HardhatUserConfig = {
       url: process.env.ARCHIVE_NODE_zksyncmainnet || "https://mainnet.era.zksync.io",
       ethNetwork: "mainnet",
       verifyURL: "https://zksync2-mainnet-explorer.zksync.io/contract_verification",
-      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
+      accounts: {
+        mnemonic: process.env.MNEMONIC || ""
+      },
       zksync: true,
       live: true,
     },
