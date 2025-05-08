@@ -123,7 +123,7 @@ const config: HardhatUserConfig = {
       ethNetwork: "sepolia",
       verifyURL: "https://explorer.sepolia.era.zksync.dev/contract_verification",
       accounts: {
-        mnemonic: process.env.MNEMONIC || ""
+        mnemonic: process.env.MNEMONIC || "",
       },
       zksync: true,
       live: true,
@@ -134,7 +134,7 @@ const config: HardhatUserConfig = {
       ethNetwork: "mainnet",
       verifyURL: "https://zksync2-mainnet-explorer.zksync.io/contract_verification",
       accounts: {
-        mnemonic: process.env.MNEMONIC || ""
+        mnemonic: process.env.MNEMONIC || "",
       },
       zksync: true,
       live: true,

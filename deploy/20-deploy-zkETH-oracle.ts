@@ -4,35 +4,34 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
 
-const func: DeployFunction = async ({
-  getNamedAccounts,
-  deployments,
-  network,
-  artifacts,
-}: HardhatRuntimeEnvironment) => {
+const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
   const oracle = await ethers.getContract("ResilientOracle");
-  const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
-  const { zkETH, WETH } = ADDRESSES[network.name];
-  const defaultProxyAdmin = await artifacts.readArtifact(
-    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
-  );
+  const { zkETH, WETH, acm } = ADDRESSES[network.name];
+  const SNAPSHOT_UPDATE_INTERVAL = ethers.constants.MaxUint256;
+  const zkETH_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
+  const block = await ethers.provider.getBlock("latest");
+  const vault = await ethers.getContractAt("IZkETH", zkETH);
+  const exchangeRate = await vault.LSTPerToken();
+
   await deploy("ZkETHOracle", {
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [zkETH, WETH, oracle.address],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentUpgradeableProxy",
-      viaAdminContract: {
-        name: "DefaultProxyAdmin",
-        artifact: defaultProxyAdmin,
-      },
-    },
+    args: [
+      zkETH,
+      WETH,
+      oracle.address,
+      zkETH_ANNUAL_GROWTH_RATE,
+      SNAPSHOT_UPDATE_INTERVAL,
+      exchangeRate,
+      block.timestamp,
+      acm,
+      0,
+    ],
     skipIfAlreadyDeployed: true,
   });
 };
