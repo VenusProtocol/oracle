@@ -77,14 +77,6 @@ const func: DeployFunction = async ({
       log: true,
       deterministicDeployment: false,
       args: [weETH, WETH, resilientOracle.address, chainlinkOracle.address, 0, 0, 0, 0, acm, 0],
-      proxy: {
-        owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentUpgradeableProxy",
-        viaAdminContract: {
-          name: "DefaultProxyAdmin",
-          artifact: defaultProxyAdmin,
-        },
-      },
       skipIfAlreadyDeployed: true,
     });
   }
