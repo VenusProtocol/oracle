@@ -16,7 +16,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const SNAPSHOT_UPDATE_INTERVAL = ethers.constants.MaxUint256;
   const sFRAX_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
   const block = await ethers.provider.getBlock("latest");
-  const vault = await ethers.getContractAt("IAccountant", sFRAX || (await ethers.getContract("MockSFrax")).address);
+  const vault = await ethers.getContractAt("ISFrax", sFRAX || (await ethers.getContract("MockSFrax")).address);
   const exchangeRate = await vault.convertToAssets(parseUnits("1", 18));
 
   await deploy("SFraxOracle", {
