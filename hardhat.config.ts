@@ -130,6 +130,7 @@ const config: HardhatUserConfig = {
       chainId: 11155111,
       live: true,
       tags: ["testnet"],
+      gasPrice: 100000000000,
       // accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
       accounts: {
         mnemonic: process.env.MNEMONIC || ""

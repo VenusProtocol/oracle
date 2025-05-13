@@ -105,7 +105,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       ptToken: addresses.PTweETH_26DEC2024,
       underlyingToken: addresses.WETH,
       yieldToken: addresses.weETH,
-      ptOracle: addresses.PTOracle || (await ethers.getContract("MockPendleOracle")).address,
+      ptOracle: addresses.PTOracle || (await ethers.getContract("MockPendlePtOracle")).address,
       TWAPDuration: 1800,
       primaryRateKind: PendleRateKind.PT_TO_ASSET,
     },
