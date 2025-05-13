@@ -414,9 +414,7 @@
         "blockNumber": 8311082,
         "transactionHash": "0x68e64d37f9c4ab4045b8ac2ec17156c4fafda9eab9be513bffda53356f10473f",
         "address": "0x6150997cd4B2f2366d1B0503F0DE020653b67BFe",
-        "topics": [
-          "0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"
-        ],
+        "topics": ["0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"],
         "data": "0x00000000000000000000000000000000000000000000000000000000000000ff",
         "logIndex": 357,
         "blockHash": "0xe38b34a21bbe36888f0b5fa90e0423ae9201b12d78bd508a56d3ae785ecc69f4"

@@ -4,11 +4,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
 
-const func: DeployFunction = async ({
-  getNamedAccounts,
-  deployments,
-  network,
-}: HardhatRuntimeEnvironment) => {
+const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
@@ -30,9 +26,9 @@ const func: DeployFunction = async ({
     log: true,
     deterministicDeployment: false,
     args: [
-      weETHs_Accountant, 
-      weETHs, 
-      WETH, 
+      weETHs_Accountant,
+      weETHs,
+      WETH,
       resilientOracle.address,
       weETHs_ANNUAL_GROWTH_RATE,
       SNAPSHOT_UPDATE_INTERVAL,
