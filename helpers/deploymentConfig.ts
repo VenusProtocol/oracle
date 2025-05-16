@@ -320,7 +320,10 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
     WETH: "0x4200000000000000000000000000000000000006",
-    timelock: "0x1803Cf1D3495b43cC628aa1d8638A981F8CD341C", // Unichain mainnet guardian
+    weETH: "0x7DCC39B4d1C53CB31e1aBc0e358b43987FEF80f7",
+    wstETH: "0xc02fE7317D4eb8753a02c35fe019786854A92001",
+    // timelock: "0x1803Cf1D3495b43cC628aa1d8638A981F8CD341C", // Unichain mainnet guardian
+    timelock: "0x918532A78d22419Da4091930d472bDdf532BE89a", // Unichain mainnet timelock
   },
 };
 
