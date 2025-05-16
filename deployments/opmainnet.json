@@ -465,7 +465,7 @@
       ]
     },
     "BoundValidator_Implementation": {
-      "address": "0xF2E4b4D1E5950DEFb09dA18b0B11b81Ebb14cAfA",
+      "address": "0xc04C8dFF5a91f82f5617Ee9Bd83f6d96de0eb39C",
       "abi": [
         {
           "inputs": [],
@@ -1655,7 +1655,7 @@
       ]
     },
     "RedStoneOracle_Implementation": {
-      "address": "0x8Ab4553f1A705ADc54b52c0a7d2e5BDe4C60e965",
+      "address": "0x5e448421aB3c505AdF0E5Ee2D2fCCD80FDe08a43",
       "abi": [
         {
           "inputs": [
@@ -2977,7 +2977,7 @@
       ]
     },
     "ResilientOracle_Implementation": {
-      "address": "0xc5e9fD641327201B648a1c3aE2e32c837fA103Db",
+      "address": "0xB4E073C5abB056D94f14f0F8748B6BFcb418fFe6",
       "abi": [
         {
           "inputs": [
@@ -3020,6 +3020,25 @@
           ],
           "name": "Unauthorized",
           "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "bool",
+              "name": "enabled",
+              "type": "bool"
+            }
+          ],
+          "name": "CachedEnabled",
+          "type": "event"
         },
         {
           "anonymous": false,
@@ -3200,6 +3219,19 @@
         },
         {
           "inputs": [],
+          "name": "CACHE_SLOT",
+          "outputs": [
+            {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "INVALID_PRICE",
           "outputs": [
             {
@@ -3354,6 +3386,11 @@
                   "internalType": "bool[3]",
                   "name": "enableFlagsForOracles",
                   "type": "bool[3]"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "cachingEnabled",
+                  "type": "bool"
                 }
               ],
               "internalType": "struct ResilientOracle.TokenConfig",
@@ -3516,6 +3553,11 @@
                   "internalType": "bool[3]",
                   "name": "enableFlagsForOracles",
                   "type": "bool[3]"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "cachingEnabled",
+                  "type": "bool"
                 }
               ],
               "internalType": "struct ResilientOracle.TokenConfig",
@@ -3546,6 +3588,11 @@
                   "internalType": "bool[3]",
                   "name": "enableFlagsForOracles",
                   "type": "bool[3]"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "cachingEnabled",
+                  "type": "bool"
                 }
               ],
               "internalType": "struct ResilientOracle.TokenConfig[]",
@@ -4309,7 +4356,7 @@
       ]
     },
     "SequencerChainlinkOracle_Implementation": {
-      "address": "0xe57AfB8198008a487F95bDDE5F078ca81682f474",
+      "address": "0x1Abf4919dE8ae2B917d553475e9B1D9CdE6E36D3",
       "abi": [
         {
           "inputs": [
