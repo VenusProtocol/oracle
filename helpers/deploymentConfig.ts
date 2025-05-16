@@ -313,6 +313,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: "0x854C064EA6b503A97980F481FA3B7279012fdeDd",
     timelock: "0x9831D3A641E8c7F082EEA75b8249c99be9D09a34", // Unichain sepolia Multisig
+    WETH: "0x4200000000000000000000000000000000000006",
+    weETH: "0x3B3aCc90D848981E69052FD461123EA19dca6cAF",
+    wstETH: "0x114B3fD3dA17F8EDBc19a3AEE43aC168Ca5b03b4",
   },
   unichainmainnet: {
     acm: "0x1f12014c497a9d905155eB9BfDD9FaC6885e61d0",
@@ -322,8 +325,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WETH: "0x4200000000000000000000000000000000000006",
     weETH: "0x7DCC39B4d1C53CB31e1aBc0e358b43987FEF80f7",
     wstETH: "0xc02fE7317D4eb8753a02c35fe019786854A92001",
-    // timelock: "0x1803Cf1D3495b43cC628aa1d8638A981F8CD341C", // Unichain mainnet guardian
-    timelock: "0x918532A78d22419Da4091930d472bDdf532BE89a", // Unichain mainnet timelock
+    timelock: "0x1803Cf1D3495b43cC628aa1d8638A981F8CD341C", // Unichain mainnet guardian
   },
 };
 

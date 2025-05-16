@@ -61,6 +61,6 @@ const func: DeployFunction = async function ({
   console.log(`wstETH Oracle deployed to: ${wstETHOracle.address}`);
 };
 
-func.skip = async () => !["unichainmainnet"].includes(hre.network.name);
+func.skip = async () => !["unichainmainnet", "unichainsepolia"].includes(hre.network.name);
 func.tags = ["unichain_oracles"];
 export default func;
