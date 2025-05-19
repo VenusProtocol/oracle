@@ -1,3 +1,24 @@
+## [2.13.0-dev.6](https://github.com/VenusProtocol/oracle/compare/v2.13.0-dev.5...v2.13.0-dev.6) (2025-05-09)
+
+
+### Features
+
+* deployed contracts ([ffd0493](https://github.com/VenusProtocol/oracle/commit/ffd0493328aaa08f83344bf1369a943bc1aaa7ef))
+* deployed on bepolia ([22bc46e](https://github.com/VenusProtocol/oracle/commit/22bc46e7120467d323f6e53e9f559f0c5ec2c07a))
+* deployed redstone oracle ([2183ff5](https://github.com/VenusProtocol/oracle/commit/2183ff55d18cf31b295173b8902ddf4fb65faef7))
+* redeployed contracts ([c90a8c6](https://github.com/VenusProtocol/oracle/commit/c90a8c68a477802b86810ca6204d032fe6680e0d))
+* updating deployment files ([243cf65](https://github.com/VenusProtocol/oracle/commit/243cf659b97272e84f543a146148d1524e672efd))
+* updating deployment files ([385dc05](https://github.com/VenusProtocol/oracle/commit/385dc050e0998a6996d11c12a3d2184558395f07))
+
+
+### Bug Fixes
+
+* merge conflict ([6c3e10a](https://github.com/VenusProtocol/oracle/commit/6c3e10aafbfd77c36a79637158e9563e1289341b))
+* removed bartio deployments ([11bdff7](https://github.com/VenusProtocol/oracle/commit/11bdff7793f29700542ab1679e35d84c3c9c0648))
+* revert config ([599c45a](https://github.com/VenusProtocol/oracle/commit/599c45a0f426d70ad2f0bf9e204893b97e277c10))
+* use base imports to get acm addr ([5012be7](https://github.com/VenusProtocol/oracle/commit/5012be73c1627ea186b276b016de1174b214b253))
+* use timelock as owner instead of guardian ([5c93d9f](https://github.com/VenusProtocol/oracle/commit/5c93d9f4fa02bbb470e8f8201382609783f28911))
+
 ## [2.13.0-dev.5](https://github.com/VenusProtocol/oracle/compare/v2.13.0-dev.4...v2.13.0-dev.5) (2025-04-15)
 
 

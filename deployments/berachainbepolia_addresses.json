@@ -1,0 +1,19 @@
+{
+  "name": "berachainbepolia",
+  "chainId": "80069",
+  "addresses": {
+    "BoundValidator": "0xd3A635930300ea87548A1C3428Ac5DDfE3FFE66E",
+    "BoundValidator_Implementation": "0xd24c0795BaEA6D79a45def90889bc4Dd4fd19a62",
+    "BoundValidator_Proxy": "0xd3A635930300ea87548A1C3428Ac5DDfE3FFE66E",
+    "ChainlinkOracle": "0xF7451caCcb32E6E3695e4B4bcF42152D57B73aD5",
+    "ChainlinkOracle_Implementation": "0x9eA68754e5AB4717b2b0Dd310f7fA03A9c57c0Df",
+    "ChainlinkOracle_Proxy": "0xF7451caCcb32E6E3695e4B4bcF42152D57B73aD5",
+    "DefaultProxyAdmin": "0x09f0Cf4eD50ed01994900CE9ee1ae85BFECd5c66",
+    "RedStoneOracle": "0xedc00668FC314fcc85a574c8DBa0BB205810F247",
+    "RedStoneOracle_Implementation": "0x33baAA71Fdb915275908c80A383874096c5ecdEa",
+    "RedStoneOracle_Proxy": "0xedc00668FC314fcc85a574c8DBa0BB205810F247",
+    "ResilientOracle": "0x150B667d42FB80409f162aB84065f0c8E9B3A7a0",
+    "ResilientOracle_Implementation": "0xffCb974c4E2c9EE9107d966530d485bDBd98bBAA",
+    "ResilientOracle_Proxy": "0x150B667d42FB80409f162aB84065f0c8E9B3A7a0"
+  }
+}

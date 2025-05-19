@@ -1,10 +1,14 @@
 import arbitrumoneGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/arbitrumone.json";
 import arbitrumsepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/arbitrumsepolia.json";
+import basemainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/basemainnet.json";
+import basesepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/basesepolia.json";
 import bscmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bscmainnet.json";
 import bsctestnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bsctestnet.json";
 import ethereumGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/ethereum.json";
 import opbnbmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/opbnbmainnet.json";
 import opbnbtestnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/opbnbtestnet.json";
+import opmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/opmainnet.json";
+import opsepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/opsepolia.json";
 import sepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/sepolia.json";
 import zksyncmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/zksyncmainnet.json";
 import zksyncsepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/zksyncsepolia.json";
@@ -138,7 +142,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     wstETHAddress: "0x9b87ea90fdb55e1a0f17fbeddcf7eb0ac4d50493",
     VAIAddress: ethers.constants.AddressZero,
     acm: sepoliaGovernanceDeployments.contracts.AccessControlManager.address,
-    timelock: "0x94fa6078b6b8a26f0b6edffbe6501b22a10470fb", // Sepolia Multisig
+    timelock: sepoliaGovernanceDeployments.contracts.NormalTimelock.address,
     weETH: "0x3b8b6E96e57f0d1cD366AaCf4CcC68413aF308D0",
     eETH: "0x0012875a7395a293Adfc9b5cDC2Cfa352C4cDcD3",
     WETH: "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9",
@@ -217,7 +221,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     sidRegistryAddress: ethers.constants.AddressZero,
     feedRegistryAddress: "0x338b3D0E75bc4B3127813A79C8ECBBa96A7DB70a",
     acm: opbnbtestnetGovernanceDeployments.contracts.AccessControlManager.address,
-    timelock: "0xb15f6EfEbC276A3b9805df81b5FB3D50C2A62BDf", // opBNB Multisig
+    timelock: opbnbtestnetGovernanceDeployments.contracts.NormalTimelock.address,
   },
   opbnbmainnet: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -226,14 +230,14 @@ export const ADDRESSES: PreconfiguredAddresses = {
     sidRegistryAddress: ethers.constants.AddressZero,
     feedRegistryAddress: "0x72d55658242377AF22907b6E7350148288f88033",
     acm: opbnbmainnetGovernanceDeployments.contracts.AccessControlManager.address,
-    timelock: "0xC46796a21a3A9FAB6546aF3434F2eBfFd0604207", // opBNB Multisig
+    timelock: opbnbmainnetGovernanceDeployments.contracts.NormalTimelock.address,
   },
   arbitrumsepolia: {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
     acm: arbitrumsepoliaGovernanceDeployments.contracts.AccessControlManager.address,
-    timelock: "0x1426A5Ae009c4443188DA8793751024E358A61C2", // Arbitrum Sepolia Multisig
+    timelock: arbitrumsepoliaGovernanceDeployments.contracts.NormalTimelock.address,
     wstETH: "0x4A9dc15aA6094eF2c7eb9d9390Ac1d71f9406fAE",
     weETH: "0x243141DBff86BbB0a082d790fdC21A6ff615Fa34",
     WETH: "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
@@ -243,7 +247,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
     acm: arbitrumoneGovernanceDeployments.contracts.AccessControlManager.address,
-    timelock: "0x14e0E151b33f9802b3e75b621c1457afc44DcAA0", // Arbitrum One Multisig
+    timelock: arbitrumoneGovernanceDeployments.contracts.NormalTimelock.address,
     devMultisig: "0xdE493Eb75d2c5834b17134620399024D8Ac87a02",
     wstETH: "0x5979D7b546E38E414F7E9822514be443A4800529",
     weETH: "0x35751007a407ca6FEFfE80b3cB397736D2cf4dbe",
@@ -278,17 +282,17 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
     acm: "0x1652E12C8ABE2f0D84466F0fc1fA4286491B3BC1",
-    timelock: "0xd57365EE4E850e881229e2F8Aa405822f289e78d", // OpSepolia Multisig
+    timelock: opsepoliaGovernanceDeployments.contracts.NormalTimelock.address,
   },
   opmainnet: {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
     acm: "0xD71b1F33f6B0259683f11174EE4Ddc2bb9cE4eD6",
-    timelock: "0x2e94dd14E81999CdBF5deDE31938beD7308354b3", // OpMainnet Multisig
+    timelock: opmainnetGovernanceDeployments.contracts.NormalTimelock.address,
   },
   basesepolia: {
-    acm: "0x724138223D8F76b519fdE715f60124E7Ce51e051",
+    acm: basesepoliaGovernanceDeployments.contracts.AccessControlManager.address,
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
@@ -298,7 +302,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     wstETH: "0xAd69AA3811fE0EE7dBd4e25C4bae40e6422c76C8",
   },
   basemainnet: {
-    acm: "0x9E6CeEfDC6183e4D0DF8092A9B90cDF659687daB",
+    acm: basemainnetGovernanceDeployments.contracts.AccessControlManager.address,
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
     VAIAddress: ethers.constants.AddressZero,
@@ -326,6 +330,13 @@ export const ADDRESSES: PreconfiguredAddresses = {
     weETH: "0x7DCC39B4d1C53CB31e1aBc0e358b43987FEF80f7",
     wstETH: "0xc02fE7317D4eb8753a02c35fe019786854A92001",
     timelock: "0x1803Cf1D3495b43cC628aa1d8638A981F8CD341C", // Unichain mainnet guardian
+  },
+  berachainbepolia: {
+    acm: "0x243313C1cC198FF80756ed2ef14D9dcd94Ee762b",
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    timelock: "0xAb3DBA18664B96AD54459D06Ca8BD18C9146d5CE",
   },
 };
 
