@@ -126,6 +126,7 @@ const config: HardhatUserConfig = {
       zksync: true,
       live: true,
       gasPrice: 2000000000, // 20 gwei
+      enableVerifyURL: true,
     },
     zksyncmainnet: {
       url: process.env.ARCHIVE_NODE_zksyncmainnet || "https://mainnet.era.zksync.io",
@@ -134,7 +135,12 @@ const config: HardhatUserConfig = {
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
       zksync: true,
       live: true,
+      enableVerifyURL: true,
     },
+  },
+  // Etherscan verification configuration (optional)
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
   },
   // Hardhat deploy
   namedAccounts: {
