@@ -30,6 +30,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   });
 };
 
-func.skip = async () => !["basemainnet", "basesepolia", "unichainsepolia", "unichainmainnet"].includes(hre.network.name);
+func.skip = async () =>
+  !["basemainnet", "basesepolia", "unichainsepolia", "unichainmainnet"].includes(hre.network.name);
 func.tags = ["wstETH_OneJumpOracle"];
 export default func;
