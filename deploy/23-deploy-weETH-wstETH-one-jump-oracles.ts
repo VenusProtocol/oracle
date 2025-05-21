@@ -10,10 +10,9 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   if (!deployer) {
     throw new Error("Deployer address is not defined. Ensure deployer is set in namedAccounts.");
   }
-  const { WETH, wstETH, acm } = ADDRESSES[network.name];
 
+  const { WETH, weETH, wstETH, acm } = ADDRESSES[network.name];
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
-
   const redstoneOracle = await hre.ethers.getContract("RedStoneOracle");
 
   const commonParams = {
@@ -23,6 +22,14 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     waitConfirmations: 1,
   };
 
+  // Deploy weETH OneJumpOracle
+  await deploy("weETHOneJumpOracle", {
+    contract: "OneJumpOracle",
+    args: [weETH, WETH, resilientOracle.address, redstoneOracle.address, 0, 0, 0, 0, acm, 0],
+    ...commonParams,
+  });
+
+  // Deploy wstETH OneJumpOracle
   await deploy("wstETHOneJumpOracle", {
     contract: "OneJumpOracle",
     args: [wstETH, WETH, resilientOracle.address, redstoneOracle.address, 0, 0, 0, 0, acm, 0],
@@ -31,6 +38,9 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 };
 
 func.skip = async () =>
-  !["basemainnet", "basesepolia", "unichainsepolia", "unichainmainnet"].includes(hre.network.name);
-func.tags = ["wstETH_OneJumpOracle"];
+  !["basemainnet", "basesepolia", "zksyncsepolia", "zksyncmainnet", "unichainsepolia", "unichainmainnet"].includes(
+    hre.network.name,
+  );
+
+func.tags = ["weETH_OneJumpOracle", "wstETH_OneJumpOracle"];
 export default func;
