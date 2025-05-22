@@ -7,7 +7,6 @@ import { ADDRESSES } from "../helpers/deploymentConfig";
 const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-  const proxyOwnerAddress = ADDRESSES[network.name].timelock;
   const { LBTC, WBTC, acm } = ADDRESSES[network.name];
 
   const redstoneOracle = await hre.ethers.getContract("RedStoneOracle");
@@ -19,10 +18,6 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     log: true,
     deterministicDeployment: false,
     args: [LBTC, WBTC, resilientOracle.address, redstoneOracle.address, 0, 0, 0, 0, acm, 0],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
-    },
     skipIfAlreadyDeployed: true,
   });
 };
