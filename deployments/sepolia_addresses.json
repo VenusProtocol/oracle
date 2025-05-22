@@ -9,9 +9,6 @@
     "ChainlinkOracle_Implementation": "0x034Cc5097379B13d3Ed5F6c85c8FAf20F48aE480",
     "ChainlinkOracle_Proxy": "0x102F0b714E5d321187A4b6E5993358448f7261cE",
     "DefaultProxyAdmin": "0x01435866babd91311b1355cf3af488cca36db68e",
-    "LBTCOneJumpRedStoneOracle": "0x1082191431E1d24D21C97717ED1927ce337caa70",
-    "LBTCOneJumpRedStoneOracle_Implementation": "0x1f88B40E4dD5b1c46805272Fe6C1d8Db0D4b4CFC",
-    "LBTCOneJumpRedStoneOracle_Proxy": "0x1082191431E1d24D21C97717ED1927ce337caa70",
     "MockAccountant_eBTC": "0x01466F572A9F1A0353A491187D32DfB28F2BF94c",
     "MockAccountant_weETHs": "0x04d7B1244Ff052319D154E627004EaE5b7a05FCf",
     "MockEtherFiLiquidityPool": "0x4634Cc129ec46DbBab6a7E2b5c73c1b991be6cfC",
@@ -31,12 +28,6 @@
     "SFrxETHOracle_Proxy": "0x61EB836afA467677e6b403D504fe69D6940e7996",
     "WstETHOracle": "0x92E7F73B0d57902fDC453E8aef990EdEe827b0BF",
     "WstETHOracle_Implementation": "0xEf0F74FaBC69f32F9b73419726eeFa70F4E8d10F",
-    "WstETHOracle_Proxy": "0x92E7F73B0d57902fDC453E8aef990EdEe827b0BF",
-    "eBTCAccountantOracle": "0xD819F6fC189691A78Ff226Da51F63597e679b601",
-    "eBTCAccountantOracle_Implementation": "0x9ea651E462F39A7B82819ddE7b3dbeC6b9934a5B",
-    "eBTCAccountantOracle_Proxy": "0xD819F6fC189691A78Ff226Da51F63597e679b601",
-    "pufETHOneJumpRedStoneOracle": "0xB6aA35247097a2711CF4941DECD00b858124d959",
-    "pufETHOneJumpRedStoneOracle_Implementation": "0x41D699a58D83440853a25E2194992c0C9e332144",
-    "pufETHOneJumpRedStoneOracle_Proxy": "0xB6aA35247097a2711CF4941DECD00b858124d959"
+    "WstETHOracle_Proxy": "0x92E7F73B0d57902fDC453E8aef990EdEe827b0BF"
   }
 }

@@ -10,9 +10,6 @@
     "ChainlinkOracle_Proxy": "0x94c3A2d6B7B2c051aDa041282aec5B0752F8A1F2",
     "DefaultProxyAdmin": "0x567e4cc5e085d09f66f836fa8279f38b4e5866b9",
     "DevProxyAdmin": "0x294775f18a6E4C3a61EE300095d8275a46f80898",
-    "LBTCOneJumpRedStoneOracle": "0x3c8C488d65F2AFDe15F285eAAF4B153C4d35A944",
-    "LBTCOneJumpRedStoneOracle_Implementation": "0x41bDc21a953bB764B530fa0A68Ba257376696010",
-    "LBTCOneJumpRedStoneOracle_Proxy": "0x3c8C488d65F2AFDe15F285eAAF4B153C4d35A944",
     "RedStoneOracle": "0x0FC8001B2c9Ec90352A46093130e284de5889C86",
     "RedStoneOracle_Implementation": "0x9AF18734e116CEa591AEbc6B0ed0228D15c23e8D",
     "RedStoneOracle_Proxy": "0x0FC8001B2c9Ec90352A46093130e284de5889C86",
@@ -30,12 +27,6 @@
     "WstETHOracle_Equivalence_Proxy": "0xd8B43165a6cdA057DBd3Fcd4745E88FC475398c5",
     "WstETHOracle_NonEquivalence": "0xd082B50b3EeB012605598bB45Fc2Be853b9AFEEf",
     "WstETHOracle_NonEquivalence_Implementation": "0x24D3D52332834ddE93692D9ede4679FE920d2afC",
-    "WstETHOracle_NonEquivalence_Proxy": "0xd082B50b3EeB012605598bB45Fc2Be853b9AFEEf",
-    "eBTCAccountantOracle": "0x077A11d634be3498b9af3EbD3d5D35A0fC3569d8",
-    "eBTCAccountantOracle_Implementation": "0xD29cD9F2353c1DaC9466277E1945B142E1231147",
-    "eBTCAccountantOracle_Proxy": "0x077A11d634be3498b9af3EbD3d5D35A0fC3569d8",
-    "pufETHOneJumpRedStoneOracle": "0xAaE18CEBDF55bbbbf5C70c334Ee81D918be728Bc",
-    "pufETHOneJumpRedStoneOracle_Implementation": "0x5177623f49e44ec2FA57452DB6c09EF38CF9203b",
-    "pufETHOneJumpRedStoneOracle_Proxy": "0xAaE18CEBDF55bbbbf5C70c334Ee81D918be728Bc"
+    "WstETHOracle_NonEquivalence_Proxy": "0xd082B50b3EeB012605598bB45Fc2Be853b9AFEEf"
   }
 }
