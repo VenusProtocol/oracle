@@ -61,19 +61,26 @@ const func: DeployFunction = async ({
   await deploy("PendleOracle-PT-sUSDe-26JUN2025", {
     contract: "PendleOracle",
     args: [
-      addresses["PT-sUSDE-26JUN2025_Market"] || "0x0000000000000000000000000000000000000003",
-      ptOracleAddress,
-      PendleRateKind.PT_TO_SY,
-      addresses["PT-sUSDE-26JUN2025"],
-      addresses.sUSDe,
-      resilientOracle.address,
-      1800,
+      {
+        market: addresses["PT-sUSDE-26JUN2025_Market"] || "0x0000000000000000000000000000000000000003",
+        ptOracle: ptOracleAddress,
+        rateKind: PendleRateKind.PT_TO_SY,
+        ptToken: addresses["PT-sUSDE-26JUN2025"],
+        underlyingToken: addresses.sUSDe,
+        resilientOracle: resilientOracle.address,
+        twapDuration: 1800,
+        annualGrowthRate: 0,
+        snapshotInterval: 0,
+        initialSnapshotMaxExchangeRate: 0,
+        initialSnapshotTimestamp: 0,
+        accessControlManager: addresses.acm,
+        snapshotGap: 0,
+      },
     ],
     ...commonParams,
   });
 
   if (isMainnet(network)) {
-    const referenceOracle = await ethers.getContract("ReferenceOracle");
     const { devMultisig } = addresses;
     await deploy("PendleOracle-PT-sUSDe-26JUN2025_Reference_PtToAsset", {
       contract: "PendleOracle",
@@ -81,13 +88,21 @@ const func: DeployFunction = async ({
       log: true,
       deterministicDeployment: false,
       args: [
-        addresses["PT-sUSDE-26JUN2025_Market"] || "0x0000000000000000000000000000000000000003",
-        ptOracleAddress,
-        PendleRateKind.PT_TO_ASSET,
-        addresses["PT-sUSDE-26JUN2025"],
-        addresses.USDe,
-        referenceOracle.address,
-        1800,
+        {
+          market: addresses["PT-sUSDE-26JUN2025_Market"] || "0x0000000000000000000000000000000000000003",
+          ptOracle: ptOracleAddress,
+          rateKind: PendleRateKind.PT_TO_ASSET,
+          ptToken: addresses["PT-sUSDE-26JUN2025"],
+          underlyingToken: addresses.USDe,
+          resilientOracle: resilientOracle.address,
+          twapDuration: 1800,
+          annualGrowthRate: 0,
+          snapshotInterval: 0,
+          initialSnapshotMaxExchangeRate: 0,
+          initialSnapshotTimestamp: 0,
+          accessControlManager: addresses.acm,
+          snapshotGap: 0,
+        },
       ],
       proxy: {
         owner: devMultisig,

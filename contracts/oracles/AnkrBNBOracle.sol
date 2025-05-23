@@ -15,17 +15,34 @@ contract AnkrBNBOracle is CorrelatedTokenOracle {
     address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address ankrBNB,
-        address resilientOracle
-    ) CorrelatedTokenOracle(ankrBNB, NATIVE_TOKEN_ADDR, resilientOracle) {}
+        address resilientOracle,
+        uint256 annualGrowthRate,
+        uint256 _snapshotInterval,
+        uint256 initialSnapshotMaxExchangeRate,
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 _snapshotGap
+    )
+        CorrelatedTokenOracle(
+            ankrBNB,
+            NATIVE_TOKEN_ADDR,
+            resilientOracle,
+            annualGrowthRate,
+            _snapshotInterval,
+            initialSnapshotMaxExchangeRate,
+            initialSnapshotTimestamp,
+            accessControlManager,
+            _snapshotGap
+        )
+    {}
 
     /**
      * @notice Fetches the amount of BNB for 1 ankrBNB
      * @return amount The amount of BNB for ankrBNB
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return IAnkrBNB(CORRELATED_TOKEN).sharesToBonds(EXP_SCALE);
     }
 }

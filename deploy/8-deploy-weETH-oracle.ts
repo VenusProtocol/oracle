@@ -1,3 +1,4 @@
+import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -20,24 +21,33 @@ const func: DeployFunction = async ({
     "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
   );
   let { EtherFiLiquidityPool } = ADDRESSES[network.name];
-  const { weETH, eETH, WETH } = ADDRESSES[network.name];
+  const { weETH, eETH, WETH, acm } = ADDRESSES[network.name];
 
   EtherFiLiquidityPool = EtherFiLiquidityPool || (await ethers.getContract("MockEtherFiLiquidityPool")).address;
+
+  const SNAPSHOT_UPDATE_INTERVAL = ethers.constants.MaxUint256;
+  const weETH_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
+  const block = await ethers.provider.getBlock("latest");
+  const vault = await ethers.getContractAt("IEtherFiLiquidityPool", EtherFiLiquidityPool);
+  const exchangeRate = await vault.amountForShare(parseUnits("1", 18));
 
   if (network.name === "sepolia") {
     await deploy("WeETHOracle", {
       from: deployer,
       log: true,
       deterministicDeployment: false,
-      args: [EtherFiLiquidityPool, weETH, eETH, resilientOracle.address],
-      proxy: {
-        owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentUpgradeableProxy",
-        viaAdminContract: {
-          name: "DefaultProxyAdmin",
-          artifact: defaultProxyAdmin,
-        },
-      },
+      args: [
+        EtherFiLiquidityPool,
+        weETH,
+        eETH,
+        resilientOracle.address,
+        weETH_ANNUAL_GROWTH_RATE,
+        SNAPSHOT_UPDATE_INTERVAL,
+        exchangeRate,
+        block.timestamp,
+        acm,
+        0,
+      ],
       skipIfAlreadyDeployed: true,
     });
   } else {
@@ -46,15 +56,18 @@ const func: DeployFunction = async ({
       from: deployer,
       log: true,
       deterministicDeployment: false,
-      args: [EtherFiLiquidityPool, weETH, WETH, resilientOracle.address],
-      proxy: {
-        owner: proxyOwnerAddress,
-        proxyContract: "OptimizedTransparentUpgradeableProxy",
-        viaAdminContract: {
-          name: "DefaultProxyAdmin",
-          artifact: defaultProxyAdmin,
-        },
-      },
+      args: [
+        EtherFiLiquidityPool,
+        weETH,
+        WETH,
+        resilientOracle.address,
+        weETH_ANNUAL_GROWTH_RATE,
+        SNAPSHOT_UPDATE_INTERVAL,
+        exchangeRate,
+        block.timestamp,
+        acm,
+        0,
+      ],
       skipIfAlreadyDeployed: true,
     });
 
@@ -63,7 +76,7 @@ const func: DeployFunction = async ({
       from: deployer,
       log: true,
       deterministicDeployment: false,
-      args: [weETH, WETH, resilientOracle.address, chainlinkOracle.address],
+      args: [weETH, WETH, resilientOracle.address, chainlinkOracle.address, 0, 0, 0, 0, acm, 0],
       proxy: {
         owner: proxyOwnerAddress,
         proxyContract: "OptimizedTransparentUpgradeableProxy",

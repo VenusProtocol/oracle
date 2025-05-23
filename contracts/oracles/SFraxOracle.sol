@@ -12,18 +12,35 @@ import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants
  */
 contract SFraxOracle is CorrelatedTokenOracle {
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address sFrax,
         address frax,
-        address resilientOracle
-    ) CorrelatedTokenOracle(sFrax, frax, resilientOracle) {}
+        address resilientOracle,
+        uint256 annualGrowthRate,
+        uint256 _snapshotInterval,
+        uint256 initialSnapshotMaxExchangeRate,
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 _snapshotGap
+    )
+        CorrelatedTokenOracle(
+            sFrax,
+            frax,
+            resilientOracle,
+            annualGrowthRate,
+            _snapshotInterval,
+            initialSnapshotMaxExchangeRate,
+            initialSnapshotTimestamp,
+            accessControlManager,
+            _snapshotGap
+        )
+    {}
 
     /**
      * @notice Fetches the amount of FRAX for 1 sFrax
      * @return amount The amount of FRAX for sFrax
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return ISFrax(CORRELATED_TOKEN).convertToAssets(EXP_SCALE);
     }
 }
