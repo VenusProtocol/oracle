@@ -1,8 +1,9 @@
+import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { ADDRESSES } from "../helpers/deploymentConfig";
+import { ADDRESSES, DAYS_30, getSnapshotGap, increaseExchangeRateByPercentage } from "../helpers/deploymentConfig";
 
 const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
@@ -11,11 +12,15 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
   const resilientOracle = await ethers.getContract("ResilientOracle");
 
-  const SNAPSHOT_UPDATE_INTERVAL = ethers.constants.MaxUint256;
-  const yvUSDC_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
-  const yvUSDT_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
-  const yvUSDS_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
-  const yvWETH_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
+  const yvUSDC_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.1221", 18);
+  const yvUSDT_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.1108", 18);
+  const yvUSDS_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.2212", 18);
+  const yvWETH_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.0518", 18);
+
+  const yvUSDC_Snapshot_Gap = BigNumber.from("107"); // 1.07%
+  const yvUSDT_Snapshot_Gap = BigNumber.from("92"); // 0.92%
+  const yvUSDS_Snapshot_Gap = BigNumber.from("185"); // 1.85%
+  const yvWETH_Snapshot_Gap = BigNumber.from("43"); // 0.43%
 
   let block = await ethers.provider.getBlock("latest");
   let vault = await ethers.getContractAt("IERC4626", yvUSDC_1);
@@ -31,11 +36,11 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       USDC,
       resilientOracle.address,
       yvUSDC_1_ANNUAL_GROWTH_RATE,
-      SNAPSHOT_UPDATE_INTERVAL,
-      exchangeRate,
+      DAYS_30,
+      increaseExchangeRateByPercentage(exchangeRate, yvUSDC_Snapshot_Gap),
       block.timestamp,
       acm,
-      0,
+      getSnapshotGap(exchangeRate, yvUSDC_Snapshot_Gap.toNumber()),
     ],
   });
 
@@ -53,11 +58,11 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       USDT,
       resilientOracle.address,
       yvUSDT_1_ANNUAL_GROWTH_RATE,
-      SNAPSHOT_UPDATE_INTERVAL,
-      exchangeRate,
+      DAYS_30,
+      increaseExchangeRateByPercentage(exchangeRate, yvUSDT_Snapshot_Gap),
       block.timestamp,
       acm,
-      0,
+      getSnapshotGap(exchangeRate, yvUSDT_Snapshot_Gap.toNumber()),
     ],
   });
 
@@ -75,11 +80,11 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       USDS,
       resilientOracle.address,
       yvUSDS_1_ANNUAL_GROWTH_RATE,
-      SNAPSHOT_UPDATE_INTERVAL,
-      exchangeRate,
+      DAYS_30,
+      increaseExchangeRateByPercentage(exchangeRate, yvUSDS_Snapshot_Gap),
       block.timestamp,
       acm,
-      0,
+      getSnapshotGap(exchangeRate, yvUSDS_Snapshot_Gap.toNumber()),
     ],
   });
 
@@ -97,11 +102,11 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       WETH,
       resilientOracle.address,
       yvWETH_1_ANNUAL_GROWTH_RATE,
-      SNAPSHOT_UPDATE_INTERVAL,
-      exchangeRate,
+      DAYS_30,
+      increaseExchangeRateByPercentage(exchangeRate, yvWETH_Snapshot_Gap),
       block.timestamp,
       acm,
-      0,
+      getSnapshotGap(exchangeRate, yvWETH_Snapshot_Gap.toNumber()),
     ],
   });
 };
