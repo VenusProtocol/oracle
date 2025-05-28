@@ -11,7 +11,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const { deployer } = await getNamedAccounts();
   const { sUSDS, USDS, acm } = ADDRESSES[network.name];
 
-  const sUSDe_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.1624", 18); // 16.24%
+  const sUSDS_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.1624", 18); // 16.24%
   const block = await ethers.provider.getBlock("latest");
   const vault = await ethers.getContractAt("IERC4626", sUSDS);
   const exchangeRate = await vault.convertToAssets(parseUnits("1", 18));
@@ -27,7 +27,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       sUSDS,
       USDS,
       resilientOracle.address,
-      sUSDe_ANNUAL_GROWTH_RATE,
+      sUSDS_ANNUAL_GROWTH_RATE,
       DAYS_30,
       increaseExchangeRateByPercentage(exchangeRate, snapshotGap),
       block.timestamp,
