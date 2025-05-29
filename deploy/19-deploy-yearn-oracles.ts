@@ -14,7 +14,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
   const yvUSDC_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.1221", 18);
   const yvUSDT_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.1108", 18);
-  const yvUSDS_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.2212", 18);
+  const yvUSDS_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.2221", 18);
   const yvWETH_1_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.0518", 18);
 
   const yvUSDC_Snapshot_Gap = BigNumber.from("107"); // 1.07%
