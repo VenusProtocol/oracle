@@ -14,29 +14,18 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   weETHs_Accountant = weETHs_Accountant || (await ethers.getContract("MockAccountant_weETHs")).address;
 
-  const SNAPSHOT_UPDATE_INTERVAL = ethers.constants.MaxUint256;
-  const weETHs_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
-  const block = await ethers.provider.getBlock("latest");
-  const vault = await ethers.getContractAt("IAccountant", weETHs_Accountant);
-  const exchangeRate = await vault.getRateSafe();
+  // const SNAPSHOT_UPDATE_INTERVAL = ethers.constants.MaxUint256;
+  // const weETHs_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
+  // const block = await ethers.provider.getBlock("latest");
+  // const vault = await ethers.getContractAt("IAccountant", weETHs_Accountant);
+  // const exchangeRate = await vault.getRateSafe();
 
   await deploy("WeETHAccountantOracle_weETHs", {
     contract: "WeETHAccountantOracle",
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [
-      weETHs_Accountant,
-      weETHs,
-      WETH,
-      resilientOracle.address,
-      weETHs_ANNUAL_GROWTH_RATE,
-      SNAPSHOT_UPDATE_INTERVAL,
-      exchangeRate,
-      block.timestamp,
-      acm,
-      0,
-    ],
+    args: [weETHs_Accountant, weETHs, WETH, resilientOracle.address, 0, 0, 0, 0, acm, 0],
     skipIfAlreadyDeployed: true,
   });
 };
