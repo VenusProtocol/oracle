@@ -3,17 +3,19 @@
   "chainId": "42161",
   "addresses": {
     "BoundValidator": "0x2245FA2420925Cd3C2D889Ddc5bA1aefEF0E14CF",
-    "BoundValidator_Implementation": "0xC1F2846D5bcA25178743a0060Fd356b2E0fd51E8",
+    "BoundValidator_Implementation": "0x20Fb908a61C000431C4FCb4A51FcB67b73a8A526",
     "BoundValidator_Proxy": "0x2245FA2420925Cd3C2D889Ddc5bA1aefEF0E14CF",
     "DefaultProxyAdmin": "0xF6fF3e9459227f0cDE8B102b90bE25960317b216",
     "RedStoneOracle": "0xF792C4D3BdeF534D6d1dcC305056D00C95453dD6",
-    "RedStoneOracle_Implementation": "0xf5a03c36228b73F654d03601B90A37FfcFe1Ad2a",
+    "RedStoneOracle_Implementation": "0x5cfCC7F674DbC64f21E66FdDE921B4467aB79aB2",
     "RedStoneOracle_Proxy": "0xF792C4D3BdeF534D6d1dcC305056D00C95453dD6",
     "ResilientOracle": "0xd55A98150e0F9f5e3F6280FC25617A5C93d96007",
-    "ResilientOracle_Implementation": "0x3E6bed944d75078EFc03bE8aa935a464Cc49cf0e",
+    "ResilientOracle_Implementation": "0x6B85803c8a2FE134AC1964879Bafd319E1279ff8",
     "ResilientOracle_Proxy": "0xd55A98150e0F9f5e3F6280FC25617A5C93d96007",
     "SequencerChainlinkOracle": "0x9cd9Fcc7E3dEDA360de7c080590AaD377ac9F113",
-    "SequencerChainlinkOracle_Implementation": "0x9E52EFCAD3db5191B4Cb69CaBdCe4F356119F8d8",
-    "SequencerChainlinkOracle_Proxy": "0x9cd9Fcc7E3dEDA360de7c080590AaD377ac9F113"
+    "SequencerChainlinkOracle_Implementation": "0x4256f572B8738126466e864D453BCCD0281b3C6C",
+    "SequencerChainlinkOracle_Proxy": "0x9cd9Fcc7E3dEDA360de7c080590AaD377ac9F113",
+    "weETHOneJumpChainlinkOracle": "0x0afD33490fBcF537ede00F9Cc4607230bBf65774",
+    "wstETHOneJumpChainlinkOracle": "0x17a5596DF05c7bfB2280D5B9cCcDAf711e957Ed4"
   }
 }
