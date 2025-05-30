@@ -14,7 +14,7 @@ import zksyncmainnetGovernanceDeployments from "@venusprotocol/governance-contra
 import zksyncsepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/zksyncsepolia.json";
 import mainnetDeployments from "@venusprotocol/venus-protocol/deployments/bscmainnet.json";
 import testnetDeployments from "@venusprotocol/venus-protocol/deployments/bsctestnet.json";
-import { Contract } from "ethers";
+import { BigNumber, Contract } from "ethers";
 import { ethers } from "hardhat";
 
 export interface Feed {
@@ -1513,4 +1513,25 @@ export const getOraclesToDeploy = async (network: string): Promise<Record<string
   });
 
   return oracles;
+};
+
+export const DAYS_30 = 30 * 24 * 60 * 60;
+
+export const SECONDS_PER_YEAR = 31536000;
+
+export const increaseExchangeRateByPercentage = (
+  exchangeRate: BigNumber,
+  percentage: BigNumber, // BPS value (e.g., 10000 for 100%)
+) => {
+  const increaseAmount = exchangeRate.mul(percentage).div(10000);
+  return exchangeRate.add(increaseAmount).toString();
+};
+
+export const getSnapshotGap = (
+  exchangeRate: BigNumber,
+  percentage: number, // BPS value (e.g., 10000 for 100%)
+) => {
+  // snapshot gap is percentage of the exchange rate
+  const snapshotGap = exchangeRate.mul(percentage).div(10000);
+  return snapshotGap.toString();
 };

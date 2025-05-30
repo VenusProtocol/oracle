@@ -1,8 +1,15 @@
+import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { ADDRESSES } from "../helpers/deploymentConfig";
+import {
+  ADDRESSES,
+  DAYS_30,
+  SECONDS_PER_YEAR,
+  getSnapshotGap,
+  increaseExchangeRateByPercentage,
+} from "../helpers/deploymentConfig";
 
 const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
@@ -14,11 +21,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   eBTC_Accountant = eBTC_Accountant || (await ethers.getContract("MockAccountant_eBTC")).address;
 
-  const SNAPSHOT_UPDATE_INTERVAL = ethers.constants.MaxUint256;
-  const eBTC_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
+  const eBTC_ANNUAL_GROWTH_RATE = SECONDS_PER_YEAR; // 0% growth rate
   const block = await ethers.provider.getBlock("latest");
   const accountant = await ethers.getContractAt("IAccountant", eBTC_Accountant);
   const exchangeRate = await accountant.getRateSafe();
+  const snapshotGap = BigNumber.from("400"); // 4.00%
 
   await deploy("eBTCAccountantOracle", {
     contract: "EtherfiAccountantOracle",
@@ -31,11 +38,11 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       WBTC,
       resilientOracle.address,
       eBTC_ANNUAL_GROWTH_RATE,
-      SNAPSHOT_UPDATE_INTERVAL,
-      exchangeRate,
+      DAYS_30,
+      increaseExchangeRateByPercentage(exchangeRate, snapshotGap),
       block.timestamp,
       acm,
-      0,
+      getSnapshotGap(exchangeRate, snapshotGap.toNumber()),
     ],
     skipIfAlreadyDeployed: true,
   });
