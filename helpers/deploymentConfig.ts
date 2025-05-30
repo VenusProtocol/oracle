@@ -101,6 +101,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     "PT-sUSDE-26JUN2025": "0x95e58161BA2423c3034658d957F3f5b94DeAbf81",
     sUSDe: "0xcFec590e417Abb378cfEfE6296829E35fa25cEbd",
     USDe: "0x986C30591f5aAb401ea3aa63aFA595608721B1B9",
+    xSolvBTC: "0x3ea87323806586A0282b50377e0FEa76070F532B",
+    SolvBTC: "0x6855E14A6df91b8E4D55163d068E9ef2530fd4CE"
   },
   bscmainnet: {
     vBNBAddress: mainnetDeployments.contracts.vBNB.address,
@@ -134,6 +136,8 @@ export const ADDRESSES: PreconfiguredAddresses = {
     "PT-sUSDE-26JUN2025_Market": "0x8557D39d4BAB2b045ac5c2B7ea66d12139da9Af4",
     sUSDe: "0x211Cc4DD073734dA055fbF44a2b4667d5E5fE5d2",
     USDe: "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34",
+    xSolvBTC: "0x1346b618dC92810EC74163e4c27004c921D446a5",
+    SolvBTC: "0x4aae823a6a0b376De6A78e74eCC5b079d38cBCf7"
   },
   sepolia: {
     vBNBAddress: ethers.constants.AddressZero,
