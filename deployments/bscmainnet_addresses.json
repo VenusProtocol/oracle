@@ -81,6 +81,9 @@
     "wstETHOneJumpChainlinkOracle_Proxy": "0x3C9850633e8Cb5ac5c3Da833C947E7c91EED15C4",
     "wstETHOneJumpRedstoneOracle": "0x90dd7ae1137cC072F7740Ee0b264f2351515B98A",
     "wstETHOneJumpRedstoneOracle_Implementation": "0xCf56AEB81930bB4d1Bd94a2381A4A3fb6b4Bd44b",
-    "wstETHOneJumpRedstoneOracle_Proxy": "0x90dd7ae1137cC072F7740Ee0b264f2351515B98A"
+    "wstETHOneJumpRedstoneOracle_Proxy": "0x90dd7ae1137cC072F7740Ee0b264f2351515B98A",
+    "xSolvBTCOneJumpRedStoneOracle": "0xD39f9280873EB8A312246ee85f7ff118cb8206bb",
+    "xSolvBTCOneJumpRedStoneOracle_Implementation": "0x5a9ca0d481b1f00cC48EaC43Df64f50e98bbdc48",
+    "xSolvBTCOneJumpRedStoneOracle_Proxy": "0xD39f9280873EB8A312246ee85f7ff118cb8206bb"
   }
 }
