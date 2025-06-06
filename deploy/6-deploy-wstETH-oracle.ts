@@ -8,11 +8,19 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const { stETHAddress, wstETHAddress, acm } = ADDRESSES[network.name];
+  const { stETHAddress, wstETHAddress, WETH, acm } = ADDRESSES[network.name];
 
   const oracle = await ethers.getContract("ResilientOracle");
 
-  await deploy("WstETHOracle", {
+  await deploy("WstETHOracleV2_Equivalence", {
+    contract: "WstETHOracleV2",
+    from: deployer,
+    log: true,
+    deterministicDeployment: false,
+    args: [wstETHAddress, WETH, oracle.address, 0, 0, 0, 0, acm, 0],
+  });
+
+  await deploy("WstETHOracleV2_NonEquivalence", {
     contract: "WstETHOracleV2",
     from: deployer,
     log: true,
