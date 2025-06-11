@@ -426,9 +426,7 @@
         "blockNumber": 54420477,
         "transactionHash": "0xc74f5ff1ed2a87a6117d9baaf37fa24b1804b42a2ee9c1735dc28e3c35d3a1d9",
         "address": "0x8dA774a84e20BBFA5d62c3718feE5f1753046e0C",
-        "topics": [
-          "0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"
-        ],
+        "topics": ["0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"],
         "data": "0x00000000000000000000000000000000000000000000000000000000000000ff",
         "logIndex": 493,
         "blockHash": "0xd76eed52ecc1dc4f82b5f4cfcbf38c94013d1aa72e05d41119ee452a9c1d5dfa"
