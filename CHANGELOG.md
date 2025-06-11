@@ -1,3 +1,12 @@
+## [2.13.0-dev.7](https://github.com/VenusProtocol/oracle/compare/v2.13.0-dev.6...v2.13.0-dev.7) (2025-06-03)
+
+
+### Features
+
+* added config and script ([a9046bb](https://github.com/VenusProtocol/oracle/commit/a9046bbe4e238a29bd927d815fa6f582c3e4b22b))
+* deployed oracle ([b872b75](https://github.com/VenusProtocol/oracle/commit/b872b7524813f58092f442b0b492608d399d8cb1))
+* updating deployment files ([f704821](https://github.com/VenusProtocol/oracle/commit/f70482163369fc5bea092b7a3f7dd1d61e355e81))
+
 ## [2.13.0-dev.6](https://github.com/VenusProtocol/oracle/compare/v2.13.0-dev.5...v2.13.0-dev.6) (2025-05-09)
 
 
