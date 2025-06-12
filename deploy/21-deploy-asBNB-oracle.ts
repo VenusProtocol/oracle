@@ -4,22 +4,19 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
 
-const func: DeployFunction = async ({
-  getNamedAccounts,
-  deployments,
-  network,
-  artifacts,
-}: HardhatRuntimeEnvironment) => {
+const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
   const oracle = await ethers.getContract("ResilientOracle");
-  const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
 
-  const { asBNB, slisBNB } = ADDRESSES[network.name];
-  const defaultProxyAdmin = await artifacts.readArtifact(
-    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
-  );
+  const { asBNB, slisBNB, acm } = ADDRESSES[network.name];
+
+  const SNAPSHOT_UPDATE_INTERVAL = 0;
+  const asBNB_ANNUAL_GROWTH_RATE = 0;
+  const EXCHANGE_RATE = 0;
+  const SNAPSHOT_TIMESTAMP = 0;
+  const SNAPSHOT_GAP = 0;
 
   // Deploy dependencies for testnet
   if (network.name === "bsctestnet") {
@@ -44,20 +41,21 @@ const func: DeployFunction = async ({
     });
   }
 
-  console.log("args", asBNB, slisBNB, oracle.address);
   await deploy("AsBNBOracle", {
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [asBNB, slisBNB, oracle.address],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentUpgradeableProxy",
-      viaAdminContract: {
-        name: "DefaultProxyAdmin",
-        artifact: defaultProxyAdmin,
-      },
-    },
+    args: [
+      asBNB,
+      slisBNB,
+      oracle.address,
+      asBNB_ANNUAL_GROWTH_RATE,
+      SNAPSHOT_UPDATE_INTERVAL,
+      EXCHANGE_RATE,
+      SNAPSHOT_TIMESTAMP,
+      acm,
+      SNAPSHOT_GAP,
+    ],
     skipIfAlreadyDeployed: true,
   });
 };
