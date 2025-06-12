@@ -10,51 +10,55 @@ enum PendleRateKind {
   PT_TO_SY = 1,
 }
 
-const func: DeployFunction = async ({
-  getNamedAccounts,
-  deployments,
-  network,
-  artifacts,
-}: HardhatRuntimeEnvironment) => {
+const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const proxyOwnerAddress = ADDRESSES[network.name].timelock;
   const redStoneOracle = await ethers.getContract("RedStoneOracle");
   const chainlinkOracle = await ethers.getContract("ChainlinkOracle");
   const resilientOracle = await ethers.getContract("ResilientOracle");
   const addresses = ADDRESSES[network.name];
   const ptOracleAddress = addresses.PTOracle || (await ethers.getContract("MockPendlePtOracle")).address;
 
-  const defaultProxyAdmin = await artifacts.readArtifact(
-    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
-  );
-
   const commonParams = {
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentUpgradeableProxy",
-      viaAdminContract: {
-        name: "DefaultProxyAdmin",
-        artifact: defaultProxyAdmin,
-      },
-    },
     skipIfAlreadyDeployed: true,
     waitConfirmations: 1,
   };
 
   await deploy("sUSDeOneJumpChainlinkOracle", {
     contract: "OneJumpOracle",
-    args: [addresses.sUSDe, addresses.USDe, resilientOracle.address, chainlinkOracle.address],
+    args: [
+      addresses.sUSDe,
+      addresses.USDe,
+      resilientOracle.address,
+      chainlinkOracle.address,
+      0,
+      0,
+      0,
+      0,
+      addresses.acm,
+      0,
+    ],
     ...commonParams,
   });
 
   await deploy("sUSDeOneJumpRedstoneOracle", {
     contract: "OneJumpOracle",
-    args: [addresses.sUSDe, addresses.USDe, resilientOracle.address, redStoneOracle.address],
+    args: [
+      addresses.sUSDe,
+      addresses.USDe,
+      resilientOracle.address,
+      redStoneOracle.address,
+      0,
+      0,
+      0,
+      0,
+      addresses.acm,
+      0,
+    ],
     ...commonParams,
   });
 
@@ -81,7 +85,6 @@ const func: DeployFunction = async ({
   });
 
   if (isMainnet(network)) {
-    const { devMultisig } = addresses;
     await deploy("PendleOracle-PT-sUSDe-26JUN2025_Reference_PtToAsset", {
       contract: "PendleOracle",
       from: deployer,
@@ -104,13 +107,6 @@ const func: DeployFunction = async ({
           snapshotGap: 0,
         },
       ],
-      proxy: {
-        owner: devMultisig,
-        proxyContract: "OptimizedTransparentUpgradeableProxy",
-        viaAdminContract: {
-          name: "DevProxyAdmin",
-        },
-      },
       skipIfAlreadyDeployed: true,
     });
   }
