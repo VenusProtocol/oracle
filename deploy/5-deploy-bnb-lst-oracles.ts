@@ -13,12 +13,16 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const { ankrBNB, stkBNB, BNBx, BNBxStakeManager, slisBNBStakeManager, stkBNBStakePool, slisBNB, wBETH, acm } =
     ADDRESSES[network.name];
   const ETH = assets[network.name].find(asset => asset.token === "ETH");
-  const SNAPSHOT_UPDATE_INTERVAL = ethers.constants.MaxUint256;
 
-  const BNBx_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
+  const SNAPSHOT_UPDATE_INTERVAL = 0;
+  const BNBx_ANNUAL_GROWTH_RATE = 0;
+  const slis_BNB_ANNUAL_GROWTH_RATE = 0;
+  const ankr_BNB_ANNUAL_GROWTH_RATE = 0;
+  const EXCHANGE_RATE = 0;
+  const SNAPSHOT_TIMESTAMP = 0;
+  const SNAPSHOT_GAP = 0;
+
   let block = await ethers.provider.getBlock("latest");
-  const stakeManagerContract = await ethers.getContractAt("IStaderStakeManager", BNBxStakeManager);
-  let exchangeRate = await stakeManagerContract.convertBnbXToBnb(ethers.utils.parseUnits("1", 18));
 
   await deploy("BNBxOracle", {
     from: deployer,
@@ -30,18 +34,13 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       oracle.address,
       BNBx_ANNUAL_GROWTH_RATE,
       SNAPSHOT_UPDATE_INTERVAL,
-      exchangeRate,
-      block.timestamp,
+      EXCHANGE_RATE,
+      SNAPSHOT_TIMESTAMP,
       acm,
-      0,
+      SNAPSHOT_GAP,
     ],
     skipIfAlreadyDeployed: true,
   });
-
-  const slis_BNB_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
-  block = await ethers.provider.getBlock("latest");
-  const syncClubStakeManagerContract = await ethers.getContractAt("ISynclubStakeManager", slisBNBStakeManager);
-  exchangeRate = await syncClubStakeManagerContract.convertSnBnbToBnb(ethers.utils.parseUnits("1", 18));
 
   await deploy("SlisBNBOracle", {
     from: deployer,
@@ -53,10 +52,10 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       oracle.address,
       slis_BNB_ANNUAL_GROWTH_RATE,
       SNAPSHOT_UPDATE_INTERVAL,
-      exchangeRate,
-      block.timestamp,
+      EXCHANGE_RATE,
+      SNAPSHOT_TIMESTAMP,
       acm,
-      0,
+      SNAPSHOT_GAP,
     ],
     skipIfAlreadyDeployed: true,
   });
@@ -87,12 +86,6 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const ankrBNBAddress = ankrBNB || (await ethers.getContract("MockAnkrBNB")).address;
 
-  const ankr_BNB_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
-
-  block = await ethers.provider.getBlock("latest");
-  const ankrBNBContract = await ethers.getContractAt("IAnkrBNB", ankrBNBAddress);
-  exchangeRate = await ankrBNBContract.sharesToBonds(ethers.utils.parseUnits("1", 18));
-
   await deploy("AnkrBNBOracle", {
     from: deployer,
     log: true,
@@ -102,10 +95,10 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       oracle.address,
       ankr_BNB_ANNUAL_GROWTH_RATE,
       SNAPSHOT_UPDATE_INTERVAL,
-      exchangeRate,
-      block.timestamp,
+      EXCHANGE_RATE,
+      SNAPSHOT_TIMESTAMP,
       acm,
-      0,
+      SNAPSHOT_GAP,
     ],
     skipIfAlreadyDeployed: true,
   });
