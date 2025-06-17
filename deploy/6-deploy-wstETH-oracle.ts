@@ -4,26 +4,13 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ADDRESSES, addr0000, assets } from "../helpers/deploymentConfig";
 
-const func: DeployFunction = async ({
-  getNamedAccounts,
-  deployments,
-  network,
-  artifacts,
-}: HardhatRuntimeEnvironment) => {
+const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  console.log(`Deployer ${deployer}`);
-
-  const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
-
-  const { stETHAddress, wstETHAddress } = ADDRESSES[network.name];
+  const { stETHAddress, wstETHAddress, acm } = ADDRESSES[network.name];
   const WETHAsset = assets[network.name].find(asset => asset.token === "WETH");
   const WETHAddress = WETHAsset?.address ?? addr0000;
-
-  const defaultProxyAdmin = await artifacts.readArtifact(
-    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
-  );
 
   const oracle = await ethers.getContract("ResilientOracle");
 
@@ -32,35 +19,19 @@ const func: DeployFunction = async ({
   // will get stETH/USD price from secondary market
 
   await deploy("WstETHOracle_Equivalence", {
-    contract: "WstETHOracle",
+    contract: "WstETHOracleV2",
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [wstETHAddress, WETHAddress, stETHAddress, oracle.address, true],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentUpgradeableProxy",
-      viaAdminContract: {
-        name: "DefaultProxyAdmin",
-        artifact: defaultProxyAdmin,
-      },
-    },
+    args: [stETHAddress, wstETHAddress, WETHAddress, oracle.address, 0, 0, 0, 0, acm, 0],
   });
 
   await deploy("WstETHOracle_NonEquivalence", {
-    contract: "WstETHOracle",
+    contract: "WstETHOracleV2",
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [wstETHAddress, WETHAddress, stETHAddress, oracle.address, false],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentUpgradeableProxy",
-      viaAdminContract: {
-        name: "DefaultProxyAdmin",
-        artifact: defaultProxyAdmin,
-      },
-    },
+    args: [stETHAddress, wstETHAddress, stETHAddress, oracle.address, 0, 0, 0, 0, acm, 0],
   });
 };
 
