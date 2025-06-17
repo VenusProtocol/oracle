@@ -1,8 +1,17 @@
+import { BigNumber } from "ethers";
+import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { ADDRESSES, addr0000, assets } from "../helpers/deploymentConfig";
+import {
+  ADDRESSES,
+  DAYS_30,
+  addr0000,
+  assets,
+  getSnapshotGap,
+  increaseExchangeRateByPercentage,
+} from "../helpers/deploymentConfig";
 
 const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
@@ -18,12 +27,29 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   // assume 1/1 price ration between stETH/ETH or
   // will get stETH/USD price from secondary market
 
+  const wstETH_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.067", 18); // 6.7%
+  const block = await ethers.provider.getBlock("latest");
+  const stETHContract = await ethers.getContractAt("IStETH", stETHAddress);
+  const exchangeRate = await stETHContract.getPooledEthByShares(parseUnits("1", 18));
+  const snapshotGap = BigNumber.from("55"); // 0.55%
+
   await deploy("WstETHOracle_Equivalence", {
     contract: "WstETHOracleV2",
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [stETHAddress, wstETHAddress, WETHAddress, oracle.address, 0, 0, 0, 0, acm, 0],
+    args: [
+      stETHAddress,
+      wstETHAddress,
+      WETHAddress,
+      oracle.address,
+      wstETH_ANNUAL_GROWTH_RATE,
+      DAYS_30,
+      increaseExchangeRateByPercentage(exchangeRate, snapshotGap),
+      block.timestamp,
+      acm,
+      getSnapshotGap(exchangeRate, snapshotGap.toNumber()),
+    ],
   });
 
   await deploy("WstETHOracle_NonEquivalence", {
@@ -31,7 +57,18 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [stETHAddress, wstETHAddress, stETHAddress, oracle.address, 0, 0, 0, 0, acm, 0],
+    args: [
+      stETHAddress,
+      wstETHAddress,
+      stETHAddress,
+      oracle.address,
+      wstETH_ANNUAL_GROWTH_RATE,
+      DAYS_30,
+      increaseExchangeRateByPercentage(exchangeRate, snapshotGap),
+      block.timestamp,
+      acm,
+      getSnapshotGap(exchangeRate, snapshotGap.toNumber()),
+    ],
   });
 };
 
