@@ -4,6 +4,7 @@ pragma solidity 0.8.25;
 import { IStETH } from "../interfaces/IStETH.sol";
 import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
 import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants.sol";
+import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contracts/validators.sol";
 
 /**
  * @title WstETHOracleV2
