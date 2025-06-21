@@ -1,115 +1,76 @@
 {
-  "address": "0xA1dF2F18C74dB5Bed3A7752547F6Cc3094a1A2d5",
+  "address": "0x2B2895104f958E1EC042E6Ba5cbfeCbAD3C5beDb",
   "abi": [
     {
-      "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
           "internalType": "address",
-          "name": "previousAdmin",
+          "name": "correlatedToken",
           "type": "address"
         },
         {
-          "indexed": false,
           "internalType": "address",
-          "name": "newAdmin",
-          "type": "address"
-        }
-      ],
-      "name": "AdminChanged",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "beacon",
-          "type": "address"
-        }
-      ],
-      "name": "BeaconUpgraded",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "implementation",
-          "type": "address"
-        }
-      ],
-      "name": "Upgraded",
-      "type": "event"
-    },
-    {
-      "stateMutability": "payable",
-      "type": "fallback"
-    },
-    {
-      "inputs": [],
-      "name": "admin",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "admin_",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "implementation",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "implementation_",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "newImplementation",
-          "type": "address"
-        }
-      ],
-      "name": "upgradeTo",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "newImplementation",
+          "name": "underlyingToken",
           "type": "address"
         },
         {
-          "internalType": "bytes",
-          "name": "data",
-          "type": "bytes"
+          "internalType": "address",
+          "name": "resilientOracle",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "intermediateOracle",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "annualGrowthRate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_snapshotInterval",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "initialSnapshotMaxExchangeRate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "initialSnapshotTimestamp",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "accessControlManager",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_snapshotGap",
+          "type": "uint256"
         }
       ],
-      "name": "upgradeToAndCall",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
+      "stateMutability": "nonpayable",
+      "type": "constructor"
     },
     {
-      "stateMutability": "payable",
-      "type": "receive"
+      "inputs": [],
+      "name": "InvalidGrowthRate",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidInitialSnapshot",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidSnapshotMaxExchangeRate",
+      "type": "error"
     },
     {
       "inputs": [],
@@ -117,9 +78,112 @@
       "type": "error"
     },
     {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "calledContract",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "methodSignature",
+          "type": "string"
+        }
+      ],
+      "name": "Unauthorized",
+      "type": "error"
+    },
+    {
       "inputs": [],
       "name": "ZeroAddressNotAllowed",
       "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "oldGrowthRatePerSecond",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "newGrowthRatePerSecond",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "oldSnapshotInterval",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newSnapshotInterval",
+          "type": "uint256"
+        }
+      ],
+      "name": "GrowthRateUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "oldSnapshotGap",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "newSnapshotGap",
+          "type": "uint256"
+        }
+      ],
+      "name": "SnapshotGapUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "maxExchangeRate",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "SnapshotUpdated",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "ACCESS_CONTROL_MANAGER",
+      "outputs": [
+        {
+          "internalType": "contract IAccessControlManagerV8",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
     },
     {
       "inputs": [],
@@ -152,7 +216,7 @@
       "name": "RESILIENT_ORACLE",
       "outputs": [
         {
-          "internalType": "contract OracleInterface",
+          "internalType": "contract ResilientOracleInterface",
           "name": "",
           "type": "address"
         }
@@ -168,6 +232,19 @@
           "internalType": "address",
           "name": "",
           "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getMaxAllowedExchangeRate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -193,114 +270,396 @@
       "type": "function"
     },
     {
-      "inputs": [
+      "inputs": [],
+      "name": "getUnderlyingAmount",
+      "outputs": [
         {
-          "internalType": "address",
-          "name": "_logic",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "admin_",
-          "type": "address"
-        },
-        {
-          "internalType": "bytes",
-          "name": "_data",
-          "type": "bytes"
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
         }
       ],
-      "stateMutability": "payable",
-      "type": "constructor"
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "growthRatePerSecond",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "isCapped",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_annualGrowthRate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_snapshotInterval",
+          "type": "uint256"
+        }
+      ],
+      "name": "setGrowthRate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_snapshotMaxExchangeRate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_snapshotTimestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "setSnapshot",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_snapshotGap",
+          "type": "uint256"
+        }
+      ],
+      "name": "setSnapshotGap",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "snapshotGap",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "snapshotInterval",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "snapshotMaxExchangeRate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "snapshotTimestamp",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "updateSnapshot",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
     }
   ],
-  "transactionHash": "0xda2aad53599ee40c130947e39a24c03473ee5b0a97283c01d6d0c0dc4a7b110b",
+  "transactionHash": "0x5e5f65930e7f8e0aad966cbd4a04f476d6ab727f886456a0cd388f6edfc45de1",
   "receipt": {
     "to": null,
-    "from": "0xa05f990d647287e4E84715b813BC000aEA970467",
-    "contractAddress": "0xA1dF2F18C74dB5Bed3A7752547F6Cc3094a1A2d5",
-    "transactionIndex": 92,
-    "gasUsed": "513501",
-    "logsBloom": "0x00000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000001000000000002000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000020000000000000000000000000000002000000000000000000000800000000000000000000000200000000000000000000000000000000000000000000000000020000000000000000000000000000000000400000000000000000000000000000000000000000040000000000000000000000000000000000000000000",
-    "blockHash": "0xca70cecd01eeb6255920a593f48c13d65de467812789559a35339bb39950a185",
-    "transactionHash": "0xda2aad53599ee40c130947e39a24c03473ee5b0a97283c01d6d0c0dc4a7b110b",
-    "logs": [
-      {
-        "transactionIndex": 92,
-        "blockNumber": 48318384,
-        "transactionHash": "0xda2aad53599ee40c130947e39a24c03473ee5b0a97283c01d6d0c0dc4a7b110b",
-        "address": "0xA1dF2F18C74dB5Bed3A7752547F6Cc3094a1A2d5",
-        "topics": [
-          "0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b",
-          "0x000000000000000000000000c2befc6d90014130ac1a39799375b45d438d4269"
-        ],
-        "data": "0x",
-        "logIndex": 246,
-        "blockHash": "0xca70cecd01eeb6255920a593f48c13d65de467812789559a35339bb39950a185"
-      },
-      {
-        "transactionIndex": 92,
-        "blockNumber": 48318384,
-        "transactionHash": "0xda2aad53599ee40c130947e39a24c03473ee5b0a97283c01d6d0c0dc4a7b110b",
-        "address": "0xA1dF2F18C74dB5Bed3A7752547F6Cc3094a1A2d5",
-        "topics": ["0x7e644d79422f17c01e4894b5f4f588d331ebfa28653d42ae832dc59e38c9798f"],
-        "data": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000001bb765b741a5f3c2a338369dab539385534e3343",
-        "logIndex": 247,
-        "blockHash": "0xca70cecd01eeb6255920a593f48c13d65de467812789559a35339bb39950a185"
-      }
-    ],
-    "blockNumber": 48318384,
-    "cumulativeGasUsed": "8899710",
+    "from": "0x7Bf1Fe2C42E79dbA813Bf5026B7720935a55ec5f",
+    "contractAddress": "0x2B2895104f958E1EC042E6Ba5cbfeCbAD3C5beDb",
+    "transactionIndex": 236,
+    "gasUsed": "837130",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x1969fea7c859eddff60040992ddf5f1c6763c6e459419b63a7c92a02235e51b1",
+    "transactionHash": "0x5e5f65930e7f8e0aad966cbd4a04f476d6ab727f886456a0cd388f6edfc45de1",
+    "logs": [],
+    "blockNumber": 51328583,
+    "cumulativeGasUsed": "44463438",
     "status": 1,
     "byzantium": true
   },
-  "args": ["0xc2BEfC6d90014130ac1a39799375B45D438D4269", "0x1BB765b741A5f3C2A338369DAb539385534E3343", "0x"],
+  "args": [
+    "0x211Cc4DD073734dA055fbF44a2b4667d5E5fE5d2",
+    "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34",
+    "0x6592b5DE802159F3E74B2486b091D11a8256ab8A",
+    "0x8455EFA4D7Ff63b8BFD96AdD889483Ea7d39B70a",
+    0,
+    0,
+    0,
+    0,
+    "0x4788629abc6cfca10f9f969efdeaa1cf70c23555",
+    0
+  ],
   "numDeployments": 1,
-  "solcInputHash": "d2941541ad0a5d456f9efff480594d3e",
-  "metadata": "{\"compiler\":{\"version\":\"0.8.25+commit.b61c2a91\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_logic\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"admin_\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"stateMutability\":\"payable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"previousAdmin\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\"}],\"name\":\"AdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"beacon\",\"type\":\"address\"}],\"name\":\"BeaconUpgraded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"implementation\",\"type\":\"address\"}],\"name\":\"Upgraded\",\"type\":\"event\"},{\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"inputs\":[],\"name\":\"admin\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"admin_\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"implementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"implementation_\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\"}],\"name\":\"upgradeTo\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newImplementation\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"upgradeToAndCall\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}],\"devdoc\":{\"details\":\"This contract implements a proxy that is upgradeable by an admin. To avoid https://medium.com/nomic-labs-blog/malicious-backdoors-in-ethereum-proxies-62629adf3357[proxy selector clashing], which can potentially be used in an attack, this contract uses the https://blog.openzeppelin.com/the-transparent-proxy-pattern/[transparent proxy pattern]. This pattern implies two things that go hand in hand: 1. If any account other than the admin calls the proxy, the call will be forwarded to the implementation, even if that call matches one of the admin functions exposed by the proxy itself. 2. If the admin calls the proxy, it can access the admin functions, but its calls will never be forwarded to the implementation. If the admin tries to call a function on the implementation it will fail with an error that says \\\"admin cannot fallback to proxy target\\\". These properties mean that the admin account can only be used for admin actions like upgrading the proxy or changing the admin, so it's best if it's a dedicated account that is not used for anything else. This will avoid headaches due to sudden errors when trying to call a function from the proxy implementation. Our recommendation is for the dedicated account to be an instance of the {ProxyAdmin} contract. If set up this way, you should think of the `ProxyAdmin` instance as the real administrative interface of your proxy.\",\"events\":{\"AdminChanged(address,address)\":{\"details\":\"Emitted when the admin account has changed.\"},\"BeaconUpgraded(address)\":{\"details\":\"Emitted when the beacon is upgraded.\"},\"Upgraded(address)\":{\"details\":\"Emitted when the implementation is upgraded.\"}},\"kind\":\"dev\",\"methods\":{\"admin()\":{\"details\":\"Returns the current admin. NOTE: Only the admin can call this function. See {ProxyAdmin-getProxyAdmin}. TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using the https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call. `0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103`\"},\"constructor\":{\"details\":\"Initializes an upgradeable proxy managed by `_admin`, backed by the implementation at `_logic`, and optionally initialized with `_data` as explained in {ERC1967Proxy-constructor}.\"},\"implementation()\":{\"details\":\"Returns the current implementation. NOTE: Only the admin can call this function. See {ProxyAdmin-getProxyImplementation}. TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using the https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call. `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`\"},\"upgradeTo(address)\":{\"details\":\"Upgrade the implementation of the proxy. NOTE: Only the admin can call this function. See {ProxyAdmin-upgrade}.\"},\"upgradeToAndCall(address,bytes)\":{\"details\":\"Upgrade the implementation of the proxy, and then call a function from the new implementation as specified by `data`, which should be an encoded function call. This is useful to initialize new storage variables in the proxied contract. NOTE: Only the admin can call this function. See {ProxyAdmin-upgradeAndCall}.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"hardhat-deploy/solc_0.8/proxy/OptimizedTransparentUpgradeableProxy.sol\":\"OptimizedTransparentUpgradeableProxy\"},\"evmVersion\":\"cancun\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"hardhat-deploy/solc_0.8/openzeppelin/interfaces/draft-IERC1822.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.5.0-rc.0) (interfaces/draft-IERC1822.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev ERC1822: Universal Upgradeable Proxy Standard (UUPS) documents a method for upgradeability through a simplified\\n * proxy whose upgrades are fully controlled by the current implementation.\\n */\\ninterface IERC1822Proxiable {\\n    /**\\n     * @dev Returns the storage slot that the proxiable contract assumes is being used to store the implementation\\n     * address.\\n     *\\n     * IMPORTANT: A proxy pointing at a proxiable contract should not be considered proxiable itself, because this risks\\n     * bricking a proxy that upgrades to it, by delegating to itself until out of gas. Thus it is critical that this\\n     * function revert if invoked through a proxy.\\n     */\\n    function proxiableUUID() external view returns (bytes32);\\n}\\n\",\"keccak256\":\"0x93b4e21c931252739a1ec13ea31d3d35a5c068be3163ccab83e4d70c40355f03\",\"license\":\"MIT\"},\"hardhat-deploy/solc_0.8/openzeppelin/proxy/ERC1967/ERC1967Proxy.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (proxy/ERC1967/ERC1967Proxy.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../Proxy.sol\\\";\\nimport \\\"./ERC1967Upgrade.sol\\\";\\n\\n/**\\n * @dev This contract implements an upgradeable proxy. It is upgradeable because calls are delegated to an\\n * implementation address that can be changed. This address is stored in storage in the location specified by\\n * https://eips.ethereum.org/EIPS/eip-1967[EIP1967], so that it doesn't conflict with the storage layout of the\\n * implementation behind the proxy.\\n */\\ncontract ERC1967Proxy is Proxy, ERC1967Upgrade {\\n    /**\\n     * @dev Initializes the upgradeable proxy with an initial implementation specified by `_logic`.\\n     *\\n     * If `_data` is nonempty, it's used as data in a delegate call to `_logic`. This will typically be an encoded\\n     * function call, and allows initializating the storage of the proxy like a Solidity constructor.\\n     */\\n    constructor(address _logic, bytes memory _data) payable {\\n        assert(_IMPLEMENTATION_SLOT == bytes32(uint256(keccak256(\\\"eip1967.proxy.implementation\\\")) - 1));\\n        _upgradeToAndCall(_logic, _data, false);\\n    }\\n\\n    /**\\n     * @dev Returns the current implementation address.\\n     */\\n    function _implementation() internal view virtual override returns (address impl) {\\n        return ERC1967Upgrade._getImplementation();\\n    }\\n}\\n\",\"keccak256\":\"0x6309f9f39dc6f4f45a24f296543867aa358e32946cd6b2874627a996d606b3a0\",\"license\":\"MIT\"},\"hardhat-deploy/solc_0.8/openzeppelin/proxy/ERC1967/ERC1967Upgrade.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.5.0-rc.0) (proxy/ERC1967/ERC1967Upgrade.sol)\\n\\npragma solidity ^0.8.2;\\n\\nimport \\\"../beacon/IBeacon.sol\\\";\\nimport \\\"../../interfaces/draft-IERC1822.sol\\\";\\nimport \\\"../../utils/Address.sol\\\";\\nimport \\\"../../utils/StorageSlot.sol\\\";\\n\\n/**\\n * @dev This abstract contract provides getters and event emitting update functions for\\n * https://eips.ethereum.org/EIPS/eip-1967[EIP1967] slots.\\n *\\n * _Available since v4.1._\\n *\\n * @custom:oz-upgrades-unsafe-allow delegatecall\\n */\\nabstract contract ERC1967Upgrade {\\n    // This is the keccak-256 hash of \\\"eip1967.proxy.rollback\\\" subtracted by 1\\n    bytes32 private constant _ROLLBACK_SLOT = 0x4910fdfa16fed3260ed0e7147f7cc6da11a60208b5b9406d12a635614ffd9143;\\n\\n    /**\\n     * @dev Storage slot with the address of the current implementation.\\n     * This is the keccak-256 hash of \\\"eip1967.proxy.implementation\\\" subtracted by 1, and is\\n     * validated in the constructor.\\n     */\\n    bytes32 internal constant _IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;\\n\\n    /**\\n     * @dev Emitted when the implementation is upgraded.\\n     */\\n    event Upgraded(address indexed implementation);\\n\\n    /**\\n     * @dev Returns the current implementation address.\\n     */\\n    function _getImplementation() internal view returns (address) {\\n        return StorageSlot.getAddressSlot(_IMPLEMENTATION_SLOT).value;\\n    }\\n\\n    /**\\n     * @dev Stores a new address in the EIP1967 implementation slot.\\n     */\\n    function _setImplementation(address newImplementation) private {\\n        require(Address.isContract(newImplementation), \\\"ERC1967: new implementation is not a contract\\\");\\n        StorageSlot.getAddressSlot(_IMPLEMENTATION_SLOT).value = newImplementation;\\n    }\\n\\n    /**\\n     * @dev Perform implementation upgrade\\n     *\\n     * Emits an {Upgraded} event.\\n     */\\n    function _upgradeTo(address newImplementation) internal {\\n        _setImplementation(newImplementation);\\n        emit Upgraded(newImplementation);\\n    }\\n\\n    /**\\n     * @dev Perform implementation upgrade with additional setup call.\\n     *\\n     * Emits an {Upgraded} event.\\n     */\\n    function _upgradeToAndCall(\\n        address newImplementation,\\n        bytes memory data,\\n        bool forceCall\\n    ) internal {\\n        _upgradeTo(newImplementation);\\n        if (data.length > 0 || forceCall) {\\n            Address.functionDelegateCall(newImplementation, data);\\n        }\\n    }\\n\\n    /**\\n     * @dev Perform implementation upgrade with security checks for UUPS proxies, and additional setup call.\\n     *\\n     * Emits an {Upgraded} event.\\n     */\\n    function _upgradeToAndCallUUPS(\\n        address newImplementation,\\n        bytes memory data,\\n        bool forceCall\\n    ) internal {\\n        // Upgrades from old implementations will perform a rollback test. This test requires the new\\n        // implementation to upgrade back to the old, non-ERC1822 compliant, implementation. Removing\\n        // this special case will break upgrade paths from old UUPS implementation to new ones.\\n        if (StorageSlot.getBooleanSlot(_ROLLBACK_SLOT).value) {\\n            _setImplementation(newImplementation);\\n        } else {\\n            try IERC1822Proxiable(newImplementation).proxiableUUID() returns (bytes32 slot) {\\n                require(slot == _IMPLEMENTATION_SLOT, \\\"ERC1967Upgrade: unsupported proxiableUUID\\\");\\n            } catch {\\n                revert(\\\"ERC1967Upgrade: new implementation is not UUPS\\\");\\n            }\\n            _upgradeToAndCall(newImplementation, data, forceCall);\\n        }\\n    }\\n\\n    /**\\n     * @dev Storage slot with the admin of the contract.\\n     * This is the keccak-256 hash of \\\"eip1967.proxy.admin\\\" subtracted by 1, and is\\n     * validated in the constructor.\\n     */\\n    bytes32 internal constant _ADMIN_SLOT = 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103;\\n\\n    /**\\n     * @dev Emitted when the admin account has changed.\\n     */\\n    event AdminChanged(address previousAdmin, address newAdmin);\\n\\n    /**\\n     * @dev Returns the current admin.\\n     */\\n    function _getAdmin() internal view virtual returns (address) {\\n        return StorageSlot.getAddressSlot(_ADMIN_SLOT).value;\\n    }\\n\\n    /**\\n     * @dev Stores a new address in the EIP1967 admin slot.\\n     */\\n    function _setAdmin(address newAdmin) private {\\n        require(newAdmin != address(0), \\\"ERC1967: new admin is the zero address\\\");\\n        StorageSlot.getAddressSlot(_ADMIN_SLOT).value = newAdmin;\\n    }\\n\\n    /**\\n     * @dev Changes the admin of the proxy.\\n     *\\n     * Emits an {AdminChanged} event.\\n     */\\n    function _changeAdmin(address newAdmin) internal {\\n        emit AdminChanged(_getAdmin(), newAdmin);\\n        _setAdmin(newAdmin);\\n    }\\n\\n    /**\\n     * @dev The storage slot of the UpgradeableBeacon contract which defines the implementation for this proxy.\\n     * This is bytes32(uint256(keccak256('eip1967.proxy.beacon')) - 1)) and is validated in the constructor.\\n     */\\n    bytes32 internal constant _BEACON_SLOT = 0xa3f0ad74e5423aebfd80d3ef4346578335a9a72aeaee59ff6cb3582b35133d50;\\n\\n    /**\\n     * @dev Emitted when the beacon is upgraded.\\n     */\\n    event BeaconUpgraded(address indexed beacon);\\n\\n    /**\\n     * @dev Returns the current beacon.\\n     */\\n    function _getBeacon() internal view returns (address) {\\n        return StorageSlot.getAddressSlot(_BEACON_SLOT).value;\\n    }\\n\\n    /**\\n     * @dev Stores a new beacon in the EIP1967 beacon slot.\\n     */\\n    function _setBeacon(address newBeacon) private {\\n        require(Address.isContract(newBeacon), \\\"ERC1967: new beacon is not a contract\\\");\\n        require(Address.isContract(IBeacon(newBeacon).implementation()), \\\"ERC1967: beacon implementation is not a contract\\\");\\n        StorageSlot.getAddressSlot(_BEACON_SLOT).value = newBeacon;\\n    }\\n\\n    /**\\n     * @dev Perform beacon upgrade with additional setup call. Note: This upgrades the address of the beacon, it does\\n     * not upgrade the implementation contained in the beacon (see {UpgradeableBeacon-_setImplementation} for that).\\n     *\\n     * Emits a {BeaconUpgraded} event.\\n     */\\n    function _upgradeBeaconToAndCall(\\n        address newBeacon,\\n        bytes memory data,\\n        bool forceCall\\n    ) internal {\\n        _setBeacon(newBeacon);\\n        emit BeaconUpgraded(newBeacon);\\n        if (data.length > 0 || forceCall) {\\n            Address.functionDelegateCall(IBeacon(newBeacon).implementation(), data);\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x17668652127feebed0ce8d9431ef95ccc8c4292f03e3b8cf06c6ca16af396633\",\"license\":\"MIT\"},\"hardhat-deploy/solc_0.8/openzeppelin/proxy/Proxy.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.5.0-rc.0) (proxy/Proxy.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev This abstract contract provides a fallback function that delegates all calls to another contract using the EVM\\n * instruction `delegatecall`. We refer to the second contract as the _implementation_ behind the proxy, and it has to\\n * be specified by overriding the virtual {_implementation} function.\\n *\\n * Additionally, delegation to the implementation can be triggered manually through the {_fallback} function, or to a\\n * different contract through the {_delegate} function.\\n *\\n * The success and return data of the delegated call will be returned back to the caller of the proxy.\\n */\\nabstract contract Proxy {\\n    /**\\n     * @dev Delegates the current call to `implementation`.\\n     *\\n     * This function does not return to its internal call site, it will return directly to the external caller.\\n     */\\n    function _delegate(address implementation) internal virtual {\\n        assembly {\\n            // Copy msg.data. We take full control of memory in this inline assembly\\n            // block because it will not return to Solidity code. We overwrite the\\n            // Solidity scratch pad at memory position 0.\\n            calldatacopy(0, 0, calldatasize())\\n\\n            // Call the implementation.\\n            // out and outsize are 0 because we don't know the size yet.\\n            let result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)\\n\\n            // Copy the returned data.\\n            returndatacopy(0, 0, returndatasize())\\n\\n            switch result\\n            // delegatecall returns 0 on error.\\n            case 0 {\\n                revert(0, returndatasize())\\n            }\\n            default {\\n                return(0, returndatasize())\\n            }\\n        }\\n    }\\n\\n    /**\\n     * @dev This is a virtual function that should be overriden so it returns the address to which the fallback function\\n     * and {_fallback} should delegate.\\n     */\\n    function _implementation() internal view virtual returns (address);\\n\\n    /**\\n     * @dev Delegates the current call to the address returned by `_implementation()`.\\n     *\\n     * This function does not return to its internall call site, it will return directly to the external caller.\\n     */\\n    function _fallback() internal virtual {\\n        _beforeFallback();\\n        _delegate(_implementation());\\n    }\\n\\n    /**\\n     * @dev Fallback function that delegates calls to the address returned by `_implementation()`. Will run if no other\\n     * function in the contract matches the call data.\\n     */\\n    fallback() external payable virtual {\\n        _fallback();\\n    }\\n\\n    /**\\n     * @dev Fallback function that delegates calls to the address returned by `_implementation()`. Will run if call data\\n     * is empty.\\n     */\\n    receive() external payable virtual {\\n        _fallback();\\n    }\\n\\n    /**\\n     * @dev Hook that is called before falling back to the implementation. Can happen as part of a manual `_fallback`\\n     * call, or as part of the Solidity `fallback` or `receive` functions.\\n     *\\n     * If overriden should call `super._beforeFallback()`.\\n     */\\n    function _beforeFallback() internal virtual {}\\n}\\n\",\"keccak256\":\"0xd5d1fd16e9faff7fcb3a52e02a8d49156f42a38a03f07b5f1810c21c2149a8ab\",\"license\":\"MIT\"},\"hardhat-deploy/solc_0.8/openzeppelin/proxy/beacon/IBeacon.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (proxy/beacon/IBeacon.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev This is the interface that {BeaconProxy} expects of its beacon.\\n */\\ninterface IBeacon {\\n    /**\\n     * @dev Must return an address that can be used as a delegate call target.\\n     *\\n     * {BeaconProxy} will check that this address is a contract.\\n     */\\n    function implementation() external view returns (address);\\n}\\n\",\"keccak256\":\"0xd50a3421ac379ccb1be435fa646d66a65c986b4924f0849839f08692f39dde61\",\"license\":\"MIT\"},\"hardhat-deploy/solc_0.8/openzeppelin/utils/Address.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.5.0-rc.0) (utils/Address.sol)\\n\\npragma solidity ^0.8.1;\\n\\n/**\\n * @dev Collection of functions related to the address type\\n */\\nlibrary Address {\\n    /**\\n     * @dev Returns true if `account` is a contract.\\n     *\\n     * [IMPORTANT]\\n     * ====\\n     * It is unsafe to assume that an address for which this function returns\\n     * false is an externally-owned account (EOA) and not a contract.\\n     *\\n     * Among others, `isContract` will return false for the following\\n     * types of addresses:\\n     *\\n     *  - an externally-owned account\\n     *  - a contract in construction\\n     *  - an address where a contract will be created\\n     *  - an address where a contract lived, but was destroyed\\n     * ====\\n     *\\n     * [IMPORTANT]\\n     * ====\\n     * You shouldn't rely on `isContract` to protect against flash loan attacks!\\n     *\\n     * Preventing calls from contracts is highly discouraged. It breaks composability, breaks support for smart wallets\\n     * like Gnosis Safe, and does not provide security since it can be circumvented by calling from a contract\\n     * constructor.\\n     * ====\\n     */\\n    function isContract(address account) internal view returns (bool) {\\n        // This method relies on extcodesize/address.code.length, which returns 0\\n        // for contracts in construction, since the code is only stored at the end\\n        // of the constructor execution.\\n\\n        return account.code.length > 0;\\n    }\\n\\n    /**\\n     * @dev Replacement for Solidity's `transfer`: sends `amount` wei to\\n     * `recipient`, forwarding all available gas and reverting on errors.\\n     *\\n     * https://eips.ethereum.org/EIPS/eip-1884[EIP1884] increases the gas cost\\n     * of certain opcodes, possibly making contracts go over the 2300 gas limit\\n     * imposed by `transfer`, making them unable to receive funds via\\n     * `transfer`. {sendValue} removes this limitation.\\n     *\\n     * https://diligence.consensys.net/posts/2019/09/stop-using-soliditys-transfer-now/[Learn more].\\n     *\\n     * IMPORTANT: because control is transferred to `recipient`, care must be\\n     * taken to not create reentrancy vulnerabilities. Consider using\\n     * {ReentrancyGuard} or the\\n     * https://solidity.readthedocs.io/en/v0.5.11/security-considerations.html#use-the-checks-effects-interactions-pattern[checks-effects-interactions pattern].\\n     */\\n    function sendValue(address payable recipient, uint256 amount) internal {\\n        require(address(this).balance >= amount, \\\"Address: insufficient balance\\\");\\n\\n        (bool success, ) = recipient.call{value: amount}(\\\"\\\");\\n        require(success, \\\"Address: unable to send value, recipient may have reverted\\\");\\n    }\\n\\n    /**\\n     * @dev Performs a Solidity function call using a low level `call`. A\\n     * plain `call` is an unsafe replacement for a function call: use this\\n     * function instead.\\n     *\\n     * If `target` reverts with a revert reason, it is bubbled up by this\\n     * function (like regular Solidity function calls).\\n     *\\n     * Returns the raw returned data. To convert to the expected return value,\\n     * use https://solidity.readthedocs.io/en/latest/units-and-global-variables.html?highlight=abi.decode#abi-encoding-and-decoding-functions[`abi.decode`].\\n     *\\n     * Requirements:\\n     *\\n     * - `target` must be a contract.\\n     * - calling `target` with `data` must not revert.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCall(address target, bytes memory data) internal returns (bytes memory) {\\n        return functionCall(target, data, \\\"Address: low-level call failed\\\");\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`], but with\\n     * `errorMessage` as a fallback revert reason when `target` reverts.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCall(\\n        address target,\\n        bytes memory data,\\n        string memory errorMessage\\n    ) internal returns (bytes memory) {\\n        return functionCallWithValue(target, data, 0, errorMessage);\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],\\n     * but also transferring `value` wei to `target`.\\n     *\\n     * Requirements:\\n     *\\n     * - the calling contract must have an ETH balance of at least `value`.\\n     * - the called Solidity function must be `payable`.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCallWithValue(\\n        address target,\\n        bytes memory data,\\n        uint256 value\\n    ) internal returns (bytes memory) {\\n        return functionCallWithValue(target, data, value, \\\"Address: low-level call with value failed\\\");\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCallWithValue-address-bytes-uint256-}[`functionCallWithValue`], but\\n     * with `errorMessage` as a fallback revert reason when `target` reverts.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCallWithValue(\\n        address target,\\n        bytes memory data,\\n        uint256 value,\\n        string memory errorMessage\\n    ) internal returns (bytes memory) {\\n        require(address(this).balance >= value, \\\"Address: insufficient balance for call\\\");\\n        require(isContract(target), \\\"Address: call to non-contract\\\");\\n\\n        (bool success, bytes memory returndata) = target.call{value: value}(data);\\n        return verifyCallResult(success, returndata, errorMessage);\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],\\n     * but performing a static call.\\n     *\\n     * _Available since v3.3._\\n     */\\n    function functionStaticCall(address target, bytes memory data) internal view returns (bytes memory) {\\n        return functionStaticCall(target, data, \\\"Address: low-level static call failed\\\");\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-string-}[`functionCall`],\\n     * but performing a static call.\\n     *\\n     * _Available since v3.3._\\n     */\\n    function functionStaticCall(\\n        address target,\\n        bytes memory data,\\n        string memory errorMessage\\n    ) internal view returns (bytes memory) {\\n        require(isContract(target), \\\"Address: static call to non-contract\\\");\\n\\n        (bool success, bytes memory returndata) = target.staticcall(data);\\n        return verifyCallResult(success, returndata, errorMessage);\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],\\n     * but performing a delegate call.\\n     *\\n     * _Available since v3.4._\\n     */\\n    function functionDelegateCall(address target, bytes memory data) internal returns (bytes memory) {\\n        return functionDelegateCall(target, data, \\\"Address: low-level delegate call failed\\\");\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-string-}[`functionCall`],\\n     * but performing a delegate call.\\n     *\\n     * _Available since v3.4._\\n     */\\n    function functionDelegateCall(\\n        address target,\\n        bytes memory data,\\n        string memory errorMessage\\n    ) internal returns (bytes memory) {\\n        require(isContract(target), \\\"Address: delegate call to non-contract\\\");\\n\\n        (bool success, bytes memory returndata) = target.delegatecall(data);\\n        return verifyCallResult(success, returndata, errorMessage);\\n    }\\n\\n    /**\\n     * @dev Tool to verifies that a low level call was successful, and revert if it wasn't, either by bubbling the\\n     * revert reason using the provided one.\\n     *\\n     * _Available since v4.3._\\n     */\\n    function verifyCallResult(\\n        bool success,\\n        bytes memory returndata,\\n        string memory errorMessage\\n    ) internal pure returns (bytes memory) {\\n        if (success) {\\n            return returndata;\\n        } else {\\n            // Look for revert reason and bubble it up if present\\n            if (returndata.length > 0) {\\n                // The easiest way to bubble the revert reason is using memory via assembly\\n\\n                assembly {\\n                    let returndata_size := mload(returndata)\\n                    revert(add(32, returndata), returndata_size)\\n                }\\n            } else {\\n                revert(errorMessage);\\n            }\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x3777e696b62134e6177440dbe6e6601c0c156a443f57167194b67e75527439de\",\"license\":\"MIT\"},\"hardhat-deploy/solc_0.8/openzeppelin/utils/StorageSlot.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/StorageSlot.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Library for reading and writing primitive types to specific storage slots.\\n *\\n * Storage slots are often used to avoid storage conflict when dealing with upgradeable contracts.\\n * This library helps with reading and writing to such slots without the need for inline assembly.\\n *\\n * The functions in this library return Slot structs that contain a `value` member that can be used to read or write.\\n *\\n * Example usage to set ERC1967 implementation slot:\\n * ```\\n * contract ERC1967 {\\n *     bytes32 internal constant _IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;\\n *\\n *     function _getImplementation() internal view returns (address) {\\n *         return StorageSlot.getAddressSlot(_IMPLEMENTATION_SLOT).value;\\n *     }\\n *\\n *     function _setImplementation(address newImplementation) internal {\\n *         require(Address.isContract(newImplementation), \\\"ERC1967: new implementation is not a contract\\\");\\n *         StorageSlot.getAddressSlot(_IMPLEMENTATION_SLOT).value = newImplementation;\\n *     }\\n * }\\n * ```\\n *\\n * _Available since v4.1 for `address`, `bool`, `bytes32`, and `uint256`._\\n */\\nlibrary StorageSlot {\\n    struct AddressSlot {\\n        address value;\\n    }\\n\\n    struct BooleanSlot {\\n        bool value;\\n    }\\n\\n    struct Bytes32Slot {\\n        bytes32 value;\\n    }\\n\\n    struct Uint256Slot {\\n        uint256 value;\\n    }\\n\\n    /**\\n     * @dev Returns an `AddressSlot` with member `value` located at `slot`.\\n     */\\n    function getAddressSlot(bytes32 slot) internal pure returns (AddressSlot storage r) {\\n        assembly {\\n            r.slot := slot\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns an `BooleanSlot` with member `value` located at `slot`.\\n     */\\n    function getBooleanSlot(bytes32 slot) internal pure returns (BooleanSlot storage r) {\\n        assembly {\\n            r.slot := slot\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns an `Bytes32Slot` with member `value` located at `slot`.\\n     */\\n    function getBytes32Slot(bytes32 slot) internal pure returns (Bytes32Slot storage r) {\\n        assembly {\\n            r.slot := slot\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns an `Uint256Slot` with member `value` located at `slot`.\\n     */\\n    function getUint256Slot(bytes32 slot) internal pure returns (Uint256Slot storage r) {\\n        assembly {\\n            r.slot := slot\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0xfe1b7a9aa2a530a9e705b220e26cd584e2fbdc9602a3a1066032b12816b46aca\",\"license\":\"MIT\"},\"hardhat-deploy/solc_0.8/proxy/OptimizedTransparentUpgradeableProxy.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (proxy/transparent/TransparentUpgradeableProxy.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../openzeppelin/proxy/ERC1967/ERC1967Proxy.sol\\\";\\n\\n/**\\n * @dev This contract implements a proxy that is upgradeable by an admin.\\n *\\n * To avoid https://medium.com/nomic-labs-blog/malicious-backdoors-in-ethereum-proxies-62629adf3357[proxy selector\\n * clashing], which can potentially be used in an attack, this contract uses the\\n * https://blog.openzeppelin.com/the-transparent-proxy-pattern/[transparent proxy pattern]. This pattern implies two\\n * things that go hand in hand:\\n *\\n * 1. If any account other than the admin calls the proxy, the call will be forwarded to the implementation, even if\\n * that call matches one of the admin functions exposed by the proxy itself.\\n * 2. If the admin calls the proxy, it can access the admin functions, but its calls will never be forwarded to the\\n * implementation. If the admin tries to call a function on the implementation it will fail with an error that says\\n * \\\"admin cannot fallback to proxy target\\\".\\n *\\n * These properties mean that the admin account can only be used for admin actions like upgrading the proxy or changing\\n * the admin, so it's best if it's a dedicated account that is not used for anything else. This will avoid headaches due\\n * to sudden errors when trying to call a function from the proxy implementation.\\n *\\n * Our recommendation is for the dedicated account to be an instance of the {ProxyAdmin} contract. If set up this way,\\n * you should think of the `ProxyAdmin` instance as the real administrative interface of your proxy.\\n */\\ncontract OptimizedTransparentUpgradeableProxy is ERC1967Proxy {\\n    address internal immutable _ADMIN;\\n\\n    /**\\n     * @dev Initializes an upgradeable proxy managed by `_admin`, backed by the implementation at `_logic`, and\\n     * optionally initialized with `_data` as explained in {ERC1967Proxy-constructor}.\\n     */\\n    constructor(\\n        address _logic,\\n        address admin_,\\n        bytes memory _data\\n    ) payable ERC1967Proxy(_logic, _data) {\\n        assert(_ADMIN_SLOT == bytes32(uint256(keccak256(\\\"eip1967.proxy.admin\\\")) - 1));\\n        _ADMIN = admin_;\\n\\n        // still store it to work with EIP-1967\\n        bytes32 slot = _ADMIN_SLOT;\\n        // solhint-disable-next-line no-inline-assembly\\n        assembly {\\n            sstore(slot, admin_)\\n        }\\n        emit AdminChanged(address(0), admin_);\\n    }\\n\\n    /**\\n     * @dev Modifier used internally that will delegate the call to the implementation unless the sender is the admin.\\n     */\\n    modifier ifAdmin() {\\n        if (msg.sender == _getAdmin()) {\\n            _;\\n        } else {\\n            _fallback();\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the current admin.\\n     *\\n     * NOTE: Only the admin can call this function. See {ProxyAdmin-getProxyAdmin}.\\n     *\\n     * TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using the\\n     * https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call.\\n     * `0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103`\\n     */\\n    function admin() external ifAdmin returns (address admin_) {\\n        admin_ = _getAdmin();\\n    }\\n\\n    /**\\n     * @dev Returns the current implementation.\\n     *\\n     * NOTE: Only the admin can call this function. See {ProxyAdmin-getProxyImplementation}.\\n     *\\n     * TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using the\\n     * https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call.\\n     * `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`\\n     */\\n    function implementation() external ifAdmin returns (address implementation_) {\\n        implementation_ = _implementation();\\n    }\\n\\n    /**\\n     * @dev Upgrade the implementation of the proxy.\\n     *\\n     * NOTE: Only the admin can call this function. See {ProxyAdmin-upgrade}.\\n     */\\n    function upgradeTo(address newImplementation) external ifAdmin {\\n        _upgradeToAndCall(newImplementation, bytes(\\\"\\\"), false);\\n    }\\n\\n    /**\\n     * @dev Upgrade the implementation of the proxy, and then call a function from the new implementation as specified\\n     * by `data`, which should be an encoded function call. This is useful to initialize new storage variables in the\\n     * proxied contract.\\n     *\\n     * NOTE: Only the admin can call this function. See {ProxyAdmin-upgradeAndCall}.\\n     */\\n    function upgradeToAndCall(address newImplementation, bytes calldata data) external payable ifAdmin {\\n        _upgradeToAndCall(newImplementation, data, true);\\n    }\\n\\n    /**\\n     * @dev Returns the current admin.\\n     */\\n    function _admin() internal view virtual returns (address) {\\n        return _getAdmin();\\n    }\\n\\n    /**\\n     * @dev Makes sure the admin cannot access the fallback function. See {Proxy-_beforeFallback}.\\n     */\\n    function _beforeFallback() internal virtual override {\\n        require(msg.sender != _getAdmin(), \\\"TransparentUpgradeableProxy: admin cannot fallback to proxy target\\\");\\n        super._beforeFallback();\\n    }\\n\\n    function _getAdmin() internal view virtual override returns (address) {\\n        return _ADMIN;\\n    }\\n}\\n\",\"keccak256\":\"0xa30117644e27fa5b49e162aae2f62b36c1aca02f801b8c594d46e2024963a534\",\"license\":\"MIT\"}},\"version\":1}",
-  "bytecode": "0x60a0604052604051610c8f380380610c8f8339810160408190526100229161039f565b828161004f60017f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbd61046a565b5f80516020610c488339815191521461006a5761006a610489565b61007582825f610123565b506100a3905060017fb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d610461046a565b5f80516020610c28833981519152146100be576100be610489565b6001600160a01b03821660808190525f80516020610c28833981519152838155604080515f8152602081019390935290917f7e644d79422f17c01e4894b5f4f588d331ebfa28653d42ae832dc59e38c9798f910160405180910390a1505050506104e8565b61012c8361014e565b5f825111806101385750805b1561014957610147838361018d565b505b505050565b610157816101bb565b6040516001600160a01b038216907fbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b905f90a250565b60606101b28383604051806060016040528060278152602001610c686027913961025b565b90505b92915050565b6001600160a01b0381163b61022d5760405162461bcd60e51b815260206004820152602d60248201527f455243313936373a206e657720696d706c656d656e746174696f6e206973206e60448201526c1bdd08184818dbdb9d1c9858dd609a1b60648201526084015b60405180910390fd5b5f80516020610c4883398151915280546001600160a01b0319166001600160a01b0392909216919091179055565b60606001600160a01b0384163b6102c35760405162461bcd60e51b815260206004820152602660248201527f416464726573733a2064656c65676174652063616c6c20746f206e6f6e2d636f6044820152651b9d1c9858dd60d21b6064820152608401610224565b5f80856001600160a01b0316856040516102dd919061049d565b5f60405180830381855af49150503d805f8114610315576040519150601f19603f3d011682016040523d82523d5f602084013e61031a565b606091505b50909250905061032b828286610337565b925050505b9392505050565b60608315610346575081610330565b8251156103565782518084602001fd5b8160405162461bcd60e51b815260040161022491906104b3565b80516001600160a01b0381168114610386575f80fd5b919050565b634e487b7160e01b5f52604160045260245ffd5b5f805f606084860312156103b1575f80fd5b6103ba84610370565b92506103c860208501610370565b60408501519092506001600160401b03808211156103e4575f80fd5b818601915086601f8301126103f7575f80fd5b8151818111156104095761040961038b565b604051601f8201601f19908116603f011681019083821181831017156104315761043161038b565b81604052828152896020848701011115610449575f80fd5b8260208601602083015e5f6020848301015280955050505050509250925092565b818103818111156101b557634e487b7160e01b5f52601160045260245ffd5b634e487b7160e01b5f52600160045260245ffd5b5f82518060208501845e5f920191825250919050565b602081525f82518060208401528060208501604085015e5f604082850101526040601f19601f83011684010191505092915050565b6080516107066105225f395f818160eb0152818161013f015281816101bf0152818161020801528181610239015261025d01526107065ff3fe608060405260043610610042575f3560e01c80633659cfe6146100595780634f1ef286146100785780635c60da1b1461008b578063f851a440146100bb57610051565b366100515761004f6100cf565b005b61004f6100cf565b348015610064575f80fd5b5061004f6100733660046105c9565b6100e9565b61004f6100863660046105e2565b61013d565b348015610096575f80fd5b5061009f6101bc565b6040516001600160a01b03909116815260200160405180910390f35b3480156100c6575f80fd5b5061009f610205565b6100d761025b565b6100e76100e2610309565b61033b565b565b7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b03163303610135576101328160405180602001604052805f8152505f610359565b50565b6101326100cf565b7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031633036101b4576101af8383838080601f0160208091040260200160405190810160405280939291908181526020018383808284375f9201919091525060019250610359915050565b505050565b6101af6100cf565b5f7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031633036101fa576101f5610309565b905090565b6102026100cf565b90565b5f7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031633036101fa57507f000000000000000000000000000000000000000000000000000000000000000090565b7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031633036100e75760405162461bcd60e51b815260206004820152604260248201527f5472616e73706172656e745570677261646561626c6550726f78793a2061646d60448201527f696e2063616e6e6f742066616c6c6261636b20746f2070726f78792074617267606482015261195d60f21b608482015260a4015b60405180910390fd5b5f6101f57f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc546001600160a01b031690565b365f80375f80365f845af43d5f803e808015610355573d5ff35b3d5ffd5b61036283610383565b5f8251118061036e5750805b156101af5761037d83836103c2565b50505050565b61038c816103ee565b6040516001600160a01b038216907fbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b905f90a250565b60606103e783836040518060600160405280602781526020016106aa6027913961049c565b9392505050565b6001600160a01b0381163b61045b5760405162461bcd60e51b815260206004820152602d60248201527f455243313936373a206e657720696d706c656d656e746174696f6e206973206e60448201526c1bdd08184818dbdb9d1c9858dd609a1b6064820152608401610300565b7f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc80546001600160a01b0319166001600160a01b0392909216919091179055565b60606001600160a01b0384163b6105045760405162461bcd60e51b815260206004820152602660248201527f416464726573733a2064656c65676174652063616c6c20746f206e6f6e2d636f6044820152651b9d1c9858dd60d21b6064820152608401610300565b5f80856001600160a01b03168560405161051e919061065e565b5f60405180830381855af49150503d805f8114610556576040519150601f19603f3d011682016040523d82523d5f602084013e61055b565b606091505b509150915061056b828286610575565b9695505050505050565b606083156105845750816103e7565b8251156105945782518084602001fd5b8160405162461bcd60e51b81526004016103009190610674565b80356001600160a01b03811681146105c4575f80fd5b919050565b5f602082840312156105d9575f80fd5b6103e7826105ae565b5f805f604084860312156105f4575f80fd5b6105fd846105ae565b9250602084013567ffffffffffffffff80821115610619575f80fd5b818601915086601f83011261062c575f80fd5b81358181111561063a575f80fd5b87602082850101111561064b575f80fd5b6020830194508093505050509250925092565b5f82518060208501845e5f920191825250919050565b602081525f82518060208401528060208501604085015e5f604082850101526040601f19601f8301168401019150509291505056fe416464726573733a206c6f772d6c6576656c2064656c65676174652063616c6c206661696c6564a2646970667358221220d447ec2a4b47962d9e959ca0ec6571d77747999259501e773b66fdcaef0e50bf64736f6c63430008190033b53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc416464726573733a206c6f772d6c6576656c2064656c65676174652063616c6c206661696c6564",
-  "deployedBytecode": "0x608060405260043610610042575f3560e01c80633659cfe6146100595780634f1ef286146100785780635c60da1b1461008b578063f851a440146100bb57610051565b366100515761004f6100cf565b005b61004f6100cf565b348015610064575f80fd5b5061004f6100733660046105c9565b6100e9565b61004f6100863660046105e2565b61013d565b348015610096575f80fd5b5061009f6101bc565b6040516001600160a01b03909116815260200160405180910390f35b3480156100c6575f80fd5b5061009f610205565b6100d761025b565b6100e76100e2610309565b61033b565b565b7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b03163303610135576101328160405180602001604052805f8152505f610359565b50565b6101326100cf565b7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031633036101b4576101af8383838080601f0160208091040260200160405190810160405280939291908181526020018383808284375f9201919091525060019250610359915050565b505050565b6101af6100cf565b5f7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031633036101fa576101f5610309565b905090565b6102026100cf565b90565b5f7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031633036101fa57507f000000000000000000000000000000000000000000000000000000000000000090565b7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031633036100e75760405162461bcd60e51b815260206004820152604260248201527f5472616e73706172656e745570677261646561626c6550726f78793a2061646d60448201527f696e2063616e6e6f742066616c6c6261636b20746f2070726f78792074617267606482015261195d60f21b608482015260a4015b60405180910390fd5b5f6101f57f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc546001600160a01b031690565b365f80375f80365f845af43d5f803e808015610355573d5ff35b3d5ffd5b61036283610383565b5f8251118061036e5750805b156101af5761037d83836103c2565b50505050565b61038c816103ee565b6040516001600160a01b038216907fbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b905f90a250565b60606103e783836040518060600160405280602781526020016106aa6027913961049c565b9392505050565b6001600160a01b0381163b61045b5760405162461bcd60e51b815260206004820152602d60248201527f455243313936373a206e657720696d706c656d656e746174696f6e206973206e60448201526c1bdd08184818dbdb9d1c9858dd609a1b6064820152608401610300565b7f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc80546001600160a01b0319166001600160a01b0392909216919091179055565b60606001600160a01b0384163b6105045760405162461bcd60e51b815260206004820152602660248201527f416464726573733a2064656c65676174652063616c6c20746f206e6f6e2d636f6044820152651b9d1c9858dd60d21b6064820152608401610300565b5f80856001600160a01b03168560405161051e919061065e565b5f60405180830381855af49150503d805f8114610556576040519150601f19603f3d011682016040523d82523d5f602084013e61055b565b606091505b509150915061056b828286610575565b9695505050505050565b606083156105845750816103e7565b8251156105945782518084602001fd5b8160405162461bcd60e51b81526004016103009190610674565b80356001600160a01b03811681146105c4575f80fd5b919050565b5f602082840312156105d9575f80fd5b6103e7826105ae565b5f805f604084860312156105f4575f80fd5b6105fd846105ae565b9250602084013567ffffffffffffffff80821115610619575f80fd5b818601915086601f83011261062c575f80fd5b81358181111561063a575f80fd5b87602082850101111561064b575f80fd5b6020830194508093505050509250925092565b5f82518060208501845e5f920191825250919050565b602081525f82518060208401528060208501604085015e5f604082850101526040601f19601f8301168401019150509291505056fe416464726573733a206c6f772d6c6576656c2064656c65676174652063616c6c206661696c6564a2646970667358221220d447ec2a4b47962d9e959ca0ec6571d77747999259501e773b66fdcaef0e50bf64736f6c63430008190033",
-  "implementation": "0xc2BEfC6d90014130ac1a39799375B45D438D4269",
+  "solcInputHash": "8100be9851a60cd39397bcc019f102c9",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.25+commit.b61c2a91\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"correlatedToken\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"underlyingToken\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"resilientOracle\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"intermediateOracle\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"annualGrowthRate\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_snapshotInterval\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"initialSnapshotMaxExchangeRate\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"initialSnapshotTimestamp\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"accessControlManager\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_snapshotGap\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"InvalidGrowthRate\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidInitialSnapshot\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidSnapshotMaxExchangeRate\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidTokenAddress\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"calledContract\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"methodSignature\",\"type\":\"string\"}],\"name\":\"Unauthorized\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ZeroAddressNotAllowed\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"oldGrowthRatePerSecond\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"newGrowthRatePerSecond\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"oldSnapshotInterval\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newSnapshotInterval\",\"type\":\"uint256\"}],\"name\":\"GrowthRateUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"oldSnapshotGap\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"newSnapshotGap\",\"type\":\"uint256\"}],\"name\":\"SnapshotGapUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"maxExchangeRate\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"SnapshotUpdated\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"ACCESS_CONTROL_MANAGER\",\"outputs\":[{\"internalType\":\"contract IAccessControlManagerV8\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"CORRELATED_TOKEN\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"INTERMEDIATE_ORACLE\",\"outputs\":[{\"internalType\":\"contract OracleInterface\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"RESILIENT_ORACLE\",\"outputs\":[{\"internalType\":\"contract ResilientOracleInterface\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"UNDERLYING_TOKEN\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMaxAllowedExchangeRate\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"}],\"name\":\"getPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getUnderlyingAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"growthRatePerSecond\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isCapped\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_annualGrowthRate\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_snapshotInterval\",\"type\":\"uint256\"}],\"name\":\"setGrowthRate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_snapshotMaxExchangeRate\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_snapshotTimestamp\",\"type\":\"uint256\"}],\"name\":\"setSnapshot\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_snapshotGap\",\"type\":\"uint256\"}],\"name\":\"setSnapshotGap\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"snapshotGap\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"snapshotInterval\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"snapshotMaxExchangeRate\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"snapshotTimestamp\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"updateSnapshot\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"Venus\",\"kind\":\"dev\",\"methods\":{\"getMaxAllowedExchangeRate()\":{\"returns\":{\"_0\":\"maxExchangeRate Maximum allowed exchange rate\"}},\"getPrice(address)\":{\"custom:error\":\"InvalidTokenAddress error is thrown if the token address is invalid\",\"params\":{\"asset\":\"Address of the token\"},\"returns\":{\"_0\":\"price The price of the token in scaled decimal places. It can be capped to a maximum value taking into account the growth rate\"}},\"getUnderlyingAmount()\":{\"returns\":{\"_0\":\"amount The amount of the underlying token for 1 correlated token scaled by the underlying token decimals\"}},\"isCapped()\":{\"returns\":{\"_0\":\"isCapped Boolean indicating if the price is capped\"}},\"setGrowthRate(uint256,uint256)\":{\"custom:error\":\"InvalidGrowthRate error is thrown if the growth rate is invalid\",\"custom:event\":\"Emits GrowthRateUpdated event on successful update of the growth rate\",\"params\":{\"_annualGrowthRate\":\"The annual growth rate to set\",\"_snapshotInterval\":\"The snapshot interval to set\"}},\"setSnapshot(uint256,uint256)\":{\"custom:event\":\"Emits SnapshotUpdated event on successful update of the snapshot\",\"params\":{\"_snapshotMaxExchangeRate\":\"The exchange rate to set\",\"_snapshotTimestamp\":\"The timestamp to set\"}},\"setSnapshotGap(uint256)\":{\"custom:event\":\"Emits SnapshotGapUpdated event on successful update of the snapshot gap\",\"params\":{\"_snapshotGap\":\"The snapshot gap to set\"}},\"updateSnapshot()\":{\"custom:error\":\"InvalidSnapshotMaxExchangeRate error is thrown if the max snapshot exchange rate is zero\",\"custom:event\":\"Emits SnapshotUpdated event on successful update of the snapshot\"}},\"title\":\"OneJumpOracle\",\"version\":1},\"userdoc\":{\"errors\":{\"InvalidGrowthRate()\":[{\"notice\":\"Thrown if the growth rate is invalid\"}],\"InvalidInitialSnapshot()\":[{\"notice\":\"Thrown if the initial snapshot is invalid\"}],\"InvalidSnapshotMaxExchangeRate()\":[{\"notice\":\"Thrown if the max snapshot exchange rate is invalid\"}],\"InvalidTokenAddress()\":[{\"notice\":\"Thrown if the token address is invalid\"}],\"Unauthorized(address,address,string)\":[{\"notice\":\"@notice Thrown when the action is prohibited by AccessControlManager\"}],\"ZeroAddressNotAllowed()\":[{\"notice\":\"Thrown if the supplied address is a zero address where it is not allowed\"}]},\"events\":{\"GrowthRateUpdated(uint256,uint256,uint256,uint256)\":{\"notice\":\"Emitted when the growth rate is updated\"},\"SnapshotGapUpdated(uint256,uint256)\":{\"notice\":\"Emitted when the snapshot gap is updated\"},\"SnapshotUpdated(uint256,uint256)\":{\"notice\":\"Emitted when the snapshot is updated\"}},\"kind\":\"user\",\"methods\":{\"ACCESS_CONTROL_MANAGER()\":{\"notice\":\"Address of the AccessControlManager contract\"},\"CORRELATED_TOKEN()\":{\"notice\":\"Address of the correlated token\"},\"INTERMEDIATE_ORACLE()\":{\"notice\":\"Address of the intermediate oracle\"},\"RESILIENT_ORACLE()\":{\"notice\":\"Address of Resilient Oracle\"},\"UNDERLYING_TOKEN()\":{\"notice\":\"Address of the underlying token\"},\"constructor\":{\"notice\":\"Constructor for the implementation contract.\"},\"getMaxAllowedExchangeRate()\":{\"notice\":\"Gets the maximum allowed exchange rate for token\"},\"getPrice(address)\":{\"notice\":\"Fetches the price of the token\"},\"getUnderlyingAmount()\":{\"notice\":\"Fetches the amount of the underlying token for 1 correlated token, using the intermediate oracle\"},\"isCapped()\":{\"notice\":\"Returns if the price is capped\"},\"setGrowthRate(uint256,uint256)\":{\"notice\":\"Sets the growth rate and snapshot interval\"},\"setSnapshot(uint256,uint256)\":{\"notice\":\"Directly sets the snapshot exchange rate and timestamp\"},\"setSnapshotGap(uint256)\":{\"notice\":\"Sets the snapshot gap\"},\"snapshotGap()\":{\"notice\":\"Gap to add when updating the snapshot\"},\"snapshotInterval()\":{\"notice\":\"Snapshot update interval\"},\"snapshotMaxExchangeRate()\":{\"notice\":\"Last stored snapshot maximum exchange rate\"},\"snapshotTimestamp()\":{\"notice\":\"Last stored snapshot timestamp\"},\"updateSnapshot()\":{\"notice\":\"Updates the snapshot price and timestamp\"}},\"notice\":\"This oracle fetches the price of an asset in through an intermediate asset\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/oracles/OneJumpOracle.sol\":\"OneJumpOracle\"},\"evmVersion\":\"cancun\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/access/IAccessControl.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (access/IAccessControl.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev External interface of AccessControl declared to support ERC165 detection.\\n */\\ninterface IAccessControl {\\n    /**\\n     * @dev Emitted when `newAdminRole` is set as ``role``'s admin role, replacing `previousAdminRole`\\n     *\\n     * `DEFAULT_ADMIN_ROLE` is the starting admin for all roles, despite\\n     * {RoleAdminChanged} not being emitted signaling this.\\n     *\\n     * _Available since v3.1._\\n     */\\n    event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole);\\n\\n    /**\\n     * @dev Emitted when `account` is granted `role`.\\n     *\\n     * `sender` is the account that originated the contract call, an admin role\\n     * bearer except when using {AccessControl-_setupRole}.\\n     */\\n    event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender);\\n\\n    /**\\n     * @dev Emitted when `account` is revoked `role`.\\n     *\\n     * `sender` is the account that originated the contract call:\\n     *   - if using `revokeRole`, it is the admin role bearer\\n     *   - if using `renounceRole`, it is the role bearer (i.e. `account`)\\n     */\\n    event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender);\\n\\n    /**\\n     * @dev Returns `true` if `account` has been granted `role`.\\n     */\\n    function hasRole(bytes32 role, address account) external view returns (bool);\\n\\n    /**\\n     * @dev Returns the admin role that controls `role`. See {grantRole} and\\n     * {revokeRole}.\\n     *\\n     * To change a role's admin, use {AccessControl-_setRoleAdmin}.\\n     */\\n    function getRoleAdmin(bytes32 role) external view returns (bytes32);\\n\\n    /**\\n     * @dev Grants `role` to `account`.\\n     *\\n     * If `account` had not been already granted `role`, emits a {RoleGranted}\\n     * event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must have ``role``'s admin role.\\n     */\\n    function grantRole(bytes32 role, address account) external;\\n\\n    /**\\n     * @dev Revokes `role` from `account`.\\n     *\\n     * If `account` had been granted `role`, emits a {RoleRevoked} event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must have ``role``'s admin role.\\n     */\\n    function revokeRole(bytes32 role, address account) external;\\n\\n    /**\\n     * @dev Revokes `role` from the calling account.\\n     *\\n     * Roles are often managed via {grantRole} and {revokeRole}: this function's\\n     * purpose is to provide a mechanism for accounts to lose their privileges\\n     * if they are compromised (such as when a trusted device is misplaced).\\n     *\\n     * If the calling account had been granted `role`, emits a {RoleRevoked}\\n     * event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must be `account`.\\n     */\\n    function renounceRole(bytes32 role, address account) external;\\n}\\n\",\"keccak256\":\"0x59ce320a585d7e1f163cd70390a0ef2ff9cec832e2aa544293a00692465a7a57\",\"license\":\"MIT\"},\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.9.0) (token/ERC20/IERC20.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Interface of the ERC20 standard as defined in the EIP.\\n */\\ninterface IERC20 {\\n    /**\\n     * @dev Emitted when `value` tokens are moved from one account (`from`) to\\n     * another (`to`).\\n     *\\n     * Note that `value` may be zero.\\n     */\\n    event Transfer(address indexed from, address indexed to, uint256 value);\\n\\n    /**\\n     * @dev Emitted when the allowance of a `spender` for an `owner` is set by\\n     * a call to {approve}. `value` is the new allowance.\\n     */\\n    event Approval(address indexed owner, address indexed spender, uint256 value);\\n\\n    /**\\n     * @dev Returns the amount of tokens in existence.\\n     */\\n    function totalSupply() external view returns (uint256);\\n\\n    /**\\n     * @dev Returns the amount of tokens owned by `account`.\\n     */\\n    function balanceOf(address account) external view returns (uint256);\\n\\n    /**\\n     * @dev Moves `amount` tokens from the caller's account to `to`.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function transfer(address to, uint256 amount) external returns (bool);\\n\\n    /**\\n     * @dev Returns the remaining number of tokens that `spender` will be\\n     * allowed to spend on behalf of `owner` through {transferFrom}. This is\\n     * zero by default.\\n     *\\n     * This value changes when {approve} or {transferFrom} are called.\\n     */\\n    function allowance(address owner, address spender) external view returns (uint256);\\n\\n    /**\\n     * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * IMPORTANT: Beware that changing an allowance with this method brings the risk\\n     * that someone may use both the old and the new allowance by unfortunate\\n     * transaction ordering. One possible solution to mitigate this race\\n     * condition is to first reduce the spender's allowance to 0 and set the\\n     * desired value afterwards:\\n     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729\\n     *\\n     * Emits an {Approval} event.\\n     */\\n    function approve(address spender, uint256 amount) external returns (bool);\\n\\n    /**\\n     * @dev Moves `amount` tokens from `from` to `to` using the\\n     * allowance mechanism. `amount` is then deducted from the caller's\\n     * allowance.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function transferFrom(address from, address to, uint256 amount) external returns (bool);\\n}\\n\",\"keccak256\":\"0x287b55befed2961a7eabd7d7b1b2839cbca8a5b80ef8dcbb25ed3d4c2002c305\",\"license\":\"MIT\"},\"@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/IERC20Metadata.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../IERC20.sol\\\";\\n\\n/**\\n * @dev Interface for the optional metadata functions from the ERC20 standard.\\n *\\n * _Available since v4.1._\\n */\\ninterface IERC20Metadata is IERC20 {\\n    /**\\n     * @dev Returns the name of the token.\\n     */\\n    function name() external view returns (string memory);\\n\\n    /**\\n     * @dev Returns the symbol of the token.\\n     */\\n    function symbol() external view returns (string memory);\\n\\n    /**\\n     * @dev Returns the decimals places of the token.\\n     */\\n    function decimals() external view returns (uint8);\\n}\\n\",\"keccak256\":\"0x8de418a5503946cabe331f35fe242d3201a73f67f77aaeb7110acb1f30423aca\",\"license\":\"MIT\"},\"@venusprotocol/governance-contracts/contracts/Governance/IAccessControlManagerV8.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity ^0.8.25;\\n\\nimport \\\"@openzeppelin/contracts/access/IAccessControl.sol\\\";\\n\\n/**\\n * @title IAccessControlManagerV8\\n * @author Venus\\n * @notice Interface implemented by the `AccessControlManagerV8` contract.\\n */\\ninterface IAccessControlManagerV8 is IAccessControl {\\n    function giveCallPermission(address contractAddress, string calldata functionSig, address accountToPermit) external;\\n\\n    function revokeCallPermission(\\n        address contractAddress,\\n        string calldata functionSig,\\n        address accountToRevoke\\n    ) external;\\n\\n    function isAllowedToCall(address account, string calldata functionSig) external view returns (bool);\\n\\n    function hasPermission(\\n        address account,\\n        address contractAddress,\\n        string calldata functionSig\\n    ) external view returns (bool);\\n}\\n\",\"keccak256\":\"0xaa29b098440d0b3a131c5ecdf25ce548790c1b5ac7bf9b5c0264b6af6f7a1e0b\",\"license\":\"BSD-3-Clause\"},\"@venusprotocol/solidity-utilities/contracts/constants.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity ^0.8.25;\\n\\n/// @dev Base unit for computations, usually used in scaling (multiplications, divisions)\\nuint256 constant EXP_SCALE = 1e18;\\n\\n/// @dev A unit (literal one) in EXP_SCALE, usually used in additions/subtractions\\nuint256 constant MANTISSA_ONE = EXP_SCALE;\\n\\n/// @dev The approximate number of seconds per year\\nuint256 constant SECONDS_PER_YEAR = 31_536_000;\\n\",\"keccak256\":\"0x14de93ead464da249af31bea0e3bcfb62ec693bea3475fb4d90f055ac81dc5eb\",\"license\":\"BSD-3-Clause\"},\"@venusprotocol/solidity-utilities/contracts/validators.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity 0.8.25;\\n\\n/// @notice Thrown if the supplied address is a zero address where it is not allowed\\nerror ZeroAddressNotAllowed();\\n\\n/// @notice Thrown if the supplied value is 0 where it is not allowed\\nerror ZeroValueNotAllowed();\\n\\n/// @notice Checks if the provided address is nonzero, reverts otherwise\\n/// @param address_ Address to check\\n/// @custom:error ZeroAddressNotAllowed is thrown if the provided address is a zero address\\nfunction ensureNonzeroAddress(address address_) pure {\\n    if (address_ == address(0)) {\\n        revert ZeroAddressNotAllowed();\\n    }\\n}\\n\\n/// @notice Checks if the provided value is nonzero, reverts otherwise\\n/// @param value_ Value to check\\n/// @custom:error ZeroValueNotAllowed is thrown if the provided value is 0\\nfunction ensureNonzeroValue(uint256 value_) pure {\\n    if (value_ == 0) {\\n        revert ZeroValueNotAllowed();\\n    }\\n}\\n\",\"keccak256\":\"0xdb88e14d50dd21889ca3329d755673d022c47e8da005b6a545c7f69c2c4b7b86\",\"license\":\"BSD-3-Clause\"},\"contracts/interfaces/ICappedOracle.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity 0.8.25;\\n\\ninterface ICappedOracle {\\n    function updateSnapshot() external;\\n}\\n\",\"keccak256\":\"0xad239e65b5e92b3486418c5ccca120247702251f9724cd96657c3cfdc7fedc31\",\"license\":\"BSD-3-Clause\"},\"contracts/interfaces/OracleInterface.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity ^0.8.25;\\n\\ninterface OracleInterface {\\n    function getPrice(address asset) external view returns (uint256);\\n}\\n\\ninterface ResilientOracleInterface is OracleInterface {\\n    function updatePrice(address vToken) external;\\n\\n    function updateAssetPrice(address asset) external;\\n\\n    function getUnderlyingPrice(address vToken) external view returns (uint256);\\n}\\n\\ninterface BoundValidatorInterface {\\n    function validatePriceWithAnchorPrice(\\n        address asset,\\n        uint256 reporterPrice,\\n        uint256 anchorPrice\\n    ) external view returns (bool);\\n}\\n\",\"keccak256\":\"0xd3bbb7c9eef19e8f467342df6034ef95399a00964646fb8c82b438968ae3a8c0\",\"license\":\"BSD-3-Clause\"},\"contracts/oracles/OneJumpOracle.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity 0.8.25;\\n\\nimport { CorrelatedTokenOracle } from \\\"./common/CorrelatedTokenOracle.sol\\\";\\nimport { ensureNonzeroAddress } from \\\"@venusprotocol/solidity-utilities/contracts/validators.sol\\\";\\nimport { OracleInterface } from \\\"../interfaces/OracleInterface.sol\\\";\\nimport { IERC20Metadata } from \\\"@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol\\\";\\n\\n/**\\n * @title OneJumpOracle\\n * @author Venus\\n * @notice This oracle fetches the price of an asset in through an intermediate asset\\n */\\ncontract OneJumpOracle is CorrelatedTokenOracle {\\n    /// @notice Address of the intermediate oracle\\n    OracleInterface public immutable INTERMEDIATE_ORACLE;\\n\\n    /// @notice Constructor for the implementation contract.\\n    constructor(\\n        address correlatedToken,\\n        address underlyingToken,\\n        address resilientOracle,\\n        address intermediateOracle,\\n        uint256 annualGrowthRate,\\n        uint256 _snapshotInterval,\\n        uint256 initialSnapshotMaxExchangeRate,\\n        uint256 initialSnapshotTimestamp,\\n        address accessControlManager,\\n        uint256 _snapshotGap\\n    )\\n        CorrelatedTokenOracle(\\n            correlatedToken,\\n            underlyingToken,\\n            resilientOracle,\\n            annualGrowthRate,\\n            _snapshotInterval,\\n            initialSnapshotMaxExchangeRate,\\n            initialSnapshotTimestamp,\\n            accessControlManager,\\n            _snapshotGap\\n        )\\n    {\\n        ensureNonzeroAddress(intermediateOracle);\\n        INTERMEDIATE_ORACLE = OracleInterface(intermediateOracle);\\n    }\\n\\n    /**\\n     * @notice Fetches the amount of the underlying token for 1 correlated token, using the intermediate oracle\\n     * @return amount The amount of the underlying token for 1 correlated token scaled by the underlying token decimals\\n     */\\n    function getUnderlyingAmount() public view override returns (uint256) {\\n        uint256 underlyingDecimals = IERC20Metadata(UNDERLYING_TOKEN).decimals();\\n        uint256 correlatedDecimals = IERC20Metadata(CORRELATED_TOKEN).decimals();\\n\\n        uint256 underlyingAmount = INTERMEDIATE_ORACLE.getPrice(CORRELATED_TOKEN);\\n\\n        return (underlyingAmount * (10 ** correlatedDecimals)) / (10 ** (36 - underlyingDecimals));\\n    }\\n}\\n\",\"keccak256\":\"0xa08f479bef67278c8b7a32cdf49691b76ed64c9f29c7dbd3435bd1a964f6b4ac\",\"license\":\"BSD-3-Clause\"},\"contracts/oracles/common/CorrelatedTokenOracle.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity 0.8.25;\\n\\nimport { OracleInterface, ResilientOracleInterface } from \\\"../../interfaces/OracleInterface.sol\\\";\\nimport { ensureNonzeroAddress } from \\\"@venusprotocol/solidity-utilities/contracts/validators.sol\\\";\\nimport { SECONDS_PER_YEAR } from \\\"@venusprotocol/solidity-utilities/contracts/constants.sol\\\";\\nimport { IERC20Metadata } from \\\"@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol\\\";\\nimport { ICappedOracle } from \\\"../../interfaces/ICappedOracle.sol\\\";\\nimport { IAccessControlManagerV8 } from \\\"@venusprotocol/governance-contracts/contracts/Governance/IAccessControlManagerV8.sol\\\";\\n\\n/**\\n * @title CorrelatedTokenOracle\\n * @notice This oracle fetches the price of a token that is correlated to another token.\\n */\\nabstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {\\n    /// @notice Address of the correlated token\\n    address public immutable CORRELATED_TOKEN;\\n\\n    /// @notice Address of the underlying token\\n    address public immutable UNDERLYING_TOKEN;\\n\\n    /// @notice Address of Resilient Oracle\\n    ResilientOracleInterface public immutable RESILIENT_ORACLE;\\n\\n    /// @notice Address of the AccessControlManager contract\\n    IAccessControlManagerV8 public immutable ACCESS_CONTROL_MANAGER;\\n\\n    //// @notice Growth rate percentage in seconds. Ex: 1e18 is 100%\\n    uint256 public growthRatePerSecond;\\n\\n    /// @notice Snapshot update interval\\n    uint256 public snapshotInterval;\\n\\n    /// @notice Last stored snapshot maximum exchange rate\\n    uint256 public snapshotMaxExchangeRate;\\n\\n    /// @notice Last stored snapshot timestamp\\n    uint256 public snapshotTimestamp;\\n\\n    /// @notice Gap to add when updating the snapshot\\n    uint256 public snapshotGap;\\n\\n    /// @notice Emitted when the snapshot is updated\\n    event SnapshotUpdated(uint256 indexed maxExchangeRate, uint256 indexed timestamp);\\n\\n    /// @notice Emitted when the growth rate is updated\\n    event GrowthRateUpdated(\\n        uint256 indexed oldGrowthRatePerSecond,\\n        uint256 indexed newGrowthRatePerSecond,\\n        uint256 indexed oldSnapshotInterval,\\n        uint256 newSnapshotInterval\\n    );\\n\\n    /// @notice Emitted when the snapshot gap is updated\\n    event SnapshotGapUpdated(uint256 indexed oldSnapshotGap, uint256 indexed newSnapshotGap);\\n\\n    /// @notice Thrown if the token address is invalid\\n    error InvalidTokenAddress();\\n\\n    /// @notice Thrown if the growth rate is invalid\\n    error InvalidGrowthRate();\\n\\n    /// @notice Thrown if the initial snapshot is invalid\\n    error InvalidInitialSnapshot();\\n\\n    /// @notice Thrown if the max snapshot exchange rate is invalid\\n    error InvalidSnapshotMaxExchangeRate();\\n\\n    /// @notice @notice Thrown when the action is prohibited by AccessControlManager\\n    error Unauthorized(address sender, address calledContract, string methodSignature);\\n\\n    /**\\n     * @notice Constructor for the implementation contract.\\n     * @custom:error InvalidGrowthRate error is thrown if the growth rate is invalid\\n     * @custom:error InvalidInitialSnapshot error is thrown if the initial snapshot values are invalid\\n     */\\n    constructor(\\n        address _correlatedToken,\\n        address _underlyingToken,\\n        address _resilientOracle,\\n        uint256 _annualGrowthRate,\\n        uint256 _snapshotInterval,\\n        uint256 _initialSnapshotMaxExchangeRate,\\n        uint256 _initialSnapshotTimestamp,\\n        address _accessControlManager,\\n        uint256 _snapshotGap\\n    ) {\\n        growthRatePerSecond = _annualGrowthRate / SECONDS_PER_YEAR;\\n\\n        if ((growthRatePerSecond == 0 && _snapshotInterval > 0) || (growthRatePerSecond > 0 && _snapshotInterval == 0))\\n            revert InvalidGrowthRate();\\n\\n        if ((_initialSnapshotMaxExchangeRate == 0 || _initialSnapshotTimestamp == 0) && _snapshotInterval > 0) {\\n            revert InvalidInitialSnapshot();\\n        }\\n\\n        ensureNonzeroAddress(_correlatedToken);\\n        ensureNonzeroAddress(_underlyingToken);\\n        ensureNonzeroAddress(_resilientOracle);\\n        ensureNonzeroAddress(_accessControlManager);\\n\\n        CORRELATED_TOKEN = _correlatedToken;\\n        UNDERLYING_TOKEN = _underlyingToken;\\n        RESILIENT_ORACLE = ResilientOracleInterface(_resilientOracle);\\n        snapshotInterval = _snapshotInterval;\\n\\n        snapshotMaxExchangeRate = _initialSnapshotMaxExchangeRate;\\n        snapshotTimestamp = _initialSnapshotTimestamp;\\n        snapshotGap = _snapshotGap;\\n\\n        ACCESS_CONTROL_MANAGER = IAccessControlManagerV8(_accessControlManager);\\n    }\\n\\n    /**\\n     * @notice Directly sets the snapshot exchange rate and timestamp\\n     * @param _snapshotMaxExchangeRate The exchange rate to set\\n     * @param _snapshotTimestamp The timestamp to set\\n     * @custom:event Emits SnapshotUpdated event on successful update of the snapshot\\n     */\\n    function setSnapshot(uint256 _snapshotMaxExchangeRate, uint256 _snapshotTimestamp) external {\\n        _checkAccessAllowed(\\\"setSnapshot(uint256,uint256)\\\");\\n\\n        snapshotMaxExchangeRate = _snapshotMaxExchangeRate;\\n        snapshotTimestamp = _snapshotTimestamp;\\n\\n        emit SnapshotUpdated(snapshotMaxExchangeRate, snapshotTimestamp);\\n    }\\n\\n    /**\\n     * @notice Sets the growth rate and snapshot interval\\n     * @param _annualGrowthRate The annual growth rate to set\\n     * @param _snapshotInterval The snapshot interval to set\\n     * @custom:error InvalidGrowthRate error is thrown if the growth rate is invalid\\n     * @custom:event Emits GrowthRateUpdated event on successful update of the growth rate\\n     */\\n    function setGrowthRate(uint256 _annualGrowthRate, uint256 _snapshotInterval) external {\\n        _checkAccessAllowed(\\\"setGrowthRate(uint256,uint256)\\\");\\n        uint256 oldGrowthRatePerSecond = growthRatePerSecond;\\n\\n        growthRatePerSecond = _annualGrowthRate / SECONDS_PER_YEAR;\\n\\n        if ((growthRatePerSecond == 0 && _snapshotInterval > 0) || (growthRatePerSecond > 0 && _snapshotInterval == 0))\\n            revert InvalidGrowthRate();\\n\\n        emit GrowthRateUpdated(oldGrowthRatePerSecond, growthRatePerSecond, snapshotInterval, _snapshotInterval);\\n\\n        snapshotInterval = _snapshotInterval;\\n    }\\n\\n    /**\\n     * @notice Sets the snapshot gap\\n     * @param _snapshotGap The snapshot gap to set\\n     * @custom:event Emits SnapshotGapUpdated event on successful update of the snapshot gap\\n     */\\n    function setSnapshotGap(uint256 _snapshotGap) external {\\n        _checkAccessAllowed(\\\"setSnapshotGap(uint256)\\\");\\n\\n        emit SnapshotGapUpdated(snapshotGap, _snapshotGap);\\n\\n        snapshotGap = _snapshotGap;\\n    }\\n\\n    /**\\n     * @notice Returns if the price is capped\\n     * @return isCapped Boolean indicating if the price is capped\\n     */\\n    function isCapped() external view virtual returns (bool) {\\n        if (snapshotInterval == 0) {\\n            return false;\\n        }\\n\\n        uint256 maxAllowedExchangeRate = getMaxAllowedExchangeRate();\\n        if (maxAllowedExchangeRate == 0) {\\n            return false;\\n        }\\n\\n        uint256 exchangeRate = getUnderlyingAmount();\\n\\n        return exchangeRate > maxAllowedExchangeRate;\\n    }\\n\\n    /**\\n     * @notice Updates the snapshot price and timestamp\\n     * @custom:event Emits SnapshotUpdated event on successful update of the snapshot\\n     * @custom:error InvalidSnapshotMaxExchangeRate error is thrown if the max snapshot exchange rate is zero\\n     */\\n    function updateSnapshot() public override {\\n        if (block.timestamp - snapshotTimestamp < snapshotInterval || snapshotInterval == 0) return;\\n\\n        uint256 exchangeRate = getUnderlyingAmount();\\n        uint256 maxAllowedExchangeRate = getMaxAllowedExchangeRate();\\n\\n        snapshotMaxExchangeRate =\\n            (exchangeRate > maxAllowedExchangeRate ? maxAllowedExchangeRate : exchangeRate) +\\n            snapshotGap;\\n        snapshotTimestamp = block.timestamp;\\n\\n        if (snapshotMaxExchangeRate == 0) revert InvalidSnapshotMaxExchangeRate();\\n\\n        RESILIENT_ORACLE.updateAssetPrice(UNDERLYING_TOKEN);\\n        emit SnapshotUpdated(snapshotMaxExchangeRate, snapshotTimestamp);\\n    }\\n\\n    /**\\n     * @notice Fetches the price of the token\\n     * @param asset Address of the token\\n     * @return price The price of the token in scaled decimal places. It can be capped\\n     * to a maximum value taking into account the growth rate\\n     * @custom:error InvalidTokenAddress error is thrown if the token address is invalid\\n     */\\n    function getPrice(address asset) public view override returns (uint256) {\\n        if (asset != CORRELATED_TOKEN) revert InvalidTokenAddress();\\n\\n        uint256 exchangeRate = getUnderlyingAmount();\\n\\n        if (snapshotInterval == 0) {\\n            return _calculatePrice(exchangeRate);\\n        }\\n\\n        uint256 maxAllowedExchangeRate = getMaxAllowedExchangeRate();\\n\\n        uint256 finalExchangeRate = (exchangeRate > maxAllowedExchangeRate && maxAllowedExchangeRate != 0)\\n            ? maxAllowedExchangeRate\\n            : exchangeRate;\\n\\n        return _calculatePrice(finalExchangeRate);\\n    }\\n\\n    /**\\n     * @notice Gets the maximum allowed exchange rate for token\\n     * @return maxExchangeRate Maximum allowed exchange rate\\n     */\\n    function getMaxAllowedExchangeRate() public view returns (uint256) {\\n        uint256 timeElapsed = block.timestamp - snapshotTimestamp;\\n        uint256 maxExchangeRate = snapshotMaxExchangeRate +\\n            (snapshotMaxExchangeRate * growthRatePerSecond * timeElapsed) /\\n            1e18;\\n        return maxExchangeRate;\\n    }\\n\\n    /**\\n     * @notice Gets the underlying amount for correlated token\\n     * @return underlyingAmount Amount of underlying token\\n     */\\n    function getUnderlyingAmount() public view virtual returns (uint256);\\n\\n    /**\\n     * @notice Fetches price of the token based on an underlying exchange rate\\n     * @param exchangeRate The underlying exchange rate to use\\n     * @return price The price of the token in scaled decimal places\\n     */\\n    function _calculatePrice(uint256 exchangeRate) internal view returns (uint256) {\\n        uint256 underlyingUSDPrice = RESILIENT_ORACLE.getPrice(UNDERLYING_TOKEN);\\n\\n        IERC20Metadata token = IERC20Metadata(CORRELATED_TOKEN);\\n        uint256 decimals = token.decimals();\\n\\n        return (exchangeRate * underlyingUSDPrice) / (10 ** decimals);\\n    }\\n\\n    /**\\n     * @notice Reverts if the call is not allowed by AccessControlManager\\n     * @param signature Method signature\\n     * @custom:error Unauthorized error is thrown if the call is not allowed\\n     */\\n    function _checkAccessAllowed(string memory signature) internal view {\\n        bool isAllowedToCall = ACCESS_CONTROL_MANAGER.isAllowedToCall(msg.sender, signature);\\n\\n        if (!isAllowedToCall) {\\n            revert Unauthorized(msg.sender, address(this), signature);\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x808b444fa4d1d440dc43de290f1eb59a64646ce9085028b286fa30346305872e\",\"license\":\"BSD-3-Clause\"}},\"version\":1}",
+  "bytecode": "0x610120604052348015610010575f80fd5b5060405161108538038061108583398101604081905261002f9161017d565b8989898888888888886100466301e133808761020e565b5f81905515801561005657505f85115b8061006a57505f805411801561006a575084155b15610088576040516353b7e64560e11b815260040160405180910390fd5b831580610093575082155b801561009e57505f85115b156100bc5760405163b8a5589b60e01b815260040160405180910390fd5b6100c589610138565b6100ce88610138565b6100d787610138565b6100e082610138565b6001600160a01b0398891660805296881660a05294871660c052600192909255600255600355506004919091551660e05261011a87610138565b5050506001600160a01b03909316610100525061022d945050505050565b6001600160a01b03811661015f576040516342bcdf7f60e11b815260040160405180910390fd5b50565b80516001600160a01b0381168114610178575f80fd5b919050565b5f805f805f805f805f806101408b8d031215610197575f80fd5b6101a08b610162565b99506101ae60208c01610162565b98506101bc60408c01610162565b97506101ca60608c01610162565b965060808b0151955060a08b0151945060c08b0151935060e08b015192506101f56101008c01610162565b91506101208b015190509295989b9194979a5092959850565b5f8261022857634e487b7160e01b5f52601260045260245ffd5b500490565b60805160a05160c05160e05161010051610dce6102b75f395f818161028b01526107f201525f81816101910152610a5701525f818161024c0152818161059c015261092a01525f818161013601528181610574015281816106a501526108fe01525f8181610209015281816102b00152818161072b015281816107c001526109980152610dce5ff3fe608060405234801561000f575f80fd5b5060043610610111575f3560e01c8063692404261161009e578063a4edcd4c1161006e578063a4edcd4c14610247578063abb856131461026e578063ac5a693e14610276578063bdf13af21461027e578063ef4fa51b14610286575f80fd5b806369240426146101fc57806369818a35146102045780637fc4e4a01461022b5780639c43eb541461023e575f80fd5b806345be2dc7116100e457806345be2dc71461018c5780635213f9c8146101b3578063596efe6f146101c8578063643d813d146101d1578063671528d4146101e4575f80fd5b806307d0413c1461011557806329db1be6146101315780634169d2451461017057806341976e0914610179575b5f80fd5b61011e60015481565b6040519081526020015b60405180910390f35b6101587f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b039091168152602001610128565b61011e60045481565b61011e610187366004610b00565b6102ad565b6101587f000000000000000000000000000000000000000000000000000000000000000081565b6101c66101c1366004610b26565b61035e565b005b61011e60025481565b6101c66101df366004610b3d565b6103cf565b6101ec6104a5565b6040519015158152602001610128565b6101c66104e0565b6101587f000000000000000000000000000000000000000000000000000000000000000081565b6101c6610239366004610b3d565b610629565b61011e60035481565b6101587f000000000000000000000000000000000000000000000000000000000000000081565b61011e6106a1565b61011e5f5481565b61011e61089a565b6101587f000000000000000000000000000000000000000000000000000000000000000081565b5f7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b0316826001600160a01b03161461030057604051630f58058360e11b815260040160405180910390fd5b5f6103096106a1565b90506001545f036103245761031d816108e7565b9392505050565b5f61032d61089a565b90505f818311801561033e57508115155b610348578261034a565b815b9050610355816108e7565b95945050505050565b61039c6040518060400160405280601781526020017f736574536e617073686f744761702875696e7432353629000000000000000000815250610a3e565b6004546040518291907feb3716d3f8388c182853c1dc98b18931f3a600bbab31f2ff48631f6412e4997f905f90a3600455565b61040d6040518060400160405280601e81526020017f73657447726f777468526174652875696e743235362c75696e74323536290000815250610a3e565b5f5461041d6301e1338084610b71565b5f81905515801561042d57505f82115b8061044157505f8054118015610441575081155b1561045f576040516353b7e64560e11b815260040160405180910390fd5b6001545f54827fa65cbeb0e28a8803a912daac67c472c160aa01e2c988755fa424f290321de6088560405161049691815260200190565b60405180910390a45060015550565b5f6001545f036104b457505f90565b5f6104bd61089a565b9050805f036104cd575f91505090565b5f6104d66106a1565b9190911192915050565b6001546003546104f09042610b90565b10806104fc5750600154155b1561050357565b5f61050c6106a1565b90505f61051761089a565b9050600454818311610529578261052b565b815b6105359190610ba9565b6002819055426003555f0361055d57604051635f18388760e01b815260040160405180910390fd5b60405163b62cad6960e01b81526001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000811660048301527f0000000000000000000000000000000000000000000000000000000000000000169063b62cad69906024015f604051808303815f87803b1580156105dd575f80fd5b505af11580156105ef573d5f803e3d5ffd5b505050506003546002547f2c8c8fcb8c77a0ca21dcc3ab8fc0ade761557e76b1240cb40ebbef9fcee00f7d60405160405180910390a35050565b6106676040518060400160405280601c81526020017f736574536e617073686f742875696e743235362c75696e743235362900000000815250610a3e565b60028290556003819055604051819083907f2c8c8fcb8c77a0ca21dcc3ab8fc0ade761557e76b1240cb40ebbef9fcee00f7d905f90a35050565b5f807f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031663313ce5676040518163ffffffff1660e01b8152600401602060405180830381865afa1580156106ff573d5f803e3d5ffd5b505050506040513d601f19601f820116820180604052508101906107239190610bbc565b60ff1690505f7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031663313ce5676040518163ffffffff1660e01b8152600401602060405180830381865afa158015610785573d5f803e3d5ffd5b505050506040513d601f19601f820116820180604052508101906107a99190610bbc565b6040516341976e0960e01b81526001600160a01b037f00000000000000000000000000000000000000000000000000000000000000008116600483015260ff9290921692505f917f000000000000000000000000000000000000000000000000000000000000000016906341976e0990602401602060405180830381865afa158015610837573d5f803e3d5ffd5b505050506040513d601f19601f8201168201806040525081019061085b9190610bdc565b9050610868836024610b90565b61087390600a610cd3565b61087e83600a610cd3565b6108889083610cde565b6108929190610b71565b935050505090565b5f80600354426108aa9190610b90565b90505f670de0b6b3a7640000825f546002546108c69190610cde565b6108d09190610cde565b6108da9190610b71565b60025461031d9190610ba9565b6040516341976e0960e01b81526001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000811660048301525f9182917f000000000000000000000000000000000000000000000000000000000000000016906341976e0990602401602060405180830381865afa15801561096f573d5f803e3d5ffd5b505050506040513d601f19601f820116820180604052508101906109939190610bdc565b90505f7f000000000000000000000000000000000000000000000000000000000000000090505f816001600160a01b031663313ce5676040518163ffffffff1660e01b8152600401602060405180830381865afa1580156109f6573d5f803e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610a1a9190610bbc565b60ff169050610a2a81600a610cd3565b610a348487610cde565b6103559190610b71565b6040516318c5e8ab60e01b81525f906001600160a01b037f000000000000000000000000000000000000000000000000000000000000000016906318c5e8ab90610a8e9033908690600401610d23565b602060405180830381865afa158015610aa9573d5f803e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610acd9190610d4e565b905080610afc57333083604051634a3fa29360e01b8152600401610af393929190610d6d565b60405180910390fd5b5050565b5f60208284031215610b10575f80fd5b81356001600160a01b038116811461031d575f80fd5b5f60208284031215610b36575f80fd5b5035919050565b5f8060408385031215610b4e575f80fd5b50508035926020909101359150565b634e487b7160e01b5f52601160045260245ffd5b5f82610b8b57634e487b7160e01b5f52601260045260245ffd5b500490565b81810381811115610ba357610ba3610b5d565b92915050565b80820180821115610ba357610ba3610b5d565b5f60208284031215610bcc575f80fd5b815160ff8116811461031d575f80fd5b5f60208284031215610bec575f80fd5b5051919050565b600181815b80851115610c2d57815f1904821115610c1357610c13610b5d565b80851615610c2057918102915b93841c9390800290610bf8565b509250929050565b5f82610c4357506001610ba3565b81610c4f57505f610ba3565b8160018114610c655760028114610c6f57610c8b565b6001915050610ba3565b60ff841115610c8057610c80610b5d565b50506001821b610ba3565b5060208310610133831016604e8410600b8410161715610cae575081810a610ba3565b610cb88383610bf3565b805f1904821115610ccb57610ccb610b5d565b029392505050565b5f61031d8383610c35565b8082028115828204841417610ba357610ba3610b5d565b5f81518084528060208401602086015e5f602082860101526020601f19601f83011685010191505092915050565b6001600160a01b03831681526040602082018190525f90610d4690830184610cf5565b949350505050565b5f60208284031215610d5e575f80fd5b8151801515811461031d575f80fd5b6001600160a01b038481168252831660208201526060604082018190525f9061035590830184610cf556fea264697066735822122057dc71c01a42ea6e734ad67ef8afa39d0d746c0cd6b90ea6f845bc4e46b319b764736f6c63430008190033",
+  "deployedBytecode": "0x608060405234801561000f575f80fd5b5060043610610111575f3560e01c8063692404261161009e578063a4edcd4c1161006e578063a4edcd4c14610247578063abb856131461026e578063ac5a693e14610276578063bdf13af21461027e578063ef4fa51b14610286575f80fd5b806369240426146101fc57806369818a35146102045780637fc4e4a01461022b5780639c43eb541461023e575f80fd5b806345be2dc7116100e457806345be2dc71461018c5780635213f9c8146101b3578063596efe6f146101c8578063643d813d146101d1578063671528d4146101e4575f80fd5b806307d0413c1461011557806329db1be6146101315780634169d2451461017057806341976e0914610179575b5f80fd5b61011e60015481565b6040519081526020015b60405180910390f35b6101587f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b039091168152602001610128565b61011e60045481565b61011e610187366004610b00565b6102ad565b6101587f000000000000000000000000000000000000000000000000000000000000000081565b6101c66101c1366004610b26565b61035e565b005b61011e60025481565b6101c66101df366004610b3d565b6103cf565b6101ec6104a5565b6040519015158152602001610128565b6101c66104e0565b6101587f000000000000000000000000000000000000000000000000000000000000000081565b6101c6610239366004610b3d565b610629565b61011e60035481565b6101587f000000000000000000000000000000000000000000000000000000000000000081565b61011e6106a1565b61011e5f5481565b61011e61089a565b6101587f000000000000000000000000000000000000000000000000000000000000000081565b5f7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b0316826001600160a01b03161461030057604051630f58058360e11b815260040160405180910390fd5b5f6103096106a1565b90506001545f036103245761031d816108e7565b9392505050565b5f61032d61089a565b90505f818311801561033e57508115155b610348578261034a565b815b9050610355816108e7565b95945050505050565b61039c6040518060400160405280601781526020017f736574536e617073686f744761702875696e7432353629000000000000000000815250610a3e565b6004546040518291907feb3716d3f8388c182853c1dc98b18931f3a600bbab31f2ff48631f6412e4997f905f90a3600455565b61040d6040518060400160405280601e81526020017f73657447726f777468526174652875696e743235362c75696e74323536290000815250610a3e565b5f5461041d6301e1338084610b71565b5f81905515801561042d57505f82115b8061044157505f8054118015610441575081155b1561045f576040516353b7e64560e11b815260040160405180910390fd5b6001545f54827fa65cbeb0e28a8803a912daac67c472c160aa01e2c988755fa424f290321de6088560405161049691815260200190565b60405180910390a45060015550565b5f6001545f036104b457505f90565b5f6104bd61089a565b9050805f036104cd575f91505090565b5f6104d66106a1565b9190911192915050565b6001546003546104f09042610b90565b10806104fc5750600154155b1561050357565b5f61050c6106a1565b90505f61051761089a565b9050600454818311610529578261052b565b815b6105359190610ba9565b6002819055426003555f0361055d57604051635f18388760e01b815260040160405180910390fd5b60405163b62cad6960e01b81526001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000811660048301527f0000000000000000000000000000000000000000000000000000000000000000169063b62cad69906024015f604051808303815f87803b1580156105dd575f80fd5b505af11580156105ef573d5f803e3d5ffd5b505050506003546002547f2c8c8fcb8c77a0ca21dcc3ab8fc0ade761557e76b1240cb40ebbef9fcee00f7d60405160405180910390a35050565b6106676040518060400160405280601c81526020017f736574536e617073686f742875696e743235362c75696e743235362900000000815250610a3e565b60028290556003819055604051819083907f2c8c8fcb8c77a0ca21dcc3ab8fc0ade761557e76b1240cb40ebbef9fcee00f7d905f90a35050565b5f807f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031663313ce5676040518163ffffffff1660e01b8152600401602060405180830381865afa1580156106ff573d5f803e3d5ffd5b505050506040513d601f19601f820116820180604052508101906107239190610bbc565b60ff1690505f7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b031663313ce5676040518163ffffffff1660e01b8152600401602060405180830381865afa158015610785573d5f803e3d5ffd5b505050506040513d601f19601f820116820180604052508101906107a99190610bbc565b6040516341976e0960e01b81526001600160a01b037f00000000000000000000000000000000000000000000000000000000000000008116600483015260ff9290921692505f917f000000000000000000000000000000000000000000000000000000000000000016906341976e0990602401602060405180830381865afa158015610837573d5f803e3d5ffd5b505050506040513d601f19601f8201168201806040525081019061085b9190610bdc565b9050610868836024610b90565b61087390600a610cd3565b61087e83600a610cd3565b6108889083610cde565b6108929190610b71565b935050505090565b5f80600354426108aa9190610b90565b90505f670de0b6b3a7640000825f546002546108c69190610cde565b6108d09190610cde565b6108da9190610b71565b60025461031d9190610ba9565b6040516341976e0960e01b81526001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000811660048301525f9182917f000000000000000000000000000000000000000000000000000000000000000016906341976e0990602401602060405180830381865afa15801561096f573d5f803e3d5ffd5b505050506040513d601f19601f820116820180604052508101906109939190610bdc565b90505f7f000000000000000000000000000000000000000000000000000000000000000090505f816001600160a01b031663313ce5676040518163ffffffff1660e01b8152600401602060405180830381865afa1580156109f6573d5f803e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610a1a9190610bbc565b60ff169050610a2a81600a610cd3565b610a348487610cde565b6103559190610b71565b6040516318c5e8ab60e01b81525f906001600160a01b037f000000000000000000000000000000000000000000000000000000000000000016906318c5e8ab90610a8e9033908690600401610d23565b602060405180830381865afa158015610aa9573d5f803e3d5ffd5b505050506040513d601f19601f82011682018060405250810190610acd9190610d4e565b905080610afc57333083604051634a3fa29360e01b8152600401610af393929190610d6d565b60405180910390fd5b5050565b5f60208284031215610b10575f80fd5b81356001600160a01b038116811461031d575f80fd5b5f60208284031215610b36575f80fd5b5035919050565b5f8060408385031215610b4e575f80fd5b50508035926020909101359150565b634e487b7160e01b5f52601160045260245ffd5b5f82610b8b57634e487b7160e01b5f52601260045260245ffd5b500490565b81810381811115610ba357610ba3610b5d565b92915050565b80820180821115610ba357610ba3610b5d565b5f60208284031215610bcc575f80fd5b815160ff8116811461031d575f80fd5b5f60208284031215610bec575f80fd5b5051919050565b600181815b80851115610c2d57815f1904821115610c1357610c13610b5d565b80851615610c2057918102915b93841c9390800290610bf8565b509250929050565b5f82610c4357506001610ba3565b81610c4f57505f610ba3565b8160018114610c655760028114610c6f57610c8b565b6001915050610ba3565b60ff841115610c8057610c80610b5d565b50506001821b610ba3565b5060208310610133831016604e8410600b8410161715610cae575081810a610ba3565b610cb88383610bf3565b805f1904821115610ccb57610ccb610b5d565b029392505050565b5f61031d8383610c35565b8082028115828204841417610ba357610ba3610b5d565b5f81518084528060208401602086015e5f602082860101526020601f19601f83011685010191505092915050565b6001600160a01b03831681526040602082018190525f90610d4690830184610cf5565b949350505050565b5f60208284031215610d5e575f80fd5b8151801515811461031d575f80fd5b6001600160a01b038481168252831660208201526060604082018190525f9061035590830184610cf556fea264697066735822122057dc71c01a42ea6e734ad67ef8afa39d0d746c0cd6b90ea6f845bc4e46b319b764736f6c63430008190033",
   "devdoc": {
-    "details": "This contract implements a proxy that is upgradeable by an admin. To avoid https://medium.com/nomic-labs-blog/malicious-backdoors-in-ethereum-proxies-62629adf3357[proxy selector clashing], which can potentially be used in an attack, this contract uses the https://blog.openzeppelin.com/the-transparent-proxy-pattern/[transparent proxy pattern]. This pattern implies two things that go hand in hand: 1. If any account other than the admin calls the proxy, the call will be forwarded to the implementation, even if that call matches one of the admin functions exposed by the proxy itself. 2. If the admin calls the proxy, it can access the admin functions, but its calls will never be forwarded to the implementation. If the admin tries to call a function on the implementation it will fail with an error that says \"admin cannot fallback to proxy target\". These properties mean that the admin account can only be used for admin actions like upgrading the proxy or changing the admin, so it's best if it's a dedicated account that is not used for anything else. This will avoid headaches due to sudden errors when trying to call a function from the proxy implementation. Our recommendation is for the dedicated account to be an instance of the {ProxyAdmin} contract. If set up this way, you should think of the `ProxyAdmin` instance as the real administrative interface of your proxy.",
-    "events": {
-      "AdminChanged(address,address)": {
-        "details": "Emitted when the admin account has changed."
-      },
-      "BeaconUpgraded(address)": {
-        "details": "Emitted when the beacon is upgraded."
-      },
-      "Upgraded(address)": {
-        "details": "Emitted when the implementation is upgraded."
-      }
-    },
+    "author": "Venus",
     "kind": "dev",
     "methods": {
-      "admin()": {
-        "details": "Returns the current admin. NOTE: Only the admin can call this function. See {ProxyAdmin-getProxyAdmin}. TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using the https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call. `0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103`"
+      "getMaxAllowedExchangeRate()": {
+        "returns": {
+          "_0": "maxExchangeRate Maximum allowed exchange rate"
+        }
       },
-      "constructor": {
-        "details": "Initializes an upgradeable proxy managed by `_admin`, backed by the implementation at `_logic`, and optionally initialized with `_data` as explained in {ERC1967Proxy-constructor}."
+      "getPrice(address)": {
+        "custom:error": "InvalidTokenAddress error is thrown if the token address is invalid",
+        "params": {
+          "asset": "Address of the token"
+        },
+        "returns": {
+          "_0": "price The price of the token in scaled decimal places. It can be capped to a maximum value taking into account the growth rate"
+        }
       },
-      "implementation()": {
-        "details": "Returns the current implementation. NOTE: Only the admin can call this function. See {ProxyAdmin-getProxyImplementation}. TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using the https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call. `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`"
+      "getUnderlyingAmount()": {
+        "returns": {
+          "_0": "amount The amount of the underlying token for 1 correlated token scaled by the underlying token decimals"
+        }
       },
-      "upgradeTo(address)": {
-        "details": "Upgrade the implementation of the proxy. NOTE: Only the admin can call this function. See {ProxyAdmin-upgrade}."
+      "isCapped()": {
+        "returns": {
+          "_0": "isCapped Boolean indicating if the price is capped"
+        }
       },
-      "upgradeToAndCall(address,bytes)": {
-        "details": "Upgrade the implementation of the proxy, and then call a function from the new implementation as specified by `data`, which should be an encoded function call. This is useful to initialize new storage variables in the proxied contract. NOTE: Only the admin can call this function. See {ProxyAdmin-upgradeAndCall}."
+      "setGrowthRate(uint256,uint256)": {
+        "custom:error": "InvalidGrowthRate error is thrown if the growth rate is invalid",
+        "custom:event": "Emits GrowthRateUpdated event on successful update of the growth rate",
+        "params": {
+          "_annualGrowthRate": "The annual growth rate to set",
+          "_snapshotInterval": "The snapshot interval to set"
+        }
+      },
+      "setSnapshot(uint256,uint256)": {
+        "custom:event": "Emits SnapshotUpdated event on successful update of the snapshot",
+        "params": {
+          "_snapshotMaxExchangeRate": "The exchange rate to set",
+          "_snapshotTimestamp": "The timestamp to set"
+        }
+      },
+      "setSnapshotGap(uint256)": {
+        "custom:event": "Emits SnapshotGapUpdated event on successful update of the snapshot gap",
+        "params": {
+          "_snapshotGap": "The snapshot gap to set"
+        }
+      },
+      "updateSnapshot()": {
+        "custom:error": "InvalidSnapshotMaxExchangeRate error is thrown if the max snapshot exchange rate is zero",
+        "custom:event": "Emits SnapshotUpdated event on successful update of the snapshot"
       }
     },
+    "title": "OneJumpOracle",
     "version": 1
   },
   "userdoc": {
+    "errors": {
+      "InvalidGrowthRate()": [
+        {
+          "notice": "Thrown if the growth rate is invalid"
+        }
+      ],
+      "InvalidInitialSnapshot()": [
+        {
+          "notice": "Thrown if the initial snapshot is invalid"
+        }
+      ],
+      "InvalidSnapshotMaxExchangeRate()": [
+        {
+          "notice": "Thrown if the max snapshot exchange rate is invalid"
+        }
+      ],
+      "InvalidTokenAddress()": [
+        {
+          "notice": "Thrown if the token address is invalid"
+        }
+      ],
+      "Unauthorized(address,address,string)": [
+        {
+          "notice": "@notice Thrown when the action is prohibited by AccessControlManager"
+        }
+      ],
+      "ZeroAddressNotAllowed()": [
+        {
+          "notice": "Thrown if the supplied address is a zero address where it is not allowed"
+        }
+      ]
+    },
+    "events": {
+      "GrowthRateUpdated(uint256,uint256,uint256,uint256)": {
+        "notice": "Emitted when the growth rate is updated"
+      },
+      "SnapshotGapUpdated(uint256,uint256)": {
+        "notice": "Emitted when the snapshot gap is updated"
+      },
+      "SnapshotUpdated(uint256,uint256)": {
+        "notice": "Emitted when the snapshot is updated"
+      }
+    },
     "kind": "user",
-    "methods": {},
+    "methods": {
+      "ACCESS_CONTROL_MANAGER()": {
+        "notice": "Address of the AccessControlManager contract"
+      },
+      "CORRELATED_TOKEN()": {
+        "notice": "Address of the correlated token"
+      },
+      "INTERMEDIATE_ORACLE()": {
+        "notice": "Address of the intermediate oracle"
+      },
+      "RESILIENT_ORACLE()": {
+        "notice": "Address of Resilient Oracle"
+      },
+      "UNDERLYING_TOKEN()": {
+        "notice": "Address of the underlying token"
+      },
+      "constructor": {
+        "notice": "Constructor for the implementation contract."
+      },
+      "getMaxAllowedExchangeRate()": {
+        "notice": "Gets the maximum allowed exchange rate for token"
+      },
+      "getPrice(address)": {
+        "notice": "Fetches the price of the token"
+      },
+      "getUnderlyingAmount()": {
+        "notice": "Fetches the amount of the underlying token for 1 correlated token, using the intermediate oracle"
+      },
+      "isCapped()": {
+        "notice": "Returns if the price is capped"
+      },
+      "setGrowthRate(uint256,uint256)": {
+        "notice": "Sets the growth rate and snapshot interval"
+      },
+      "setSnapshot(uint256,uint256)": {
+        "notice": "Directly sets the snapshot exchange rate and timestamp"
+      },
+      "setSnapshotGap(uint256)": {
+        "notice": "Sets the snapshot gap"
+      },
+      "snapshotGap()": {
+        "notice": "Gap to add when updating the snapshot"
+      },
+      "snapshotInterval()": {
+        "notice": "Snapshot update interval"
+      },
+      "snapshotMaxExchangeRate()": {
+        "notice": "Last stored snapshot maximum exchange rate"
+      },
+      "snapshotTimestamp()": {
+        "notice": "Last stored snapshot timestamp"
+      },
+      "updateSnapshot()": {
+        "notice": "Updates the snapshot price and timestamp"
+      }
+    },
+    "notice": "This oracle fetches the price of an asset in through an intermediate asset",
     "version": 1
   },
   "storageLayout": {
-    "storage": [],
-    "types": null
+    "storage": [
+      {
+        "astId": 6407,
+        "contract": "contracts/oracles/OneJumpOracle.sol:OneJumpOracle",
+        "label": "growthRatePerSecond",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 6410,
+        "contract": "contracts/oracles/OneJumpOracle.sol:OneJumpOracle",
+        "label": "snapshotInterval",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 6413,
+        "contract": "contracts/oracles/OneJumpOracle.sol:OneJumpOracle",
+        "label": "snapshotMaxExchangeRate",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 6416,
+        "contract": "contracts/oracles/OneJumpOracle.sol:OneJumpOracle",
+        "label": "snapshotTimestamp",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 6419,
+        "contract": "contracts/oracles/OneJumpOracle.sol:OneJumpOracle",
+        "label": "snapshotGap",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
   }
 }
