@@ -16,6 +16,8 @@ contract WstETHOracleV2 is CorrelatedTokenOracle {
     IStETH public immutable STETH;
 
     /// @notice Constructor for the implementation contract.
+    /// @dev The underlyingToken must be correlated so that 1 underlyingToken is equal to 1 stETH, because
+    /// getUnderlyingAmount() implicitly assumes that
     constructor(
         address stETH,
         address wstETH,
