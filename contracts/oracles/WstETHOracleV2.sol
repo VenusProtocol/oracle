@@ -45,8 +45,8 @@ contract WstETHOracleV2 is CorrelatedTokenOracle {
     }
 
     /**
-     * @notice Gets the stETH for 1 wstETH
-     * @return amount Amount of stETH
+     * @notice Gets the amount of underlyingToken for 1 wstETH, assuming that 1 underlyingToken is equivalent to 1 stETH
+     * @return amount Amount of underlyingToken
      */
     function getUnderlyingAmount() public view override returns (uint256) {
         return STETH.getPooledEthByShares(EXP_SCALE);
