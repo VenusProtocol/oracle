@@ -64,7 +64,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   block = await ethers.provider.getBlock("latest");
   const stakePoolContract = await ethers.getContractAt("IPStakePool", stkBNBStakePool);
   const exchangeRateData = await stakePoolContract.exchangeRate();
-  exchangeRate = exchangeRateData.totalWei.mul(ethers.utils.parseUnits("1", 18)).div(exchangeRateData.poolTokenSupply);
+  let exchangeRate = exchangeRateData.totalWei.mul(ethers.utils.parseUnits("1", 18)).div(exchangeRateData.poolTokenSupply);
 
   await deploy("StkBNBOracle", {
     from: deployer,
