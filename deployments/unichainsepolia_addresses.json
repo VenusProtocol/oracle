@@ -3,14 +3,16 @@
   "chainId": "1301",
   "addresses": {
     "BoundValidator": "0x51C9F57Ffc0A4dD6d135aa3b856571F5A4e4C6CB",
-    "BoundValidator_Implementation": "0xA382F5CD9ECf7187C986c170D939A6fA05aF0996",
+    "BoundValidator_Implementation": "0x15242a55Ad1842A1aEa09c59cf8366bD2f3CE9B4",
     "BoundValidator_Proxy": "0x51C9F57Ffc0A4dD6d135aa3b856571F5A4e4C6CB",
     "DefaultProxyAdmin": "0x256735eFdfDf135bD6991854e0065909e57804aa",
     "RedStoneOracle": "0x8683D6902A669Ac479cfcCf2542724a133D4d872",
-    "RedStoneOracle_Implementation": "0xb180a21eE8372a40636B2990fC0396e03c034aAA",
+    "RedStoneOracle_Implementation": "0x44A47AfC1A9467Dfe1D5E967cA78432C699a13d9",
     "RedStoneOracle_Proxy": "0x8683D6902A669Ac479cfcCf2542724a133D4d872",
     "ResilientOracle": "0xA469E718BDE2C9939bD29529A38184e97dF0A741",
-    "ResilientOracle_Implementation": "0x5A4F8Bb10De121EACcCB36C4deD9792B9D5Ce378",
-    "ResilientOracle_Proxy": "0xA469E718BDE2C9939bD29529A38184e97dF0A741"
+    "ResilientOracle_Implementation": "0x4E953e3741a17aFaD69776742d1ED1c0130F43f7",
+    "ResilientOracle_Proxy": "0xA469E718BDE2C9939bD29529A38184e97dF0A741",
+    "weETHOneJumpOracle": "0xa980158116316d0759C56D7E812D7D8cEf18B425",
+    "wstETHOneJumpOracle": "0x555bD5dc1dCf87EEcC39778C3ba9DDCc40dF05c0"
   }
 }

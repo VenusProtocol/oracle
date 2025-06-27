@@ -11,18 +11,35 @@ import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
  */
 contract ZkETHOracle is CorrelatedTokenOracle {
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address zkETH,
         address rzkETH,
-        address resilientOracle
-    ) CorrelatedTokenOracle(zkETH, rzkETH, resilientOracle) {}
+        address resilientOracle,
+        uint256 annualGrowthRate,
+        uint256 _snapshotInterval,
+        uint256 initialSnapshotMaxExchangeRate,
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 _snapshotGap
+    )
+        CorrelatedTokenOracle(
+            zkETH,
+            rzkETH,
+            resilientOracle,
+            annualGrowthRate,
+            _snapshotInterval,
+            initialSnapshotMaxExchangeRate,
+            initialSnapshotTimestamp,
+            accessControlManager,
+            _snapshotGap
+        )
+    {}
 
     /**
      * @notice Gets the amount of rzkETH for 1 zkETH
      * @return amount Amount of rzkETH
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return IZkETH(CORRELATED_TOKEN).LSTPerToken();
     }
 }

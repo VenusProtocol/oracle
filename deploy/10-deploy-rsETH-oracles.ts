@@ -7,8 +7,7 @@ import { ADDRESSES } from "../helpers/deploymentConfig";
 const func: DeployFunction = async function ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-  const proxyOwnerAddress = ADDRESSES[network.name].timelock;
-  const { WETH, rsETH } = ADDRESSES[network.name];
+  const { WETH, rsETH, acm } = ADDRESSES[network.name];
 
   const redStoneOracle = await hre.ethers.getContract("RedStoneOracle");
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
@@ -19,11 +18,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [rsETH, WETH, resilientOracle.address, redStoneOracle.address],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
-    },
+    args: [rsETH, WETH, resilientOracle.address, redStoneOracle.address, 0, 0, 0, 0, acm, 0],
     skipIfAlreadyDeployed: true,
   });
 
@@ -32,11 +27,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    args: [rsETH, WETH, resilientOracle.address, chainlinkOracle.address],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentProxy",
-    },
+    args: [rsETH, WETH, resilientOracle.address, chainlinkOracle.address, 0, 0, 0, 0, acm, 0],
     skipIfAlreadyDeployed: true,
   });
 };

@@ -3,24 +3,20 @@
   "chainId": "324",
   "addresses": {
     "BoundValidator": "0x51519cdCDDD05E2ADCFA108f4a960755D9d6ea8b",
-    "BoundValidator_Implementation": "0x37878481A040E4F6a8856315bdF02Be4a1B4bd6C",
+    "BoundValidator_Implementation": "0xc79fE34320903dA7a19E6335417C7131293844ED",
     "BoundValidator_Proxy": "0x51519cdCDDD05E2ADCFA108f4a960755D9d6ea8b",
     "ChainlinkOracle": "0x4FC29E1d3fFFbDfbf822F09d20A5BE97e59F66E5",
-    "ChainlinkOracle_Implementation": "0xd55B0bc224288949c3f5D33e0F3A54d8caCc6B35",
+    "ChainlinkOracle_Implementation": "0xb20d1B03C62D2c8Dc150298b8D151AF022068347",
     "ChainlinkOracle_Proxy": "0x4FC29E1d3fFFbDfbf822F09d20A5BE97e59F66E5",
     "DefaultProxyAdmin": "0x8Ea1A989B036f7Ef21bb95CE4E7961522Ca00287",
     "RedStoneOracle": "0xFa1e65e714CDfefDC9729130496AB5b5f3708fdA",
-    "RedStoneOracle_Implementation": "0xD9CC8b33A1F09b84255577044022182229Bf2fc2",
+    "RedStoneOracle_Implementation": "0x3D45B3025c9Aa5c669B6F625592cd70b5E1F3F87",
     "RedStoneOracle_Proxy": "0xFa1e65e714CDfefDC9729130496AB5b5f3708fdA",
     "ResilientOracle": "0xDe564a4C887d5ad315a19a96DC81991c98b12182",
-    "ResilientOracle_Implementation": "0x88DcFE18AcE5a75659177c9F980C2771D9736e66",
+    "ResilientOracle_Implementation": "0x9d04692c4f86a5fa52a5dd02F61a9cc9F685B9EB",
     "ResilientOracle_Proxy": "0xDe564a4C887d5ad315a19a96DC81991c98b12182",
-    "ZkETHOracle": "0x540aA1683E5E5592E0444499bDA41f6DF8de2Dd8",
-    "ZkETHOracle_Implementation": "0xA62aD5d6e2d9Ea37791824ac3eA0328138f16393",
-    "ZkETHOracle_Proxy": "0x540aA1683E5E5592E0444499bDA41f6DF8de2Dd8",
-    "wUSDM_ERC4626Oracle": "0x7Fb95a0B7b933A9F3Fe3Ead4b69B0267BD8Fe55F",
-    "wstETHOneJumpChainlinkOracle": "0xd2b4352A3C1C452D9D4D11B4F19e28476128798f",
-    "wstETHOneJumpChainlinkOracle_Implementation": "0xFc8f37ae8f36bB74606fC3E140460be98d1b4d00",
-    "wstETHOneJumpChainlinkOracle_Proxy": "0xd2b4352A3C1C452D9D4D11B4F19e28476128798f"
+    "ZkETHOracle": "0x407dE1229BCBD2Ec876d063F3F93c4D8a38bd81a",
+    "wUSDM_ERC4626Oracle": "0x22cE94e302c8C80a6C2dCfa9Da6c5286e9f28692",
+    "wstETHOneJumpChainlinkOracle": "0x2DAaeb94E19145BA7633cAB2C38c76fD8c493198"
   }
 }

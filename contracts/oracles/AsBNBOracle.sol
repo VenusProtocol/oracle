@@ -13,18 +13,35 @@ import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
  */
 contract AsBNBOracle is CorrelatedTokenOracle {
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     constructor(
         address asBNB,
         address slisBNB,
-        address resilientOracle
-    ) CorrelatedTokenOracle(asBNB, slisBNB, resilientOracle) {}
+        address resilientOracle,
+        uint256 annualGrowthRate,
+        uint256 _snapshotInterval,
+        uint256 initialSnapshotMaxExchangeRate,
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 _snapshotGap
+    )
+        CorrelatedTokenOracle(
+            asBNB,
+            slisBNB,
+            resilientOracle,
+            annualGrowthRate,
+            _snapshotInterval,
+            initialSnapshotMaxExchangeRate,
+            initialSnapshotTimestamp,
+            accessControlManager,
+            _snapshotGap
+        )
+    {}
 
     /**
      * @notice Fetches the amount of slisBNB for 1 asBNB
      * @return price The amount of slisBNB for asBNB
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         IAsBNBMinter minter = IAsBNBMinter(IAsBNB(CORRELATED_TOKEN).minter());
         return minter.convertToTokens(EXP_SCALE);
     }

@@ -3,14 +3,14 @@
   "chainId": "5611",
   "addresses": {
     "BinanceOracle": "0x496B6b03469472572C47bdB407d5549b244a74F2",
-    "BinanceOracle_Implementation": "0x74E708A7F5486ed73CCCAe54B63e71B1988F1383",
+    "BinanceOracle_Implementation": "0xCFbE7121c4Fb550502854B8c69f88f817D34AaB2",
     "BinanceOracle_Proxy": "0x496B6b03469472572C47bdB407d5549b244a74F2",
     "BoundValidator": "0x049537Bb065e6253e9D8D08B45Bf6b753657A746",
-    "BoundValidator_Implementation": "0x95d1C5f11C7d84fb60bf0cd4dfCCdDE664cb0Af0",
+    "BoundValidator_Implementation": "0x73b615e88fDAe39fb8ED12d0dFeFBCDF5BA0E312",
     "BoundValidator_Proxy": "0x049537Bb065e6253e9D8D08B45Bf6b753657A746",
     "DefaultProxyAdmin": "0xB1281ADC816fba7df64B798D7A0BC4bd2a6d42f4",
     "ResilientOracle": "0xEF4e53a9A4565ef243A2f0ee9a7fc2410E1aA623",
-    "ResilientOracle_Implementation": "0xa37791D28C282b997Eed9e5dAbc8961691e83D5B",
+    "ResilientOracle_Implementation": "0x2fD256De0E5e783A51d3a661bCD5D04f1aF6E243",
     "ResilientOracle_Proxy": "0xEF4e53a9A4565ef243A2f0ee9a7fc2410E1aA623"
   }
 }

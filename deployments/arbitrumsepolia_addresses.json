@@ -3,23 +3,19 @@
   "chainId": "421614",
   "addresses": {
     "BoundValidator": "0xfe6bc1545Cc14C131bacA97476D6035ffcC0b889",
-    "BoundValidator_Implementation": "0x12702e23acf7B110f8B6F8681E817f8A76a39A81",
+    "BoundValidator_Implementation": "0x2Ec432F123FEbb114e6fbf9f4F14baF0B1F14AbC",
     "BoundValidator_Proxy": "0xfe6bc1545Cc14C131bacA97476D6035ffcC0b889",
     "ChainlinkOracle": "0xeDd02c7FfA31490b4107e8f2c25e9198a04F9E45",
-    "ChainlinkOracle_Implementation": "0xC75b363aEBd490FBb43c4BF5Fe0961Ea3c0A0791",
+    "ChainlinkOracle_Implementation": "0xc8614663Cc4ee868EF5267891E177586d7105D7F",
     "ChainlinkOracle_Proxy": "0xeDd02c7FfA31490b4107e8f2c25e9198a04F9E45",
     "DefaultProxyAdmin": "0xA78A1Df376c3CEeBC5Fab574fe6EdDbbF76fd03e",
     "RedStoneOracle": "0x15058891ca0c71Bd724b873c41596A682420613C",
-    "RedStoneOracle_Implementation": "0x30DA2116bFc1474FaE803531620AAB34b118D9dE",
+    "RedStoneOracle_Implementation": "0xbDd501dB1B0D6aab299CE69ef5B86C8578947AD0",
     "RedStoneOracle_Proxy": "0x15058891ca0c71Bd724b873c41596A682420613C",
     "ResilientOracle": "0x6708bAd042916B47311c8078b29d7f432342102F",
-    "ResilientOracle_Implementation": "0xbeF4F9590Bb7B3a7620b6444Aca5D81471019d8C",
+    "ResilientOracle_Implementation": "0x992127c0cd1af5c0Ae40995193ac1adA752C12a8",
     "ResilientOracle_Proxy": "0x6708bAd042916B47311c8078b29d7f432342102F",
-    "weETHOneJumpChainlinkOracle": "0x4f894aC6F5e2E2bD72632B137E28234339Db3D53",
-    "weETHOneJumpChainlinkOracle_Implementation": "0xd53226E153a7F525ca2f7481bDf6E284767347dC",
-    "weETHOneJumpChainlinkOracle_Proxy": "0x4f894aC6F5e2E2bD72632B137E28234339Db3D53",
-    "wstETHOneJumpChainlinkOracle": "0x06b47B32d9C4D8f948EB3FFDB4a1ecE93794f922",
-    "wstETHOneJumpChainlinkOracle_Implementation": "0x01f8d4A0178ceB60B2fFBf8736765198c7392607",
-    "wstETHOneJumpChainlinkOracle_Proxy": "0x06b47B32d9C4D8f948EB3FFDB4a1ecE93794f922"
+    "weETHOneJumpChainlinkOracle": "0x0E2a7C58e06d4924EF74fb14222aa087ECfc14D5",
+    "wstETHOneJumpChainlinkOracle": "0xFfc4869368a3954A1b933AC94471f12B7e83C24a"
   }
 }

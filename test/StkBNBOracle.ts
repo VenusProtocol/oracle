@@ -4,7 +4,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ADDRESSES } from "../helpers/deploymentConfig";
-import { BEP20Harness, IPStakePool, ResilientOracleInterface } from "../typechain-types";
+import { AccessControlManager, BEP20Harness, IPStakePool, ResilientOracleInterface } from "../typechain-types";
 import { addr0000 } from "./utils/data";
 
 const { expect } = chai;
@@ -15,6 +15,10 @@ const EXP_SCALE = parseUnits("1", 18);
 const BNB_USD_PRICE = parseUnits("300", 18); // 300 USD for 1 BNB
 const TOTAL_WEI = parseUnits("17173.956674843638040397", 18);
 const POOL_TOKEN_SUPPLY = parseUnits("16497.681117925810757967", 18);
+const ANNUAL_GROWTH_RATE = parseUnits("0.05", 18); // 5% growth
+const StkBNB_USD_PRICE = BNB_USD_PRICE.mul(POOL_TOKEN_SUPPLY).div(EXP_SCALE);
+const SNAPSHOT_UPDATE_INTERVAL = 10;
+const INITIAL_EXCHANGE_RATE = parseUnits("1.040992158", 18);
 
 describe("StkBNBOracle unit tests", () => {
   let stkBNBStakePoolMock;
@@ -22,7 +26,11 @@ describe("StkBNBOracle unit tests", () => {
   let StkBNBOracle;
   let StkBNBOracleFactory;
   let stkBNBMock;
+  let timestamp;
+  let acm;
   before(async () => {
+    ({ timestamp } = await ethers.provider.getBlock("latest"));
+
     //  To initialize the provider we need to hit the node with any request
     await ethers.getSigners();
     resilientOracleMock = await smock.fake<ResilientOracleInterface>("ResilientOracleInterface");
@@ -37,21 +45,74 @@ describe("StkBNBOracle unit tests", () => {
       poolTokenSupply: POOL_TOKEN_SUPPLY,
     });
     StkBNBOracleFactory = await ethers.getContractFactory("StkBNBOracle");
+
+    const fakeAccessControlManager = await smock.fake<AccessControlManager>("AccessControlManager");
+    fakeAccessControlManager.isAllowedToCall.returns(true);
+
+    acm = fakeAccessControlManager.address;
   });
 
   describe("deployment", () => {
     it("revert if stakePool address is 0", async () => {
-      await expect(StkBNBOracleFactory.deploy(addr0000, stkBNB, resilientOracleMock.address)).to.be.reverted;
+      await expect(
+        StkBNBOracleFactory.deploy(
+          addr0000,
+          stkBNB,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+          INITIAL_EXCHANGE_RATE,
+          timestamp,
+          acm,
+          0,
+        ),
+      ).to.be.reverted;
     });
+
     it("revert if stkBNB address is 0", async () => {
-      await expect(StkBNBOracleFactory.deploy(stkBNBStakePoolMock.address, addr0000, resilientOracleMock.address)).to.be
-        .reverted;
+      await expect(
+        StkBNBOracleFactory.deploy(
+          stkBNBStakePoolMock.address,
+          addr0000,
+          resilientOracleMock.address,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+          INITIAL_EXCHANGE_RATE,
+          timestamp,
+          acm,
+          0,
+        ),
+      ).to.be.reverted;
     });
+
     it("revert if resilientOracle address is 0", async () => {
-      await expect(StkBNBOracleFactory.deploy(stkBNBStakePoolMock.address, stkBNB, addr0000)).to.be.reverted;
+      await expect(
+        StkBNBOracleFactory.deploy(
+          stkBNBStakePoolMock.address,
+          stkBNB,
+          addr0000,
+          ANNUAL_GROWTH_RATE,
+          SNAPSHOT_UPDATE_INTERVAL,
+          INITIAL_EXCHANGE_RATE,
+          timestamp,
+          acm,
+          0,
+        ),
+      ).to.be.reverted;
     });
+
     it("should deploy contract", async () => {
-      StkBNBOracle = await StkBNBOracleFactory.deploy(stkBNBStakePoolMock.address, stkBNB, resilientOracleMock.address);
+      StkBNBOracle = await StkBNBOracleFactory.deploy(
+        stkBNBStakePoolMock.address,
+        stkBNB,
+        resilientOracleMock.address,
+        ANNUAL_GROWTH_RATE,
+        SNAPSHOT_UPDATE_INTERVAL,
+        INITIAL_EXCHANGE_RATE,
+        timestamp,
+        acm,
+        0,
+      );
     });
   });
 

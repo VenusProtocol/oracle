@@ -7,7 +7,6 @@ import "@typechain/hardhat";
 import * as dotenv from "dotenv";
 import "hardhat-dependency-compiler";
 import "hardhat-deploy";
-import "hardhat-gas-reporter";
 import { HardhatUserConfig, extendConfig } from "hardhat/config";
 import { HardhatConfig } from "hardhat/types";
 import "solidity-coverage";
@@ -210,10 +209,6 @@ const config: HardhatUserConfig = {
       live: true,
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
-  },
-  gasReporter: {
-    enabled: process.env.REPORT_GAS !== undefined,
-    currency: "USD",
   },
   etherscan: {
     apiKey: {

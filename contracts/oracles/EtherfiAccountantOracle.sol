@@ -13,17 +13,33 @@ import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contract
  */
 contract EtherfiAccountantOracle is CorrelatedTokenOracle {
     /// @notice Address of Accountant
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IAccountant public immutable ACCOUNTANT;
 
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address accountant,
         address correlatedToken,
         address underlyingToken,
-        address resilientOracle
-    ) CorrelatedTokenOracle(correlatedToken, underlyingToken, resilientOracle) {
+        address resilientOracle,
+        uint256 annualGrowthRate,
+        uint256 _snapshotInterval,
+        uint256 initialSnapshotMaxExchangeRate,
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 _snapshotGap
+    )
+        CorrelatedTokenOracle(
+            correlatedToken,
+            underlyingToken,
+            resilientOracle,
+            annualGrowthRate,
+            _snapshotInterval,
+            initialSnapshotMaxExchangeRate,
+            initialSnapshotTimestamp,
+            accessControlManager,
+            _snapshotGap
+        )
+    {
         ensureNonzeroAddress(accountant);
         ACCOUNTANT = IAccountant(accountant);
     }
@@ -32,7 +48,7 @@ contract EtherfiAccountantOracle is CorrelatedTokenOracle {
      * @notice Fetches the conversion rate from the ACCOUNTANT contract
      * @return amount Amount of WBTC
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return ACCOUNTANT.getRateSafe();
     }
 }

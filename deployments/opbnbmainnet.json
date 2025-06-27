@@ -542,7 +542,7 @@
       ]
     },
     "BinanceOracle_Implementation": {
-      "address": "0x7B9BFF3AEbAcE3715660e6340370810f10481b53",
+      "address": "0x05CEE4B936C654be43993D3A8Baa76c8fdd5BeCC",
       "abi": [
         {
           "inputs": [],
@@ -784,7 +784,7 @@
             },
             {
               "internalType": "address",
-              "name": "_accessControlManager",
+              "name": "_acm",
               "type": "address"
             }
           ],
@@ -1553,7 +1553,7 @@
       ]
     },
     "BoundValidator_Implementation": {
-      "address": "0x47C33167d13eD2374161A6f0A9b55fc4cad09897",
+      "address": "0xe630fa259c893D9a1d8b1d61EdFB1B59EF574df4",
       "abi": [
         {
           "inputs": [],
@@ -2943,7 +2943,7 @@
       ]
     },
     "ResilientOracle_Implementation": {
-      "address": "0xbC3ee948Ba5D78880c6ECb005274257e60d017c8",
+      "address": "0x47981520753d592a42Ac9521b5396C3c7FA04408",
       "abi": [
         {
           "inputs": [
@@ -2986,6 +2986,25 @@
           ],
           "name": "Unauthorized",
           "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "bool",
+              "name": "enabled",
+              "type": "bool"
+            }
+          ],
+          "name": "CachedEnabled",
+          "type": "event"
         },
         {
           "anonymous": false,
@@ -3166,6 +3185,19 @@
         },
         {
           "inputs": [],
+          "name": "CACHE_SLOT",
+          "outputs": [
+            {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "INVALID_PRICE",
           "outputs": [
             {
@@ -3320,6 +3352,11 @@
                   "internalType": "bool[3]",
                   "name": "enableFlagsForOracles",
                   "type": "bool[3]"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "cachingEnabled",
+                  "type": "bool"
                 }
               ],
               "internalType": "struct ResilientOracle.TokenConfig",
@@ -3482,6 +3519,11 @@
                   "internalType": "bool[3]",
                   "name": "enableFlagsForOracles",
                   "type": "bool[3]"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "cachingEnabled",
+                  "type": "bool"
                 }
               ],
               "internalType": "struct ResilientOracle.TokenConfig",
@@ -3512,6 +3554,11 @@
                   "internalType": "bool[3]",
                   "name": "enableFlagsForOracles",
                   "type": "bool[3]"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "cachingEnabled",
+                  "type": "bool"
                 }
               ],
               "internalType": "struct ResilientOracle.TokenConfig[]",

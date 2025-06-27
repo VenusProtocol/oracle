@@ -16,19 +16,35 @@ contract StkBNBOracle is CorrelatedTokenOracle {
     address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
     /// @notice Address of StakePool
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IPStakePool public immutable STAKE_POOL;
 
     /// @notice Thrown if the pool token supply is zero
     error PoolTokenSupplyIsZero();
 
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address stakePool,
         address stkBNB,
-        address resilientOracle
-    ) CorrelatedTokenOracle(stkBNB, NATIVE_TOKEN_ADDR, resilientOracle) {
+        address resilientOracle,
+        uint256 annualGrowthRate,
+        uint256 _snapshotInterval,
+        uint256 initialSnapshotMaxExchangeRate,
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 _snapshotGap
+    )
+        CorrelatedTokenOracle(
+            stkBNB,
+            NATIVE_TOKEN_ADDR,
+            resilientOracle,
+            annualGrowthRate,
+            _snapshotInterval,
+            initialSnapshotMaxExchangeRate,
+            initialSnapshotTimestamp,
+            accessControlManager,
+            _snapshotGap
+        )
+    {
         ensureNonzeroAddress(stakePool);
         STAKE_POOL = IPStakePool(stakePool);
     }
@@ -36,8 +52,9 @@ contract StkBNBOracle is CorrelatedTokenOracle {
     /**
      * @notice Fetches the amount of BNB for 1 stkBNB
      * @return price The amount of BNB for stkBNB
+     * @custom:error PoolTokenSupplyIsZero error is thrown if the pool token supply is zero
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         IPStakePool.Data memory exchangeRateData = STAKE_POOL.exchangeRate();
 
         if (exchangeRateData.poolTokenSupply == 0) {

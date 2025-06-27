@@ -465,7 +465,7 @@
       ]
     },
     "BoundValidator_Implementation": {
-      "address": "0xbf34F1Ca52586FDf5AFb7A92712D047B69932c9f",
+      "address": "0x66e6744104fAa55C14A6CD356eF1016E50B907df",
       "abi": [
         {
           "inputs": [],
@@ -1464,7 +1464,7 @@
       ]
     },
     "ChainlinkOracle_Implementation": {
-      "address": "0x73461E884C256e1B5Ec1FEEF305410C478EA6818",
+      "address": "0x58d8a589c111161dBb22742BF00671BEa1e32994",
       "abi": [
         {
           "inputs": [],
@@ -2693,7 +2693,7 @@
       ]
     },
     "RedStoneOracle_Implementation": {
-      "address": "0xf66Ee1C402155483d3d1cb05D5294c59916fF3c5",
+      "address": "0x04D8444A4aDbE4697B2Ba6Dd7Cd174bf5a37098c",
       "abi": [
         {
           "inputs": [],
@@ -3983,7 +3983,7 @@
       ]
     },
     "ResilientOracle_Implementation": {
-      "address": "0x32810ABAE45A08e0BadEF94b753306E8636B39ED",
+      "address": "0x4eE2399B57796A94644E1dFb5e4751FaCbE05c2E",
       "abi": [
         {
           "inputs": [
@@ -4026,6 +4026,25 @@
           ],
           "name": "Unauthorized",
           "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "bool",
+              "name": "enabled",
+              "type": "bool"
+            }
+          ],
+          "name": "CachedEnabled",
+          "type": "event"
         },
         {
           "anonymous": false,
@@ -4206,6 +4225,19 @@
         },
         {
           "inputs": [],
+          "name": "CACHE_SLOT",
+          "outputs": [
+            {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "INVALID_PRICE",
           "outputs": [
             {
@@ -4360,6 +4392,11 @@
                   "internalType": "bool[3]",
                   "name": "enableFlagsForOracles",
                   "type": "bool[3]"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "cachingEnabled",
+                  "type": "bool"
                 }
               ],
               "internalType": "struct ResilientOracle.TokenConfig",
@@ -4522,6 +4559,11 @@
                   "internalType": "bool[3]",
                   "name": "enableFlagsForOracles",
                   "type": "bool[3]"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "cachingEnabled",
+                  "type": "bool"
                 }
               ],
               "internalType": "struct ResilientOracle.TokenConfig",
@@ -4552,6 +4594,11 @@
                   "internalType": "bool[3]",
                   "name": "enableFlagsForOracles",
                   "type": "bool[3]"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "cachingEnabled",
+                  "type": "bool"
                 }
               ],
               "internalType": "struct ResilientOracle.TokenConfig[]",
@@ -4762,211 +4809,7 @@
       ]
     },
     "ZkETHOracle": {
-      "address": "0x6aE071218F81f4e70312d1F435be24AeD70fa53A",
-      "abi": [
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "previousAdmin",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "newAdmin",
-              "type": "address"
-            }
-          ],
-          "name": "AdminChanged",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "beacon",
-              "type": "address"
-            }
-          ],
-          "name": "BeaconUpgraded",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "implementation",
-              "type": "address"
-            }
-          ],
-          "name": "Upgraded",
-          "type": "event"
-        },
-        {
-          "stateMutability": "payable",
-          "type": "fallback"
-        },
-        {
-          "inputs": [],
-          "name": "admin",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "admin_",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "implementation",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "implementation_",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "newImplementation",
-              "type": "address"
-            }
-          ],
-          "name": "upgradeTo",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "newImplementation",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes",
-              "name": "data",
-              "type": "bytes"
-            }
-          ],
-          "name": "upgradeToAndCall",
-          "outputs": [],
-          "stateMutability": "payable",
-          "type": "function"
-        },
-        {
-          "stateMutability": "payable",
-          "type": "receive"
-        },
-        {
-          "inputs": [],
-          "name": "InvalidTokenAddress",
-          "type": "error"
-        },
-        {
-          "inputs": [],
-          "name": "ZeroAddressNotAllowed",
-          "type": "error"
-        },
-        {
-          "inputs": [],
-          "name": "CORRELATED_TOKEN",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "RESILIENT_ORACLE",
-          "outputs": [
-            {
-              "internalType": "contract OracleInterface",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "UNDERLYING_TOKEN",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "asset",
-              "type": "address"
-            }
-          ],
-          "name": "getPrice",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_logic",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "admin_",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes",
-              "name": "_data",
-              "type": "bytes"
-            }
-          ],
-          "stateMutability": "payable",
-          "type": "constructor"
-        }
-      ]
-    },
-    "ZkETHOracle_Implementation": {
-      "address": "0x327871D3a9a8Cbeb06a1FD19607Cc11dE5ec74a7",
+      "address": "0x4C7cA0B8A23d6ff73D7dd1f74096D25628f90348",
       "abi": [
         {
           "inputs": [
@@ -4977,13 +4820,43 @@
             },
             {
               "internalType": "address",
-              "name": "weth",
+              "name": "rzkETH",
               "type": "address"
             },
             {
               "internalType": "address",
               "name": "resilientOracle",
               "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "annualGrowthRate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_snapshotInterval",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "initialSnapshotMaxExchangeRate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "initialSnapshotTimestamp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "accessControlManager",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_snapshotGap",
+              "type": "uint256"
             }
           ],
           "stateMutability": "nonpayable",
@@ -4991,13 +4864,131 @@
         },
         {
           "inputs": [],
+          "name": "InvalidGrowthRate",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidInitialSnapshot",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidSnapshotMaxExchangeRate",
+          "type": "error"
+        },
+        {
+          "inputs": [],
           "name": "InvalidTokenAddress",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "calledContract",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "methodSignature",
+              "type": "string"
+            }
+          ],
+          "name": "Unauthorized",
           "type": "error"
         },
         {
           "inputs": [],
           "name": "ZeroAddressNotAllowed",
           "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "oldGrowthRatePerSecond",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "newGrowthRatePerSecond",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "oldSnapshotInterval",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newSnapshotInterval",
+              "type": "uint256"
+            }
+          ],
+          "name": "GrowthRateUpdated",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "oldSnapshotGap",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "newSnapshotGap",
+              "type": "uint256"
+            }
+          ],
+          "name": "SnapshotGapUpdated",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "maxExchangeRate",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            }
+          ],
+          "name": "SnapshotUpdated",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "ACCESS_CONTROL_MANAGER",
+          "outputs": [
+            {
+              "internalType": "contract IAccessControlManagerV8",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
         },
         {
           "inputs": [],
@@ -5017,7 +5008,7 @@
           "name": "RESILIENT_ORACLE",
           "outputs": [
             {
-              "internalType": "contract OracleInterface",
+              "internalType": "contract ResilientOracleInterface",
               "name": "",
               "type": "address"
             }
@@ -5033,6 +5024,19 @@
               "internalType": "address",
               "name": "",
               "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getMaxAllowedExchangeRate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -5056,117 +5060,60 @@
           ],
           "stateMutability": "view",
           "type": "function"
-        }
-      ]
-    },
-    "ZkETHOracle_Proxy": {
-      "address": "0x6aE071218F81f4e70312d1F435be24AeD70fa53A",
-      "abi": [
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_logic",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "admin_",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes",
-              "name": "_data",
-              "type": "bytes"
-            }
-          ],
-          "stateMutability": "payable",
-          "type": "constructor"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "previousAdmin",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "newAdmin",
-              "type": "address"
-            }
-          ],
-          "name": "AdminChanged",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "beacon",
-              "type": "address"
-            }
-          ],
-          "name": "BeaconUpgraded",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "implementation",
-              "type": "address"
-            }
-          ],
-          "name": "Upgraded",
-          "type": "event"
-        },
-        {
-          "stateMutability": "payable",
-          "type": "fallback"
         },
         {
           "inputs": [],
-          "name": "admin",
+          "name": "getUnderlyingAmount",
           "outputs": [
             {
-              "internalType": "address",
-              "name": "admin_",
-              "type": "address"
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
             }
           ],
-          "stateMutability": "nonpayable",
+          "stateMutability": "view",
           "type": "function"
         },
         {
           "inputs": [],
-          "name": "implementation",
+          "name": "growthRatePerSecond",
           "outputs": [
             {
-              "internalType": "address",
-              "name": "implementation_",
-              "type": "address"
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
             }
           ],
-          "stateMutability": "nonpayable",
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "isCapped",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         },
         {
           "inputs": [
             {
-              "internalType": "address",
-              "name": "newImplementation",
-              "type": "address"
+              "internalType": "uint256",
+              "name": "_annualGrowthRate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_snapshotInterval",
+              "type": "uint256"
             }
           ],
-          "name": "upgradeTo",
+          "name": "setGrowthRate",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -5174,29 +5121,97 @@
         {
           "inputs": [
             {
-              "internalType": "address",
-              "name": "newImplementation",
-              "type": "address"
+              "internalType": "uint256",
+              "name": "_snapshotMaxExchangeRate",
+              "type": "uint256"
             },
             {
-              "internalType": "bytes",
-              "name": "data",
-              "type": "bytes"
+              "internalType": "uint256",
+              "name": "_snapshotTimestamp",
+              "type": "uint256"
             }
           ],
-          "name": "upgradeToAndCall",
+          "name": "setSnapshot",
           "outputs": [],
-          "stateMutability": "payable",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
-          "stateMutability": "payable",
-          "type": "receive"
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_snapshotGap",
+              "type": "uint256"
+            }
+          ],
+          "name": "setSnapshotGap",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "snapshotGap",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "snapshotInterval",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "snapshotMaxExchangeRate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "snapshotTimestamp",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "updateSnapshot",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
         }
       ]
     },
     "wUSDM_ERC4626Oracle": {
-      "address": "0xf1dD9549556F3fae6d8bf4F3283b1D9d2bfb996B",
+      "address": "0xBd09B8f1cD699F97d2c4387Fb6eA87853cF2A144",
       "abi": [
         {
           "inputs": [
@@ -5214,6 +5229,36 @@
               "internalType": "address",
               "name": "resilientOracle",
               "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "annualGrowthRate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_snapshotInterval",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "initialSnapshotMaxExchangeRate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "initialSnapshotTimestamp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "accessControlManager",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_snapshotGap",
+              "type": "uint256"
             }
           ],
           "stateMutability": "nonpayable",
@@ -5221,13 +5266,131 @@
         },
         {
           "inputs": [],
+          "name": "InvalidGrowthRate",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidInitialSnapshot",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidSnapshotMaxExchangeRate",
+          "type": "error"
+        },
+        {
+          "inputs": [],
           "name": "InvalidTokenAddress",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "calledContract",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "methodSignature",
+              "type": "string"
+            }
+          ],
+          "name": "Unauthorized",
           "type": "error"
         },
         {
           "inputs": [],
           "name": "ZeroAddressNotAllowed",
           "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "oldGrowthRatePerSecond",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "newGrowthRatePerSecond",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "oldSnapshotInterval",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newSnapshotInterval",
+              "type": "uint256"
+            }
+          ],
+          "name": "GrowthRateUpdated",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "oldSnapshotGap",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "newSnapshotGap",
+              "type": "uint256"
+            }
+          ],
+          "name": "SnapshotGapUpdated",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "maxExchangeRate",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            }
+          ],
+          "name": "SnapshotUpdated",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "ACCESS_CONTROL_MANAGER",
+          "outputs": [
+            {
+              "internalType": "contract IAccessControlManagerV8",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
         },
         {
           "inputs": [],
@@ -5244,10 +5407,23 @@
         },
         {
           "inputs": [],
+          "name": "ONE_CORRELATED_TOKEN",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "RESILIENT_ORACLE",
           "outputs": [
             {
-              "internalType": "contract OracleInterface",
+              "internalType": "contract ResilientOracleInterface",
               "name": "",
               "type": "address"
             }
@@ -5263,6 +5439,19 @@
               "internalType": "address",
               "name": "",
               "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getMaxAllowedExchangeRate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -5285,229 +5474,159 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getUnderlyingAmount",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "growthRatePerSecond",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "isCapped",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_annualGrowthRate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_snapshotInterval",
+              "type": "uint256"
+            }
+          ],
+          "name": "setGrowthRate",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_snapshotMaxExchangeRate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_snapshotTimestamp",
+              "type": "uint256"
+            }
+          ],
+          "name": "setSnapshot",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_snapshotGap",
+              "type": "uint256"
+            }
+          ],
+          "name": "setSnapshotGap",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "snapshotGap",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "snapshotInterval",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "snapshotMaxExchangeRate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "snapshotTimestamp",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "updateSnapshot",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         }
       ]
     },
     "wstETHOneJumpChainlinkOracle": {
-      "address": "0x832AafFeeD5EC923489744CE37fB35f4F533284e",
-      "abi": [
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "previousAdmin",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "newAdmin",
-              "type": "address"
-            }
-          ],
-          "name": "AdminChanged",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "beacon",
-              "type": "address"
-            }
-          ],
-          "name": "BeaconUpgraded",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "implementation",
-              "type": "address"
-            }
-          ],
-          "name": "Upgraded",
-          "type": "event"
-        },
-        {
-          "stateMutability": "payable",
-          "type": "fallback"
-        },
-        {
-          "inputs": [],
-          "name": "admin",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "admin_",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "implementation",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "implementation_",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "newImplementation",
-              "type": "address"
-            }
-          ],
-          "name": "upgradeTo",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "newImplementation",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes",
-              "name": "data",
-              "type": "bytes"
-            }
-          ],
-          "name": "upgradeToAndCall",
-          "outputs": [],
-          "stateMutability": "payable",
-          "type": "function"
-        },
-        {
-          "stateMutability": "payable",
-          "type": "receive"
-        },
-        {
-          "inputs": [],
-          "name": "InvalidTokenAddress",
-          "type": "error"
-        },
-        {
-          "inputs": [],
-          "name": "ZeroAddressNotAllowed",
-          "type": "error"
-        },
-        {
-          "inputs": [],
-          "name": "CORRELATED_TOKEN",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "INTERMEDIATE_ORACLE",
-          "outputs": [
-            {
-              "internalType": "contract OracleInterface",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "RESILIENT_ORACLE",
-          "outputs": [
-            {
-              "internalType": "contract OracleInterface",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "UNDERLYING_TOKEN",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "asset",
-              "type": "address"
-            }
-          ],
-          "name": "getPrice",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_logic",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "admin_",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes",
-              "name": "_data",
-              "type": "bytes"
-            }
-          ],
-          "stateMutability": "payable",
-          "type": "constructor"
-        }
-      ]
-    },
-    "wstETHOneJumpChainlinkOracle_Implementation": {
-      "address": "0xE0246761a77090F061C665f89CCAd853d087e9aE",
+      "address": "0xE454a8795b0077C656B4a2B4C0e72C1f3959CfCA",
       "abi": [
         {
           "inputs": [
@@ -5530,6 +5649,36 @@
               "internalType": "address",
               "name": "intermediateOracle",
               "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "annualGrowthRate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_snapshotInterval",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "initialSnapshotMaxExchangeRate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "initialSnapshotTimestamp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "accessControlManager",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_snapshotGap",
+              "type": "uint256"
             }
           ],
           "stateMutability": "nonpayable",
@@ -5537,13 +5686,131 @@
         },
         {
           "inputs": [],
+          "name": "InvalidGrowthRate",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidInitialSnapshot",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidSnapshotMaxExchangeRate",
+          "type": "error"
+        },
+        {
+          "inputs": [],
           "name": "InvalidTokenAddress",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "calledContract",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "methodSignature",
+              "type": "string"
+            }
+          ],
+          "name": "Unauthorized",
           "type": "error"
         },
         {
           "inputs": [],
           "name": "ZeroAddressNotAllowed",
           "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "oldGrowthRatePerSecond",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "newGrowthRatePerSecond",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "oldSnapshotInterval",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newSnapshotInterval",
+              "type": "uint256"
+            }
+          ],
+          "name": "GrowthRateUpdated",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "oldSnapshotGap",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "newSnapshotGap",
+              "type": "uint256"
+            }
+          ],
+          "name": "SnapshotGapUpdated",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "maxExchangeRate",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            }
+          ],
+          "name": "SnapshotUpdated",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "ACCESS_CONTROL_MANAGER",
+          "outputs": [
+            {
+              "internalType": "contract IAccessControlManagerV8",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
         },
         {
           "inputs": [],
@@ -5576,7 +5843,7 @@
           "name": "RESILIENT_ORACLE",
           "outputs": [
             {
-              "internalType": "contract OracleInterface",
+              "internalType": "contract ResilientOracleInterface",
               "name": "",
               "type": "address"
             }
@@ -5592,6 +5859,19 @@
               "internalType": "address",
               "name": "",
               "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getMaxAllowedExchangeRate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -5615,117 +5895,60 @@
           ],
           "stateMutability": "view",
           "type": "function"
-        }
-      ]
-    },
-    "wstETHOneJumpChainlinkOracle_Proxy": {
-      "address": "0x832AafFeeD5EC923489744CE37fB35f4F533284e",
-      "abi": [
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_logic",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "admin_",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes",
-              "name": "_data",
-              "type": "bytes"
-            }
-          ],
-          "stateMutability": "payable",
-          "type": "constructor"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "previousAdmin",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "newAdmin",
-              "type": "address"
-            }
-          ],
-          "name": "AdminChanged",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "beacon",
-              "type": "address"
-            }
-          ],
-          "name": "BeaconUpgraded",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "implementation",
-              "type": "address"
-            }
-          ],
-          "name": "Upgraded",
-          "type": "event"
-        },
-        {
-          "stateMutability": "payable",
-          "type": "fallback"
         },
         {
           "inputs": [],
-          "name": "admin",
+          "name": "getUnderlyingAmount",
           "outputs": [
             {
-              "internalType": "address",
-              "name": "admin_",
-              "type": "address"
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
             }
           ],
-          "stateMutability": "nonpayable",
+          "stateMutability": "view",
           "type": "function"
         },
         {
           "inputs": [],
-          "name": "implementation",
+          "name": "growthRatePerSecond",
           "outputs": [
             {
-              "internalType": "address",
-              "name": "implementation_",
-              "type": "address"
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
             }
           ],
-          "stateMutability": "nonpayable",
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "isCapped",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         },
         {
           "inputs": [
             {
-              "internalType": "address",
-              "name": "newImplementation",
-              "type": "address"
+              "internalType": "uint256",
+              "name": "_annualGrowthRate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_snapshotInterval",
+              "type": "uint256"
             }
           ],
-          "name": "upgradeTo",
+          "name": "setGrowthRate",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -5733,24 +5956,92 @@
         {
           "inputs": [
             {
-              "internalType": "address",
-              "name": "newImplementation",
-              "type": "address"
+              "internalType": "uint256",
+              "name": "_snapshotMaxExchangeRate",
+              "type": "uint256"
             },
             {
-              "internalType": "bytes",
-              "name": "data",
-              "type": "bytes"
+              "internalType": "uint256",
+              "name": "_snapshotTimestamp",
+              "type": "uint256"
             }
           ],
-          "name": "upgradeToAndCall",
+          "name": "setSnapshot",
           "outputs": [],
-          "stateMutability": "payable",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
-          "stateMutability": "payable",
-          "type": "receive"
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_snapshotGap",
+              "type": "uint256"
+            }
+          ],
+          "name": "setSnapshotGap",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "snapshotGap",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "snapshotInterval",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "snapshotMaxExchangeRate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "snapshotTimestamp",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "updateSnapshot",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
         }
       ]
     }
