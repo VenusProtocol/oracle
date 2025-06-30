@@ -33,43 +33,64 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   const exchangeRate = await stETHContract.getPooledEthByShares(parseUnits("1", 18));
   const snapshotGap = BigNumber.from("55"); // 0.55%
 
-  await deploy("WstETHOracle_Equivalence", {
-    contract: "WstETHOracleV2",
-    from: deployer,
-    log: true,
-    deterministicDeployment: false,
-    args: [
-      stETHAddress,
-      wstETHAddress,
-      WETHAddress,
-      oracle.address,
-      wstETH_ANNUAL_GROWTH_RATE,
-      DAYS_30,
-      increaseExchangeRateByPercentage(exchangeRate, snapshotGap),
-      block.timestamp,
-      acm,
-      getSnapshotGap(exchangeRate, snapshotGap.toNumber()),
-    ],
-  });
+  if (network.name === "ethereum") {
+    await deploy("WstETHOracle_Equivalence", {
+      contract: "WstETHOracleV2",
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [
+        stETHAddress,
+        wstETHAddress,
+        WETHAddress,
+        oracle.address,
+        wstETH_ANNUAL_GROWTH_RATE,
+        DAYS_30,
+        increaseExchangeRateByPercentage(exchangeRate, snapshotGap),
+        block.timestamp,
+        acm,
+        getSnapshotGap(exchangeRate, snapshotGap.toNumber()),
+      ],
+    });
 
-  await deploy("WstETHOracle_NonEquivalence", {
-    contract: "WstETHOracleV2",
-    from: deployer,
-    log: true,
-    deterministicDeployment: false,
-    args: [
-      stETHAddress,
-      wstETHAddress,
-      stETHAddress,
-      oracle.address,
-      wstETH_ANNUAL_GROWTH_RATE,
-      DAYS_30,
-      increaseExchangeRateByPercentage(exchangeRate, snapshotGap),
-      block.timestamp,
-      acm,
-      getSnapshotGap(exchangeRate, snapshotGap.toNumber()),
-    ],
-  });
+    await deploy("WstETHOracle_NonEquivalence", {
+      contract: "WstETHOracleV2",
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [
+        stETHAddress,
+        wstETHAddress,
+        stETHAddress,
+        oracle.address,
+        wstETH_ANNUAL_GROWTH_RATE,
+        DAYS_30,
+        increaseExchangeRateByPercentage(exchangeRate, snapshotGap),
+        block.timestamp,
+        acm,
+        getSnapshotGap(exchangeRate, snapshotGap.toNumber()),
+      ],
+    });
+  } else {
+    await deploy("WstETHOracle", {
+      contract: "WstETHOracleV2",
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [
+        stETHAddress,
+        wstETHAddress,
+        WETHAddress,
+        oracle.address,
+        wstETH_ANNUAL_GROWTH_RATE,
+        DAYS_30,
+        increaseExchangeRateByPercentage(exchangeRate, snapshotGap),
+        block.timestamp,
+        acm,
+        getSnapshotGap(exchangeRate, snapshotGap.toNumber()),
+      ],
+    });
+  }
 };
 
 export default func;
