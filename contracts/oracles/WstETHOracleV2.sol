@@ -12,18 +12,35 @@ import { EXP_SCALE } from "@venusprotocol/solidity-utilities/contracts/constants
  */
 contract WstETHOracleV2 is CorrelatedTokenOracle {
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address wstETH,
         address stETH,
-        address resilientOracle
-    ) CorrelatedTokenOracle(wstETH, stETH, resilientOracle) {}
+        address resilientOracle,
+        uint256 annualGrowthRate,
+        uint256 _snapshotInterval,
+        uint256 initialSnapshotMaxExchangeRate,
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 _snapshotGap
+    )
+        CorrelatedTokenOracle(
+            wstETH,
+            stETH,
+            resilientOracle,
+            annualGrowthRate,
+            _snapshotInterval,
+            initialSnapshotMaxExchangeRate,
+            initialSnapshotTimestamp,
+            accessControlManager,
+            _snapshotGap
+        )
+    {}
 
     /**
      * @notice Gets the stETH for 1 wstETH
      * @return amount Amount of stETH
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return IStETH(UNDERLYING_TOKEN).getPooledEthByShares(EXP_SCALE);
     }
 }

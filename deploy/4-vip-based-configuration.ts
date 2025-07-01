@@ -147,7 +147,6 @@ const timelockOraclePermissions = (timelock: string): AccessControlEntry[] => {
     "setValidateConfig(ValidateConfig)",
     "setMaxStalePeriod(string,uint256)",
     "setSymbolOverride(string,string)",
-    "setUnderlyingPythOracle(address)",
   ];
   return methods.map(method => ({
     caller: timelock,

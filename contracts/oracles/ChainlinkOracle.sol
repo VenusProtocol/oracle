@@ -83,11 +83,8 @@ contract ChainlinkOracle is AccessControlledV8, OracleInterface {
     function setTokenConfigs(TokenConfig[] memory tokenConfigs_) external {
         if (tokenConfigs_.length == 0) revert("length can't be 0");
         uint256 numTokenConfigs = tokenConfigs_.length;
-        for (uint256 i; i < numTokenConfigs; ) {
+        for (uint256 i; i < numTokenConfigs; ++i) {
             setTokenConfig(tokenConfigs_[i]);
-            unchecked {
-                ++i;
-            }
         }
     }
 

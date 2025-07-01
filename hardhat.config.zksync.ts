@@ -8,7 +8,6 @@ import "@typechain/hardhat";
 import * as dotenv from "dotenv";
 import "hardhat-dependency-compiler";
 import "hardhat-deploy";
-import "hardhat-gas-reporter";
 import { HardhatUserConfig, extendConfig } from "hardhat/config";
 import { HardhatConfig } from "hardhat/types";
 import "solidity-coverage";
@@ -127,6 +126,7 @@ const config: HardhatUserConfig = {
       zksync: true,
       live: true,
       gasPrice: 2000000000, // 20 gwei
+      enableVerifyURL: true,
     },
     zksyncmainnet: {
       url: process.env.ARCHIVE_NODE_zksyncmainnet || "https://mainnet.era.zksync.io",
@@ -135,11 +135,12 @@ const config: HardhatUserConfig = {
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
       zksync: true,
       live: true,
+      enableVerifyURL: true,
     },
   },
-  gasReporter: {
-    enabled: process.env.REPORT_GAS !== undefined,
-    currency: "USD",
+  // Etherscan verification configuration (optional)
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
   },
   // Hardhat deploy
   namedAccounts: {

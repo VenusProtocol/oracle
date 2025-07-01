@@ -7,7 +7,6 @@ import "@typechain/hardhat";
 import * as dotenv from "dotenv";
 import "hardhat-dependency-compiler";
 import "hardhat-deploy";
-import "hardhat-gas-reporter";
 import { HardhatUserConfig, extendConfig } from "hardhat/config";
 import { HardhatConfig } from "hardhat/types";
 import "solidity-coverage";
@@ -124,6 +123,7 @@ const config: HardhatUserConfig = {
       chainId: 56,
       live: true,
       timeout: 1200000, // 20 minutes
+      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
     sepolia: {
       url: process.env.ARCHIVE_NODE_sepolia || "https://ethereum-sepolia.blockpi.network/v1/rpc/public",
@@ -203,10 +203,12 @@ const config: HardhatUserConfig = {
       live: true,
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
-  },
-  gasReporter: {
-    enabled: process.env.REPORT_GAS !== undefined,
-    currency: "USD",
+    berachainbepolia: {
+      url: process.env.ARCHIVE_NODE_berachainbepolia || "https://bepolia.rpc.berachain.com",
+      chainId: 80069,
+      live: true,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
+    },
   },
   etherscan: {
     apiKey: {
@@ -224,6 +226,7 @@ const config: HardhatUserConfig = {
       basemainnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       unichainsepolia: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       unichainmainnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
+      berachainbepolia: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
     },
     customChains: [
       {
@@ -336,6 +339,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: `https://api.uniscan.xyz/api/`,
           browserURL: "https://uniscan.xyz/",
+        },
+      },
+      {
+        network: "berachainbepolia",
+        chainId: 80069,
+        urls: {
+          apiURL: "https://api.routescan.io/v2/network/testnet/evm/80084/etherscan",
+          browserURL: "https://bepolia.beratrail.io",
         },
       },
     ],

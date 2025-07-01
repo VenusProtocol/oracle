@@ -13,17 +13,33 @@ import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contract
  */
 contract WeETHOracle is CorrelatedTokenOracle {
     /// @notice Address of Liqiudity pool
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IEtherFiLiquidityPool public immutable LIQUIDITY_POOL;
 
     /// @notice Constructor for the implementation contract.
-    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address liquidityPool,
         address weETH,
         address eETH,
-        address resilientOracle
-    ) CorrelatedTokenOracle(weETH, eETH, resilientOracle) {
+        address resilientOracle,
+        uint256 annualGrowthRate,
+        uint256 _snapshotInterval,
+        uint256 initialSnapshotMaxExchangeRate,
+        uint256 initialSnapshotTimestamp,
+        address accessControlManager,
+        uint256 _snapshotGap
+    )
+        CorrelatedTokenOracle(
+            weETH,
+            eETH,
+            resilientOracle,
+            annualGrowthRate,
+            _snapshotInterval,
+            initialSnapshotMaxExchangeRate,
+            initialSnapshotTimestamp,
+            accessControlManager,
+            _snapshotGap
+        )
+    {
         ensureNonzeroAddress(liquidityPool);
         LIQUIDITY_POOL = IEtherFiLiquidityPool(liquidityPool);
     }
@@ -32,7 +48,7 @@ contract WeETHOracle is CorrelatedTokenOracle {
      * @notice Gets the eETH for 1 weETH
      * @return amount Amount of eETH
      */
-    function _getUnderlyingAmount() internal view override returns (uint256) {
+    function getUnderlyingAmount() public view override returns (uint256) {
         return LIQUIDITY_POOL.amountForShare(EXP_SCALE);
     }
 }

@@ -51,14 +51,14 @@ contract SFrxETHOracle is AccessControlledV8, OracleInterface {
 
     /**
      * @notice Sets the contracts required to fetch prices
-     * @param _accessControlManager Address of the access control manager contract
+     * @param _acm Address of the access control manager contract
      * @param _maxAllowedPriceDifference Maximum allowed price difference
      * @custom:error ZeroValueNotAllowed is thrown if `_maxAllowedPriceDifference` is zero
      */
-    function initialize(address _accessControlManager, uint256 _maxAllowedPriceDifference) external initializer {
+    function initialize(address _acm, uint256 _maxAllowedPriceDifference) external initializer {
         ensureNonzeroValue(_maxAllowedPriceDifference);
 
-        __AccessControlled_init(_accessControlManager);
+        __AccessControlled_init(_acm);
         maxAllowedPriceDifference = _maxAllowedPriceDifference;
     }
 

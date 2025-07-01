@@ -3,18 +3,20 @@
   "chainId": "300",
   "addresses": {
     "BoundValidator": "0x0A4daBeF41C83Af7e30FfC33feC56ba769f3D24b",
-    "BoundValidator_Implementation": "0xbf34F1Ca52586FDf5AFb7A92712D047B69932c9f",
+    "BoundValidator_Implementation": "0x66e6744104fAa55C14A6CD356eF1016E50B907df",
     "BoundValidator_Proxy": "0x0A4daBeF41C83Af7e30FfC33feC56ba769f3D24b",
     "ChainlinkOracle": "0x0DFf10dCdb3526010Df01ECc42076C25C27F8323",
-    "ChainlinkOracle_Implementation": "0x73461E884C256e1B5Ec1FEEF305410C478EA6818",
+    "ChainlinkOracle_Implementation": "0x58d8a589c111161dBb22742BF00671BEa1e32994",
     "ChainlinkOracle_Proxy": "0x0DFf10dCdb3526010Df01ECc42076C25C27F8323",
     "DefaultProxyAdmin": "0x18E44f588a4DcF2F7145d35A5C226e129040b6D3",
     "RedStoneOracle": "0x3af097f1Dcec172D5ECdD0D1eFA6B118FF15f152",
-    "RedStoneOracle_Implementation": "0xf66Ee1C402155483d3d1cb05D5294c59916fF3c5",
+    "RedStoneOracle_Implementation": "0x04D8444A4aDbE4697B2Ba6Dd7Cd174bf5a37098c",
     "RedStoneOracle_Proxy": "0x3af097f1Dcec172D5ECdD0D1eFA6B118FF15f152",
     "ResilientOracle": "0x748853B3bE26c46b4562Fd314dfb82708F395bDf",
-    "ResilientOracle_Implementation": "0x32810ABAE45A08e0BadEF94b753306E8636B39ED",
+    "ResilientOracle_Implementation": "0x4eE2399B57796A94644E1dFb5e4751FaCbE05c2E",
     "ResilientOracle_Proxy": "0x748853B3bE26c46b4562Fd314dfb82708F395bDf",
-    "wUSDM_ERC4626Oracle": "0xf1dD9549556F3fae6d8bf4F3283b1D9d2bfb996B"
+    "ZkETHOracle": "0x4C7cA0B8A23d6ff73D7dd1f74096D25628f90348",
+    "wUSDM_ERC4626Oracle": "0xBd09B8f1cD699F97d2c4387Fb6eA87853cF2A144",
+    "wstETHOneJumpChainlinkOracle": "0xE454a8795b0077C656B4a2B4C0e72C1f3959CfCA"
   }
 }
