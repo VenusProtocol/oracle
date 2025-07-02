@@ -53,6 +53,7 @@ describe("WstETHOracleV2 unit tests", () => {
     it("revert if wstETH address is 0", async () => {
       await expect(
         WsETHOracleFactory.deploy(
+          stETHMock.address,
           addr0000,
           stETHMock.address,
           resilientOracleMock.address,
@@ -69,8 +70,9 @@ describe("WstETHOracleV2 unit tests", () => {
     it("revert if stETH address is 0", async () => {
       await expect(
         WsETHOracleFactory.deploy(
-          WSTETH,
           addr0000,
+          WSTETH,
+          stETHMock.address,
           resilientOracleMock.address,
           ANNUAL_GROWTH_RATE,
           SNAPSHOT_UPDATE_INTERVAL,
@@ -85,6 +87,7 @@ describe("WstETHOracleV2 unit tests", () => {
     it("revert if ResilientOracle address is 0", async () => {
       await expect(
         WsETHOracleFactory.deploy(
+          stETHMock.address,
           WSTETH,
           stETHMock.address,
           addr0000,
@@ -100,6 +103,7 @@ describe("WstETHOracleV2 unit tests", () => {
 
     it("should deploy contract", async () => {
       wstETHOracle = await WsETHOracleFactory.deploy(
+        stETHMock.address,
         WSTETH,
         stETHMock.address,
         resilientOracleMock.address,
