@@ -335,13 +335,6 @@ export const ADDRESSES: PreconfiguredAddresses = {
     wstETH: "0xc02fE7317D4eb8753a02c35fe019786854A92001",
     timelock: "0x1803Cf1D3495b43cC628aa1d8638A981F8CD341C", // Unichain mainnet guardian
   },
-  berachainbepolia: {
-    acm: "0x243313C1cC198FF80756ed2ef14D9dcd94Ee762b",
-    vBNBAddress: ethers.constants.AddressZero,
-    WBNBAddress: ethers.constants.AddressZero,
-    VAIAddress: ethers.constants.AddressZero,
-    timelock: "0xAb3DBA18664B96AD54459D06Ca8BD18C9146d5CE",
-  },
 };
 
 export const chainlinkFeed: Config = {
