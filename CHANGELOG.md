@@ -1,3 +1,22 @@
+## [2.14.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.13.0...v2.14.0-dev.1) (2025-08-11)
+
+
+### Features
+
+* could use different contracts to get the wstETH ratio ([bd60eb8](https://github.com/VenusProtocol/oracle/commit/bd60eb88975228113195c0d4a1df3dabc61afb4d))
+* updating deployment files ([2541103](https://github.com/VenusProtocol/oracle/commit/25411038a1c2afb632d5377874349f62b98e03eb))
+
+
+### Bug Fixes
+
+* added caps ([43179a0](https://github.com/VenusProtocol/oracle/commit/43179a0ddaaacb52ca3130efcbae9cd36246bb45))
+* deployed oracle ([0d41742](https://github.com/VenusProtocol/oracle/commit/0d4174201e5570a60c612bd831acf2ffc57bc4a9))
+* fixed deploy script ([e4f1e16](https://github.com/VenusProtocol/oracle/commit/e4f1e166b9edf8451caaac96e2abc12f04a1074c))
+* fixed ut ([6809779](https://github.com/VenusProtocol/oracle/commit/6809779b51cd4a4db0ba6c8a6620738165129966))
+* fixed yarn lock ([e165afc](https://github.com/VenusProtocol/oracle/commit/e165afcccf3dd5745dfff2942595aa3d72ae81a6))
+* removed berachain deployment ([cf0ff73](https://github.com/VenusProtocol/oracle/commit/cf0ff73bc19f1f17e48366b8aebda1ca9130f4df))
+* removed proxy ([549f763](https://github.com/VenusProtocol/oracle/commit/549f763fa34f4b0e708f9be6aa8649dcaae8a8cc))
+
 ## [2.13.0](https://github.com/VenusProtocol/oracle/compare/v2.12.0...v2.13.0) (2025-07-01)
 
 
