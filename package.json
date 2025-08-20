@@ -61,6 +61,7 @@
     "@matterlabs/hardhat-zksync-solc": "^1.2.1",
     "@matterlabs/hardhat-zksync-verify": "^1.8.0",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.4",
+    "@nomicfoundation/hardhat-verify": "^2.0.14",
     "@nomiclabs/hardhat-ethers": "^2.2.1",
     "@nomiclabs/hardhat-etherscan": "^3.1.0",
     "@openzeppelin/hardhat-upgrades": "^1.22.0",
