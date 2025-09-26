@@ -26,14 +26,14 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     waitConfirmations: 1,
   };
 
-  await deploy("PendleOracle-PT-USDe-30Oct2025", {
+  await deploy("PendleOracle-PT-USDe-30OCT2025", {
     contract: "PendleOracle",
     args: [
       {
-        market: addresses["PT-USDe-30Oct2025_Market"] || "0x0000000000000000000000000000000000000003",
+        market: addresses["PT-USDe-30OCT2025_Market"] || "0x0000000000000000000000000000000000000003",
         ptOracle: ptOracleAddress,
         rateKind: PendleRateKind.PT_TO_SY,
-        ptToken: addresses["PT-USDe-30Oct2025"],
+        ptToken: addresses["PT-USDe-30OCT2025"],
         underlyingToken: addresses.USDe,
         resilientOracle: resilientOracle.address,
         twapDuration: 1800,
@@ -49,17 +49,17 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
   });
 
   if (isMainnet(network)) {
-    await deploy("PendleOracle-PT-USDe-30Oct2025_Reference_PtToAsset", {
+    await deploy("PendleOracle-PT-USDe-30OCT2025_Reference_PtToAsset", {
       contract: "PendleOracle",
       from: deployer,
       log: true,
       deterministicDeployment: false,
       args: [
         {
-          market: addresses["PT-USDe-30Oct2025_Market"] || "0x0000000000000000000000000000000000000003",
+          market: addresses["PT-USDe-30OCT2025_Market"] || "0x0000000000000000000000000000000000000003",
           ptOracle: ptOracleAddress,
           rateKind: PendleRateKind.PT_TO_ASSET,
-          ptToken: addresses["PT-USDe-30Oct2025"],
+          ptToken: addresses["PT-USDe-30OCT2025"],
           underlyingToken: addresses.USDe,
           resilientOracle: resilientOracle.address,
           twapDuration: 1800,
