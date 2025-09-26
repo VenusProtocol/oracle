@@ -30,7 +30,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     contract: "PendleOracle",
     args: [
       {
-        market: addresses["PT-USDe-30OCT2025_Market"] || "0x0000000000000000000000000000000000000003",
+        market: addresses["PT-USDe-30OCT2025_Market"] || "0x0000000000000000000000000000000000000004",
         ptOracle: ptOracleAddress,
         rateKind: PendleRateKind.PT_TO_SY,
         ptToken: addresses["PT-USDe-30OCT2025"],
@@ -56,7 +56,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       deterministicDeployment: false,
       args: [
         {
-          market: addresses["PT-USDe-30OCT2025_Market"] || "0x0000000000000000000000000000000000000003",
+          market: addresses["PT-USDe-30OCT2025_Market"] || "0x0000000000000000000000000000000000000004",
           ptOracle: ptOracleAddress,
           rateKind: PendleRateKind.PT_TO_ASSET,
           ptToken: addresses["PT-USDe-30OCT2025"],
