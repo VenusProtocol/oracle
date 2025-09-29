@@ -1,29 +1,25 @@
+import { BigNumber } from "ethers";
+import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { ADDRESSES, addr0000, assets } from "../helpers/deploymentConfig";
+import {
+  ADDRESSES,
+  DAYS_30,
+  addr0000,
+  assets,
+  getSnapshotGap,
+  increaseExchangeRateByPercentage,
+} from "../helpers/deploymentConfig";
 
-const func: DeployFunction = async ({
-  getNamedAccounts,
-  deployments,
-  network,
-  artifacts,
-}: HardhatRuntimeEnvironment) => {
+const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  console.log(`Deployer ${deployer}`);
-
-  const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
-
-  const { stETHAddress, wstETHAddress } = ADDRESSES[network.name];
+  const { stETHAddress, wstETHAddress, acm } = ADDRESSES[network.name];
   const WETHAsset = assets[network.name].find(asset => asset.token === "WETH");
   const WETHAddress = WETHAsset?.address ?? addr0000;
-
-  const defaultProxyAdmin = await artifacts.readArtifact(
-    "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
-  );
 
   const oracle = await ethers.getContract("ResilientOracle");
 
@@ -31,37 +27,70 @@ const func: DeployFunction = async ({
   // assume 1/1 price ration between stETH/ETH or
   // will get stETH/USD price from secondary market
 
-  await deploy("WstETHOracle_Equivalence", {
-    contract: "WstETHOracle",
-    from: deployer,
-    log: true,
-    deterministicDeployment: false,
-    args: [wstETHAddress, WETHAddress, stETHAddress, oracle.address, true],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentUpgradeableProxy",
-      viaAdminContract: {
-        name: "DefaultProxyAdmin",
-        artifact: defaultProxyAdmin,
-      },
-    },
-  });
+  const wstETH_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.067", 18); // 6.7%
+  const block = await ethers.provider.getBlock("latest");
+  const stETHContract = await ethers.getContractAt("IStETH", stETHAddress);
+  const exchangeRate = await stETHContract.getPooledEthByShares(parseUnits("1", 18));
+  const snapshotGap = BigNumber.from("55"); // 0.55%
 
-  await deploy("WstETHOracle_NonEquivalence", {
-    contract: "WstETHOracle",
-    from: deployer,
-    log: true,
-    deterministicDeployment: false,
-    args: [wstETHAddress, WETHAddress, stETHAddress, oracle.address, false],
-    proxy: {
-      owner: proxyOwnerAddress,
-      proxyContract: "OptimizedTransparentUpgradeableProxy",
-      viaAdminContract: {
-        name: "DefaultProxyAdmin",
-        artifact: defaultProxyAdmin,
-      },
-    },
-  });
+  if (network.name === "ethereum") {
+    await deploy("WstETHOracle_Equivalence", {
+      contract: "WstETHOracleV2",
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [
+        stETHAddress,
+        wstETHAddress,
+        WETHAddress,
+        oracle.address,
+        wstETH_ANNUAL_GROWTH_RATE,
+        DAYS_30,
+        increaseExchangeRateByPercentage(exchangeRate, snapshotGap),
+        block.timestamp,
+        acm,
+        getSnapshotGap(exchangeRate, snapshotGap.toNumber()),
+      ],
+    });
+
+    await deploy("WstETHOracle_NonEquivalence", {
+      contract: "WstETHOracleV2",
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [
+        stETHAddress,
+        wstETHAddress,
+        stETHAddress,
+        oracle.address,
+        wstETH_ANNUAL_GROWTH_RATE,
+        DAYS_30,
+        increaseExchangeRateByPercentage(exchangeRate, snapshotGap),
+        block.timestamp,
+        acm,
+        getSnapshotGap(exchangeRate, snapshotGap.toNumber()),
+      ],
+    });
+  } else {
+    await deploy("WstETHOracle", {
+      contract: "WstETHOracleV2",
+      from: deployer,
+      log: true,
+      deterministicDeployment: false,
+      args: [
+        stETHAddress,
+        wstETHAddress,
+        WETHAddress,
+        oracle.address,
+        wstETH_ANNUAL_GROWTH_RATE,
+        DAYS_30,
+        increaseExchangeRateByPercentage(exchangeRate, snapshotGap),
+        block.timestamp,
+        acm,
+        getSnapshotGap(exchangeRate, snapshotGap.toNumber()),
+      ],
+    });
+  }
 };
 
 export default func;
