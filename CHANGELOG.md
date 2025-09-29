@@ -1,3 +1,22 @@
+## [2.14.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.14.0-dev.1...v2.14.0-dev.2) (2025-09-29)
+
+
+### Features
+
+* add PT-USDe oracle deployemnts ([de0e156](https://github.com/VenusProtocol/oracle/commit/de0e15690cad6b713069ea9200a7a4b2d359bfef))
+* add PT-USDe oracle deployemnts on bscmainnet ([0428227](https://github.com/VenusProtocol/oracle/commit/042822727a1c95ef94978e32ea91333c6b6d7c0d))
+* updating deployment files ([f688009](https://github.com/VenusProtocol/oracle/commit/f688009a686c6d56c5b9748e23b0826cabe64d52))
+* updating deployment files ([7f6990a](https://github.com/VenusProtocol/oracle/commit/7f6990afe8886a559bc4a7efd8ec4794a5928e9a))
+* updating deployment files ([7a3baa3](https://github.com/VenusProtocol/oracle/commit/7a3baa3c98561e02b8cfeb0ca3301f91882e3ab3))
+* updating deployment files ([9464757](https://github.com/VenusProtocol/oracle/commit/946475775ff74d8d3fa502edb5759ad695c03f5d))
+
+
+### Bug Fixes
+
+* market naming case ([b443a93](https://github.com/VenusProtocol/oracle/commit/b443a930c4d50b80012689416c3db77ae5cd2231))
+* update PT-USDe oracle deployemnt ([6dc42ad](https://github.com/VenusProtocol/oracle/commit/6dc42ad74f1edd9338371efdcfc81db5069e7ba8))
+* yarn-lock updates ([9179568](https://github.com/VenusProtocol/oracle/commit/9179568a8c423e4207e8531406a09fb42389baf8))
+
 ## [2.14.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.13.0...v2.14.0-dev.1) (2025-08-11)
 
 
