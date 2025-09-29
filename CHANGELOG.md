@@ -1,3 +1,10 @@
+## [2.14.1-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.14.0...v2.14.1-dev.1) (2025-09-29)
+
+
+### Bug Fixes
+
+* release ([241a9e7](https://github.com/VenusProtocol/oracle/commit/241a9e73e509e94f9112a52b84be77a09f04c71c))
+
 ## [2.14.0](https://github.com/VenusProtocol/oracle/compare/v2.13.0...v2.14.0) (2025-09-29)
 
 
