@@ -1,7 +1,7 @@
 import "module-alias/register";
 
 import "@nomicfoundation/hardhat-chai-matchers";
-import "@nomiclabs/hardhat-etherscan";
+import "@nomicfoundation/hardhat-verify";
 import "@openzeppelin/hardhat-upgrades";
 import "@typechain/hardhat";
 import * as dotenv from "dotenv";
@@ -29,25 +29,25 @@ extendConfig((config: HardhatConfig) => {
 function isFork() {
   return process.env.FORK === "true"
     ? {
-        allowUnlimitedContractSize: false,
-        loggingEnabled: false,
-        forking: {
-          url:
-            process.env[`ARCHIVE_NODE_${process.env.FORKED_NETWORK}`] ||
-            "https://data-seed-prebsc-1-s1.binance.org:8545",
-        },
-        accounts: {
-          accountsBalance: "1000000000000000000",
-        },
-        live: false,
-        saveDeployments: false,
-      }
+      allowUnlimitedContractSize: false,
+      loggingEnabled: false,
+      forking: {
+        url:
+          process.env[`ARCHIVE_NODE_${process.env.FORKED_NETWORK}`] ||
+          "https://data-seed-prebsc-1-s1.binance.org:8545",
+      },
+      accounts: {
+        accountsBalance: "1000000000000000000",
+      },
+      live: false,
+      saveDeployments: false,
+    }
     : {
-        allowUnlimitedContractSize: true,
-        loggingEnabled: false,
-        live: false,
-        saveDeployments: false,
-      };
+      allowUnlimitedContractSize: true,
+      loggingEnabled: false,
+      live: false,
+      saveDeployments: false,
+    };
 }
 
 const config: HardhatUserConfig = {
@@ -204,7 +204,11 @@ const config: HardhatUserConfig = {
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
   },
+  sourcify: {
+    enabled: false,
+  },
   etherscan: {
+    enabled: true,
     apiKey: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
     customChains: [
       {
