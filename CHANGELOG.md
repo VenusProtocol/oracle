@@ -1,3 +1,11 @@
+## [2.15.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.14.1-dev.1...v2.15.0-dev.1) (2025-10-16)
+
+
+### Features
+
+* finish usdt chainlink oracle deployment script and corresponding deployment ([3756352](https://github.com/VenusProtocol/oracle/commit/37563526172c5c636623d7049849625262b5c947))
+* updating deployment files ([37a2bc6](https://github.com/VenusProtocol/oracle/commit/37a2bc614d178eb0b68fd56d31da3bc4a84fc13c))
+
 ## [2.14.1-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.14.0...v2.14.1-dev.1) (2025-09-29)
 
 
