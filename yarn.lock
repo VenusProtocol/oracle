@@ -1950,26 +1950,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nomiclabs/hardhat-etherscan@npm:^3.1.0":
-  version: 3.1.8
-  resolution: "@nomiclabs/hardhat-etherscan@npm:3.1.8"
-  dependencies:
-    "@ethersproject/abi": ^5.1.2
-    "@ethersproject/address": ^5.0.2
-    cbor: ^8.1.0
-    chalk: ^2.4.2
-    debug: ^4.1.1
-    fs-extra: ^7.0.1
-    lodash: ^4.17.11
-    semver: ^6.3.0
-    table: ^6.8.0
-    undici: ^5.14.0
-  peerDependencies:
-    hardhat: ^2.0.4
-  checksum: 13864380d104705a54668adf2fb37a87d1147a064c1d29dbc356390e7254d5c7501b9b3af9c4ec2f9d9ff642a01417d5d35970d626fe706f5f4830820ae89ecb
-  languageName: node
-  linkType: hard
-
 "@npmcli/agent@npm:^2.0.0":
   version: 2.2.2
   resolution: "@npmcli/agent@npm:2.2.2"
@@ -4045,7 +4025,6 @@ __metadata:
     "@nomicfoundation/hardhat-network-helpers": ^1.0.8
     "@nomicfoundation/hardhat-verify": ^2.0.14
     "@nomiclabs/hardhat-ethers": ^2.2.1
-    "@nomiclabs/hardhat-etherscan": ^3.1.0
     "@openzeppelin/contracts": ^4.6.0
     "@openzeppelin/contracts-upgradeable": ^4.7.3
     "@openzeppelin/hardhat-upgrades": ^1.22.0
