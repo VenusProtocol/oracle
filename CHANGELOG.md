@@ -1,3 +1,15 @@
+## [2.15.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.15.0-dev.1...v2.15.0-dev.2) (2025-10-20)
+
+
+### Bug Fixes
+
+* enable sourcify ([3b3bc87](https://github.com/VenusProtocol/oracle/commit/3b3bc87c49d9c0024df4347fb77e9ca6fef5320f))
+* fixed etherscan verification ([757fd98](https://github.com/VenusProtocol/oracle/commit/757fd986c79425b87c0b61f936427e562f50b086))
+* fixed hardhat config ([f8a4683](https://github.com/VenusProtocol/oracle/commit/f8a4683ac3c5509bd60fdba450e2535212b75072))
+* fixed yarn.lock ([0bc0d7d](https://github.com/VenusProtocol/oracle/commit/0bc0d7d82baeac828e246339f36cb525bf56bd3d))
+* merge conflict ([f462ef3](https://github.com/VenusProtocol/oracle/commit/f462ef34044171dcd1230ca91c472775bf010855))
+* removed etherscan verify ([1961046](https://github.com/VenusProtocol/oracle/commit/1961046f585d35f8b4c70b18d6c5055e85d0676c))
+
 ## [2.15.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.14.1-dev.1...v2.15.0-dev.1) (2025-10-16)
 
 
