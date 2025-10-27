@@ -1,3 +1,19 @@
+## [2.15.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.15.0-dev.2...v2.15.0-dev.3) (2025-10-27)
+
+
+### Features
+
+* updating deployment files ([f961fec](https://github.com/VenusProtocol/oracle/commit/f961fece037878006c2fbcad6517769370ad502b))
+* updating deployment files ([161a69d](https://github.com/VenusProtocol/oracle/commit/161a69d884440316a65139461691592da6ba7cf1))
+
+
+### Bug Fixes
+
+* deploy wbeth oracle ([b1b62d3](https://github.com/VenusProtocol/oracle/commit/b1b62d3712ee12f5e4cdfab273b1e512ab2e3ed5))
+* fixed yarn.lock ([3c85969](https://github.com/VenusProtocol/oracle/commit/3c85969a0d0e0baf0768827d3496fc088b2d0a13))
+* merge conflict ([509402e](https://github.com/VenusProtocol/oracle/commit/509402e614c20dc3e96a350faa6f7426cdd1f4fa))
+* revert testnet ([5f271ea](https://github.com/VenusProtocol/oracle/commit/5f271ea154d1c92b659fc9d0f15071c54a9f9d5f))
+
 ## [2.15.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.15.0-dev.1...v2.15.0-dev.2) (2025-10-20)
 
 
