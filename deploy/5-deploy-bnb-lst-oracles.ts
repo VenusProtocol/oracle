@@ -107,7 +107,7 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const wBETHAddress = wBETH || (await ethers.getContract("MockWBETH")).address;
 
-  const wBETH_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
+  const wBETH_ANNUAL_GROWTH_RATE = 0;
   block = await ethers.provider.getBlock("latest");
   const wBETHContract = await ethers.getContractAt("IWBETH", wBETHAddress);
   exchangeRate = await wBETHContract.exchangeRate();
@@ -122,10 +122,10 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       oracle.address,
       wBETH_ANNUAL_GROWTH_RATE,
       SNAPSHOT_UPDATE_INTERVAL,
-      exchangeRate,
-      block.timestamp,
+      EXCHANGE_RATE,
+      SNAPSHOT_TIMESTAMP,
       acm,
-      0,
+      SNAPSHOT_GAP,
     ],
     skipIfAlreadyDeployed: true,
   });
