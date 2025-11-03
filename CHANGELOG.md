@@ -1,3 +1,15 @@
+## [2.15.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.15.0-dev.3...v2.15.0-dev.4) (2025-11-03)
+
+
+### Features
+
+* add slim package scripts ([ed14178](https://github.com/VenusProtocol/oracle/commit/ed141788f696d3631f082bec7fee6f0d6d70c8f7))
+
+
+### Bug Fixes
+
+* add repo URL ([dee1291](https://github.com/VenusProtocol/oracle/commit/dee1291c1c71917ed3dc5b7b51868284df8c8b9f))
+
 ## [2.15.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.15.0-dev.2...v2.15.0-dev.3) (2025-10-27)
 
 
