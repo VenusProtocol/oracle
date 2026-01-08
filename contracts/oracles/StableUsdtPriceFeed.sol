@@ -12,8 +12,8 @@ contract StableUsdtPriceFeed {
     ResilientOracleInterface public resilientOracle;
 
     address public constant USDT_TOKEN_ADDR = 0x55d398326f99059fF775485246999027B3197955;
-    uint256 public constant UPPER_BOUND = 102000000; // 1.02 USD
-    uint256 public constant LOWER_BOUND = 98000000; // 0.98 USD
+    uint256 public constant UPPER_BOUND = 1020000000000000000; // 1.02 USD
+    uint256 public constant LOWER_BOUND = 980000000000000000; // 0.98 USD
 
     constructor(address _resilientOracle) {
         require(_resilientOracle != address(0), "Zero address provided");
@@ -55,10 +55,10 @@ contract StableUsdtPriceFeed {
 
     /**
      * @dev Get the price from the Resilient Oracle, and bound it to the range
-     * @return price The price of USDT in 8 decimals
+     * @return price The price of USDT in 18 decimals
      */
     function getPrice() private view returns (uint256 price) {
-        // get USDT price (8 decimals)
+        // get USDT price (18 decimals)
         price = resilientOracle.getPrice(USDT_TOKEN_ADDR);
         price = price < LOWER_BOUND ? LOWER_BOUND : (price > UPPER_BOUND ? UPPER_BOUND : price);
     }
