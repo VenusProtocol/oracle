@@ -1,0 +1,40 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/interfaces/OracleInterface.sol": {
+      "content": "// SPDX-License-Identifier: BSD-3-Clause\npragma solidity ^0.8.25;\n\ninterface OracleInterface {\n    function getPrice(address asset) external view returns (uint256);\n}\n\ninterface ResilientOracleInterface is OracleInterface {\n    function updatePrice(address vToken) external;\n\n    function updateAssetPrice(address asset) external;\n\n    function getUnderlyingPrice(address vToken) external view returns (uint256);\n}\n\ninterface BoundValidatorInterface {\n    function validatePriceWithAnchorPrice(\n        address asset,\n        uint256 reporterPrice,\n        uint256 anchorPrice\n    ) external view returns (bool);\n}\n"
+    },
+    "contracts/oracles/StableUsdtPriceFeed.sol": {
+      "content": "// SPDX-License-Identifier: BSD-3-Clause\npragma solidity 0.8.25;\n\nimport { ResilientOracleInterface } from \"../interfaces/OracleInterface.sol\";\n\n/**\n * @title StableUsdtPriceFeed\n * @dev This contract is used to get the price of USDT from a Resilient Oracle\n *      and bounds the price to a certain range.\n */\ncontract StableUsdtPriceFeed {\n    ResilientOracleInterface public resilientOracle;\n\n    address public constant USDT_TOKEN_ADDR = 0x55d398326f99059fF775485246999027B3197955;\n    uint256 public constant UPPER_BOUND = 1020000000000000000; // 1.02 USD\n    uint256 public constant LOWER_BOUND = 980000000000000000; // 0.98 USD\n\n    constructor(address _resilientOracle) {\n        require(_resilientOracle != address(0), \"Zero address provided\");\n        resilientOracle = ResilientOracleInterface(_resilientOracle);\n    }\n\n    function latestAnswer() external view returns (int256 answer) {\n        // get price\n        uint256 price = getPrice();\n        // cast price to int256\n        answer = int256(price);\n    }\n\n    function latestRoundData()\n        external\n        view\n        returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)\n    {\n        // get price\n        uint256 _answer = getPrice();\n        // mock timestamp to latest block timestamp\n        uint256 timestamp = block.timestamp;\n        // mock roundId to timestamp\n        roundId = uint80(timestamp);\n        return (roundId, int256(_answer), timestamp, timestamp, roundId);\n    }\n\n    function decimals() external pure returns (uint8) {\n        return 8;\n    }\n\n    function description() external pure returns (string memory) {\n        return \"Stabilized USDT Price Feed\";\n    }\n\n    function version() external pure returns (uint256) {\n        return 1;\n    }\n\n    /**\n     * @dev Get the price from the Resilient Oracle, and bound it to the range\n     * @return price The price of USDT in 18 decimals\n     */\n    function getPrice() private view returns (uint256 price) {\n        // get USDT price (18 decimals)\n        price = resilientOracle.getPrice(USDT_TOKEN_ADDR);\n        price = price < LOWER_BOUND ? LOWER_BOUND : (price > UPPER_BOUND ? UPPER_BOUND : price);\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200,
+      "details": {
+        "yul": true
+      }
+    },
+    "evmVersion": "cancun",
+    "outputSelection": {
+      "*": {
+        "*": [
+          "storageLayout",
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "evm.gasEstimates"
+        ],
+        "": ["ast"]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}
