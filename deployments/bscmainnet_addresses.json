@@ -48,6 +48,7 @@
     "SolvBTC.BBN_OneJumpRedStoneOracle": "0x98B9bC5a1e7E439ebEB0BEdB7e9f6b24fEc1E8B4",
     "SolvBTC.BBN_OneJumpRedStoneOracle_Implementation": "0x98eD7290a3D52FA5639dd76C16ADE3074ba664dd",
     "SolvBTC.BBN_OneJumpRedStoneOracle_Proxy": "0x98B9bC5a1e7E439ebEB0BEdB7e9f6b24fEc1E8B4",
+    "StableUsdtPriceFeed": "0x28d5A3358686d82E837BaaF225A4Faa418065532",
     "StkBNBOracle": "0xdBAFD16c5eA8C29D1e94a5c26b31bFAC94331Ac6",
     "StkBNBOracle_Implementation": "0xA7C432c50D310c805c8342488921A108b585397F",
     "StkBNBOracle_Proxy": "0xdBAFD16c5eA8C29D1e94a5c26b31bFAC94331Ac6",
