@@ -1,3 +1,14 @@
+## 2.15.0-dev.5 (2026-01-09)
+
+* ci: update to use the Trusted Publisher for npm release ([023bc82](https://github.com/VenusProtocol/oracle/commit/023bc82))
+* Merge pull request #303 from VenusProtocol/feat/VPD-418 ([c0012d9](https://github.com/VenusProtocol/oracle/commit/c0012d9)), closes [#303](https://github.com/VenusProtocol/oracle/issues/303)
+* feat: deploy stable usdt price feed ([f165163](https://github.com/VenusProtocol/oracle/commit/f165163))
+* feat: updating deployment files ([80dbbf7](https://github.com/VenusProtocol/oracle/commit/80dbbf7))
+* feat: updating deployment files ([52d2d4c](https://github.com/VenusProtocol/oracle/commit/52d2d4c))
+* feat: updating deployment files ([e62750a](https://github.com/VenusProtocol/oracle/commit/e62750a))
+* refactor: update bounds in StableUsdtPriceFeed ([d3271a5](https://github.com/VenusProtocol/oracle/commit/d3271a5))
+* refactor: update decimals ([bc10eaf](https://github.com/VenusProtocol/oracle/commit/bc10eaf))
+
 ## [2.15.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.15.0-dev.3...v2.15.0-dev.4) (2025-11-03)
 
 
