@@ -1,3 +1,12 @@
+## 2.15.0-dev.6 (2026-01-21)
+
+* Merge pull request #304 from VenusProtocol/feat/vpd-404 ([006092f](https://github.com/VenusProtocol/oracle/commit/006092f)), closes [#304](https://github.com/VenusProtocol/oracle/issues/304)
+* feat: add clisBNB pendle oracle deployment script ([611d17d](https://github.com/VenusProtocol/oracle/commit/611d17d))
+* feat: add PT-clisBNB-25JUN2026 oracle for mainnet ([a3b8923](https://github.com/VenusProtocol/oracle/commit/a3b8923))
+* feat: add PT-clisBNB-25JUN2026 pendle oracle deployments ([5244422](https://github.com/VenusProtocol/oracle/commit/5244422))
+* feat: updating deployment files ([07da32e](https://github.com/VenusProtocol/oracle/commit/07da32e))
+* feat: updating deployment files ([e52cc70](https://github.com/VenusProtocol/oracle/commit/e52cc70))
+
 ## 2.15.0-dev.5 (2026-01-09)
 
 * ci: update to use the Trusted Publisher for npm release ([023bc82](https://github.com/VenusProtocol/oracle/commit/023bc82))
