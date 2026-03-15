@@ -103,7 +103,17 @@ const config: HardhatUserConfig = {
     ],
   },
   networks: {
-    hardhat: isFork(),
+    hardhat: {
+      ...isFork(),
+      chains: {
+        56: {
+          hardforkHistory: {
+            shanghai: 39539137,
+            cancun: 43187800,
+          },
+        },
+      },
+    },
     development: {
       url: "http://127.0.0.1:8545/",
       chainId: 31337,
