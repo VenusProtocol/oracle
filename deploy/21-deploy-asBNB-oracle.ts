@@ -12,11 +12,9 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
 
   const { asBNB, slisBNB, acm } = ADDRESSES[network.name];
 
-  const SNAPSHOT_UPDATE_INTERVAL = 0;
-  const asBNB_ANNUAL_GROWTH_RATE = 0;
-  const EXCHANGE_RATE = 0;
-  const SNAPSHOT_TIMESTAMP = 0;
-  const SNAPSHOT_GAP = 0;
+  const SNAPSHOT_UPDATE_INTERVAL = 86400; // 24 hours - CAPO must be active
+  const asBNB_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.10", 18); // 10% annual for staking
+  const SNAPSHOT_GAP = ethers.utils.parseUnits("0.01", 18); // 1% safety margin
 
   // Deploy dependencies for testnet
   if (network.name === "bsctestnet") {
@@ -41,6 +39,12 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
     });
   }
 
+  const asBNBContract = await ethers.getContractAt("IAsBNB", asBNB);
+  const minterAddress = await asBNBContract.minter();
+  const minterContract = await ethers.getContractAt("IAsBNBMinter", minterAddress);
+  const exchangeRate = await minterContract.convertToTokens(ethers.utils.parseUnits("1", 18));
+  const block = await ethers.provider.getBlock("latest");
+
   await deploy("AsBNBOracle", {
     from: deployer,
     log: true,
@@ -51,8 +55,8 @@ const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: 
       oracle.address,
       asBNB_ANNUAL_GROWTH_RATE,
       SNAPSHOT_UPDATE_INTERVAL,
-      EXCHANGE_RATE,
-      SNAPSHOT_TIMESTAMP,
+      exchangeRate,
+      block.timestamp,
       acm,
       SNAPSHOT_GAP,
     ],
