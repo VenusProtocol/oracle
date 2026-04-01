@@ -61,6 +61,7 @@ interface IDeviationBoundedOracle {
             uint128 minPrice,
             uint128 maxPrice,
             bool protectedPriceEnabled,
+            bool isWhitelisted,
             uint64 protectionEnabledAt,
             uint64 cooldownPeriod
         );
@@ -68,4 +69,12 @@ interface IDeviationBoundedOracle {
     function thresholds(address asset) external view returns (uint256);
 
     function exitThresholds(address asset) external view returns (uint256);
+
+    function getWhitelistedAssets() external view returns (address[] memory);
+
+    function checkWindowDrift(
+        address[] calldata assets,
+        uint128[] calldata proposedMins,
+        uint128[] calldata proposedMaxs
+    ) external view returns (bool[] memory needsMinUpdate, bool[] memory needsMaxUpdate);
 }
