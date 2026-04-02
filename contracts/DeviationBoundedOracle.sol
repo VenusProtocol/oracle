@@ -31,22 +31,6 @@ import { Transient } from "./lib/Transient.sol";
  * updateProtectionState is called before the view price reads.
  */
 contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
-    /// @notice Per-market protection state tracking the min/max price window
-    struct MarketProtectionState {
-        /// @notice Lowest price observed in the current window (packed with maxPrice in one slot)
-        uint128 minPrice;
-        /// @notice Highest price observed in the current window
-        uint128 maxPrice;
-        /// @notice Whether protection mode is currently active
-        bool protectedPriceEnabled;
-        /// @notice Whether this market is whitelisted for bounded pricing
-        bool isWhitelisted;
-        /// @notice Timestamp of the last protection trigger — reset on every trigger
-        uint64 protectionEnabledAt;
-        /// @notice Minimum time protection stays active after last trigger
-        uint64 cooldownPeriod;
-    }
-
     /// @notice Minimum allowed threshold value (5%) to account for keeper deadband
     uint256 public constant MIN_THRESHOLD = 5e16;
 
@@ -85,91 +69,14 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     /// and can serve as any underlying asset of a market that supports native tokens
     address public constant NATIVE_TOKEN_ADDR = 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
 
-    /// @notice Per-market protection state
-    mapping(address => MarketProtectionState) public marketProtection;
-
-    /// @notice Per-market entry trigger threshold (mantissa, e.g. 0.1667e18 = 16.67%)
-    mapping(address => uint256) public thresholds;
-
-    /// @notice Per-market exit threshold (mantissa, default = threshold/2 for hysteresis)
-    mapping(address => uint256) public exitThresholds;
+    /// @notice Per-asset protection state
+    mapping(address => MarketProtectionState) public assetProtectionConfig;
 
     /// @notice Append-only array of all assets ever initialized, used for enumeration
-    address[] internal allAssets;
+    address[] public allAssets;
 
-    /// @notice Emitted when protection is initialized for an asset
-    event ProtectionInitialized(
-        address indexed asset,
-        uint128 minPrice,
-        uint128 maxPrice,
-        uint64 cooldownPeriod,
-        uint256 threshold
-    );
-
-    /// @notice Emitted when protection mode is triggered for an asset
-    event ProtectionTriggered(address indexed asset, uint256 spotPrice, uint128 minPrice, uint128 maxPrice);
-
-    /// @notice Emitted when protection mode is disabled for an asset
-    event ProtectionDisabled(address indexed asset);
-
-    /// @notice Emitted when the keeper updates the minimum price for an asset
-    event MinPriceUpdated(address indexed asset, uint128 oldMin, uint128 newMin);
-
-    /// @notice Emitted when the keeper updates the maximum price for an asset
-    event MaxPriceUpdated(address indexed asset, uint128 oldMax, uint128 newMax);
-
-    /// @notice Emitted when the entry threshold is updated for an asset
-    event ThresholdSet(address indexed asset, uint256 oldThreshold, uint256 newThreshold);
-
-    /// @notice Emitted when the exit threshold is updated for an asset
-    event ExitThresholdSet(address indexed asset, uint256 oldExitThreshold, uint256 newExitThreshold);
-
-    /// @notice Emitted when the cooldown period is updated for an asset
-    event CooldownPeriodSet(address indexed asset, uint64 oldCooldown, uint64 newCooldown);
-
-    /// @notice Emitted when an asset's whitelist status changes
-    event WhitelistUpdated(address indexed asset, bool whitelisted);
-
-    /// @notice Thrown when trying to initialize protection for an asset that is not initialized
-    error MarketNotInitialized(address asset);
-
-    /// @notice Thrown when trying to initialize an already initialized market
-    error MarketAlreadyInitialized(address asset);
-
-    /// @notice Thrown when trying to disable protection that is not active
-    error ProtectionNotActive(address asset);
-
-    /// @notice Thrown when trying to disable protection before cooldown has elapsed
-    error CooldownNotElapsed(address asset, uint64 protectionEnabledAt, uint64 cooldownPeriod);
-
-    /// @notice Thrown when trying to disable protection before price range has converged
-    error PriceRangeNotConverged(address asset, uint256 currentRangeRatio, uint256 exitThreshold);
-
-    /// @notice Thrown when keeper tries to set minPrice above current spot
-    error InvalidMinPrice(address asset, uint128 newMin, uint256 currentSpot);
-
-    /// @notice Thrown when keeper tries to set maxPrice below current spot
-    error InvalidMaxPrice(address asset, uint128 newMax, uint256 currentSpot);
-
-    /// @notice Thrown when threshold is set below the minimum allowed value
-    error ThresholdBelowMinimum(uint256 threshold, uint256 minimum);
-
-    /// @notice Thrown when threshold is set above the maximum allowed value
-    error ThresholdAboveMaximum(uint256 threshold, uint256 maximum);
-
-    /// @notice Thrown when minPrice >= maxPrice during initialization
-    error InvalidPriceRange(uint128 minPrice, uint128 maxPrice);
-
-    /// @notice Thrown when a price exceeds uint128 max
-    error PriceExceedsUint128(uint256 price);
-
-    /**
-     * @notice Checks whether an address is null or not
-     */
-    modifier notNullAddress(address someone) {
-        if (someone == address(0)) revert("can't be zero address");
-        _;
-    }
+    /// @notice Storage gap for upgrades
+    uint256[48] private __gap;
 
     /**
      * @notice Constructor for the implementation contract. Sets immutable variables.
@@ -178,11 +85,9 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param vaiAddress The address of the VAI token (if there is VAI on the deployed chain).
      * @custom:oz-upgrades-unsafe-allow constructor
      */
-    constructor(
-        ResilientOracleInterface _resilientOracle,
-        address nativeMarketAddress,
-        address vaiAddress
-    ) notNullAddress(address(_resilientOracle)) notNullAddress(nativeMarketAddress) {
+    constructor(ResilientOracleInterface _resilientOracle, address nativeMarketAddress, address vaiAddress) {
+        ensureNonzeroAddress(address(_resilientOracle));
+        ensureNonzeroAddress(nativeMarketAddress);
         RESILIENT_ORACLE = _resilientOracle;
         nativeMarket = nativeMarketAddress;
         vai = vaiAddress;
@@ -205,10 +110,13 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      *      and returns the conservative (lower) price when protection is active.
      *      Used by keepers or direct callers who want atomic update + read.
      * @param vToken vToken address
-     * @return price The bounded collateral price
+     * @return collateralPrice The bounded collateral price
+     * @custom:event MinPriceUpdated if a new window minimum is recorded
+     * @custom:event MaxPriceUpdated if a new window maximum is recorded
+     * @custom:event ProtectionTriggered if the spot price deviates beyond the threshold
      */
-    function getBoundedCollateralPrice(address vToken) external returns (uint256) {
-        return _getBoundedPrice(vToken, true);
+    function getBoundedCollateralPrice(address vToken) external returns (uint256 collateralPrice) {
+        (collateralPrice, ) = _updateAndGetBoundedPrices(vToken);
     }
 
     /**
@@ -217,10 +125,45 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      *      and returns the conservative (higher) price when protection is active.
      *      Used by keepers or direct callers who want atomic update + read.
      * @param vToken vToken address
-     * @return price The bounded debt price
+     * @return debtPrice The bounded debt price
+     * @custom:event MinPriceUpdated if a new window minimum is recorded
+     * @custom:event MaxPriceUpdated if a new window maximum is recorded
+     * @custom:event ProtectionTriggered if the spot price deviates beyond the threshold
      */
-    function getBoundedDebtPrice(address vToken) external returns (uint256) {
-        return _getBoundedPrice(vToken, false);
+    function getBoundedDebtPrice(address vToken) external returns (uint256 debtPrice) {
+        (, debtPrice) = _updateAndGetBoundedPrices(vToken);
+    }
+
+    /**
+     * @notice Gets both the bounded collateral and debt prices for a given vToken, updating protection state
+     * @dev Fetches spot from ResilientOracle, updates the price window, checks trigger,
+     *      and returns both conservative prices in a single call.
+     * @param vToken vToken address
+     * @return collateralPrice The bounded collateral price
+     * @return debtPrice The bounded debt price
+     * @custom:event MinPriceUpdated if a new window minimum is recorded
+     * @custom:event MaxPriceUpdated if a new window maximum is recorded
+     * @custom:event ProtectionTriggered if the spot price deviates beyond the threshold
+     */
+    function getBoundedPrices(address vToken) external returns (uint256 collateralPrice, uint256 debtPrice) {
+        return _updateAndGetBoundedPrices(vToken);
+    }
+
+    /**
+     * @notice Fetches the spot price, updates the protection window, and caches the resolved
+     *         bounded prices in transient storage for the duration of the transaction.
+     * @dev Call this once per vToken at the start of a transaction (e.g. from PolicyFacet before
+     *      liquidity calculations). Subsequent calls to getBoundedCollateralPriceView /
+     *      getBoundedDebtPriceView within the same transaction will read from the transient cache
+     *      instead of querying ResilientOracle again, keeping those functions as `view` and
+     *      avoiding redundant oracle calls.
+     * @param vToken vToken address
+     * @custom:event MinPriceUpdated if a new window minimum is recorded
+     * @custom:event MaxPriceUpdated if a new window maximum is recorded
+     * @custom:event ProtectionTriggered if the spot price deviates beyond the threshold
+     */
+    function updateProtectionState(address vToken) external {
+        _updateAndGetBoundedPrices(vToken);
     }
 
     // ----- View price functions (read stored/cached state only) -----
@@ -231,10 +174,10 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      *      in the same transaction). Falls back to ResilientOracle on cache miss.
      *      Returns min(spot, windowMin) when protection is active, spot otherwise.
      * @param vToken vToken address
-     * @return price The bounded collateral price
+     * @return collateralPrice The bounded collateral price
      */
-    function getBoundedCollateralPriceView(address vToken) external view returns (uint256) {
-        return _getBoundedPriceView(vToken, true);
+    function getBoundedCollateralPriceView(address vToken) external view returns (uint256 collateralPrice) {
+        (collateralPrice, ) = _computeBoundedPrices(vToken);
     }
 
     /**
@@ -243,36 +186,21 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      *      in the same transaction). Falls back to ResilientOracle on cache miss.
      *      Returns max(spot, windowMax) when protection is active, spot otherwise.
      * @param vToken vToken address
-     * @return price The bounded debt price
+     * @return debtPrice The bounded debt price
      */
-    function getBoundedDebtPriceView(address vToken) external view returns (uint256) {
-        return _getBoundedPriceView(vToken, false);
+    function getBoundedDebtPriceView(address vToken) external view returns (uint256 debtPrice) {
+        (, debtPrice) = _computeBoundedPrices(vToken);
     }
 
-    // ----- State update (called before view price reads to populate transient cache) -----
-
     /**
-     * @notice Updates the protection state for a given vToken
-     * @dev Fetches spot price from ResilientOracle, caches it in transient storage,
-     *      expands the price window if spot is a new extreme, and triggers protection
-     *      if the deviation threshold is exceeded. Called by PolicyFacet before liquidity
-     *      calculations so that subsequent view price reads are gas-efficient.
+     * @notice Gets both the bounded collateral and debt prices for a given vToken (view variant)
+     * @dev Reads from transient cache first; falls back to ResilientOracle on cache miss.
      * @param vToken vToken address
+     * @return collateralPrice The bounded collateral price
+     * @return debtPrice The bounded debt price
      */
-    function updateProtectionState(address vToken) external {
-        address asset = _getUnderlyingAsset(vToken);
-        uint256 spot = _fetchSpotPriceFromOracle(asset);
-
-        if (!_isWhitelisted(asset)) return;
-
-        MarketProtectionState storage state = marketProtection[asset];
-
-        _updateWindow(state, spot, asset);
-        _checkAndTriggerProtection(state, spot, thresholds[asset], asset);
-
-        // Cache both final bounded prices for subsequent view reads
-        _setCachedPrice(asset, true, _resolvePrice(spot, state, true));
-        _setCachedPrice(asset, false, _resolvePrice(spot, state, false));
+    function getBoundedPricesView(address vToken) external view returns (uint256 collateralPrice, uint256 debtPrice) {
+        return _computeBoundedPrices(vToken);
     }
 
     // ----- Keeper functions -----
@@ -284,10 +212,11 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param asset The underlying asset address
      * @param newMin The new minimum price
      * @custom:access Only authorized keeper addresses
+     * @custom:event MinPriceUpdated
      */
     function updateMinPrice(address asset, uint128 newMin) external {
         _checkAccessAllowed("updateMinPrice(address,uint128)");
-        _updatePrice(asset, newMin, true);
+        _validateAndUpdateBound(asset, newMin, PriceBoundType.MIN);
     }
 
     /**
@@ -297,10 +226,11 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param asset The underlying asset address
      * @param newMax The new maximum price
      * @custom:access Only authorized keeper addresses
+     * @custom:event MaxPriceUpdated
      */
     function updateMaxPrice(address asset, uint128 newMax) external {
         _checkAccessAllowed("updateMaxPrice(address,uint128)");
-        _updatePrice(asset, newMax, false);
+        _validateAndUpdateBound(asset, newMax, PriceBoundType.MAX);
     }
 
     /**
@@ -314,25 +244,26 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @custom:error ProtectionNotActive if protection is not currently active
      * @custom:error CooldownNotElapsed if cooldown period has not elapsed
      * @custom:error PriceRangeNotConverged if window range is still above exit threshold
+     * @custom:event ProtectionDisabled
      */
-    function disableProtection(address asset) external {
-        _checkAccessAllowed("disableProtection(address)");
+    function disableActiveProtection(address asset) external {
+        _checkAccessAllowed("disableActiveProtection(address)");
 
-        MarketProtectionState storage state = marketProtection[asset];
+        MarketProtectionState storage state = assetProtectionConfig[asset];
 
-        if (!state.protectedPriceEnabled) revert ProtectionNotActive(asset);
+        if (!state.isProtectionModeActive) revert ProtectionNotActive(asset);
 
-        if (block.timestamp < uint256(state.protectionEnabledAt) + uint256(state.cooldownPeriod)) {
-            revert CooldownNotElapsed(asset, state.protectionEnabledAt, state.cooldownPeriod);
+        if (block.timestamp < uint256(state.lastProtectionTriggeredAt) + uint256(state.cooldownPeriod)) {
+            revert CooldownNotElapsed(asset, state.lastProtectionTriggeredAt, state.cooldownPeriod);
         }
 
         // exit protection mode if price range has converged below exit threshold
-        uint256 rangeRatio = _getWindowRangeRatio(state);
-        if (rangeRatio >= exitThresholds[asset]) {
-            revert PriceRangeNotConverged(asset, rangeRatio, exitThresholds[asset]);
+        uint256 rangeRatio = _computePriceBoundRatio(state.minPrice, state.maxPrice);
+        if (rangeRatio >= state.resetThreshold) {
+            revert PriceRangeNotConverged(asset, rangeRatio, state.resetThreshold);
         }
 
-        state.protectedPriceEnabled = false;
+        state.isProtectionModeActive = false;
         emit ProtectionDisabled(asset);
     }
 
@@ -340,49 +271,57 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
 
     /**
      * @notice Initializes protection for a new asset
-     * @dev Sets the initial min/max window, cooldown period, threshold, exit threshold,
-     *      and whitelists the asset. Can only be called once per asset.
+     * @dev Fetches the current spot price from ResilientOracle to seed the initial min/max window,
+     *      confirming the oracle is live for this asset before it is listed. Both bounds start at
+     *      spot so the window expands naturally as prices move. Can only be called once per asset.
      * @param asset The underlying asset address
-     * @param minPrice Initial minimum price for the window
-     * @param maxPrice Initial maximum price for the window
      * @param cooldownPeriod Minimum time protection stays active after last trigger
-     * @param threshold Deviation trigger threshold (mantissa). Must be > 5%.
+     * @param triggerThreshold Deviation threshold that activates protection (mantissa). Must be between 5% and 50%.
+     * @param resetThreshold Deviation threshold below which protection can be exited (mantissa). Must be non-zero and below triggerThreshold.
      * @custom:access Only Governance
      * @custom:error MarketAlreadyInitialized if the asset has already been initialized
-     * @custom:error InvalidPriceRange if minPrice >= maxPrice or either is zero
-     * @custom:error ThresholdBelowMinimum if threshold is below 5%
+     * @custom:error ThresholdBelowMinimum if triggerThreshold is below 5%
+     * @custom:error ThresholdAboveMaximum if triggerThreshold is above 50%
+     * @custom:error InvalidResetThreshold if resetThreshold is at or above triggerThreshold
+     * @custom:error VAINotAllowed if asset is the VAI token
+     * @custom:error PriceExceedsUint128 if the spot price overflows uint128
      * @custom:event ProtectionInitialized
      * @custom:event WhitelistUpdated
      */
-    function initializeProtection(
+    function setTokenConfig(
         address asset,
-        uint128 minPrice,
-        uint128 maxPrice,
         uint64 cooldownPeriod,
-        uint256 threshold
+        uint256 triggerThreshold,
+        uint256 resetThreshold
     ) external {
-        _checkAccessAllowed("initializeProtection(address,uint128,uint128,uint64,uint256)");
+        _checkAccessAllowed("setTokenConfig(address,uint64,uint256,uint256)");
         ensureNonzeroAddress(asset);
+        ensureNonzeroValue(cooldownPeriod);
+        ensureNonzeroValue(triggerThreshold);
+        ensureNonzeroValue(resetThreshold);
+        if (assetProtectionConfig[asset].asset != address(0)) revert MarketAlreadyInitialized(asset);
+        if (triggerThreshold < MIN_THRESHOLD) revert ThresholdBelowMinimum(triggerThreshold, MIN_THRESHOLD);
+        if (triggerThreshold > MAX_THRESHOLD) revert ThresholdAboveMaximum(triggerThreshold, MAX_THRESHOLD);
+        if (resetThreshold >= triggerThreshold) revert InvalidResetThreshold(resetThreshold);
+        if (asset == vai) revert VAINotAllowed();
 
-        if (marketProtection[asset].minPrice != 0) revert MarketAlreadyInitialized(asset);
-        if (minPrice == 0 || maxPrice == 0 || minPrice >= maxPrice) revert InvalidPriceRange(minPrice, maxPrice);
-        if (threshold < MIN_THRESHOLD) revert ThresholdBelowMinimum(threshold, MIN_THRESHOLD);
-        if (threshold > MAX_THRESHOLD) revert ThresholdAboveMaximum(threshold, MAX_THRESHOLD);
+        uint128 spotU128 = _safeToUint128(_fetchSpotPrice(asset));
 
-        marketProtection[asset] = MarketProtectionState({
-            minPrice: minPrice,
-            maxPrice: maxPrice,
-            protectedPriceEnabled: false,
-            isWhitelisted: true,
-            protectionEnabledAt: 0,
-            cooldownPeriod: cooldownPeriod
+        assetProtectionConfig[asset] = MarketProtectionState({
+            minPrice: spotU128,
+            maxPrice: spotU128,
+            isProtectionModeActive: false,
+            isBoundedPricingEnabled: true,
+            lastProtectionTriggeredAt: 0,
+            cooldownPeriod: cooldownPeriod,
+            asset: asset,
+            triggerThreshold: uint128(triggerThreshold),
+            resetThreshold: uint128(resetThreshold)
         });
 
-        thresholds[asset] = threshold;
-        exitThresholds[asset] = threshold / 2;
         allAssets.push(asset);
 
-        emit ProtectionInitialized(asset, minPrice, maxPrice, cooldownPeriod, threshold);
+        emit ProtectionInitialized(asset, spotU128, spotU128, cooldownPeriod, triggerThreshold);
         emit WhitelistUpdated(asset, true);
     }
 
@@ -396,100 +335,83 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     function setCooldownPeriod(address asset, uint64 newCooldown) external {
         _checkAccessAllowed("setCooldownPeriod(address,uint64)");
         ensureNonzeroAddress(asset);
-        _ensureInitialized(asset);
+        ensureNonzeroValue(newCooldown);
 
         MarketProtectionState storage state = _ensureInitialized(asset);
-
         emit CooldownPeriodSet(asset, state.cooldownPeriod, newCooldown);
         state.cooldownPeriod = newCooldown;
     }
 
     /**
-     * @notice Sets the entry trigger threshold for an asset
+     * @notice Sets the trigger and reset thresholds for an asset
      * @param asset The underlying asset address
-     * @param newThreshold The new threshold (mantissa). Must be > 5%.
+     * @param newTriggerThreshold The new trigger threshold (mantissa). Must be between 5% and 50% and above the reset threshold.
+     * @param newResetThreshold The new reset threshold (mantissa). Must be non-zero and below the trigger threshold.
      * @custom:access Only Governance
-     * @custom:error ThresholdBelowMinimum if threshold is below 5%
-     * @custom:event ThresholdSet
+     * @custom:error ThresholdBelowMinimum if newTriggerThreshold is below 5%
+     * @custom:error ThresholdAboveMaximum if newTriggerThreshold is above 50%
+     * @custom:error InvalidResetThreshold if newResetThreshold is at or above newTriggerThreshold
+     * @custom:event TriggerThresholdSet if the trigger threshold changed
+     * @custom:event ResetThresholdSet if the reset threshold changed
      */
-    function setThreshold(address asset, uint256 newThreshold) external {
-        _checkAccessAllowed("setThreshold(address,uint256)");
+    function setThresholds(address asset, uint256 newTriggerThreshold, uint256 newResetThreshold) external {
+        _checkAccessAllowed("setThresholds(address,uint256,uint256)");
         ensureNonzeroAddress(asset);
-        _ensureInitialized(asset);
+        ensureNonzeroValue(newTriggerThreshold);
+        ensureNonzeroValue(newResetThreshold);
+        if (newTriggerThreshold < MIN_THRESHOLD) revert ThresholdBelowMinimum(newTriggerThreshold, MIN_THRESHOLD);
+        if (newTriggerThreshold > MAX_THRESHOLD) revert ThresholdAboveMaximum(newTriggerThreshold, MAX_THRESHOLD);
+        if (newResetThreshold >= newTriggerThreshold) revert InvalidResetThreshold(newResetThreshold);
+        MarketProtectionState storage state = _ensureInitialized(asset);
 
-        if (newThreshold < MIN_THRESHOLD) revert ThresholdBelowMinimum(newThreshold, MIN_THRESHOLD);
-        if (newThreshold > MAX_THRESHOLD) revert ThresholdAboveMaximum(newThreshold, MAX_THRESHOLD);
-
-        emit ThresholdSet(asset, thresholds[asset], newThreshold);
-        thresholds[asset] = newThreshold;
+        if (newTriggerThreshold != state.triggerThreshold) {
+            emit TriggerThresholdSet(asset, state.triggerThreshold, newTriggerThreshold);
+            state.triggerThreshold = uint128(newTriggerThreshold);
+        }
+        if (newResetThreshold != state.resetThreshold) {
+            emit ResetThresholdSet(asset, state.resetThreshold, newResetThreshold);
+            state.resetThreshold = uint128(newResetThreshold);
+        }
     }
 
     /**
-     * @notice Sets the exit threshold for an asset
+     * @notice Sets whether an asset is enabled for bounded pricing
      * @param asset The underlying asset address
-     * @param exitThreshold The new exit threshold (mantissa)
-     * @custom:access Only Governance
-     * @custom:event ExitThresholdSet
-     */
-    function setExitThreshold(address asset, uint256 exitThreshold) external {
-        _checkAccessAllowed("setExitThreshold(address,uint256)");
-        ensureNonzeroAddress(asset);
-        _ensureInitialized(asset);
-
-        ensureNonzeroValue(exitThreshold);
-
-        uint256 oldExitThreshold = exitThresholds[asset];
-        exitThresholds[asset] = exitThreshold;
-        emit ExitThresholdSet(asset, oldExitThreshold, exitThreshold);
-    }
-
-    /**
-     * @notice Sets whether an asset is whitelisted for bounded pricing
-     * @param asset The underlying asset address
-     * @param whitelisted Whether the asset should be whitelisted
+     * @param enabled Whether bounded pricing should be enabled for the asset
      * @custom:access Only Governance
      * @custom:event WhitelistUpdated
      */
-    function setWhitelisted(address asset, bool whitelisted) external {
-        _checkAccessAllowed("setWhitelisted(address,bool)");
+    function setAssetBoundedPricingEnabled(address asset, bool enabled) external {
+        _checkAccessAllowed("setAssetBoundedPricingEnabled(address,bool)");
         ensureNonzeroAddress(asset);
-        _ensureInitialized(asset);
 
-        marketProtection[asset].isWhitelisted = whitelisted;
-        emit WhitelistUpdated(asset, whitelisted);
+        MarketProtectionState storage state = _ensureInitialized(asset);
+
+        if (!enabled && state.isProtectionModeActive) {
+            revert ProtectionActive(asset);
+        }
+
+        state.isBoundedPricingEnabled = enabled;
+        emit WhitelistUpdated(asset, enabled);
     }
 
     // ----- View helpers -----
+
+    /**
+     * @notice Returns all asset addresses that have ever been initialized
+     * @return Array of all initialized asset addresses
+     */
+    function getInitializedAssets() external view returns (address[] memory) {
+        return allAssets;
+    }
 
     /**
      * @notice Checks if an asset is whitelisted for bounded pricing
      * @param asset The underlying asset address
      * @return True if the asset is whitelisted
      */
-    function isWhitelisted(address asset) external view returns (bool) {
-        return _isWhitelisted(asset);
-    }
-
-    /**
-     * @notice Returns all currently whitelisted asset addresses
-     * @dev Iterates the append-only allAssets array and filters by isWhitelisted.
-     *      Gas-free for off-chain callers.
-     * @return result Array of whitelisted asset addresses
-     */
-    function getWhitelistedAssets() external view returns (address[] memory) {
-        uint256 len = allAssets.length;
-        uint256 count;
-        for (uint256 i; i < len; ++i) {
-            if (_isWhitelisted(allAssets[i])) ++count;
-        }
-        address[] memory result = new address[](count);
-        uint256 idx;
-        for (uint256 i; i < len; ++i) {
-            if (_isWhitelisted(allAssets[i])) {
-                result[idx++] = allAssets[i];
-            }
-        }
-        return result;
+    function isBoundedPricingEnabled(address asset) external view returns (bool) {
+        return assetProtectionConfig[asset].isBoundedPricingEnabled;
     }
 
     /**
@@ -497,8 +419,30 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param asset The underlying asset address
      * @return True if protection mode is active
      */
-    function isProtected(address asset) external view returns (bool) {
-        return marketProtection[asset].protectedPriceEnabled;
+    function isProtectionActive(address asset) external view returns (bool) {
+        return assetProtectionConfig[asset].isProtectionModeActive;
+    }
+
+    /**
+     * @notice Returns all currently whitelisted asset addresses
+     * @dev Iterates the append-only allAssets array and filters by isBoundedPricingEnabled.
+     *      Gas-free for off-chain callers.
+     * @return result Array of whitelisted asset addresses
+     */
+    function getAllBoundedPricingEnabledAssets() external view returns (address[] memory) {
+        uint256 len = allAssets.length;
+        address[] memory temp = new address[](len);
+        uint256 count;
+        for (uint256 i; i < len; ++i) {
+            if (assetProtectionConfig[allAssets[i]].isBoundedPricingEnabled) {
+                temp[count++] = allAssets[i];
+            }
+        }
+        address[] memory result = new address[](count);
+        for (uint256 i; i < count; ++i) {
+            result[i] = temp[i];
+        }
+        return result;
     }
 
     /**
@@ -510,17 +454,11 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @return True if protection can be disabled
      */
     function canExitProtection(address asset) external view returns (bool) {
-        MarketProtectionState storage state = marketProtection[asset];
-
-        if (
-            !state.protectedPriceEnabled ||
-            block.timestamp < uint256(state.protectionEnabledAt) + uint256(state.cooldownPeriod) ||
-            state.minPrice == 0
-        ) {
-            return false;
-        }
-
-        return _getWindowRangeRatio(state) < exitThresholds[asset];
+        MarketProtectionState storage state = assetProtectionConfig[asset];
+        return
+            state.isProtectionModeActive &&
+            block.timestamp >= uint256(state.lastProtectionTriggeredAt) + uint256(state.cooldownPeriod) &&
+            _computePriceBoundRatio(state.minPrice, state.maxPrice) < state.resetThreshold;
     }
 
     /**
@@ -533,155 +471,80 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param proposedMaxs Keeper's off-chain window maximum prices
      * @return needsMinUpdate Whether minPrice drift exceeds deadband for each asset
      * @return needsMaxUpdate Whether maxPrice drift exceeds deadband for each asset
+     * @custom:error InvalidArrayLength if the input array lengths do not match
      */
-    function checkWindowDrift(
+    function checkAndGetWindowDrift(
         address[] calldata assets,
         uint128[] calldata proposedMins,
         uint128[] calldata proposedMaxs
     ) external view returns (bool[] memory needsMinUpdate, bool[] memory needsMaxUpdate) {
         uint256 len = assets.length;
+        if (len != proposedMins.length || len != proposedMaxs.length) revert InvalidArrayLength();
+
         needsMinUpdate = new bool[](len);
         needsMaxUpdate = new bool[](len);
 
         for (uint256 i; i < len; ++i) {
-            MarketProtectionState storage state = marketProtection[assets[i]];
-            needsMinUpdate[i] = _exceedsDeadband(state.minPrice, proposedMins[i]);
-            needsMaxUpdate[i] = _exceedsDeadband(state.maxPrice, proposedMaxs[i]);
+            MarketProtectionState storage state = assetProtectionConfig[assets[i]];
+            needsMinUpdate[i] = _exceedsCorrectionDeadband(state.minPrice, proposedMins[i]);
+            needsMaxUpdate[i] = _exceedsCorrectionDeadband(state.maxPrice, proposedMaxs[i]);
         }
     }
 
     // ----- Internal functions -----
 
-    function _updatePrice(address asset, uint128 newPrice, bool isMinPrice) internal {
+    /**
+     * @notice Validates and applies a keeper-provided min or max price update
+     * @param asset The underlying asset address
+     * @param newPrice The new price value to set
+     * @param boundType Whether this is a MIN or MAX bound update
+     * @custom:error ZeroAddressNotAllowed if asset is the zero address
+     * @custom:error ZeroPriceNotAllowed if newPrice is zero
+     * @custom:error MarketNotInitialized if the asset has not been initialized
+     * @custom:error InvalidMinPrice if boundType is MIN and newPrice exceeds the current spot or is at or above maxPrice
+     * @custom:error InvalidMaxPrice if boundType is MAX and newPrice is below the current spot or is at or below minPrice
+     */
+    function _validateAndUpdateBound(address asset, uint128 newPrice, PriceBoundType boundType) internal {
         ensureNonzeroAddress(asset);
-
+        if (newPrice == 0) revert ZeroPriceNotAllowed();
         MarketProtectionState storage state = _ensureInitialized(asset);
 
-        uint256 currentSpot = _fetchSpotPriceFromOracle(asset);
-        if (isMinPrice) {
-            if (uint256(newPrice) > currentSpot) revert InvalidMinPrice(asset, newPrice, currentSpot);
+        uint256 currentSpot = _fetchSpotPrice(asset);
+        if (boundType == PriceBoundType.MIN) {
+            if (newPrice >= state.maxPrice || uint256(newPrice) > currentSpot)
+                revert InvalidMinPrice(asset, newPrice, currentSpot);
             _setMinPrice(state, asset, newPrice);
-        } else {
-            if (uint256(newPrice) < currentSpot) revert InvalidMaxPrice(asset, newPrice, currentSpot);
+        } else if (boundType == PriceBoundType.MAX) {
+            if (newPrice <= state.minPrice || uint256(newPrice) < currentSpot)
+                revert InvalidMaxPrice(asset, newPrice, currentSpot);
             _setMaxPrice(state, asset, newPrice);
         }
     }
 
     /**
-     * @dev Shared non-view logic for getBoundedCollateralPrice and getBoundedDebtPrice.
-     *      Fetches spot, updates window, checks trigger, and returns the resolved price.
+     * @notice Shared non-view logic for all bounded price functions.
+     *      Fetches spot, updates window, triggers protection if needed, and returns both bounded prices.
      * @param vToken vToken address
-     * @param isCollateral True for collateral pricing (min), false for debt pricing (max)
-     * @return price The bounded price
+     * @return minPrice The bounded lower (collateral) price
+     * @return maxPrice The bounded upper (debt) price
      */
-    function _getBoundedPrice(address vToken, bool isCollateral) internal returns (uint256) {
+    function _updateAndGetBoundedPrices(address vToken) internal returns (uint256 minPrice, uint256 maxPrice) {
         address asset = _getUnderlyingAsset(vToken);
-        uint256 spot = _fetchSpotPriceFromOracle(asset);
-
-        if (!_isWhitelisted(asset)) return spot;
-
-        MarketProtectionState storage state = marketProtection[asset];
-        _updateWindow(state, spot, asset);
-        _checkAndTriggerProtection(state, spot, thresholds[asset], asset);
-
-        uint256 price = _resolvePrice(spot, state, isCollateral);
-        _setCachedPrice(asset, isCollateral, price);
-        return price;
-    }
-
-    /**
-     * @dev Shared view logic for getBoundedCollateralPriceView and getBoundedDebtPriceView.
-     *      Checks transient cache first for an early return; on miss, fetches from oracle
-     *      and computes the resolved price without state mutations.
-     * @param vToken vToken address
-     * @param isCollateral True for collateral pricing (min), false for debt pricing (max)
-     * @return price The bounded price
-     */
-    function _getBoundedPriceView(address vToken, bool isCollateral) internal view returns (uint256) {
-        address asset = _getUnderlyingAsset(vToken);
-
-        // Early return if final price was cached by a prior call in this tx
-        uint256 cached = _getCachedPrice(asset, isCollateral);
-        if (cached != 0) return cached;
-
-        // Cache miss — fetch from oracle and compute without state mutations
-        uint256 spot = _fetchSpotPriceFromOracle(asset);
-        if (!_isWhitelisted(asset)) return spot;
-
-        MarketProtectionState storage state = marketProtection[asset];
-        return _resolvePrice(spot, state, isCollateral);
-    }
-
-    /**
-     * @dev Resolves the final bounded price based on protection state and price type.
-     * @param spot The current spot price
-     * @param state The market protection state
-     * @param isCollateral True for collateral pricing (min), false for debt pricing (max)
-     * @return price The resolved price
-     */
-    function _resolvePrice(
-        uint256 spot,
-        MarketProtectionState storage state,
-        bool isCollateral
-    ) internal view returns (uint256) {
-        if (!state.protectedPriceEnabled) return spot;
-
-        if (isCollateral) {
-            return _getProtectedCollateralPrice(spot, state);
+        MarketProtectionState storage state = assetProtectionConfig[asset];
+        uint256 spot = _fetchSpotPrice(asset);
+        if (!state.isBoundedPricingEnabled) {
+            _setCachedPrices(asset, spot, spot);
+            return (spot, spot);
         }
-        return _getProtectedDebtPrice(spot, state);
-    }
-
-    /**
-     * @dev Reverts if the market has not been initialized via initializeProtection
-     * @param asset The underlying asset address
-     * @return state The market protection state storage pointer
-     */
-    function _ensureInitialized(address asset) internal view returns (MarketProtectionState storage state) {
-        state = marketProtection[asset];
-        if (state.minPrice == 0) revert MarketNotInitialized(asset);
-    }
-
-    /**
-     * @dev Checks if an asset is whitelisted for bounded pricing
-     * @param asset The underlying asset address
-     * @return True if the asset is whitelisted
-     */
-    function _isWhitelisted(address asset) internal view returns (bool) {
-        return marketProtection[asset].isWhitelisted;
-    }
-
-    /**
-     * @dev Computes the current window range ratio used for exit checks.
-     *      Formula: \((maxPrice - minPrice) / minPrice\), scaled by `EXP_SCALE`.
-     * @param state The market protection state
-     * @return rangeRatio The scaled range ratio \(((max - min) * EXP_SCALE) / min\)
-     */
-    function _getWindowRangeRatio(MarketProtectionState storage state) internal view returns (uint256) {
-        uint256 range = uint256(state.maxPrice) - uint256(state.minPrice);
-        return (range * EXP_SCALE) / uint256(state.minPrice);
-    }
-
-    /**
-     * @dev Reads a cached final price from transient storage
-     * @param asset The underlying asset address
-     * @param isCollateral True for collateral price, false for debt price
-     * @return The cached price, or 0 on cache miss
-     */
-    function _getCachedPrice(address asset, bool isCollateral) internal view returns (uint256) {
-        bytes32 slot = isCollateral ? COLLATERAL_PRICE_CACHE_SLOT : DEBT_PRICE_CACHE_SLOT;
-        return Transient.readCachedPrice(slot, asset);
-    }
-
-    /**
-     * @dev Writes a final price to transient storage
-     * @param asset The underlying asset address
-     * @param isCollateral True for collateral price, false for debt price
-     * @param price The resolved price to cache
-     */
-    function _setCachedPrice(address asset, bool isCollateral, uint256 price) internal {
-        bytes32 slot = isCollateral ? COLLATERAL_PRICE_CACHE_SLOT : DEBT_PRICE_CACHE_SLOT;
-        Transient.cachePrice(slot, asset, price);
+        _expandPriceWindow(state, spot, asset);
+        _checkAndTriggerProtection(state, spot, asset);
+        (minPrice, maxPrice) = _resolveBoundedPrices(
+            state.isProtectionModeActive,
+            spot,
+            uint256(state.minPrice),
+            uint256(state.maxPrice)
+        );
+        _setCachedPrices(asset, minPrice, maxPrice);
     }
 
     /**
@@ -690,7 +553,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param spot The current spot price
      * @param asset The underlying asset address (for event emission)
      */
-    function _updateWindow(MarketProtectionState storage state, uint256 spot, address asset) internal {
+    function _expandPriceWindow(MarketProtectionState storage state, uint256 spot, address asset) internal {
         uint128 spotU128 = _safeToUint128(spot);
         if (spotU128 < state.minPrice) {
             _setMinPrice(state, asset, spotU128);
@@ -701,71 +564,122 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     }
 
     /**
-     * @dev Returns the conservative collateral price while protection is active.
-     *      Collateral pricing uses `min(spot, windowMin)` to avoid over-valuing collateral.
-     * @param spot The current spot price
-     * @param state The market protection state (read-only)
-     * @return price The bounded collateral price
-     */
-    function _getProtectedCollateralPrice(
-        uint256 spot,
-        MarketProtectionState storage state
-    ) internal view returns (uint256) {
-        uint256 minPrice = uint256(state.minPrice);
-        return spot < minPrice ? spot : minPrice;
-    }
-
-    /**
-     * @dev Returns the conservative debt price while protection is active.
-     *      Debt pricing uses `max(spot, windowMax)` to avoid under-valuing debt.
-     * @param spot The current spot price
-     * @param state The market protection state (read-only)
-     * @return price The bounded debt price
-     */
-    function _getProtectedDebtPrice(uint256 spot, MarketProtectionState storage state) internal view returns (uint256) {
-        uint256 maxPrice = uint256(state.maxPrice);
-        return spot > maxPrice ? spot : maxPrice;
-    }
-
-    /**
      * @dev Checks if the spot price has deviated beyond the threshold and triggers protection
      * @param state The market protection state
      * @param spot The current spot price
-     * @param threshold The deviation threshold (mantissa)
      * @param asset The underlying asset address (for event emission)
      */
-    function _checkAndTriggerProtection(
-        MarketProtectionState storage state,
-        uint256 spot,
-        uint256 threshold,
-        address asset
-    ) internal {
-        if (threshold == 0) return;
+    function _checkAndTriggerProtection(MarketProtectionState storage state, uint256 spot, address asset) internal {
+        if (state.isProtectionModeActive) return;
 
-        if (_isDeviationTriggered(spot, state, threshold)) {
-            state.protectedPriceEnabled = true;
-            state.protectionEnabledAt = uint64(block.timestamp);
+        if (_exceedsDeviationThreshold(spot, state.minPrice, state.maxPrice, state.triggerThreshold)) {
+            state.isProtectionModeActive = true;
+            state.lastProtectionTriggeredAt = uint64(block.timestamp);
             emit ProtectionTriggered(asset, spot, state.minPrice, state.maxPrice);
         }
     }
 
     /**
-     * @dev Checks if spot price has deviated beyond the threshold from window bounds
-     *      Pump detection: spot > minPrice * (1 + threshold)
+     * @notice Resolves the final bounded collateral and debt prices given a spot, window bounds, and protection flag.
+     * @dev When protection is active: collateral = min(spot, windowMin), debt = max(spot, windowMax).
+     *      When protection is inactive: both return spot.
+     * @param protectionActive Whether the market protection window is currently active
+     * @param spot The current spot price
+     * @param windowMin The lower bound of the price window
+     * @param windowMax The upper bound of the price window
+     * @return minPrice The resolved lower-bound (collateral) price
+     * @return maxPrice The resolved upper-bound (debt) price
+     */
+    function _resolveBoundedPrices(
+        bool protectionActive,
+        uint256 spot,
+        uint256 windowMin,
+        uint256 windowMax
+    ) internal pure returns (uint256, uint256) {
+        if (!protectionActive) return (spot, spot);
+        return (spot < windowMin ? spot : windowMin, spot > windowMax ? spot : windowMax);
+    }
+
+    /**
+     * @notice Shared view logic for all bounded price view functions.
+     *      Checks transient cache first for an early return; on miss, fetches from oracle
+     *      and computes both prices without state mutations.
+     * @param vToken vToken address
+     * @return minPrice The bounded lower (collateral) price
+     * @return maxPrice The bounded upper (debt) price
+     * @custom:error PriceExceedsUint128 if the spot price overflows uint128 (cache miss path only)
+     */
+    function _computeBoundedPrices(address vToken) internal view returns (uint256 minPrice, uint256 maxPrice) {
+        address asset = _getUnderlyingAsset(vToken);
+
+        // Early return if both prices were cached by a prior updateProtectionState call in this tx
+        minPrice = _getCachedPrice(asset, PriceBoundType.MIN);
+        maxPrice = _getCachedPrice(asset, PriceBoundType.MAX);
+        if (minPrice != 0 && maxPrice != 0) return (minPrice, maxPrice);
+
+        // Cache miss — fetch from oracle and compute without state mutations
+        uint256 spot = _fetchSpotPrice(asset);
+        MarketProtectionState storage state = assetProtectionConfig[asset];
+        if (!state.isBoundedPricingEnabled) return (spot, spot);
+
+        // Mirror _expandPriceWindow logic: compute what the window would be after expansion
+        uint128 spotU128 = _safeToUint128(spot);
+        uint128 windowMin128 = spot < uint256(state.minPrice) ? spotU128 : state.minPrice;
+        uint128 windowMax128 = spot > uint256(state.maxPrice) ? spotU128 : state.maxPrice;
+
+        bool shouldProtect = state.isProtectionModeActive ||
+            _exceedsDeviationThreshold(spot, windowMin128, windowMax128, state.triggerThreshold);
+
+        (minPrice, maxPrice) = _resolveBoundedPrices(shouldProtect, spot, uint256(windowMin128), uint256(windowMax128));
+    }
+
+    /**
+     * @dev Computes the relative spread between the price window bounds as a ratio scaled by EXP_SCALE.
+     *      Formula: \((maxPrice - minPrice) / minPrice\), scaled by `EXP_SCALE`.
+     *      Used to measure how much the window has converged -- compared against `resetThreshold`
+     *      to determine whether the price window is tight enough to exit protection mode.
+     * @param minPrice The minimum price in the window
+     * @param maxPrice The maximum price in the window
+     * @return The scaled bound ratio \(((max - min) * EXP_SCALE) / min\)
+     */
+    function _computePriceBoundRatio(uint128 minPrice, uint128 maxPrice) internal pure returns (uint256) {
+        uint256 range = uint256(maxPrice) - uint256(minPrice);
+        return (range * EXP_SCALE) / uint256(minPrice);
+    }
+
+    /**
+     * @notice Checks if the spot price has deviated beyond the threshold from the window bounds
+     * @dev Pump detection: spot > minPrice * (1 + threshold)
      *      Crash detection: spot < maxPrice * (1 - threshold)
      * @param spot The current spot price
-     * @param state The market protection state
+     * @param minPrice The minimum price in the window
+     * @param maxPrice The maximum price in the window
      * @param threshold The deviation threshold (mantissa)
      * @return True if deviation is triggered
      */
-    function _isDeviationTriggered(
+    function _exceedsDeviationThreshold(
         uint256 spot,
-        MarketProtectionState storage state,
+        uint128 minPrice,
+        uint128 maxPrice,
         uint256 threshold
-    ) internal view returns (bool) {
-        uint256 upperBound = (uint256(state.minPrice) * (EXP_SCALE + threshold)) / EXP_SCALE;
-        uint256 lowerBound = (uint256(state.maxPrice) * (EXP_SCALE - threshold)) / EXP_SCALE;
+    ) internal pure returns (bool) {
+        uint256 upperBound = (uint256(minPrice) * (EXP_SCALE + threshold)) / EXP_SCALE;
+        uint256 lowerBound = (uint256(maxPrice) * (EXP_SCALE - threshold)) / EXP_SCALE;
         return (spot > upperBound || spot < lowerBound);
+    }
+
+    /**
+     * @dev Returns true if the relative drift between onChain and proposed exceeds KEEPER_DEADBAND
+     * @param currentPrice The current on-chain price
+     * @param proposedPrice The keeper's proposed price
+     * @return True if drift exceeds deadband
+     */
+    function _exceedsCorrectionDeadband(uint128 currentPrice, uint128 proposedPrice) internal pure returns (bool) {
+        if (currentPrice == 0 || proposedPrice == 0) return false;
+        uint256 diff = currentPrice > proposedPrice
+            ? uint256(currentPrice - proposedPrice)
+            : uint256(proposedPrice - currentPrice);
+        return (diff * EXP_SCALE) / uint256(currentPrice) > KEEPER_DEADBAND;
     }
 
     /**
@@ -775,9 +689,8 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param newMin The new minimum price
      */
     function _setMinPrice(MarketProtectionState storage state, address asset, uint128 newMin) internal {
-        uint128 oldMin = state.minPrice;
+        emit MinPriceUpdated(asset, state.minPrice, newMin);
         state.minPrice = newMin;
-        emit MinPriceUpdated(asset, oldMin, newMin);
     }
 
     /**
@@ -787,21 +700,65 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param newMax The new maximum price
      */
     function _setMaxPrice(MarketProtectionState storage state, address asset, uint128 newMax) internal {
-        uint128 oldMax = state.maxPrice;
+        emit MaxPriceUpdated(asset, state.maxPrice, newMax);
         state.maxPrice = newMax;
-        emit MaxPriceUpdated(asset, oldMax, newMax);
     }
 
     /**
-     * @dev Returns true if the absolute drift between onChain and proposed exceeds KEEPER_DEADBAND
-     * @param onChain The current on-chain price
-     * @param proposed The keeper's proposed price
-     * @return True if drift exceeds deadband
+     * @dev Writes both lower and upper bounded prices to transient storage
+     * @param asset The underlying asset address
+     * @param minPrice The resolved lower (collateral) price to cache
+     * @param maxPrice The resolved upper (debt) price to cache
      */
-    function _exceedsDeadband(uint128 onChain, uint128 proposed) internal pure returns (bool) {
-        if (onChain == 0 || proposed == 0) return false;
-        uint256 diff = onChain > proposed ? uint256(onChain - proposed) : uint256(proposed - onChain);
-        return (diff * EXP_SCALE) / uint256(onChain) > KEEPER_DEADBAND;
+    function _setCachedPrices(address asset, uint256 minPrice, uint256 maxPrice) internal {
+        Transient.cachePrice(COLLATERAL_PRICE_CACHE_SLOT, asset, minPrice);
+        Transient.cachePrice(DEBT_PRICE_CACHE_SLOT, asset, maxPrice);
+    }
+
+    /**
+     * @dev Reads a cached final price from transient storage
+     * @param asset The underlying asset address
+     * @param boundType MIN for collateral price, MAX for debt price
+     * @return The cached price, or 0 on cache miss
+     */
+    function _getCachedPrice(address asset, PriceBoundType boundType) internal view returns (uint256) {
+        bytes32 slot = boundType == PriceBoundType.MIN ? COLLATERAL_PRICE_CACHE_SLOT : DEBT_PRICE_CACHE_SLOT;
+        return Transient.readCachedPrice(slot, asset);
+    }
+
+    /**
+     * @dev This function returns the underlying asset of a vToken
+     * @param vToken vToken address
+     * @return asset underlying asset address
+     */
+    function _getUnderlyingAsset(address vToken) private view returns (address asset) {
+        ensureNonzeroAddress(vToken);
+        if (vToken == nativeMarket) {
+            asset = NATIVE_TOKEN_ADDR;
+        } else if (vToken == vai) {
+            asset = vai;
+        } else {
+            asset = VBep20Interface(vToken).underlying();
+        }
+    }
+
+    /**
+     * @dev Reverts if the market has not been initialized via setTokenConfig
+     * @param asset The underlying asset address
+     * @return state The market protection state storage pointer
+     */
+    function _ensureInitialized(address asset) internal view returns (MarketProtectionState storage state) {
+        state = assetProtectionConfig[asset];
+        if (state.asset == address(0)) revert MarketNotInitialized(asset);
+    }
+
+    /**
+     * @notice Fetches the current spot price for an asset from the ResilientOracle
+     * @param asset The underlying asset address
+     * @return The current spot price
+     */
+    function _fetchSpotPrice(address asset) internal view returns (uint256) {
+        return RESILIENT_ORACLE.getPrice(asset);
     }
 
     /**
@@ -812,24 +769,5 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     function _safeToUint128(uint256 value) internal pure returns (uint128) {
         if (value > type(uint128).max) revert PriceExceedsUint128(value);
         return uint128(value);
-    }
-
-    /**
-     * @dev This function returns the underlying asset of a vToken
-     * @param vToken vToken address
-     * @return asset underlying asset address
-     */
-    function _getUnderlyingAsset(address vToken) private view notNullAddress(vToken) returns (address asset) {
-        if (vToken == nativeMarket) {
-            asset = NATIVE_TOKEN_ADDR;
-        } else if (vToken == vai) {
-            asset = vai;
-        } else {
-            asset = VBep20Interface(vToken).underlying();
-        }
-    }
-
-    function _fetchSpotPriceFromOracle(address asset) internal view returns (uint256) {
-        return RESILIENT_ORACLE.getPrice(asset);
     }
 }
