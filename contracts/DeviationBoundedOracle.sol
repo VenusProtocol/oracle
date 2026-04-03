@@ -241,30 +241,30 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      *      2. Price range has converged below the exit threshold
      * @param asset The underlying asset address
      * @custom:access Only authorized monitor/keeper addresses
-     * @custom:error ProtectionNotActive if protection is not currently active
+     * @custom:error ProtectedPriceInactive if protection is not currently active
      * @custom:error CooldownNotElapsed if cooldown period has not elapsed
      * @custom:error PriceRangeNotConverged if window range is still above exit threshold
-     * @custom:event ProtectionDisabled
+     * @custom:event ProtectedPriceDisabled
      */
     function disableActiveProtection(address asset) external {
         _checkAccessAllowed("disableActiveProtection(address)");
 
         MarketProtectionState storage state = assetProtectionConfig[asset];
 
-        if (!state.isProtectionModeActive) revert ProtectionNotActive(asset);
+        if (!state.isProtectedPriceActive) revert ProtectedPriceInactive(asset);
 
         if (block.timestamp < uint256(state.lastProtectionTriggeredAt) + uint256(state.cooldownPeriod)) {
             revert CooldownNotElapsed(asset, state.lastProtectionTriggeredAt, state.cooldownPeriod);
         }
 
-        // exit protection mode if price range has converged below exit threshold
+        // exit protected price if price range has converged below exit threshold
         uint256 rangeRatio = _computePriceBoundRatio(state.minPrice, state.maxPrice);
         if (rangeRatio >= state.resetThreshold) {
             revert PriceRangeNotConverged(asset, rangeRatio, state.resetThreshold);
         }
 
-        state.isProtectionModeActive = false;
-        emit ProtectionDisabled(asset);
+        state.isProtectedPriceActive = false;
+        emit ProtectedPriceDisabled(asset);
     }
 
     // ----- Admin functions (governance-gated) -----
@@ -286,7 +286,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @custom:error VAINotAllowed if asset is the VAI token
      * @custom:error PriceExceedsUint128 if the spot price overflows uint128
      * @custom:event ProtectionInitialized
-     * @custom:event WhitelistUpdated
+     * @custom:event BoundedPricingWhitelistUpdated
      */
     function setTokenConfig(
         address asset,
@@ -310,7 +310,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
         assetProtectionConfig[asset] = MarketProtectionState({
             minPrice: spotU128,
             maxPrice: spotU128,
-            isProtectionModeActive: false,
+            isProtectedPriceActive: false,
             isBoundedPricingEnabled: true,
             lastProtectionTriggeredAt: 0,
             cooldownPeriod: cooldownPeriod,
@@ -322,7 +322,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
         allAssets.push(asset);
 
         emit ProtectionInitialized(asset, spotU128, spotU128, cooldownPeriod, triggerThreshold);
-        emit WhitelistUpdated(asset, true);
+        emit BoundedPricingWhitelistUpdated(asset, true);
     }
 
     /**
@@ -379,7 +379,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param asset The underlying asset address
      * @param enabled Whether bounded pricing should be enabled for the asset
      * @custom:access Only Governance
-     * @custom:event WhitelistUpdated
+     * @custom:event BoundedPricingWhitelistUpdated
      */
     function setAssetBoundedPricingEnabled(address asset, bool enabled) external {
         _checkAccessAllowed("setAssetBoundedPricingEnabled(address,bool)");
@@ -387,12 +387,12 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
 
         MarketProtectionState storage state = _ensureInitialized(asset);
 
-        if (!enabled && state.isProtectionModeActive) {
-            revert ProtectionActive(asset);
+        if (!enabled && state.isProtectedPriceActive) {
+            revert ProtectedPriceActive(asset);
         }
 
         state.isBoundedPricingEnabled = enabled;
-        emit WhitelistUpdated(asset, enabled);
+        emit BoundedPricingWhitelistUpdated(asset, enabled);
     }
 
     // ----- View helpers -----
@@ -417,10 +417,10 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     /**
      * @notice Checks if protection is currently active for an asset
      * @param asset The underlying asset address
-     * @return True if protection mode is active
+     * @return True if protected price is active
      */
-    function isProtectionActive(address asset) external view returns (bool) {
-        return assetProtectionConfig[asset].isProtectionModeActive;
+    function isProtectedPriceActive(address asset) external view returns (bool) {
+        return assetProtectionConfig[asset].isProtectedPriceActive;
     }
 
     /**
@@ -456,7 +456,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     function canExitProtection(address asset) external view returns (bool) {
         MarketProtectionState storage state = assetProtectionConfig[asset];
         return
-            state.isProtectionModeActive &&
+            state.isProtectedPriceActive &&
             block.timestamp >= uint256(state.lastProtectionTriggeredAt) + uint256(state.cooldownPeriod) &&
             _computePriceBoundRatio(state.minPrice, state.maxPrice) < state.resetThreshold;
     }
@@ -498,7 +498,6 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param asset The underlying asset address
      * @param newPrice The new price value to set
      * @param boundType Whether this is a MIN or MAX bound update
-     * @custom:error ZeroAddressNotAllowed if asset is the zero address
      * @custom:error ZeroPriceNotAllowed if newPrice is zero
      * @custom:error MarketNotInitialized if the asset has not been initialized
      * @custom:error InvalidMinPrice if boundType is MIN and newPrice exceeds the current spot or is at or above maxPrice
@@ -539,7 +538,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
         _expandPriceWindow(state, spot, asset);
         _checkAndTriggerProtection(state, spot, asset);
         (minPrice, maxPrice) = _resolveBoundedPrices(
-            state.isProtectionModeActive,
+            state.isProtectedPriceActive,
             spot,
             uint256(state.minPrice),
             uint256(state.maxPrice)
@@ -570,10 +569,10 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param asset The underlying asset address (for event emission)
      */
     function _checkAndTriggerProtection(MarketProtectionState storage state, uint256 spot, address asset) internal {
-        if (state.isProtectionModeActive) return;
+        if (state.isProtectedPriceActive) return;
 
         if (_exceedsDeviationThreshold(spot, state.minPrice, state.maxPrice, state.triggerThreshold)) {
-            state.isProtectionModeActive = true;
+            state.isProtectedPriceActive = true;
             state.lastProtectionTriggeredAt = uint64(block.timestamp);
             emit ProtectionTriggered(asset, spot, state.minPrice, state.maxPrice);
         }
@@ -627,7 +626,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
         uint128 windowMin128 = spot < uint256(state.minPrice) ? spotU128 : state.minPrice;
         uint128 windowMax128 = spot > uint256(state.maxPrice) ? spotU128 : state.maxPrice;
 
-        bool shouldProtect = state.isProtectionModeActive ||
+        bool shouldProtect = state.isProtectedPriceActive ||
             _exceedsDeviationThreshold(spot, windowMin128, windowMax128, state.triggerThreshold);
 
         (minPrice, maxPrice) = _resolveBoundedPrices(shouldProtect, spot, uint256(windowMin128), uint256(windowMax128));

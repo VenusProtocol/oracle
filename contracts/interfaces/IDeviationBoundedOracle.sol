@@ -18,8 +18,8 @@ interface IDeviationBoundedOracle {
         uint128 minPrice;
         /// @notice Highest price observed in the current window
         uint128 maxPrice;
-        /// @notice Whether protection mode is currently active
-        bool isProtectionModeActive;
+        /// @notice Whether protected price is currently active
+        bool isProtectedPriceActive;
         /// @notice Whether this market is whitelisted for bounded pricing
         bool isBoundedPricingEnabled;
         /// @notice Timestamp of the last protection trigger — reset on every trigger
@@ -49,7 +49,7 @@ interface IDeviationBoundedOracle {
     event ProtectionTriggered(address indexed asset, uint256 spotPrice, uint128 minPrice, uint128 maxPrice);
 
     /// @notice Emitted when protection mode is disabled for an asset
-    event ProtectionDisabled(address indexed asset);
+    event ProtectedPriceDisabled(address indexed asset);
 
     /// @notice Emitted when the keeper updates the minimum price for an asset
     event MinPriceUpdated(address indexed asset, uint128 oldMin, uint128 newMin);
@@ -67,7 +67,7 @@ interface IDeviationBoundedOracle {
     event CooldownPeriodSet(address indexed asset, uint64 oldCooldown, uint64 newCooldown);
 
     /// @notice Emitted when an asset's whitelist status changes
-    event WhitelistUpdated(address indexed asset, bool whitelisted);
+    event BoundedPricingWhitelistUpdated(address indexed asset, bool whitelisted);
 
     // --- Errors ---
 
@@ -78,7 +78,7 @@ interface IDeviationBoundedOracle {
     error MarketAlreadyInitialized(address asset);
 
     /// @notice Thrown when trying to disable protection that is not active
-    error ProtectionNotActive(address asset);
+    error ProtectedPriceInactive(address asset);
 
     /// @notice Thrown when trying to disable protection before cooldown has elapsed
     error CooldownNotElapsed(address asset, uint64 lastProtectionTriggeredAt, uint64 cooldownPeriod);
@@ -101,9 +101,6 @@ interface IDeviationBoundedOracle {
     /// @notice Thrown when a price exceeds uint128 max
     error PriceExceedsUint128(uint256 price);
 
-    /// @notice Thrown when a zero address is provided where a non-zero address is required
-    error ZeroAddressNotAllowed();
-
     /// @notice Thrown when a zero price is provided where a non-zero price is required
     error ZeroPriceNotAllowed();
 
@@ -111,7 +108,7 @@ interface IDeviationBoundedOracle {
     error VAINotAllowed();
 
     /// @notice Thrown when trying to update for an asset with active protection
-    error ProtectionActive(address asset);
+    error ProtectedPriceActive(address asset);
 
     /// @notice Thrown when the lengths of the arrays are not equal
     error InvalidArrayLength();
@@ -125,7 +122,6 @@ interface IDeviationBoundedOracle {
      * @notice Gets the bounded collateral price for a given vToken, updating protection state
      * @param vToken vToken address
      * @return collateralPrice The bounded collateral price
-     * @custom:error ZeroAddressNotAllowed if vToken is the zero address
      * @custom:error PriceExceedsUint128 if the spot price overflows uint128
      * @custom:event MinPriceUpdated if a new window minimum is recorded
      * @custom:event MaxPriceUpdated if a new window maximum is recorded
@@ -137,7 +133,6 @@ interface IDeviationBoundedOracle {
      * @notice Gets the bounded debt price for a given vToken, updating protection state
      * @param vToken vToken address
      * @return debtPrice The bounded debt price
-     * @custom:error ZeroAddressNotAllowed if vToken is the zero address
      * @custom:error PriceExceedsUint128 if the spot price overflows uint128
      * @custom:event MinPriceUpdated if a new window minimum is recorded
      * @custom:event MaxPriceUpdated if a new window maximum is recorded
@@ -150,7 +145,6 @@ interface IDeviationBoundedOracle {
      * @param vToken vToken address
      * @return collateralPrice The bounded collateral price
      * @return debtPrice The bounded debt price
-     * @custom:error ZeroAddressNotAllowed if vToken is the zero address
      * @custom:error PriceExceedsUint128 if the spot price overflows uint128
      * @custom:event MinPriceUpdated if a new window minimum is recorded
      * @custom:event MaxPriceUpdated if a new window maximum is recorded
@@ -165,7 +159,6 @@ interface IDeviationBoundedOracle {
      * @dev Called by PolicyFacet before liquidity calculations so subsequent view price
      *      reads in the same transaction are served from transient storage.
      * @param vToken vToken address
-     * @custom:error ZeroAddressNotAllowed if vToken is the zero address
      * @custom:error PriceExceedsUint128 if the spot price overflows uint128
      * @custom:event MinPriceUpdated if a new window minimum is recorded
      * @custom:event MaxPriceUpdated if a new window maximum is recorded
@@ -180,7 +173,6 @@ interface IDeviationBoundedOracle {
      * @dev Reads from transient cache first; falls back to ResilientOracle on cache miss.
      * @param vToken vToken address
      * @return price The bounded collateral price
-     * @custom:error ZeroAddressNotAllowed if vToken is the zero address
      * @custom:error PriceExceedsUint128 if the spot price overflows uint128 (cache miss path only)
      */
     function getBoundedCollateralPriceView(address vToken) external view returns (uint256 price);
@@ -190,7 +182,6 @@ interface IDeviationBoundedOracle {
      * @dev Reads from transient cache first; falls back to ResilientOracle on cache miss.
      * @param vToken vToken address
      * @return price The bounded debt price
-     * @custom:error ZeroAddressNotAllowed if vToken is the zero address
      * @custom:error PriceExceedsUint128 if the spot price overflows uint128 (cache miss path only)
      */
     function getBoundedDebtPriceView(address vToken) external view returns (uint256 price);
@@ -201,7 +192,6 @@ interface IDeviationBoundedOracle {
      * @param vToken vToken address
      * @return collateralPrice The bounded collateral price
      * @return debtPrice The bounded debt price
-     * @custom:error ZeroAddressNotAllowed if vToken is the zero address
      * @custom:error PriceExceedsUint128 if the spot price overflows uint128 (cache miss path only)
      */
     function getBoundedPricesView(address vToken) external view returns (uint256 collateralPrice, uint256 debtPrice);
@@ -213,7 +203,6 @@ interface IDeviationBoundedOracle {
      * @param asset The underlying asset address
      * @param newMin The new minimum price; must be at or below the current spot and below maxPrice
      * @custom:access Only authorized keeper addresses
-     * @custom:error ZeroAddressNotAllowed if asset is the zero address
      * @custom:error ZeroPriceNotAllowed if newMin is zero
      * @custom:error MarketNotInitialized if the asset has not been initialized
      * @custom:error InvalidMinPrice if newMin exceeds the current spot or is at or above maxPrice
@@ -226,7 +215,6 @@ interface IDeviationBoundedOracle {
      * @param asset The underlying asset address
      * @param newMax The new maximum price; must be at or above the current spot and above minPrice
      * @custom:access Only authorized keeper addresses
-     * @custom:error ZeroAddressNotAllowed if asset is the zero address
      * @custom:error ZeroPriceNotAllowed if newMax is zero
      * @custom:error MarketNotInitialized if the asset has not been initialized
      * @custom:error InvalidMaxPrice if newMax is below the current spot or is at or below minPrice
@@ -238,10 +226,10 @@ interface IDeviationBoundedOracle {
      * @notice Disables protection mode for a given asset once conditions are met
      * @param asset The underlying asset address
      * @custom:access Only authorized monitor/keeper addresses
-     * @custom:error ProtectionNotActive if protection is not currently active
+     * @custom:error ProtectedPriceInactive if protection is not currently active
      * @custom:error CooldownNotElapsed if the cooldown period has not elapsed since the last trigger
      * @custom:error PriceRangeNotConverged if the window range is still above the exit threshold
-     * @custom:event ProtectionDisabled
+     * @custom:event ProtectedPriceDisabled
      */
     function disableActiveProtection(address asset) external;
 
@@ -263,7 +251,7 @@ interface IDeviationBoundedOracle {
      * @custom:error VAINotAllowed if asset is the VAI token
      * @custom:error PriceExceedsUint128 if the spot price overflows uint128
      * @custom:event ProtectionInitialized
-     * @custom:event WhitelistUpdated
+     * @custom:event BoundedPricingWhitelistUpdated
      */
     function setTokenConfig(
         address asset,
@@ -277,7 +265,6 @@ interface IDeviationBoundedOracle {
      * @param asset The underlying asset address
      * @param newCooldown The new cooldown period in seconds; must be non-zero
      * @custom:access Only Governance
-     * @custom:error ZeroAddressNotAllowed if asset is the zero address
      * @custom:error MarketNotInitialized if the asset has not been initialized
      * @custom:event CooldownPeriodSet
      */
@@ -289,7 +276,6 @@ interface IDeviationBoundedOracle {
      * @param newTriggerThreshold The new trigger threshold (mantissa). Must be between 5% and 50% and above the reset threshold.
      * @param newResetThreshold The new reset threshold (mantissa). Must be non-zero and below the trigger threshold.
      * @custom:access Only Governance
-     * @custom:error ZeroAddressNotAllowed if asset is the zero address
      * @custom:error MarketNotInitialized if the asset has not been initialized
      * @custom:error ThresholdBelowMinimum if newTriggerThreshold is below 5%
      * @custom:error ThresholdAboveMaximum if newTriggerThreshold is above 50%
@@ -304,10 +290,9 @@ interface IDeviationBoundedOracle {
      * @param asset The underlying asset address
      * @param enabled Whether bounded pricing should be enabled for the asset
      * @custom:access Only Governance
-     * @custom:error ZeroAddressNotAllowed if asset is the zero address
      * @custom:error MarketNotInitialized if the asset has not been initialized
-     * @custom:error ProtectionActive if trying to disable an asset while protection is active
-     * @custom:event WhitelistUpdated
+     * @custom:error ProtectedPriceActive if trying to disable an asset while protection is active
+     * @custom:event BoundedPricingWhitelistUpdated
      */
     function setAssetBoundedPricingEnabled(address asset, bool enabled) external;
 
@@ -318,7 +303,7 @@ interface IDeviationBoundedOracle {
      * @param asset The underlying asset address
      * @return minPrice Lowest price observed in the current window
      * @return maxPrice Highest price observed in the current window
-     * @return isProtectionModeActive Whether protection mode is currently active
+     * @return isProtectedPriceActive Whether protected price is currently active
      * @return isBoundedPricingEnabled Whether the asset is whitelisted for bounded pricing
      * @return lastProtectionTriggeredAt Timestamp of the last protection trigger
      * @return cooldownPeriod Minimum time protection stays active after last trigger
@@ -334,7 +319,7 @@ interface IDeviationBoundedOracle {
         returns (
             uint128 minPrice,
             uint128 maxPrice,
-            bool isProtectionModeActive,
+            bool isProtectedPriceActive,
             bool isBoundedPricingEnabled,
             uint64 lastProtectionTriggeredAt,
             uint64 cooldownPeriod,
@@ -353,9 +338,9 @@ interface IDeviationBoundedOracle {
     /**
      * @notice Checks if protection is currently active for an asset
      * @param asset The underlying asset address
-     * @return True if protection mode is active
+     * @return True if protected price is active
      */
-    function isProtectionActive(address asset) external view returns (bool);
+    function isProtectedPriceActive(address asset) external view returns (bool);
 
     /**
      * @notice Checks if protection can be exited for a given asset
