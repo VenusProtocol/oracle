@@ -88,6 +88,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     constructor(ResilientOracleInterface _resilientOracle, address nativeMarketAddress, address vaiAddress) {
         ensureNonzeroAddress(address(_resilientOracle));
         ensureNonzeroAddress(nativeMarketAddress);
+        ensureNonzeroAddress(vaiAddress);
         RESILIENT_ORACLE = _resilientOracle;
         nativeMarket = nativeMarketAddress;
         vai = vaiAddress;
@@ -529,8 +530,14 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      */
     function _updateAndGetBoundedPrices(address vToken) internal returns (uint256 minPrice, uint256 maxPrice) {
         address asset = _getUnderlyingAsset(vToken);
-        MarketProtectionState storage state = assetProtectionConfig[asset];
+
+        // Early return if both prices were cached by a prior updateProtectionState call in this tx
+        (minPrice, maxPrice) = _getCachedPrices(asset);
+        if (minPrice != 0 && maxPrice != 0) return (minPrice, maxPrice);
+
+        // return early if failure from resilient oracle to prevent cold SLOAD
         uint256 spot = _fetchSpotPrice(asset);
+        MarketProtectionState storage state = assetProtectionConfig[asset];
         if (!state.isBoundedPricingEnabled) {
             _setCachedPrices(asset, spot, spot);
             return (spot, spot);
@@ -612,8 +619,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
         address asset = _getUnderlyingAsset(vToken);
 
         // Early return if both prices were cached by a prior updateProtectionState call in this tx
-        minPrice = _getCachedPrice(asset, PriceBoundType.MIN);
-        maxPrice = _getCachedPrice(asset, PriceBoundType.MAX);
+        (minPrice, maxPrice) = _getCachedPrices(asset);
         if (minPrice != 0 && maxPrice != 0) return (minPrice, maxPrice);
 
         // Cache miss — fetch from oracle and compute without state mutations
@@ -717,12 +723,12 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     /**
      * @dev Reads a cached final price from transient storage
      * @param asset The underlying asset address
-     * @param boundType MIN for collateral price, MAX for debt price
-     * @return The cached price, or 0 on cache miss
+     * @return minPrice The cached minimum price, or 0 on cache miss
+     * @return maxPrice The cached maximum price, or 0 on cache miss
      */
-    function _getCachedPrice(address asset, PriceBoundType boundType) internal view returns (uint256) {
-        bytes32 slot = boundType == PriceBoundType.MIN ? COLLATERAL_PRICE_CACHE_SLOT : DEBT_PRICE_CACHE_SLOT;
-        return Transient.readCachedPrice(slot, asset);
+    function _getCachedPrices(address asset) internal view returns (uint256 minPrice, uint256 maxPrice) {
+        minPrice = Transient.readCachedPrice(COLLATERAL_PRICE_CACHE_SLOT, asset);
+        maxPrice = Transient.readCachedPrice(DEBT_PRICE_CACHE_SLOT, asset);
     }
 
     /**
