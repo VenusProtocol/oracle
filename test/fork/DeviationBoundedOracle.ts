@@ -696,6 +696,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
 
       it("10.7 returns spot for uninitialized asset", async () => {
         expect(await oracle.callStatic.getBoundedCollateralPrice(vTokenA.address)).to.equal(SPOT_PRICE);
+        expect(await oracle.getBoundedCollateralPriceView(vTokenA.address)).to.equal(SPOT_PRICE);
       });
 
       it("10.8 resolves native market to NATIVE_TOKEN_ADDR", async () => {
@@ -1277,7 +1278,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
     // ────────────────────────────────────────────────────────────────────
 
     describe("29. whitelist round-trip", () => {
-      it("29.1 disable returns spot, re-enable resumes bounded pricing", async () => {
+      it("29.1 disable returns spot, re-enable resets window to current spot", async () => {
         await initAssetWithWindow(assetA);
         const pumpSpot = parseUnits("1.2", 18);
         await mockOracle.setPrice(assetA, pumpSpot);
@@ -1285,8 +1286,9 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         await oracle.setAssetBoundedPricingEnabled(assetA, false);
         expect(await oracle.callStatic.getBoundedCollateralPrice(vTokenA.address)).to.equal(pumpSpot);
 
+        // Re-enable resets window to current spot (min=max=pumpSpot), no deviation
         await oracle.setAssetBoundedPricingEnabled(assetA, true);
-        expect(await oracle.getBoundedCollateralPriceView(vTokenA.address)).to.equal(MIN_PRICE);
+        expect(await oracle.getBoundedCollateralPriceView(vTokenA.address)).to.equal(pumpSpot);
       });
     });
 

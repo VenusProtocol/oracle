@@ -28,11 +28,6 @@ contract DeviationBoundedOracleCaller {
         debt = oracle.getBoundedDebtPriceView(vToken);
     }
 
-    function getViewPricesWithoutUpdate(address vToken) external view returns (uint256 collateral, uint256 debt) {
-        collateral = oracle.getBoundedCollateralPriceView(vToken);
-        debt = oracle.getBoundedDebtPriceView(vToken);
-    }
-
     function updateThenNonViewCollateral(address vToken) external returns (uint256) {
         oracle.updateProtectionState(vToken);
         return oracle.getBoundedCollateralPrice(vToken);
@@ -53,5 +48,10 @@ contract DeviationBoundedOracleCaller {
     function updateAViewB(address vTokenA, address vTokenB) external returns (uint256) {
         oracle.updateProtectionState(vTokenA);
         return oracle.getBoundedCollateralPriceView(vTokenB);
+    }
+
+    function getViewPricesWithoutUpdate(address vToken) external view returns (uint256 collateral, uint256 debt) {
+        collateral = oracle.getBoundedCollateralPriceView(vToken);
+        debt = oracle.getBoundedDebtPriceView(vToken);
     }
 }

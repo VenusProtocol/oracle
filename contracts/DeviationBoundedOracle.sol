@@ -249,6 +249,8 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      */
     function disableActiveProtection(address asset) external {
         _checkAccessAllowed("disableActiveProtection(address)");
+        ensureNonzeroAddress(asset);
+        _ensureInitialized(asset);
 
         MarketProtectionState storage state = assetProtectionConfig[asset];
 
@@ -390,6 +392,15 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
 
         if (!enabled && state.isProtectedPriceActive) {
             revert ProtectedPriceActive(asset);
+        }
+
+        if (state.isBoundedPricingEnabled == enabled) return;
+
+        // reset the window if re-enabling
+        if (enabled) {
+            uint128 spotU128 = _safeToUint128(_fetchSpotPrice(asset));
+            state.minPrice = spotU128;
+            state.maxPrice = spotU128;
         }
 
         state.isBoundedPricingEnabled = enabled;
@@ -542,14 +553,9 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
             _setCachedPrices(asset, spot, spot);
             return (spot, spot);
         }
-        _expandPriceWindow(state, spot, asset);
-        _checkAndTriggerProtection(state, spot, asset);
-        (minPrice, maxPrice) = _resolveBoundedPrices(
-            state.isProtectedPriceActive,
-            spot,
-            uint256(state.minPrice),
-            uint256(state.maxPrice)
-        );
+        (uint128 updatedMin, uint128 updatedMax) = _expandPriceWindow(state, spot, asset);
+        bool protectionActive = _checkAndTriggerProtection(state, spot, asset);
+        (minPrice, maxPrice) = _resolveBoundedPrices(protectionActive, spot, uint256(updatedMin), uint256(updatedMax));
         _setCachedPrices(asset, minPrice, maxPrice);
     }
 
@@ -559,14 +565,23 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param spot The current spot price
      * @param asset The underlying asset address (for event emission)
      */
-    function _expandPriceWindow(MarketProtectionState storage state, uint256 spot, address asset) internal {
+    function _expandPriceWindow(
+        MarketProtectionState storage state,
+        uint256 spot,
+        address asset
+    ) internal returns (uint128, uint128) {
         uint128 spotU128 = _safeToUint128(spot);
-        if (spotU128 < state.minPrice) {
+        uint128 currentMin = state.minPrice;
+        uint128 currentMax = state.maxPrice;
+        if (spotU128 < currentMin) {
             _setMinPrice(state, asset, spotU128);
+            currentMin = spotU128;
         }
-        if (spotU128 > state.maxPrice) {
+        if (spotU128 > currentMax) {
             _setMaxPrice(state, asset, spotU128);
+            currentMax = spotU128;
         }
+        return (currentMin, currentMax);
     }
 
     /**
@@ -575,13 +590,18 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param spot The current spot price
      * @param asset The underlying asset address (for event emission)
      */
-    function _checkAndTriggerProtection(MarketProtectionState storage state, uint256 spot, address asset) internal {
-        if (state.isProtectedPriceActive) return;
+    function _checkAndTriggerProtection(
+        MarketProtectionState storage state,
+        uint256 spot,
+        address asset
+    ) internal returns (bool triggered) {
+        if (state.isProtectedPriceActive) return true;
 
         if (_exceedsDeviationThreshold(spot, state.minPrice, state.maxPrice, state.triggerThreshold)) {
             state.isProtectedPriceActive = true;
             state.lastProtectionTriggeredAt = uint64(block.timestamp);
             emit ProtectionTriggered(asset, spot, state.minPrice, state.maxPrice);
+            return true;
         }
     }
 

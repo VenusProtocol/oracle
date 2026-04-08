@@ -10,9 +10,7 @@ const ACCOUNTS = {
   "Critical Timelock": "0xbfbc79D4198963e4a66270F3EfB1fdA0F382E49c",
 };
 
-const ACM_ABI = [
-  "function hasRole(bytes32 role, address account) external view returns (bool)",
-];
+const ACM_ABI = ["function hasRole(bytes32 role, address account) external view returns (bool)"];
 
 const FUNCTIONS = [
   "setTokenConfig(TokenConfig)",
@@ -32,9 +30,7 @@ async function main() {
     console.log(`--- ${name} (${address}) ---`);
     for (const fn of FUNCTIONS) {
       // Replicate ACM logic: role = keccak256(abi.encodePacked(callingContract, functionSig))
-      const role = ethers.utils.keccak256(
-        ethers.utils.solidityPack(["address", "string"], [RESILIENT_ORACLE, fn]),
-      );
+      const role = ethers.utils.keccak256(ethers.utils.solidityPack(["address", "string"], [RESILIENT_ORACLE, fn]));
       const allowed = await acm.hasRole(role, address);
       console.log(`  ${allowed ? "✅" : "❌"} ${fn}`);
     }

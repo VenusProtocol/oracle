@@ -410,9 +410,9 @@ describe("DeviationBoundedOracle", () => {
       expect(await oracle.isBoundedPricingEnabled(assetA)).to.equal(true);
     });
 
-    it("setAssetBoundedPricingEnabled(true) on already-enabled succeeds", async () => {
+    it("setAssetBoundedPricingEnabled(true) on already-enabled is a no-op", async () => {
       const tx = await oracle.setAssetBoundedPricingEnabled(assetA, true);
-      await expect(tx).to.emit(oracle, "BoundedPricingWhitelistUpdated").withArgs(assetA, true);
+      await expect(tx).to.not.emit(oracle, "BoundedPricingWhitelistUpdated");
     });
 
     it("reverts when caller is unauthorized", async () => {
@@ -681,10 +681,7 @@ describe("DeviationBoundedOracle", () => {
       resilientOracle.getPrice.whenCalledWith(assetA).returns(pumpSpot);
       await oracle.getBoundedCollateralPrice(vTokenA.address);
 
-      await expect(oracle.disableActiveProtection(assetA)).to.be.revertedWithCustomError(
-        oracle,
-        "CooldownNotElapsed",
-      );
+      await expect(oracle.disableActiveProtection(assetA)).to.be.revertedWithCustomError(oracle, "CooldownNotElapsed");
     });
 
     it("reverts when range not converged", async () => {
@@ -1202,7 +1199,14 @@ describe("DeviationBoundedOracle", () => {
 
     it("expands window without triggering protection", async () => {
       // Use 30% threshold so spot=1.15 expands max but stays under upperBound (0.9 * 1.3 = 1.17)
-      await initAssetWithWindow(assetB, MIN_PRICE, MAX_PRICE, DEFAULT_COOLDOWN, parseUnits("0.3", 18), DEFAULT_RESET_THRESHOLD);
+      await initAssetWithWindow(
+        assetB,
+        MIN_PRICE,
+        MAX_PRICE,
+        DEFAULT_COOLDOWN,
+        parseUnits("0.3", 18),
+        DEFAULT_RESET_THRESHOLD,
+      );
 
       const spot = parseUnits("1.15", 18);
       resilientOracle.getPrice.whenCalledWith(assetB).returns(spot);
@@ -1467,11 +1471,7 @@ describe("DeviationBoundedOracle", () => {
     });
 
     it("returns false when both prices equal (drift = 0)", async () => {
-      const [needsMinUpdate, needsMaxUpdate] = await oracle.checkAndGetWindowDrift(
-        [assetA],
-        [MIN_PRICE],
-        [MAX_PRICE],
-      );
+      const [needsMinUpdate, needsMaxUpdate] = await oracle.checkAndGetWindowDrift([assetA], [MIN_PRICE], [MAX_PRICE]);
       expect(needsMinUpdate[0]).to.equal(false);
       expect(needsMaxUpdate[0]).to.equal(false);
     });

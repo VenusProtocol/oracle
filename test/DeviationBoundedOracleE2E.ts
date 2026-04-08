@@ -604,7 +604,7 @@ describe("DeviationBoundedOracle E2E", () => {
   // ────────────────────────────────────────────────────────────────────────
 
   describe("E2E-8: setAssetBoundedPricingEnabled round-trip", () => {
-    it("8a: disable returns spot, re-enable resumes bounded pricing", async () => {
+    it("8a: disable returns spot, re-enable resets window to current spot", async () => {
       await initAssetWithWindow(assetA);
 
       // Set pump spot that would trigger: 1.2 > upperBound 1.08
@@ -616,11 +616,11 @@ describe("DeviationBoundedOracle E2E", () => {
       const priceDisabled = await oracle.callStatic.getBoundedCollateralPrice(vTokenA.address);
       expect(priceDisabled).to.equal(pumpSpot);
 
-      // Re-enable → bounded pricing resumes with existing window
+      // Re-enable → window resets to current spot (min=max=pumpSpot)
       await oracle.setAssetBoundedPricingEnabled(assetA, true);
-      // View with simulated trigger returns bounded price: min(1.2, 0.9) = 0.9
+      // Fresh window at pumpSpot, no deviation → returns spot
       const priceReEnabled = await oracle.getBoundedCollateralPriceView(vTokenA.address);
-      expect(priceReEnabled).to.equal(MIN_PRICE);
+      expect(priceReEnabled).to.equal(pumpSpot);
     });
   });
 
