@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity ^0.8.25;
+pragma solidity 0.8.25;
 
 interface IDeviationBoundedOracle {
     // --- Enums ---
@@ -18,8 +18,8 @@ interface IDeviationBoundedOracle {
         uint128 minPrice;
         /// @notice Highest price observed in the current window
         uint128 maxPrice;
-        /// @notice Whether protected price is currently active
-        bool isProtectedPriceActive;
+        /// @notice Whether protected price is currently being used
+        bool currentlyUsingProtectedPrice;
         /// @notice Whether this market is whitelisted for bounded pricing
         bool isBoundedPricingEnabled;
         /// @notice Timestamp of the last protection trigger — reset on every trigger
@@ -231,18 +231,19 @@ interface IDeviationBoundedOracle {
      * @custom:error PriceRangeNotConverged if the window range is still above the exit threshold
      * @custom:event ProtectedPriceDisabled
      */
-    function disableActiveProtection(address asset) external;
+    function disableActiveProtectedPrice(address asset) external;
 
     // --- Admin functions (governance-gated) ---
 
     /**
-     * @notice Initializes protection parameters for a new asset and whitelists it
+     * @notice Initializes protection parameters for a new asset
      * @dev Seeds the initial min/max window from the current ResilientOracle spot price,
      *      confirming the oracle is live for this asset before it is listed.
      * @param asset The underlying asset address
      * @param cooldownPeriod Minimum time protection stays active after the last trigger, in seconds
      * @param triggerThreshold Deviation threshold that activates protection (mantissa). Must be between 5% and 50%.
      * @param resetThreshold Deviation threshold below which protection can be exited (mantissa). Must be non-zero and below triggerThreshold.
+     * @param enableBoundedPricing Whether to enable bounded pricing immediately upon initialization
      * @custom:access Only Governance
      * @custom:error MarketAlreadyInitialized if the asset has already been initialized
      * @custom:error ThresholdBelowMinimum if triggerThreshold is below 5%
@@ -257,7 +258,28 @@ interface IDeviationBoundedOracle {
         address asset,
         uint64 cooldownPeriod,
         uint256 triggerThreshold,
-        uint256 resetThreshold
+        uint256 resetThreshold,
+        bool enableBoundedPricing
+    ) external;
+
+    /**
+     * @notice Batch-initializes protection parameters for multiple assets in a single transaction
+     * @param assets Array of underlying asset addresses
+     * @param cooldownPeriods Array of cooldown periods (seconds)
+     * @param triggerThresholds Array of trigger thresholds (mantissa)
+     * @param resetThresholds Array of reset thresholds (mantissa)
+     * @param enableBoundedPricings Array of whether to enable bounded pricing per asset
+     * @custom:access Only Governance
+     * @custom:error InvalidArrayLength if array lengths do not match
+     * @custom:event ProtectionInitialized for each asset
+     * @custom:event BoundedPricingWhitelistUpdated for each asset
+     */
+    function setTokenConfigs(
+        address[] calldata assets,
+        uint64[] calldata cooldownPeriods,
+        uint256[] calldata triggerThresholds,
+        uint256[] calldata resetThresholds,
+        bool[] calldata enableBoundedPricings
     ) external;
 
     /**
@@ -303,7 +325,7 @@ interface IDeviationBoundedOracle {
      * @param asset The underlying asset address
      * @return minPrice Lowest price observed in the current window
      * @return maxPrice Highest price observed in the current window
-     * @return isProtectedPriceActive Whether protected price is currently active
+     * @return currentlyUsingProtectedPrice Whether protected price is currently active
      * @return isBoundedPricingEnabled Whether the asset is whitelisted for bounded pricing
      * @return lastProtectionTriggeredAt Timestamp of the last protection trigger
      * @return cooldownPeriod Minimum time protection stays active after last trigger
@@ -319,7 +341,7 @@ interface IDeviationBoundedOracle {
         returns (
             uint128 minPrice,
             uint128 maxPrice,
-            bool isProtectedPriceActive,
+            bool currentlyUsingProtectedPrice,
             bool isBoundedPricingEnabled,
             uint64 lastProtectionTriggeredAt,
             uint64 cooldownPeriod,
@@ -336,11 +358,11 @@ interface IDeviationBoundedOracle {
     function isBoundedPricingEnabled(address asset) external view returns (bool);
 
     /**
-     * @notice Checks if protection is currently active for an asset
+     * @notice Checks if the asset is currently using the protected (bounded) price
      * @param asset The underlying asset address
-     * @return True if protected price is active
+     * @return True if the asset is currently using the protected price instead of spot
      */
-    function isProtectedPriceActive(address asset) external view returns (bool);
+    function currentlyUsingProtectedPrice(address asset) external view returns (bool);
 
     /**
      * @notice Checks if protection can be exited for a given asset

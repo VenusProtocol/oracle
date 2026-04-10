@@ -93,13 +93,14 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
 
       // Impersonated timelock grants all DBO permissions to deployer via real ACM
       const DBO_FUNCTIONS = [
-        "setTokenConfig(address,uint64,uint256,uint256)",
+        "setTokenConfig(address,uint64,uint256,uint256,bool)",
+        "setTokenConfigs(address[],uint64[],uint256[],uint256[],bool[])",
         "setCooldownPeriod(address,uint64)",
         "setThresholds(address,uint256,uint256)",
         "setAssetBoundedPricingEnabled(address,bool)",
         "updateMinPrice(address,uint128)",
         "updateMaxPrice(address,uint128)",
-        "disableActiveProtection(address)",
+        "disableActiveProtectedPrice(address)",
       ];
       for (const fn of DBO_FUNCTIONS) {
         await acmContract.giveCallPermission(oracleDeployed.address, fn, deployer.address);
@@ -137,7 +138,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
       triggerThreshold: BigNumber = DEFAULT_THRESHOLD,
       resetThreshold: BigNumber = DEFAULT_RESET_THRESHOLD,
     ) => {
-      await oracle.setTokenConfig(asset, cooldown, triggerThreshold, resetThreshold);
+      await oracle.setTokenConfig(asset, cooldown, triggerThreshold, resetThreshold, true);
     };
 
     const initAssetWithWindow = async (
@@ -148,7 +149,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
       triggerThreshold: BigNumber = DEFAULT_THRESHOLD,
       resetThreshold: BigNumber = DEFAULT_RESET_THRESHOLD,
     ) => {
-      await oracle.setTokenConfig(asset, cooldown, triggerThreshold, resetThreshold);
+      await oracle.setTokenConfig(asset, cooldown, triggerThreshold, resetThreshold, true);
       await oracle.updateMinPrice(asset, minPrice);
       await oracle.updateMaxPrice(asset, maxPrice);
     };
@@ -175,7 +176,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
       const newTrigger = newReset.add(parseUnits("0.01", 18));
 
       await oracle.setThresholds(asset, newTrigger, newReset);
-      await oracle.disableActiveProtection(asset);
+      await oracle.disableActiveProtectedPrice(asset);
     };
 
     // ────────────────────────────────────────────────────────────────────
@@ -227,12 +228,18 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
     describe("3. setTokenConfig", () => {
       describe("happy path", () => {
         it("3.1 sets all struct fields, emits events, updates asset lists", async () => {
-          const tx = await oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD);
+          const tx = await oracle.setTokenConfig(
+            assetA,
+            DEFAULT_COOLDOWN,
+            DEFAULT_THRESHOLD,
+            DEFAULT_RESET_THRESHOLD,
+            true,
+          );
 
           const state = await oracle.assetProtectionConfig(assetA);
           expect(state.minPrice).to.equal(SPOT_PRICE);
           expect(state.maxPrice).to.equal(SPOT_PRICE);
-          expect(state.isProtectedPriceActive).to.equal(false);
+          expect(state.currentlyUsingProtectedPrice).to.equal(false);
           expect(state.isBoundedPricingEnabled).to.equal(true);
           expect(state.lastProtectionTriggeredAt).to.equal(0);
           expect(state.cooldownPeriod).to.equal(DEFAULT_COOLDOWN);
@@ -255,62 +262,62 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
           await expect(
             oracle
               .connect(someone)
-              .setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD),
+              .setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true),
           ).to.be.revertedWithCustomError(oracle, "Unauthorized");
         });
 
         it("3.3 reverts when asset is zero address", async () => {
           await expect(
-            oracle.setTokenConfig(addr0000, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD),
+            oracle.setTokenConfig(addr0000, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true),
           ).to.be.revertedWithCustomError(oracle, "ZeroAddressNotAllowed");
         });
 
         it("3.4 reverts when already initialized", async () => {
           await initAsset(assetA);
           await expect(
-            oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD),
+            oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true),
           ).to.be.revertedWithCustomError(oracle, "MarketAlreadyInitialized");
         });
 
         it("3.5 reverts when threshold < MIN_THRESHOLD", async () => {
           await expect(
-            oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, MIN_THRESHOLD.sub(1), DEFAULT_RESET_THRESHOLD),
+            oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, MIN_THRESHOLD.sub(1), DEFAULT_RESET_THRESHOLD, true),
           ).to.be.revertedWithCustomError(oracle, "ThresholdBelowMinimum");
         });
 
         it("3.6 reverts when threshold > MAX_THRESHOLD", async () => {
           await expect(
-            oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, MAX_THRESHOLD.add(1), DEFAULT_RESET_THRESHOLD),
+            oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, MAX_THRESHOLD.add(1), DEFAULT_RESET_THRESHOLD, true),
           ).to.be.revertedWithCustomError(oracle, "ThresholdAboveMaximum");
         });
 
         it("3.7 reverts when resetThreshold >= triggerThreshold", async () => {
           await expect(
-            oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_THRESHOLD),
+            oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_THRESHOLD, true),
           ).to.be.revertedWithCustomError(oracle, "InvalidResetThreshold");
         });
 
         it("3.8 reverts when asset is VAI", async () => {
           await expect(
-            oracle.setTokenConfig(VAI_ADDRESS, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD),
+            oracle.setTokenConfig(VAI_ADDRESS, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true),
           ).to.be.revertedWithCustomError(oracle, "VAINotAllowed");
         });
 
         it("3.9 reverts when cooldownPeriod is zero", async () => {
           await expect(
-            oracle.setTokenConfig(assetA, 0, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD),
+            oracle.setTokenConfig(assetA, 0, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true),
           ).to.be.revertedWithCustomError(oracle, "ZeroValueNotAllowed");
         });
 
         it("3.10 reverts when triggerThreshold is zero", async () => {
           await expect(
-            oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, 0, DEFAULT_RESET_THRESHOLD),
+            oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, 0, DEFAULT_RESET_THRESHOLD, true),
           ).to.be.revertedWithCustomError(oracle, "ZeroValueNotAllowed");
         });
 
         it("3.11 reverts when resetThreshold is zero", async () => {
           await expect(
-            oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, 0),
+            oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, 0, true),
           ).to.be.revertedWithCustomError(oracle, "ZeroValueNotAllowed");
         });
 
@@ -318,7 +325,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
           await initAsset(assetA);
           await oracle.setAssetBoundedPricingEnabled(assetA, false);
           await expect(
-            oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD),
+            oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true),
           ).to.be.revertedWithCustomError(oracle, "MarketAlreadyInitialized");
         });
 
@@ -326,7 +333,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
           const overflowPrice = BigNumber.from(2).pow(128);
           await mockOracle.setPrice(assetA, overflowPrice);
           await expect(
-            oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD),
+            oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true),
           ).to.be.revertedWithCustomError(oracle, "PriceExceedsUint128");
         });
       });
@@ -564,10 +571,10 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
     });
 
     // ────────────────────────────────────────────────────────────────────
-    // 9. disableActiveProtection
+    // 9. disableActiveProtectedPrice
     // ────────────────────────────────────────────────────────────────────
 
-    describe("9. disableActiveProtection", () => {
+    describe("9. disableActiveProtectedPrice", () => {
       it("9.1 disables protection after governance raises reset threshold", async () => {
         await initAssetWithWindow(assetA);
         await triggerPump(assetA, vTokenA);
@@ -585,9 +592,9 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
           await oracle.setThresholds(assetA, trigger, newReset);
         }
 
-        const tx = await oracle.disableActiveProtection(assetA);
+        const tx = await oracle.disableActiveProtectedPrice(assetA);
         await expect(tx).to.emit(oracle, "ProtectedPriceDisabled").withArgs(assetA);
-        expect(await oracle.isProtectedPriceActive(assetA)).to.equal(false);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
       });
 
       it("9.2 prices revert to spot after disable", async () => {
@@ -596,6 +603,12 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         expect(await oracle.callStatic.getBoundedCollateralPrice(vTokenA.address)).to.equal(MIN_PRICE);
 
         await disableProtection(assetA);
+
+        // Verify lastProtectionTriggeredAt is reset to 0 on disable
+        const stateDisabled = await oracle.assetProtectionConfig(assetA);
+        expect(stateDisabled.lastProtectionTriggeredAt).to.equal(0);
+        expect(stateDisabled.currentlyUsingProtectedPrice).to.equal(false);
+
         await mockOracle.setPrice(assetA, SPOT_PRICE);
 
         expect(await oracle.callStatic.getBoundedCollateralPrice(vTokenA.address)).to.equal(SPOT_PRICE);
@@ -604,7 +617,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
 
       it("9.3 reverts when caller is unauthorized", async () => {
         await initAsset(assetA);
-        await expect(oracle.connect(someone).disableActiveProtection(assetA)).to.be.revertedWithCustomError(
+        await expect(oracle.connect(someone).disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
           oracle,
           "Unauthorized",
         );
@@ -612,7 +625,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
 
       it("9.4 reverts when protection is not active", async () => {
         await initAsset(assetA);
-        await expect(oracle.disableActiveProtection(assetA)).to.be.revertedWithCustomError(
+        await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
           oracle,
           "ProtectedPriceInactive",
         );
@@ -621,7 +634,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
       it("9.5 reverts when cooldown has not elapsed", async () => {
         await initAssetWithWindow(assetA);
         await triggerPump(assetA, vTokenA);
-        await expect(oracle.disableActiveProtection(assetA)).to.be.revertedWithCustomError(
+        await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
           oracle,
           "CooldownNotElapsed",
         );
@@ -632,7 +645,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         await triggerPump(assetA, vTokenA);
         await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN + 1]);
         await ethers.provider.send("evm_mine", []);
-        await expect(oracle.disableActiveProtection(assetA)).to.be.revertedWithCustomError(
+        await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
           oracle,
           "PriceRangeNotConverged",
         );
@@ -772,7 +785,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         await mockOracle.setPrice(assetA, pumpSpot);
 
         expect(await oracle.getBoundedCollateralPriceView(vTokenA.address)).to.equal(MIN_PRICE);
-        expect(await oracle.isProtectedPriceActive(assetA)).to.equal(false);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
       });
 
       it("13.3 view and non-view return identical prices (pump)", async () => {
@@ -796,7 +809,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         const crashSpot = lowerBound.sub(1);
         await mockOracle.setPrice(assetA, crashSpot);
         await oracle.getBoundedCollateralPrice(vTokenA.address);
-        expect(await oracle.isProtectedPriceActive(assetA)).to.equal(true);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
 
         expect(await oracle.callStatic.getBoundedCollateralPrice(vTokenA.address)).to.equal(
           await oracle.getBoundedCollateralPriceView(vTokenA.address),
@@ -872,14 +885,14 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         await mockOracle.setPrice(assetA, pumpSpot);
 
         await expect(oracle.updateProtectionState(vTokenA.address)).to.emit(oracle, "ProtectionTriggered");
-        expect(await oracle.isProtectedPriceActive(assetA)).to.equal(true);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
       });
 
       it("15.2 is a no-op for non-whitelisted asset", async () => {
         await initAssetWithWindow(assetA);
         await oracle.setAssetBoundedPricingEnabled(assetA, false);
         await expect(oracle.updateProtectionState(vTokenA.address)).to.not.be.reverted;
-        expect(await oracle.isProtectedPriceActive(assetA)).to.equal(false);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
       });
     });
 
@@ -897,12 +910,12 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
       });
     });
 
-    describe("17. isProtectedPriceActive", () => {
+    describe("17. currentlyUsingProtectedPrice", () => {
       it("17.1 returns true when active, false otherwise", async () => {
-        expect(await oracle.isProtectedPriceActive(assetA)).to.equal(false);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
         await initAssetWithWindow(assetA);
         await triggerPump(assetA, vTokenA);
-        expect(await oracle.isProtectedPriceActive(assetA)).to.equal(true);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
       });
     });
 
@@ -969,7 +982,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         const state = await oracle.assetProtectionConfig(assetA);
         expect(state.minPrice).to.equal(SPOT_PRICE);
         expect(state.maxPrice).to.equal(SPOT_PRICE);
-        expect(state.isProtectedPriceActive).to.equal(false);
+        expect(state.currentlyUsingProtectedPrice).to.equal(false);
         expect(state.isBoundedPricingEnabled).to.equal(true);
         expect(state.cooldownPeriod).to.equal(DEFAULT_COOLDOWN);
         expect(state.asset).to.equal(assetA);
@@ -1010,7 +1023,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         expect(result.debt).to.equal(MAX_PRICE);
 
         await caller.updateAndGetBothPrices(vTokenA.address);
-        expect(await oracle.isProtectedPriceActive(assetA)).to.equal(true);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
       });
 
       it("22.4 cache miss -- view fetches fresh", async () => {
@@ -1024,7 +1037,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
 
         const result = await caller.getViewPricesWithoutUpdate(vTokenA.address);
         expect(result.collateral).to.equal(MIN_PRICE);
-        expect(await oracle.isProtectedPriceActive(assetA)).to.equal(false);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
       });
 
       it("22.6 per-asset cache isolation", async () => {
@@ -1072,7 +1085,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
 
         await mockOracle.setPrice(assetA, parseUnits("1.2", 18));
         expect(await oracle.getBoundedCollateralPriceView(vTokenA.address)).to.equal(MIN_PRICE);
-        expect(await oracle.isProtectedPriceActive(assetA)).to.equal(false);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
       });
 
       it("23.3 lastProtectionTriggeredAt is fresh", async () => {
@@ -1104,13 +1117,13 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
       const spot = parseUnits("1.15", 18);
 
       it("24.1 lowering threshold triggers protection", async () => {
-        await oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, parseUnits("0.3", 18), parseUnits("0.15", 18));
+        await oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, parseUnits("0.3", 18), parseUnits("0.15", 18), true);
         await oracle.updateMinPrice(assetA, MIN_PRICE);
         await oracle.updateMaxPrice(assetA, MAX_PRICE);
         await mockOracle.setPrice(assetA, spot);
 
         await oracle.getBoundedCollateralPrice(vTokenA.address);
-        expect(await oracle.isProtectedPriceActive(assetA)).to.equal(false);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
 
         const state = await oracle.assetProtectionConfig(assetA);
         await oracle.setThresholds(assetA, DEFAULT_THRESHOLD, state.resetThreshold);
@@ -1124,7 +1137,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         await oracle.setThresholds(assetA, parseUnits("0.3", 18), state.resetThreshold);
 
         await oracle.getBoundedCollateralPrice(vTokenA.address);
-        expect(await oracle.isProtectedPriceActive(assetA)).to.equal(false);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
       });
 
       it("24.3 view reflects threshold change immediately", async () => {
@@ -1144,15 +1157,15 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
     // ────────────────────────────────────────────────────────────────────
 
     describe("25. no re-trigger, window expands", () => {
-      it("25.1 no re-trigger, timestamp unchanged", async () => {
+      it("25.1 continued deviation updates timestamp and re-emits event", async () => {
         await initAssetWithWindow(assetA);
         const pumpSpot = await triggerPump(assetA, vTokenA);
         const triggerTime = (await oracle.assetProtectionConfig(assetA)).lastProtectionTriggeredAt;
 
         await mockOracle.setPrice(assetA, pumpSpot.add(parseUnits("0.5", 18)));
         const tx = await oracle.getBoundedCollateralPrice(vTokenA.address);
-        await expect(tx).to.not.emit(oracle, "ProtectionTriggered");
-        expect((await oracle.assetProtectionConfig(assetA)).lastProtectionTriggeredAt).to.equal(triggerTime);
+        await expect(tx).to.emit(oracle, "ProtectionTriggered");
+        expect((await oracle.assetProtectionConfig(assetA)).lastProtectionTriggeredAt).to.be.gte(triggerTime);
       });
 
       it("25.2 window expands during protection", async () => {
@@ -1241,7 +1254,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
 
       it("27.4 price normalizes but protection still active -- bounded pricing still applies", async () => {
         await mockOracle.setPrice(assetA, SPOT_PRICE);
-        expect(await oracle.isProtectedPriceActive(assetA)).to.equal(true);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
 
         const collateral = await oracle.callStatic.getBoundedCollateralPrice(vTokenA.address);
         const debt = await oracle.callStatic.getBoundedDebtPrice(vTokenA.address);
@@ -1267,8 +1280,8 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         await mockOracle.setPrice(assetA, parseUnits("1.2", 18));
         await oracle.getBoundedCollateralPrice(vTokenA.address);
 
-        expect(await oracle.isProtectedPriceActive(assetA)).to.equal(true);
-        expect(await oracle.isProtectedPriceActive(assetB)).to.equal(false);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
+        expect(await oracle.currentlyUsingProtectedPrice(assetB)).to.equal(false);
         expect(await oracle.callStatic.getBoundedCollateralPrice(vTokenB.address)).to.equal(SPOT_PRICE);
       });
     });
@@ -1340,11 +1353,11 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
 
         await mockOracle.setPrice(assetA, upperBound);
         await oracle.getBoundedCollateralPrice(vTokenA.address);
-        expect(await oracle.isProtectedPriceActive(assetA)).to.equal(false);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
 
         await mockOracle.setPrice(assetA, upperBound.add(1));
         await oracle.getBoundedCollateralPrice(vTokenA.address);
-        expect(await oracle.isProtectedPriceActive(assetA)).to.equal(true);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
       });
 
       it("32.2 reset threshold strict inequality", async () => {
@@ -1359,14 +1372,14 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         const trigger = rangeRatio.add(parseUnits("0.01", 18));
 
         await oracle.setThresholds(assetA, trigger, rangeRatio);
-        await expect(oracle.disableActiveProtection(assetA)).to.be.revertedWithCustomError(
+        await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
           oracle,
           "PriceRangeNotConverged",
         );
 
         if (rangeRatio.add(1).lt(trigger)) {
           await oracle.setThresholds(assetA, trigger, rangeRatio.add(1));
-          await expect(oracle.disableActiveProtection(assetA)).to.not.be.reverted;
+          await expect(oracle.disableActiveProtectedPrice(assetA)).to.not.be.reverted;
         }
       });
 
@@ -1416,6 +1429,227 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         const [c, d] = await oracle.getBoundedPricesView(vTokenA.address);
         expect(c).to.equal(await oracle.getBoundedCollateralPriceView(vTokenA.address));
         expect(d).to.equal(await oracle.getBoundedDebtPriceView(vTokenA.address));
+      });
+    });
+
+    // ────────────────────────────────────────────────────────────────────
+    // 34. setTokenConfigs (batch)
+    // ────────────────────────────────────────────────────────────────────
+
+    describe("34. setTokenConfigs (batch)", () => {
+      it("34.1 batch-initializes multiple assets", async () => {
+        const tx = await oracle.setTokenConfigs(
+          [assetA, assetB],
+          [DEFAULT_COOLDOWN, DEFAULT_COOLDOWN],
+          [DEFAULT_THRESHOLD, DEFAULT_THRESHOLD],
+          [DEFAULT_RESET_THRESHOLD, DEFAULT_RESET_THRESHOLD],
+          [true, true],
+        );
+
+        const stateA = await oracle.assetProtectionConfig(assetA);
+        expect(stateA.asset).to.equal(assetA);
+        expect(stateA.isBoundedPricingEnabled).to.equal(true);
+
+        const stateB = await oracle.assetProtectionConfig(assetB);
+        expect(stateB.asset).to.equal(assetB);
+
+        await expect(tx).to.emit(oracle, "ProtectionInitialized");
+        await expect(tx).to.emit(oracle, "BoundedPricingWhitelistUpdated").withArgs(assetA, true);
+        await expect(tx).to.emit(oracle, "BoundedPricingWhitelistUpdated").withArgs(assetB, true);
+
+        expect(await oracle.getInitializedAssets()).to.have.length(2);
+      });
+
+      it("34.2 batch with mixed enableBoundedPricing values", async () => {
+        await oracle.setTokenConfigs(
+          [assetA, assetB],
+          [DEFAULT_COOLDOWN, DEFAULT_COOLDOWN],
+          [DEFAULT_THRESHOLD, DEFAULT_THRESHOLD],
+          [DEFAULT_RESET_THRESHOLD, DEFAULT_RESET_THRESHOLD],
+          [true, false],
+        );
+
+        expect(await oracle.isBoundedPricingEnabled(assetA)).to.equal(true);
+        expect(await oracle.isBoundedPricingEnabled(assetB)).to.equal(false);
+      });
+
+      it("34.3 reverts when caller is unauthorized", async () => {
+        await expect(
+          oracle
+            .connect(someone)
+            .setTokenConfigs([assetA], [DEFAULT_COOLDOWN], [DEFAULT_THRESHOLD], [DEFAULT_RESET_THRESHOLD], [true]),
+        ).to.be.revertedWithCustomError(oracle, "Unauthorized");
+      });
+
+      it("34.4 reverts when array lengths mismatch", async () => {
+        await expect(
+          oracle.setTokenConfigs(
+            [assetA, assetB],
+            [DEFAULT_COOLDOWN],
+            [DEFAULT_THRESHOLD],
+            [DEFAULT_RESET_THRESHOLD],
+            [true],
+          ),
+        ).to.be.revertedWithCustomError(oracle, "InvalidArrayLength");
+      });
+    });
+
+    // ────────────────────────────────────────────────────────────────────
+    // 35. setTokenConfig with enableBoundedPricing=false
+    // ────────────────────────────────────────────────────────────────────
+
+    describe("35. setTokenConfig with enableBoundedPricing=false", () => {
+      it("35.1 initializes with bounded pricing disabled", async () => {
+        const tx = await oracle.setTokenConfig(
+          assetA,
+          DEFAULT_COOLDOWN,
+          DEFAULT_THRESHOLD,
+          DEFAULT_RESET_THRESHOLD,
+          false,
+        );
+
+        expect((await oracle.assetProtectionConfig(assetA)).isBoundedPricingEnabled).to.equal(false);
+        await expect(tx).to.emit(oracle, "BoundedPricingWhitelistUpdated").withArgs(assetA, false);
+
+        // Pump spot — returns spot (not bounded) since disabled
+        const pumpSpot = MIN_PRICE.mul(EXP_SCALE.add(DEFAULT_THRESHOLD)).div(EXP_SCALE).add(1);
+        await mockOracle.setPrice(assetA, pumpSpot);
+        expect(await oracle.callStatic.getBoundedCollateralPrice(vTokenA.address)).to.equal(pumpSpot);
+      });
+    });
+
+    // ────────────────────────────────────────────────────────────────────
+    // 36. Volatile price extends protection period
+    // ────────────────────────────────────────────────────────────────────
+
+    describe("36. volatile price extends protection period", () => {
+      it("36.1 continued deviation extends cooldown, blocks early disable", async () => {
+        await initAssetWithWindow(assetA);
+
+        const pumpSpot = await triggerPump(assetA, vTokenA);
+        const firstTriggerTime = (await oracle.assetProtectionConfig(assetA)).lastProtectionTriggeredAt;
+
+        // Advance half cooldown
+        await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN / 2]);
+        await ethers.provider.send("evm_mine", []);
+
+        // Another deviating price
+        await mockOracle.setPrice(assetA, pumpSpot.add(parseUnits("0.2", 18)));
+        const tx = await oracle.getBoundedCollateralPrice(vTokenA.address);
+        await expect(tx).to.emit(oracle, "ProtectionTriggered");
+
+        const secondTriggerTime = (await oracle.assetProtectionConfig(assetA)).lastProtectionTriggeredAt;
+        expect(secondTriggerTime).to.be.gt(firstTriggerTime);
+
+        // Advance half cooldown (total = cooldown from initial, half from latest)
+        await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN / 2]);
+        await ethers.provider.send("evm_mine", []);
+
+        // Raise reset threshold
+        const state = await oracle.assetProtectionConfig(assetA);
+        const range = state.maxPrice.sub(state.minPrice).mul(EXP_SCALE).div(state.minPrice);
+        const newReset = range.add(parseUnits("0.001", 18));
+        const trigger = state.triggerThreshold;
+        if (newReset.gte(trigger)) {
+          await oracle.setThresholds(assetA, newReset.add(parseUnits("0.01", 18)), newReset);
+        } else {
+          await oracle.setThresholds(assetA, trigger, newReset);
+        }
+
+        // Should revert — cooldown restarted
+        await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
+          oracle,
+          "CooldownNotElapsed",
+        );
+
+        // Advance remaining
+        await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN / 2 + 1]);
+        await ethers.provider.send("evm_mine", []);
+
+        await expect(oracle.disableActiveProtectedPrice(assetA)).to.not.be.reverted;
+      });
+
+      it("36.2 price normalizes — no event, timestamp unchanged, protection still active", async () => {
+        await initAssetWithWindow(assetA);
+        await triggerPump(assetA, vTokenA);
+        const triggerTime = (await oracle.assetProtectionConfig(assetA)).lastProtectionTriggeredAt;
+
+        await mockOracle.setPrice(assetA, SPOT_PRICE);
+        const tx = await oracle.getBoundedCollateralPrice(vTokenA.address);
+
+        await expect(tx).to.not.emit(oracle, "ProtectionTriggered");
+        expect((await oracle.assetProtectionConfig(assetA)).lastProtectionTriggeredAt).to.equal(triggerTime);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
+
+        // Bounded pricing still applies
+        expect(await oracle.callStatic.getBoundedCollateralPrice(vTokenA.address)).to.equal(MIN_PRICE);
+      });
+
+      it("36.3 full volatile cycle — repeated spikes extend protection, normalization in between, final disable", async () => {
+        await initAssetWithWindow(assetA);
+
+        // ── Cycle 1: initial trigger ──
+        const pumpSpot1 = await triggerPump(assetA, vTokenA);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
+        const trigger1 = (await oracle.assetProtectionConfig(assetA)).lastProtectionTriggeredAt;
+
+        // Price normalizes mid-cycle — protection still active
+        await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN / 4]);
+        await ethers.provider.send("evm_mine", []);
+        await mockOracle.setPrice(assetA, SPOT_PRICE);
+        const txNorm1 = await oracle.getBoundedCollateralPrice(vTokenA.address);
+        await expect(txNorm1).to.not.emit(oracle, "ProtectionTriggered");
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
+        expect(await oracle.callStatic.getBoundedCollateralPrice(vTokenA.address)).to.equal(MIN_PRICE);
+
+        // ── Cycle 2: second spike extends cooldown (keep within window to avoid exceeding MAX_THRESHOLD) ──
+        await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN / 4]);
+        await ethers.provider.send("evm_mine", []);
+        const pumpSpot2 = pumpSpot1.add(parseUnits("0.05", 18));
+        await mockOracle.setPrice(assetA, pumpSpot2);
+        const txSpike2 = await oracle.getBoundedCollateralPrice(vTokenA.address);
+        await expect(txSpike2).to.emit(oracle, "ProtectionTriggered");
+        const trigger2 = (await oracle.assetProtectionConfig(assetA)).lastProtectionTriggeredAt;
+        expect(trigger2).to.be.gt(trigger1);
+
+        // Try disable after original cooldown elapsed but not after second trigger
+        await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN / 2 + 1]);
+        await ethers.provider.send("evm_mine", []);
+
+        const stateM = await oracle.assetProtectionConfig(assetA);
+        const rangeM = stateM.maxPrice.sub(stateM.minPrice).mul(EXP_SCALE).div(stateM.minPrice);
+        const newResetM = rangeM.add(parseUnits("0.001", 18));
+        const triggerM = stateM.triggerThreshold;
+        if (newResetM.gte(triggerM)) {
+          await oracle.setThresholds(assetA, newResetM.add(parseUnits("0.01", 18)), newResetM);
+        } else {
+          await oracle.setThresholds(assetA, triggerM, newResetM);
+        }
+
+        // Disable fails — cooldown restarted from second spike
+        await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
+          oracle,
+          "CooldownNotElapsed",
+        );
+
+        // Price normalizes again — still protected
+        await mockOracle.setPrice(assetA, SPOT_PRICE);
+        const txNorm2 = await oracle.getBoundedCollateralPrice(vTokenA.address);
+        await expect(txNorm2).to.not.emit(oracle, "ProtectionTriggered");
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
+        expect(await oracle.callStatic.getBoundedCollateralPrice(vTokenA.address)).to.equal(MIN_PRICE);
+
+        // ── Final: wait full cooldown from last spike, disable succeeds ──
+        await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN]);
+        await ethers.provider.send("evm_mine", []);
+
+        await oracle.disableActiveProtectedPrice(assetA);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
+        expect((await oracle.assetProtectionConfig(assetA)).lastProtectionTriggeredAt).to.equal(0);
+
+        // Spot prices returned after disable
+        expect(await oracle.callStatic.getBoundedCollateralPrice(vTokenA.address)).to.equal(SPOT_PRICE);
+        expect(await oracle.callStatic.getBoundedDebtPrice(vTokenA.address)).to.equal(SPOT_PRICE);
       });
     });
   });

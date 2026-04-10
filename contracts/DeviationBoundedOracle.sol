@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: BSD-3-Clause
-// SPDX-FileCopyrightText: 2024 Venus
 pragma solidity 0.8.25;
 
 import { VBep20Interface } from "./interfaces/VBep20Interface.sol";
@@ -247,14 +246,12 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @custom:error PriceRangeNotConverged if window range is still above exit threshold
      * @custom:event ProtectedPriceDisabled
      */
-    function disableActiveProtection(address asset) external {
-        _checkAccessAllowed("disableActiveProtection(address)");
+    function disableActiveProtectedPrice(address asset) external {
+        _checkAccessAllowed("disableActiveProtectedPrice(address)");
         ensureNonzeroAddress(asset);
-        _ensureInitialized(asset);
+        MarketProtectionState storage state = _ensureInitialized(asset);
 
-        MarketProtectionState storage state = assetProtectionConfig[asset];
-
-        if (!state.isProtectedPriceActive) revert ProtectedPriceInactive(asset);
+        if (!state.currentlyUsingProtectedPrice) revert ProtectedPriceInactive(asset);
 
         if (block.timestamp < uint256(state.lastProtectionTriggeredAt) + uint256(state.cooldownPeriod)) {
             revert CooldownNotElapsed(asset, state.lastProtectionTriggeredAt, state.cooldownPeriod);
@@ -266,7 +263,8 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
             revert PriceRangeNotConverged(asset, rangeRatio, state.resetThreshold);
         }
 
-        state.isProtectedPriceActive = false;
+        state.currentlyUsingProtectedPrice = false;
+        state.lastProtectionTriggeredAt = 0;
         emit ProtectedPriceDisabled(asset);
     }
 
@@ -274,20 +272,12 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
 
     /**
      * @notice Initializes protection for a new asset
-     * @dev Fetches the current spot price from ResilientOracle to seed the initial min/max window,
-     *      confirming the oracle is live for this asset before it is listed. Both bounds start at
-     *      spot so the window expands naturally as prices move. Can only be called once per asset.
      * @param asset The underlying asset address
      * @param cooldownPeriod Minimum time protection stays active after last trigger
      * @param triggerThreshold Deviation threshold that activates protection (mantissa). Must be between 5% and 50%.
      * @param resetThreshold Deviation threshold below which protection can be exited (mantissa). Must be non-zero and below triggerThreshold.
+     * @param enableBoundedPricing Whether to enable bounded pricing immediately upon initialization
      * @custom:access Only Governance
-     * @custom:error MarketAlreadyInitialized if the asset has already been initialized
-     * @custom:error ThresholdBelowMinimum if triggerThreshold is below 5%
-     * @custom:error ThresholdAboveMaximum if triggerThreshold is above 50%
-     * @custom:error InvalidResetThreshold if resetThreshold is at or above triggerThreshold
-     * @custom:error VAINotAllowed if asset is the VAI token
-     * @custom:error PriceExceedsUint128 if the spot price overflows uint128
      * @custom:event ProtectionInitialized
      * @custom:event BoundedPricingWhitelistUpdated
      */
@@ -295,37 +285,51 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
         address asset,
         uint64 cooldownPeriod,
         uint256 triggerThreshold,
-        uint256 resetThreshold
+        uint256 resetThreshold,
+        bool enableBoundedPricing
     ) external {
-        _checkAccessAllowed("setTokenConfig(address,uint64,uint256,uint256)");
-        ensureNonzeroAddress(asset);
-        ensureNonzeroValue(cooldownPeriod);
-        ensureNonzeroValue(triggerThreshold);
-        ensureNonzeroValue(resetThreshold);
-        if (assetProtectionConfig[asset].asset != address(0)) revert MarketAlreadyInitialized(asset);
-        if (triggerThreshold < MIN_THRESHOLD) revert ThresholdBelowMinimum(triggerThreshold, MIN_THRESHOLD);
-        if (triggerThreshold > MAX_THRESHOLD) revert ThresholdAboveMaximum(triggerThreshold, MAX_THRESHOLD);
-        if (resetThreshold >= triggerThreshold) revert InvalidResetThreshold(resetThreshold);
-        if (asset == vai) revert VAINotAllowed();
+        _checkAccessAllowed("setTokenConfig(address,uint64,uint256,uint256,bool)");
+        _setTokenConfig(asset, cooldownPeriod, triggerThreshold, resetThreshold, enableBoundedPricing);
+    }
 
-        uint128 spotU128 = _safeToUint128(_fetchSpotPrice(asset));
+    /**
+     * @notice Batch-initializes protection for multiple assets in a single transaction
+     * @param assets Array of underlying asset addresses
+     * @param cooldownPeriods Array of cooldown periods (seconds)
+     * @param triggerThresholds Array of trigger thresholds (mantissa)
+     * @param resetThresholds Array of reset thresholds (mantissa)
+     * @param enableBoundedPricings Array of whether to enable bounded pricing per asset
+     * @custom:access Only Governance
+     * @custom:error InvalidArrayLength if array lengths do not match
+     * @custom:event ProtectionInitialized for each asset
+     * @custom:event BoundedPricingWhitelistUpdated for each asset
+     */
+    function setTokenConfigs(
+        address[] calldata assets,
+        uint64[] calldata cooldownPeriods,
+        uint256[] calldata triggerThresholds,
+        uint256[] calldata resetThresholds,
+        bool[] calldata enableBoundedPricings
+    ) external {
+        _checkAccessAllowed("setTokenConfigs(address[],uint64[],uint256[],uint256[],bool[])");
+        uint256 len = assets.length;
+        if (
+            len == 0 ||
+            len != cooldownPeriods.length ||
+            len != triggerThresholds.length ||
+            len != resetThresholds.length ||
+            len != enableBoundedPricings.length
+        ) revert InvalidArrayLength();
 
-        assetProtectionConfig[asset] = MarketProtectionState({
-            minPrice: spotU128,
-            maxPrice: spotU128,
-            isProtectedPriceActive: false,
-            isBoundedPricingEnabled: true,
-            lastProtectionTriggeredAt: 0,
-            cooldownPeriod: cooldownPeriod,
-            asset: asset,
-            triggerThreshold: uint128(triggerThreshold),
-            resetThreshold: uint128(resetThreshold)
-        });
-
-        allAssets.push(asset);
-
-        emit ProtectionInitialized(asset, spotU128, spotU128, cooldownPeriod, triggerThreshold);
-        emit BoundedPricingWhitelistUpdated(asset, true);
+        for (uint256 i; i < len; ++i) {
+            _setTokenConfig(
+                assets[i],
+                cooldownPeriods[i],
+                triggerThresholds[i],
+                resetThresholds[i],
+                enableBoundedPricings[i]
+            );
+        }
     }
 
     /**
@@ -382,6 +386,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param asset The underlying asset address
      * @param enabled Whether bounded pricing should be enabled for the asset
      * @custom:access Only Governance
+     * @custom:error ProtectedPriceActive if trying to disable an asset while protection is active
      * @custom:event BoundedPricingWhitelistUpdated
      */
     function setAssetBoundedPricingEnabled(address asset, bool enabled) external {
@@ -390,7 +395,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
 
         MarketProtectionState storage state = _ensureInitialized(asset);
 
-        if (!enabled && state.isProtectedPriceActive) {
+        if (!enabled && state.currentlyUsingProtectedPrice) {
             revert ProtectedPriceActive(asset);
         }
 
@@ -427,12 +432,12 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     }
 
     /**
-     * @notice Checks if protection is currently active for an asset
+     * @notice Checks if the asset is currently using the protected (bounded) price
      * @param asset The underlying asset address
-     * @return True if protected price is active
+     * @return True if the asset is currently using the protected price instead of spot
      */
-    function isProtectedPriceActive(address asset) external view returns (bool) {
-        return assetProtectionConfig[asset].isProtectedPriceActive;
+    function currentlyUsingProtectedPrice(address asset) external view returns (bool) {
+        return assetProtectionConfig[asset].currentlyUsingProtectedPrice;
     }
 
     /**
@@ -468,7 +473,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     function canExitProtection(address asset) external view returns (bool) {
         MarketProtectionState storage state = assetProtectionConfig[asset];
         return
-            state.isProtectedPriceActive &&
+            state.currentlyUsingProtectedPrice &&
             block.timestamp >= uint256(state.lastProtectionTriggeredAt) + uint256(state.cooldownPeriod) &&
             _computePriceBoundRatio(state.minPrice, state.maxPrice) < state.resetThreshold;
     }
@@ -504,6 +509,60 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     }
 
     // ----- Internal functions -----
+
+    /**
+     * @notice Initializes protection parameters and price window for a single asset
+     * @dev Fetches the current spot price from ResilientOracle to seed the initial min/max window,
+     *      confirming the oracle is live for this asset before it is listed. Both bounds start at
+     *      spot so the window expands naturally as prices move. Can only be called once per asset.
+     * @param asset The underlying asset address
+     * @param cooldownPeriod Minimum time protection stays active after last trigger
+     * @param triggerThreshold Deviation threshold that activates protection (mantissa). Must be between 5% and 50%.
+     * @param resetThreshold Deviation threshold below which protection can be exited (mantissa). Must be non-zero and below triggerThreshold.
+     * @param enableBoundedPricing Whether to enable bounded pricing immediately upon initialization
+     * @custom:error MarketAlreadyInitialized if the asset has already been initialized
+     * @custom:error ThresholdBelowMinimum if triggerThreshold is below 5%
+     * @custom:error ThresholdAboveMaximum if triggerThreshold is above 50%
+     * @custom:error InvalidResetThreshold if resetThreshold is at or above triggerThreshold
+     * @custom:error VAINotAllowed if asset is the VAI token
+     * @custom:error PriceExceedsUint128 if the spot price overflows uint128
+     */
+    function _setTokenConfig(
+        address asset,
+        uint64 cooldownPeriod,
+        uint256 triggerThreshold,
+        uint256 resetThreshold,
+        bool enableBoundedPricing
+    ) internal {
+        ensureNonzeroAddress(asset);
+        ensureNonzeroValue(cooldownPeriod);
+        ensureNonzeroValue(triggerThreshold);
+        ensureNonzeroValue(resetThreshold);
+        if (assetProtectionConfig[asset].asset != address(0)) revert MarketAlreadyInitialized(asset);
+        if (triggerThreshold < MIN_THRESHOLD) revert ThresholdBelowMinimum(triggerThreshold, MIN_THRESHOLD);
+        if (triggerThreshold > MAX_THRESHOLD) revert ThresholdAboveMaximum(triggerThreshold, MAX_THRESHOLD);
+        if (resetThreshold >= triggerThreshold) revert InvalidResetThreshold(resetThreshold);
+        if (asset == vai) revert VAINotAllowed();
+
+        uint128 spotU128 = _safeToUint128(_fetchSpotPrice(asset));
+
+        assetProtectionConfig[asset] = MarketProtectionState({
+            minPrice: spotU128,
+            maxPrice: spotU128,
+            currentlyUsingProtectedPrice: false,
+            isBoundedPricingEnabled: enableBoundedPricing,
+            lastProtectionTriggeredAt: 0,
+            cooldownPeriod: cooldownPeriod,
+            asset: asset,
+            triggerThreshold: uint128(triggerThreshold),
+            resetThreshold: uint128(resetThreshold)
+        });
+
+        allAssets.push(asset);
+
+        emit ProtectionInitialized(asset, spotU128, spotU128, cooldownPeriod, triggerThreshold);
+        emit BoundedPricingWhitelistUpdated(asset, enableBoundedPricing);
+    }
 
     /**
      * @notice Validates and applies a keeper-provided min or max price update
@@ -595,14 +654,15 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
         uint256 spot,
         address asset
     ) internal returns (bool triggered) {
-        if (state.isProtectedPriceActive) return true;
-
         if (_exceedsDeviationThreshold(spot, state.minPrice, state.maxPrice, state.triggerThreshold)) {
-            state.isProtectedPriceActive = true;
             state.lastProtectionTriggeredAt = uint64(block.timestamp);
+            if (!state.currentlyUsingProtectedPrice) {
+                state.currentlyUsingProtectedPrice = true;
+            }
             emit ProtectionTriggered(asset, spot, state.minPrice, state.maxPrice);
             return true;
         }
+        if (state.currentlyUsingProtectedPrice) return true;
     }
 
     /**
@@ -652,7 +712,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
         uint128 windowMin128 = spot < uint256(state.minPrice) ? spotU128 : state.minPrice;
         uint128 windowMax128 = spot > uint256(state.maxPrice) ? spotU128 : state.maxPrice;
 
-        bool shouldProtect = state.isProtectedPriceActive ||
+        bool shouldProtect = state.currentlyUsingProtectedPrice ||
             _exceedsDeviationThreshold(spot, windowMin128, windowMax128, state.triggerThreshold);
 
         (minPrice, maxPrice) = _resolveBoundedPrices(shouldProtect, spot, uint256(windowMin128), uint256(windowMax128));
