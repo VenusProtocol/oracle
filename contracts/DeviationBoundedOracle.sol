@@ -243,7 +243,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @custom:error ProtectedPriceInactive if protection is not currently active
      * @custom:error CooldownNotElapsed if cooldown period has not elapsed
      * @custom:error PriceRangeNotConverged if window range is still above exit threshold
-     * @custom:event ProtectedPriceDisabled
+     * @custom:event ProtectionModeExited
      */
     function exitProtectionMode(address asset) external {
         _checkAccessAllowed("exitProtectionMode(address)");
@@ -264,7 +264,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
 
         state.currentlyUsingProtectedPrice = false;
         state.lastProtectionTriggeredAt = 0;
-        emit ProtectedPriceDisabled(asset);
+        emit ProtectionModeExited(asset);
     }
 
     // ----- Admin functions (governance-gated) -----

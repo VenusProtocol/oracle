@@ -46,9 +46,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
   } = ADDRESSES[FORKED_NETWORK];
 
   forking(90924377, () => {
-    let admin: SignerWithAddress;
     let someone: SignerWithAddress;
-    let timelockSigner: SignerWithAddress;
     let mockOracle: MockSimpleOracle;
     let acm: IAccessControlManagerV8;
     let oracle: DeviationBoundedOracle;
@@ -126,8 +124,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
     };
 
     beforeEach(async () => {
-      ({ mockOracle, acm, oracle, caller, admin, someone, timelockSigner, vTokenA, vTokenB, assetA, assetB } =
-        await loadFixture(fixture));
+      ({ mockOracle, acm, oracle, caller, someone, vTokenA, vTokenB, assetA, assetB } = await loadFixture(fixture));
     });
 
     // ── Helpers ───────────────────────────────────────────────────────────
@@ -1092,7 +1089,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
 
       it("23.4 repeated trigger -> disable -> trigger cycle", async () => {
         await initAssetWithWindow(assetA);
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 3; i += 1) {
           await triggerPump(assetA, vTokenA);
           await disableProtection(assetA);
           await oracle.setThresholds(assetA, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD);

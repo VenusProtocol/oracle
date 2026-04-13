@@ -300,7 +300,7 @@ describe("DeviationBoundedOracle E2E", () => {
     it("2d: repeated trigger → disable → trigger cycle", async () => {
       await initAssetWithWindow(assetA);
 
-      for (let cycle = 0; cycle < 3; cycle++) {
+      for (let cycle = 0; cycle < 3; cycle += 1) {
         // Use triggerPump which computes minimal pumpSpot from current threshold
         await triggerPump(assetA, vTokenA);
         expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);

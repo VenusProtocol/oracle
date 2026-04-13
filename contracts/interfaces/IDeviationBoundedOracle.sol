@@ -49,7 +49,7 @@ interface IDeviationBoundedOracle {
     event ProtectionTriggered(address indexed asset, uint256 spotPrice, uint128 minPrice, uint128 maxPrice);
 
     /// @notice Emitted when protection mode is disabled for an asset
-    event ProtectedPriceDisabled(address indexed asset);
+    event ProtectionModeExited(address indexed asset);
 
     /// @notice Emitted when the keeper updates the minimum price for an asset
     event MinPriceUpdated(address indexed asset, uint128 oldMin, uint128 newMin);
@@ -229,7 +229,7 @@ interface IDeviationBoundedOracle {
      * @custom:error ProtectedPriceInactive if protection is not currently active
      * @custom:error CooldownNotElapsed if the cooldown period has not elapsed since the last trigger
      * @custom:error PriceRangeNotConverged if the window range is still above the exit threshold
-     * @custom:event ProtectedPriceDisabled
+     * @custom:event ProtectionModeExited
      */
     function exitProtectionMode(address asset) external;
 

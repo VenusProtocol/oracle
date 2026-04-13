@@ -6,6 +6,7 @@
     "test",
     "tasks",
     "docgen-templates",
+    "scripts",
     "commitlint.config.js",
     "./hardhat.config.zksync.ts"
   ]

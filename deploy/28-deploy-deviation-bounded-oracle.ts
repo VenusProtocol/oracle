@@ -1,4 +1,4 @@
-import hre from "hardhat";
+import hre, { ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
@@ -8,12 +8,13 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const accessControlManagerAddress = ADDRESSES[network.name].acm;
+  // Fallback placeholder addresses are used on the hardhat network where ADDRESSES is not defined
+  const accessControlManagerAddress = ADDRESSES[network.name]?.acm || "0x0000000000000000000000000000000000000001";
 
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
-  const vbnbAddress = ADDRESSES[network.name].vBNBAddress;
-  const vaiAddress = ADDRESSES[network.name].VAIAddress;
-  const timelock = ADDRESSES[network.name].timelock;
+  const vbnbAddress = ADDRESSES[network.name]?.vBNBAddress || "0x0000000000000000000000000000000000000001";
+  const vaiAddress = ADDRESSES[network.name]?.VAIAddress || ethers.constants.AddressZero;
+  const timelock = ADDRESSES[network.name]?.timelock || "0x0000000000000000000000000000000000000001";
 
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
 
