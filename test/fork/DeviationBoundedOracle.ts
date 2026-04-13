@@ -100,7 +100,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         "setAssetBoundedPricingEnabled(address,bool)",
         "updateMinPrice(address,uint128)",
         "updateMaxPrice(address,uint128)",
-        "disableActiveProtectedPrice(address)",
+        "exitProtectionMode(address)",
       ];
       for (const fn of DBO_FUNCTIONS) {
         await acmContract.giveCallPermission(oracleDeployed.address, fn, deployer.address);
@@ -176,7 +176,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
       const newTrigger = newReset.add(parseUnits("0.01", 18));
 
       await oracle.setThresholds(asset, newTrigger, newReset);
-      await oracle.disableActiveProtectedPrice(asset);
+      await oracle.exitProtectionMode(asset);
     };
 
     // ────────────────────────────────────────────────────────────────────
@@ -571,10 +571,10 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
     });
 
     // ────────────────────────────────────────────────────────────────────
-    // 9. disableActiveProtectedPrice
+    // 9. exitProtectionMode
     // ────────────────────────────────────────────────────────────────────
 
-    describe("9. disableActiveProtectedPrice", () => {
+    describe("9. exitProtectionMode", () => {
       it("9.1 disables protection after governance raises reset threshold", async () => {
         await initAssetWithWindow(assetA);
         await triggerPump(assetA, vTokenA);
@@ -592,7 +592,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
           await oracle.setThresholds(assetA, trigger, newReset);
         }
 
-        const tx = await oracle.disableActiveProtectedPrice(assetA);
+        const tx = await oracle.exitProtectionMode(assetA);
         await expect(tx).to.emit(oracle, "ProtectedPriceDisabled").withArgs(assetA);
         expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
       });
@@ -617,7 +617,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
 
       it("9.3 reverts when caller is unauthorized", async () => {
         await initAsset(assetA);
-        await expect(oracle.connect(someone).disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
+        await expect(oracle.connect(someone).exitProtectionMode(assetA)).to.be.revertedWithCustomError(
           oracle,
           "Unauthorized",
         );
@@ -625,19 +625,13 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
 
       it("9.4 reverts when protection is not active", async () => {
         await initAsset(assetA);
-        await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
-          oracle,
-          "ProtectedPriceInactive",
-        );
+        await expect(oracle.exitProtectionMode(assetA)).to.be.revertedWithCustomError(oracle, "ProtectedPriceInactive");
       });
 
       it("9.5 reverts when cooldown has not elapsed", async () => {
         await initAssetWithWindow(assetA);
         await triggerPump(assetA, vTokenA);
-        await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
-          oracle,
-          "CooldownNotElapsed",
-        );
+        await expect(oracle.exitProtectionMode(assetA)).to.be.revertedWithCustomError(oracle, "CooldownNotElapsed");
       });
 
       it("9.6 reverts when range not converged", async () => {
@@ -645,10 +639,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         await triggerPump(assetA, vTokenA);
         await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN + 1]);
         await ethers.provider.send("evm_mine", []);
-        await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
-          oracle,
-          "PriceRangeNotConverged",
-        );
+        await expect(oracle.exitProtectionMode(assetA)).to.be.revertedWithCustomError(oracle, "PriceRangeNotConverged");
       });
     });
 
@@ -1372,14 +1363,11 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         const trigger = rangeRatio.add(parseUnits("0.01", 18));
 
         await oracle.setThresholds(assetA, trigger, rangeRatio);
-        await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
-          oracle,
-          "PriceRangeNotConverged",
-        );
+        await expect(oracle.exitProtectionMode(assetA)).to.be.revertedWithCustomError(oracle, "PriceRangeNotConverged");
 
         if (rangeRatio.add(1).lt(trigger)) {
           await oracle.setThresholds(assetA, trigger, rangeRatio.add(1));
-          await expect(oracle.disableActiveProtectedPrice(assetA)).to.not.be.reverted;
+          await expect(oracle.exitProtectionMode(assetA)).to.not.be.reverted;
         }
       });
 
@@ -1557,16 +1545,13 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         }
 
         // Should revert — cooldown restarted
-        await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
-          oracle,
-          "CooldownNotElapsed",
-        );
+        await expect(oracle.exitProtectionMode(assetA)).to.be.revertedWithCustomError(oracle, "CooldownNotElapsed");
 
         // Advance remaining
         await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN / 2 + 1]);
         await ethers.provider.send("evm_mine", []);
 
-        await expect(oracle.disableActiveProtectedPrice(assetA)).to.not.be.reverted;
+        await expect(oracle.exitProtectionMode(assetA)).to.not.be.reverted;
       });
 
       it("36.2 price normalizes — no event, timestamp unchanged, protection still active", async () => {
@@ -1627,10 +1612,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         }
 
         // Disable fails — cooldown restarted from second spike
-        await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
-          oracle,
-          "CooldownNotElapsed",
-        );
+        await expect(oracle.exitProtectionMode(assetA)).to.be.revertedWithCustomError(oracle, "CooldownNotElapsed");
 
         // Price normalizes again — still protected
         await mockOracle.setPrice(assetA, SPOT_PRICE);
@@ -1643,7 +1625,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN]);
         await ethers.provider.send("evm_mine", []);
 
-        await oracle.disableActiveProtectedPrice(assetA);
+        await oracle.exitProtectionMode(assetA);
         expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
         expect((await oracle.assetProtectionConfig(assetA)).lastProtectionTriggeredAt).to.equal(0);
 

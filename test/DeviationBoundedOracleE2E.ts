@@ -119,7 +119,7 @@ describe("DeviationBoundedOracle E2E", () => {
     const newTrigger = newReset.add(parseUnits("0.01", 18));
 
     await oracle.setThresholds(asset, newTrigger, newReset);
-    await oracle.disableActiveProtectedPrice(asset);
+    await oracle.exitProtectionMode(asset);
   };
 
   // ────────────────────────────────────────────────────────────────────────
@@ -374,7 +374,7 @@ describe("DeviationBoundedOracle E2E", () => {
       expect(await oracle.getBoundedCollateralPriceView(vTokenA.address)).to.equal(spot);
     });
 
-    it("3d: reset threshold interaction with disableActiveProtectedPrice", async () => {
+    it("3d: reset threshold interaction with exitProtectionMode", async () => {
       await initAssetWithWindow(assetA);
 
       // Trigger protection
@@ -385,10 +385,7 @@ describe("DeviationBoundedOracle E2E", () => {
       await ethers.provider.send("evm_mine", []);
 
       // Current range is wide, reset threshold is 10% — too low to disable
-      await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
-        oracle,
-        "PriceRangeNotConverged",
-      );
+      await expect(oracle.exitProtectionMode(assetA)).to.be.revertedWithCustomError(oracle, "PriceRangeNotConverged");
 
       // Raise reset threshold to allow disable via setThresholds
       const state = await oracle.assetProtectionConfig(assetA);
@@ -397,7 +394,7 @@ describe("DeviationBoundedOracle E2E", () => {
       const newTrigger = newReset.add(parseUnits("0.01", 18));
 
       await oracle.setThresholds(assetA, newTrigger, newReset);
-      await expect(oracle.disableActiveProtectedPrice(assetA)).to.not.be.reverted;
+      await expect(oracle.exitProtectionMode(assetA)).to.not.be.reverted;
     });
   });
 
@@ -715,18 +712,15 @@ describe("DeviationBoundedOracle E2E", () => {
       const state = await oracle.assetProtectionConfig(assetA);
       const rangeRatio = state.maxPrice.sub(state.minPrice).mul(EXP_SCALE).div(state.minPrice);
 
-      // Set resetThreshold = rangeRatio via setThresholds → disableActiveProtectedPrice reverts (>=)
+      // Set resetThreshold = rangeRatio via setThresholds → exitProtectionMode reverts (>=)
       const triggerThreshold = rangeRatio.add(parseUnits("0.01", 18));
       await oracle.setThresholds(assetA, triggerThreshold, rangeRatio);
-      await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
-        oracle,
-        "PriceRangeNotConverged",
-      );
+      await expect(oracle.exitProtectionMode(assetA)).to.be.revertedWithCustomError(oracle, "PriceRangeNotConverged");
 
       // Set resetThreshold = rangeRatio + 1 → succeeds
       if (rangeRatio.add(1).lt(triggerThreshold)) {
         await oracle.setThresholds(assetA, triggerThreshold, rangeRatio.add(1));
-        await expect(oracle.disableActiveProtectedPrice(assetA)).to.not.be.reverted;
+        await expect(oracle.exitProtectionMode(assetA)).to.not.be.reverted;
       }
     });
 
@@ -989,17 +983,14 @@ describe("DeviationBoundedOracle E2E", () => {
       }
 
       // Disable should revert — cooldown restarted from second trigger
-      await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
-        oracle,
-        "CooldownNotElapsed",
-      );
+      await expect(oracle.exitProtectionMode(assetA)).to.be.revertedWithCustomError(oracle, "CooldownNotElapsed");
 
       // Advance remaining half cooldown
       await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN / 2 + 1]);
       await ethers.provider.send("evm_mine", []);
 
       // Now disable succeeds
-      await expect(oracle.disableActiveProtectedPrice(assetA)).to.not.be.reverted;
+      await expect(oracle.exitProtectionMode(assetA)).to.not.be.reverted;
     });
 
     it("16b: price normalizes — no event, timestamp unchanged, protection still active", async () => {
@@ -1066,10 +1057,7 @@ describe("DeviationBoundedOracle E2E", () => {
       }
 
       // Disable fails — cooldown restarted from second spike
-      await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
-        oracle,
-        "CooldownNotElapsed",
-      );
+      await expect(oracle.exitProtectionMode(assetA)).to.be.revertedWithCustomError(oracle, "CooldownNotElapsed");
 
       // Price normalizes again — still protected
       resilientOracle.getPrice.whenCalledWith(assetA).returns(SPOT_PRICE);
@@ -1082,7 +1070,7 @@ describe("DeviationBoundedOracle E2E", () => {
       await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN]);
       await ethers.provider.send("evm_mine", []);
 
-      await oracle.disableActiveProtectedPrice(assetA);
+      await oracle.exitProtectionMode(assetA);
       expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
       expect((await oracle.assetProtectionConfig(assetA)).lastProtectionTriggeredAt).to.equal(0);
 

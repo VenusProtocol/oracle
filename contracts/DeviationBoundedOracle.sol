@@ -81,13 +81,12 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @notice Constructor for the implementation contract. Sets immutable variables.
      * @param _resilientOracle Address of the ResilientOracle contract
      * @param nativeMarketAddress The address of a native market (for bsc it would be vBNB address)
-     * @param vaiAddress The address of the VAI token (if there is VAI on the deployed chain).
+     * @param vaiAddress The address of the VAI token, or address(0) if VAI is not deployed on the chain.
      * @custom:oz-upgrades-unsafe-allow constructor
      */
     constructor(ResilientOracleInterface _resilientOracle, address nativeMarketAddress, address vaiAddress) {
         ensureNonzeroAddress(address(_resilientOracle));
         ensureNonzeroAddress(nativeMarketAddress);
-        ensureNonzeroAddress(vaiAddress);
         RESILIENT_ORACLE = _resilientOracle;
         nativeMarket = nativeMarketAddress;
         vai = vaiAddress;
@@ -234,7 +233,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     }
 
     /**
-     * @notice Disables protection mode for a given asset
+     * @notice Exits protection mode for a given asset
      * @dev Called by the keeper/monitor after confirming price has normalised.
      *      Enforces two conditions on-chain:
      *      1. Cooldown period has elapsed since the last trigger
@@ -246,8 +245,8 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @custom:error PriceRangeNotConverged if window range is still above exit threshold
      * @custom:event ProtectedPriceDisabled
      */
-    function disableActiveProtectedPrice(address asset) external {
-        _checkAccessAllowed("disableActiveProtectedPrice(address)");
+    function exitProtectionMode(address asset) external {
+        _checkAccessAllowed("exitProtectionMode(address)");
         ensureNonzeroAddress(asset);
         MarketProtectionState storage state = _ensureInitialized(asset);
 

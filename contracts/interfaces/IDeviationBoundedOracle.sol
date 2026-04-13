@@ -223,7 +223,7 @@ interface IDeviationBoundedOracle {
     function updateMaxPrice(address asset, uint128 newMax) external;
 
     /**
-     * @notice Disables protection mode for a given asset once conditions are met
+     * @notice Exits protection mode for a given asset once conditions are met
      * @param asset The underlying asset address
      * @custom:access Only authorized monitor/keeper addresses
      * @custom:error ProtectedPriceInactive if protection is not currently active
@@ -231,7 +231,7 @@ interface IDeviationBoundedOracle {
      * @custom:error PriceRangeNotConverged if the window range is still above the exit threshold
      * @custom:event ProtectedPriceDisabled
      */
-    function disableActiveProtectedPrice(address asset) external;
+    function exitProtectionMode(address asset) external;
 
     // --- Admin functions (governance-gated) ---
 

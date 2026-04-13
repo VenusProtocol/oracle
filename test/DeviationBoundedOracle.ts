@@ -716,10 +716,10 @@ describe("DeviationBoundedOracle", () => {
   });
 
   // ────────────────────────────────────────────────────────────────────────
-  // 9. disableActiveProtectedPrice
+  // 9. exitProtectionMode
   // ────────────────────────────────────────────────────────────────────────
 
-  describe("disableActiveProtectedPrice", () => {
+  describe("exitProtectionMode", () => {
     it("disables protection after governance raises reset threshold", async () => {
       await initAssetWithWindow(assetA);
 
@@ -747,12 +747,12 @@ describe("DeviationBoundedOracle", () => {
         await oracle.setThresholds(assetA, currentTrigger, newResetThreshold);
       }
 
-      const tx = await oracle.disableActiveProtectedPrice(assetA);
+      const tx = await oracle.exitProtectionMode(assetA);
       await expect(tx).to.emit(oracle, "ProtectedPriceDisabled").withArgs(assetA);
       expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
     });
 
-    it("prices revert to spot after disableActiveProtectedPrice", async () => {
+    it("prices revert to spot after exitProtectionMode", async () => {
       await initAssetWithWindow(assetA);
 
       // Trigger via pump
@@ -777,7 +777,7 @@ describe("DeviationBoundedOracle", () => {
       } else {
         await oracle.setThresholds(assetA, currentTrigger, newReset);
       }
-      await oracle.disableActiveProtectedPrice(assetA);
+      await oracle.exitProtectionMode(assetA);
 
       // Verify lastProtectionTriggeredAt is reset to 0 on disable
       const stateDisabled = await oracle.assetProtectionConfig(assetA);
@@ -797,15 +797,12 @@ describe("DeviationBoundedOracle", () => {
     it("reverts when caller is unauthorized", async () => {
       await initAsset(assetA);
       acm.isAllowedToCall.returns(false);
-      await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(oracle, "Unauthorized");
+      await expect(oracle.exitProtectionMode(assetA)).to.be.revertedWithCustomError(oracle, "Unauthorized");
     });
 
     it("reverts when protection is not active", async () => {
       await initAsset(assetA);
-      await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
-        oracle,
-        "ProtectedPriceInactive",
-      );
+      await expect(oracle.exitProtectionMode(assetA)).to.be.revertedWithCustomError(oracle, "ProtectedPriceInactive");
     });
 
     it("reverts when cooldown has not elapsed", async () => {
@@ -815,10 +812,7 @@ describe("DeviationBoundedOracle", () => {
       resilientOracle.getPrice.whenCalledWith(assetA).returns(pumpSpot);
       await oracle.getBoundedCollateralPrice(vTokenA.address);
 
-      await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
-        oracle,
-        "CooldownNotElapsed",
-      );
+      await expect(oracle.exitProtectionMode(assetA)).to.be.revertedWithCustomError(oracle, "CooldownNotElapsed");
     });
 
     it("reverts when range not converged", async () => {
@@ -833,10 +827,7 @@ describe("DeviationBoundedOracle", () => {
       await ethers.provider.send("evm_mine", []);
 
       // Range still wide -> reverts
-      await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
-        oracle,
-        "PriceRangeNotConverged",
-      );
+      await expect(oracle.exitProtectionMode(assetA)).to.be.revertedWithCustomError(oracle, "PriceRangeNotConverged");
     });
 
     it("reverts when rangeRatio exactly at resetThreshold (uses >=)", async () => {
@@ -863,10 +854,7 @@ describe("DeviationBoundedOracle", () => {
       }
 
       // Set resetThreshold = rangeRatio (exactly equal, should revert since >=)
-      await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
-        oracle,
-        "PriceRangeNotConverged",
-      );
+      await expect(oracle.exitProtectionMode(assetA)).to.be.revertedWithCustomError(oracle, "PriceRangeNotConverged");
     });
 
     it("succeeds when rangeRatio at resetThreshold - 1 wei", async () => {
@@ -892,7 +880,7 @@ describe("DeviationBoundedOracle", () => {
         await oracle.setThresholds(assetA, currentTrigger, rangeRatio.add(1));
       }
 
-      await expect(oracle.disableActiveProtectedPrice(assetA)).to.not.be.reverted;
+      await expect(oracle.exitProtectionMode(assetA)).to.not.be.reverted;
     });
   });
 
@@ -1736,17 +1724,14 @@ describe("DeviationBoundedOracle", () => {
         await oracle.setThresholds(assetA, trigger, newReset);
       }
 
-      await expect(oracle.disableActiveProtectedPrice(assetA)).to.be.revertedWithCustomError(
-        oracle,
-        "CooldownNotElapsed",
-      );
+      await expect(oracle.exitProtectionMode(assetA)).to.be.revertedWithCustomError(oracle, "CooldownNotElapsed");
 
       // 6. Advance remaining half cooldown
       await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN / 2 + 1]);
       await ethers.provider.send("evm_mine", []);
 
       // 7. Now disable succeeds
-      await expect(oracle.disableActiveProtectedPrice(assetA)).to.not.be.reverted;
+      await expect(oracle.exitProtectionMode(assetA)).to.not.be.reverted;
     });
 
     it("protection period does NOT extend when price returns within threshold", async () => {
