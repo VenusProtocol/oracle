@@ -748,7 +748,7 @@ describe("DeviationBoundedOracle", () => {
       }
 
       const tx = await oracle.exitProtectionMode(assetA);
-      await expect(tx).to.emit(oracle, "ProtectedPriceDisabled").withArgs(assetA);
+      await expect(tx).to.emit(oracle, "ProtectionModeExited").withArgs(assetA);
       expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
     });
 
