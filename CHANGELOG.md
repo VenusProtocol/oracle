@@ -1,3 +1,9 @@
+## 2.15.0-dev.7 (2026-04-17)
+
+* Merge pull request #307 from VenusProtocol/feat/vpd-995 ([adfcddd](https://github.com/VenusProtocol/oracle/commit/adfcddd)), closes [#307](https://github.com/VenusProtocol/oracle/issues/307)
+* feat: add new oracle deployments for solvBTC and U ([a3a9f08](https://github.com/VenusProtocol/oracle/commit/a3a9f08))
+* feat: updating deployment files ([b0a81d3](https://github.com/VenusProtocol/oracle/commit/b0a81d3))
+
 ## 2.15.0-dev.6 (2026-01-21)
 
 * Merge pull request #304 from VenusProtocol/feat/vpd-404 ([006092f](https://github.com/VenusProtocol/oracle/commit/006092f)), closes [#304](https://github.com/VenusProtocol/oracle/issues/304)
