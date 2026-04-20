@@ -403,8 +403,8 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
         // reset the window if re-enabling
         if (enabled) {
             uint128 spotU128 = _safeToUint128(_fetchSpotPrice(asset));
-            state.minPrice = spotU128;
-            state.maxPrice = spotU128;
+            _setMinPrice(state, asset, spotU128);
+            _setMaxPrice(state, asset, spotU128);
         }
 
         state.isBoundedPricingEnabled = enabled;
