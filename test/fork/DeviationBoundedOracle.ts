@@ -590,7 +590,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         }
 
         const tx = await oracle.exitProtectionMode(assetA);
-        await expect(tx).to.emit(oracle, "ProtectedPriceDisabled").withArgs(assetA);
+        await expect(tx).to.emit(oracle, "ProtectionModeExited").withArgs(assetA);
         expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
       });
 
@@ -1629,6 +1629,77 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         // Spot prices returned after disable
         expect(await oracle.callStatic.getBoundedCollateralPrice(vTokenA.address)).to.equal(SPOT_PRICE);
         expect(await oracle.callStatic.getBoundedDebtPrice(vTokenA.address)).to.equal(SPOT_PRICE);
+      });
+    });
+
+    // ────────────────────────────────────────────────────────────────────
+    // 37. M01: cooldown reset only on genuine window expansion
+    // ────────────────────────────────────────────────────────────────────
+
+    describe("37. M01: cooldown reset only on genuine window expansion", () => {
+      it("37.1 recovery within the existing window does NOT refresh the cooldown — exitProtectionMode stays reachable", async () => {
+        await initAssetWithWindow(assetA);
+
+        // Mild crash: spot < MAX_PRICE * (1 - threshold) = 1.1 * 0.8 = 0.88,
+        // and resulting range (~29%) stays under MAX_THRESHOLD = 50% so we can
+        // bump setThresholds at the end.
+        const crashSpot = parseUnits("0.85", 18);
+        await mockOracle.setPrice(assetA, crashSpot);
+        await oracle.getBoundedCollateralPrice(vTokenA.address);
+
+        const stateAfterCrash = await oracle.assetProtectionConfig(assetA);
+        const t0 = stateAfterCrash.lastProtectionTriggeredAt;
+        expect(stateAfterCrash.minPrice).to.equal(crashSpot);
+        expect(stateAfterCrash.currentlyUsingProtectedPrice).to.equal(true);
+
+        // Recovery within the existing window but above the (post-crash) pump threshold
+        // (1.05 > 0.85 * 1.2 = 1.02). Pre-M01 this would have refreshed the cooldown.
+        await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN / 2]);
+        await ethers.provider.send("evm_mine", []);
+        await mockOracle.setPrice(assetA, parseUnits("1.05", 18));
+        await oracle.getBoundedCollateralPrice(vTokenA.address);
+
+        const stateAfterRecovery = await oracle.assetProtectionConfig(assetA);
+        expect(stateAfterRecovery.lastProtectionTriggeredAt).to.equal(t0);
+        expect(stateAfterRecovery.minPrice).to.equal(crashSpot);
+        expect(stateAfterRecovery.maxPrice).to.equal(MAX_PRICE);
+
+        // Finish the original cooldown
+        await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN / 2 + 1]);
+        await ethers.provider.send("evm_mine", []);
+
+        // Bump resetThreshold above the current range (~29.4%) so the convergence check passes
+        const range = stateAfterRecovery.maxPrice
+          .sub(stateAfterRecovery.minPrice)
+          .mul(EXP_SCALE)
+          .div(stateAfterRecovery.minPrice);
+        const newReset = range.add(parseUnits("0.001", 18));
+        const newTrigger = newReset.add(parseUnits("0.01", 18));
+        await oracle.setThresholds(assetA, newTrigger, newReset);
+
+        await expect(oracle.exitProtectionMode(assetA)).to.not.be.reverted;
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
+      });
+
+      it("37.2 a deeper crash (new low) DOES refresh the cooldown", async () => {
+        await initAssetWithWindow(assetA);
+
+        const firstCrash = parseUnits("0.85", 18);
+        await mockOracle.setPrice(assetA, firstCrash);
+        await oracle.getBoundedCollateralPrice(vTokenA.address);
+        const t0 = (await oracle.assetProtectionConfig(assetA)).lastProtectionTriggeredAt;
+
+        await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN / 2]);
+        await ethers.provider.send("evm_mine", []);
+
+        // New low: minPrice expands → windowExpanded = true → cooldown resets
+        const deeperCrash = parseUnits("0.8", 18);
+        await mockOracle.setPrice(assetA, deeperCrash);
+        await oracle.getBoundedCollateralPrice(vTokenA.address);
+
+        const stateAfter = await oracle.assetProtectionConfig(assetA);
+        expect(stateAfter.lastProtectionTriggeredAt).to.be.gt(t0);
+        expect(stateAfter.minPrice).to.equal(deeperCrash);
       });
     });
   });

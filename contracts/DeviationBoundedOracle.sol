@@ -611,8 +611,8 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
             _setCachedPrices(asset, spot, spot);
             return (spot, spot);
         }
-        (uint128 updatedMin, uint128 updatedMax) = _expandPriceWindow(state, spot, asset);
-        bool protectionActive = _checkAndTriggerProtection(state, spot, asset);
+        (uint128 updatedMin, uint128 updatedMax, bool windowExpanded) = _expandPriceWindow(state, spot, asset);
+        bool protectionActive = _checkAndTriggerProtection(state, spot, asset, windowExpanded);
         (minPrice, maxPrice) = _resolveBoundedPrices(protectionActive, spot, uint256(updatedMin), uint256(updatedMax));
         _setCachedPrices(asset, minPrice, maxPrice);
     }
@@ -627,35 +627,46 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
         MarketProtectionState storage state,
         uint256 spot,
         address asset
-    ) internal returns (uint128, uint128) {
+    ) internal returns (uint128, uint128, bool) {
         uint128 spotU128 = _safeToUint128(spot);
         uint128 currentMin = state.minPrice;
         uint128 currentMax = state.maxPrice;
+        bool windowExpanded;
         if (spotU128 < currentMin) {
             _setMinPrice(state, asset, spotU128);
             currentMin = spotU128;
+            windowExpanded = true;
         }
         if (spotU128 > currentMax) {
             _setMaxPrice(state, asset, spotU128);
             currentMax = spotU128;
+            windowExpanded = true;
         }
-        return (currentMin, currentMax);
+        return (currentMin, currentMax, windowExpanded);
     }
 
     /**
-     * @dev Checks if the spot price has deviated beyond the threshold and triggers protection
+     * @dev Checks if the spot price has deviated beyond the threshold and triggers protection.
+     *      `lastProtectionTriggeredAt` is reset only on the first trigger or when the price has made a
+     *      genuine new extreme this update (windowExpanded == true). Recovery within the existing window
+     *      keeps the cooldown ticking so `exitProtectionMode` remains reachable.
      * @param state The market protection state
      * @param spot The current spot price
      * @param asset The underlying asset address (for event emission)
+     * @param windowExpanded True if `_expandPriceWindow` recorded a new low or new high this call
      */
     function _checkAndTriggerProtection(
         MarketProtectionState storage state,
         uint256 spot,
-        address asset
+        address asset,
+        bool windowExpanded
     ) internal returns (bool triggered) {
         if (_exceedsDeviationThreshold(spot, state.minPrice, state.maxPrice, state.triggerThreshold)) {
-            state.lastProtectionTriggeredAt = uint64(block.timestamp);
-            if (!state.currentlyUsingProtectedPrice) {
+            bool enteringProtection = !state.currentlyUsingProtectedPrice;
+            if (enteringProtection || windowExpanded) {
+                state.lastProtectionTriggeredAt = uint64(block.timestamp);
+            }
+            if (enteringProtection) {
                 state.currentlyUsingProtectedPrice = true;
             }
             emit ProtectionTriggered(asset, spot, state.minPrice, state.maxPrice);

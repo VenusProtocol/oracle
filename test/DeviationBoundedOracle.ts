@@ -1757,4 +1757,121 @@ describe("DeviationBoundedOracle", () => {
       expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
     });
   });
+
+  // ────────────────────────────────────────────────────────────────────────
+  // M01: cooldown reset only on first trigger or genuine window expansion
+  // ────────────────────────────────────────────────────────────────────────
+
+  describe("Cooldown reset only on genuine window expansion", () => {
+    it("recovery after a crash does NOT reset the cooldown", async () => {
+      await initAssetWithWindow(assetA);
+
+      // Crash: spot below maxPrice * (1 - threshold) = 1.1 * 0.8 = 0.88
+      const crashSpot = parseUnits("0.6", 18);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(crashSpot);
+      await oracle.getBoundedCollateralPrice(vTokenA.address);
+      const stateAfterCrash = await oracle.assetProtectionConfig(assetA);
+      const t0 = stateAfterCrash.lastProtectionTriggeredAt;
+      expect(stateAfterCrash.minPrice).to.equal(crashSpot);
+      expect(stateAfterCrash.currentlyUsingProtectedPrice).to.equal(true);
+
+      // Advance halfway through cooldown
+      await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN / 2]);
+      await ethers.provider.send("evm_mine", []);
+
+      // Recovery: spot above minPrice * (1 + threshold) = 0.6 * 1.2 = 0.72,
+      // still within the existing window (no new low, no new high → windowExpanded = false).
+      // _exceedsDeviationThreshold returns true (recovery is misclassified as a pump),
+      // but the cooldown must NOT advance.
+      const recoverySpot = parseUnits("0.85", 18);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(recoverySpot);
+      const tx = await oracle.getBoundedCollateralPrice(vTokenA.address);
+      await expect(tx).to.emit(oracle, "ProtectionTriggered");
+
+      const stateAfterRecovery = await oracle.assetProtectionConfig(assetA);
+      expect(stateAfterRecovery.lastProtectionTriggeredAt).to.equal(t0);
+      expect(stateAfterRecovery.minPrice).to.equal(crashSpot);
+      expect(stateAfterRecovery.maxPrice).to.equal(MAX_PRICE);
+    });
+
+    it("a deeper crash (new low) DOES reset the cooldown", async () => {
+      await initAssetWithWindow(assetA);
+
+      const firstCrash = parseUnits("0.6", 18);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(firstCrash);
+      await oracle.getBoundedCollateralPrice(vTokenA.address);
+      const t0 = (await oracle.assetProtectionConfig(assetA)).lastProtectionTriggeredAt;
+
+      await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN / 2]);
+      await ethers.provider.send("evm_mine", []);
+
+      // New low: minPrice expands → windowExpanded = true → cooldown resets
+      const deeperCrash = parseUnits("0.5", 18);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(deeperCrash);
+      await oracle.getBoundedCollateralPrice(vTokenA.address);
+
+      const stateAfter = await oracle.assetProtectionConfig(assetA);
+      expect(stateAfter.lastProtectionTriggeredAt).to.be.gt(t0);
+      expect(stateAfter.minPrice).to.equal(deeperCrash);
+    });
+
+    it("sustained pump within the existing window does NOT reset the cooldown", async () => {
+      await initAssetWithWindow(assetA);
+
+      // Pump above maxPrice so the window expands on the first trigger
+      const firstPump = parseUnits("1.4", 18);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(firstPump);
+      await oracle.getBoundedCollateralPrice(vTokenA.address);
+      const stateAfterFirstPump = await oracle.assetProtectionConfig(assetA);
+      const t0 = stateAfterFirstPump.lastProtectionTriggeredAt;
+      expect(stateAfterFirstPump.maxPrice).to.equal(firstPump);
+
+      await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN / 2]);
+      await ethers.provider.send("evm_mine", []);
+
+      // Still pump-classified (1.3 > 0.9 * 1.2 = 1.08) but no new high (1.3 < 1.4)
+      const sustainedPump = parseUnits("1.3", 18);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(sustainedPump);
+      await oracle.getBoundedCollateralPrice(vTokenA.address);
+
+      const stateAfter = await oracle.assetProtectionConfig(assetA);
+      expect(stateAfter.lastProtectionTriggeredAt).to.equal(t0);
+      expect(stateAfter.maxPrice).to.equal(firstPump);
+    });
+
+    it("exitProtectionMode becomes reachable when recovery does not refresh the cooldown", async () => {
+      await initAssetWithWindow(assetA);
+
+      // Mild crash: spot < 1.1 * 0.8 = 0.88, with the resulting window narrow enough
+      // (~29%) to fit under MAX_THRESHOLD = 50% when we later bump setThresholds.
+      const crashSpot = parseUnits("0.85", 18);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(crashSpot);
+      await oracle.getBoundedCollateralPrice(vTokenA.address);
+
+      // Recovery within the existing window but above the post-crash pump threshold
+      // (1.05 > 0.85 * 1.2 = 1.02). _exceedsDeviationThreshold returns true,
+      // but no new low / no new high → windowExpanded = false → cooldown must NOT advance.
+      await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN / 2]);
+      await ethers.provider.send("evm_mine", []);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(parseUnits("1.05", 18));
+      await oracle.getBoundedCollateralPrice(vTokenA.address);
+
+      // Finish the original cooldown window
+      await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN / 2 + 1]);
+      await ethers.provider.send("evm_mine", []);
+
+      // Bump resetThreshold above the current range (~29.4%) so the convergence check passes
+      const stateBeforeExit = await oracle.assetProtectionConfig(assetA);
+      const range = stateBeforeExit.maxPrice
+        .sub(stateBeforeExit.minPrice)
+        .mul(EXP_SCALE)
+        .div(stateBeforeExit.minPrice);
+      const newReset = range.add(parseUnits("0.001", 18));
+      const newTrigger = newReset.add(parseUnits("0.01", 18));
+      await oracle.setThresholds(assetA, newTrigger, newReset);
+
+      await expect(oracle.exitProtectionMode(assetA)).to.not.be.reverted;
+      expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
+    });
+  });
 });
