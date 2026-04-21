@@ -156,6 +156,8 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      *      getBoundedDebtPriceView within the same transaction will read from the transient cache
      *      instead of querying ResilientOracle again, keeping those functions as `view` and
      *      avoiding redundant oracle calls.
+     *      Permissionless: anyone can call this, both for gas optimisation and to ensure every
+     *      caller in the same transaction reads the correct, up-to-date bounded price.
      * @param vToken vToken address
      * @custom:event MinPriceUpdated if a new window minimum is recorded
      * @custom:event MaxPriceUpdated if a new window maximum is recorded
