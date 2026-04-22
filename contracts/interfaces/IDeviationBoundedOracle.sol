@@ -76,7 +76,7 @@ interface IDeviationBoundedOracle {
 
     // --- Errors ---
 
-    /// @notice Thrown when trying to initialize protection for an asset that is not initialized
+    /// @notice Thrown when trying to use or update protection for an asset that has not been initialized
     error MarketNotInitialized(address asset);
 
     /// @notice Thrown when trying to initialize an already initialized market
@@ -112,13 +112,13 @@ interface IDeviationBoundedOracle {
     /// @notice Thrown when trying to initialize protection for VAI
     error VAINotAllowed();
 
-    /// @notice Thrown when trying to update for an asset with active protection
+    /// @notice Thrown when trying to disable bounded pricing for an asset while protection is active
     error ProtectedPriceActive(address asset);
 
     /// @notice Thrown when the lengths of the arrays are not equal
     error InvalidArrayLength();
 
-    /// @notice Thrown when the exit threshold is set above the deviation threshold
+    /// @notice Thrown when the exit threshold is set at or above the trigger threshold
     error InvalidResetThreshold(uint256 resetThreshold);
 
     /// @notice Thrown when a bound or threshold update would make the trigger window overlap,
