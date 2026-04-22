@@ -777,7 +777,9 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     }
 
     /**
-     * @notice Checks if the spot price has deviated beyond the threshold from the window bounds
+     * @notice Checks whether the spot price has moved beyond the threshold relative to the
+     *         opposite window bound — i.e. `spot > minPrice * (1 + threshold)` or
+     *         `spot < maxPrice * (1 - threshold)`.
      * @dev Pump detection: spot > minPrice * (1 + threshold)
      *      Crash detection: spot < maxPrice * (1 - threshold)
      * @param spot The current spot price
