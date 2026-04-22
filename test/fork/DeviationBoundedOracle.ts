@@ -96,6 +96,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         "setCooldownPeriod(address,uint64)",
         "setThresholds(address,uint256,uint256)",
         "setAssetBoundedPricingEnabled(address,bool)",
+        "setCachingEnabled(address,bool)",
         "updateMinPrice(address,uint128)",
         "updateMaxPrice(address,uint128)",
         "exitProtectionMode(address)",
@@ -499,6 +500,50 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         expect(await oracle.getBoundedCollateralPriceView(vTokenB.address)).to.equal(MIN_PRICE);
         await oracle.setAssetBoundedPricingEnabled(assetB, false);
         expect(await oracle.getBoundedCollateralPriceView(vTokenB.address)).to.equal(pumpSpot);
+      });
+    });
+
+    // ────────────────────────────────────────────────────────────────────
+    // 6b. setCachingEnabled
+    // ────────────────────────────────────────────────────────────────────
+
+    describe("6b. setCachingEnabled", () => {
+      beforeEach(async () => {
+        await initAsset(assetA);
+      });
+
+      it("6b.1 defaults to true at asset initialization", async () => {
+        const state = await oracle.assetProtectionConfig(assetA);
+        expect(state.cachingEnabled).to.equal(true);
+      });
+
+      it("6b.2 disables caching and emits CachingEnabledUpdated", async () => {
+        const tx = await oracle.setCachingEnabled(assetA, false);
+        await expect(tx).to.emit(oracle, "CachingEnabledUpdated").withArgs(assetA, true, false);
+        const state = await oracle.assetProtectionConfig(assetA);
+        expect(state.cachingEnabled).to.equal(false);
+      });
+
+      it("6b.3 re-enables caching and emits CachingEnabledUpdated", async () => {
+        await oracle.setCachingEnabled(assetA, false);
+        const tx = await oracle.setCachingEnabled(assetA, true);
+        await expect(tx).to.emit(oracle, "CachingEnabledUpdated").withArgs(assetA, false, true);
+        const state = await oracle.assetProtectionConfig(assetA);
+        expect(state.cachingEnabled).to.equal(true);
+      });
+
+      it("6b.4 reverts when caller is unauthorized", async () => {
+        await expect(oracle.connect(someone).setCachingEnabled(assetA, false)).to.be.revertedWithCustomError(
+          oracle,
+          "Unauthorized",
+        );
+      });
+
+      it("6b.5 reverts when asset has not been initialized", async () => {
+        await expect(oracle.setCachingEnabled(assetB, false)).to.be.revertedWithCustomError(
+          oracle,
+          "MarketNotInitialized",
+        );
       });
     });
 
@@ -1048,6 +1093,55 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         const result = await caller.callStatic.updateAndGetBothPrices(vTokenA.address);
         expect(result.collateral).to.equal(specialSpot);
         expect(result.debt).to.equal(specialSpot);
+      });
+    });
+
+    // ────────────────────────────────────────────────────────────────────
+    // 22b. cachingEnabled gating (DBO-local flag)
+    // ────────────────────────────────────────────────────────────────────
+
+    describe("22b. cachingEnabled gating", () => {
+      beforeEach(async () => {
+        await initAssetWithWindow(assetA);
+      });
+
+      it("22b.1 cache hit when cachingEnabled is true (default), no protection", async () => {
+        const result = await caller.callStatic.updateAndGetBothPrices(vTokenA.address);
+        expect(result.collateral).to.equal(SPOT_PRICE);
+        expect(result.debt).to.equal(SPOT_PRICE);
+      });
+
+      it("22b.2 views recompute from live spot when cachingEnabled is false", async () => {
+        // Seed the cache with the original spot, then disable caching.
+        await caller.updateAndGetBothPrices(vTokenA.address);
+        await oracle.setCachingEnabled(assetA, false);
+
+        // Change the live spot — cache-disabled views must recompute from it.
+        const newSpot = parseUnits("1.05", 18);
+        await mockOracle.setPrice(assetA, newSpot);
+
+        const result = await caller.callStatic.updateAndGetBothPrices(vTokenA.address);
+        expect(result.collateral).to.equal(newSpot);
+        expect(result.debt).to.equal(newSpot);
+      });
+
+      it("22b.3 re-enabling caching restores cache-hit behaviour", async () => {
+        await oracle.setCachingEnabled(assetA, false);
+        await oracle.setCachingEnabled(assetA, true);
+
+        const result = await caller.callStatic.updateAndGetBothPrices(vTokenA.address);
+        expect(result.collateral).to.equal(SPOT_PRICE);
+        expect(result.debt).to.equal(SPOT_PRICE);
+      });
+
+      it("22b.4 cachingEnabled is per-asset and does not leak across assets", async () => {
+        await initAssetWithWindow(assetB);
+        await oracle.setCachingEnabled(assetA, false);
+
+        const stateA = await oracle.assetProtectionConfig(assetA);
+        const stateB = await oracle.assetProtectionConfig(assetB);
+        expect(stateA.cachingEnabled).to.equal(false);
+        expect(stateB.cachingEnabled).to.equal(true);
       });
     });
 

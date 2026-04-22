@@ -160,6 +160,7 @@ describe("DeviationBoundedOracle", () => {
         expect(state.asset).to.equal(assetA);
         expect(state.triggerThreshold).to.equal(DEFAULT_THRESHOLD);
         expect(state.resetThreshold).to.equal(DEFAULT_RESET_THRESHOLD);
+        expect(state.cachingEnabled).to.equal(true);
 
         // Verify events
         await expect(tx)
@@ -598,6 +599,43 @@ describe("DeviationBoundedOracle", () => {
       expect(await oracle.getBoundedDebtPriceView(vTokenB.address)).to.equal(pumpSpot);
       const collateral = await oracle.callStatic.getBoundedCollateralPrice(vTokenB.address);
       expect(collateral).to.equal(pumpSpot);
+    });
+  });
+
+  // ────────────────────────────────────────────────────────────────────────
+  // 6b. setCachingEnabled
+  // ────────────────────────────────────────────────────────────────────────
+
+  describe("setCachingEnabled", () => {
+    beforeEach(async () => {
+      await initAsset(assetA);
+    });
+
+    it("disables caching and emits CachingEnabledUpdated", async () => {
+      const tx = await oracle.setCachingEnabled(assetA, false);
+      await expect(tx).to.emit(oracle, "CachingEnabledUpdated").withArgs(assetA, true, false);
+      const state = await oracle.assetProtectionConfig(assetA);
+      expect(state.cachingEnabled).to.equal(false);
+    });
+
+    it("re-enables caching and emits CachingEnabledUpdated", async () => {
+      await oracle.setCachingEnabled(assetA, false);
+      const tx = await oracle.setCachingEnabled(assetA, true);
+      await expect(tx).to.emit(oracle, "CachingEnabledUpdated").withArgs(assetA, false, true);
+      const state = await oracle.assetProtectionConfig(assetA);
+      expect(state.cachingEnabled).to.equal(true);
+    });
+
+    it("reverts when caller is unauthorized", async () => {
+      acm.isAllowedToCall.returns(false);
+      await expect(oracle.setCachingEnabled(assetA, false)).to.be.revertedWithCustomError(oracle, "Unauthorized");
+    });
+
+    it("reverts when asset has not been initialized", async () => {
+      await expect(oracle.setCachingEnabled(assetB, false)).to.be.revertedWithCustomError(
+        oracle,
+        "MarketNotInitialized",
+      );
     });
   });
 
@@ -1354,6 +1392,56 @@ describe("DeviationBoundedOracle", () => {
       await expect(tx).to.not.emit(oracle, "MinPriceUpdated");
       await expect(tx).to.not.emit(oracle, "MaxPriceUpdated");
       expect(await oracle.currentlyUsingProtectedPrice(assetB)).to.equal(true);
+    });
+  });
+
+  // ────────────────────────────────────────────────────────────────────────
+  // 15b. transient cache gating (DBO.cachingEnabled)
+  // ────────────────────────────────────────────────────────────────────────
+
+  describe("transient cache gating (DBO.cachingEnabled)", () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let caller: any;
+
+    beforeEach(async () => {
+      await initAssetWithWindow(assetA);
+      const callerFactory = await ethers.getContractFactory("DeviationBoundedOracleCaller", admin);
+      caller = await callerFactory.deploy(oracle.address);
+      resilientOracle.getPrice.reset();
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(SPOT_PRICE);
+    });
+
+    it("view reads hit the cache when cachingEnabled is true (default)", async () => {
+      await caller.updateAndGetBothPrices(vTokenA.address);
+
+      // updateProtectionState fetches the spot once; both view getters read from the
+      // transient cache and do not re-query the ResilientOracle.
+      expect(resilientOracle.getPrice).to.have.callCount(1);
+    });
+
+    it("view reads bypass the cache when cachingEnabled is false", async () => {
+      await oracle.setCachingEnabled(assetA, false);
+      resilientOracle.getPrice.reset();
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(SPOT_PRICE);
+
+      await caller.updateAndGetBothPrices(vTokenA.address);
+
+      // updateProtectionState fetches once; each view getter recomputes and fetches again.
+      expect(resilientOracle.getPrice).to.have.callCount(3);
+    });
+
+    it("disabling caching mid-window does not serve stale prices from prior cache writes", async () => {
+      // Seed the cache first by running update with the original spot.
+      await caller.updateAndGetBothPrices(vTokenA.address);
+
+      // Disable caching and change the spot — views must recompute with the new spot.
+      await oracle.setCachingEnabled(assetA, false);
+      const newSpot = parseUnits("1.05", 18);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(newSpot);
+
+      const [collateral, debt] = await caller.callStatic.updateAndGetBothPrices(vTokenA.address);
+      expect(collateral).to.equal(newSpot);
+      expect(debt).to.equal(newSpot);
     });
   });
 
