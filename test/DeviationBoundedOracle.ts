@@ -1987,10 +1987,7 @@ describe("DeviationBoundedOracle", () => {
 
       // Bump resetThreshold above the current range (~29.4%) so the convergence check passes
       const stateBeforeExit = await oracle.assetProtectionConfig(assetA);
-      const range = stateBeforeExit.maxPrice
-        .sub(stateBeforeExit.minPrice)
-        .mul(EXP_SCALE)
-        .div(stateBeforeExit.minPrice);
+      const range = stateBeforeExit.maxPrice.sub(stateBeforeExit.minPrice).mul(EXP_SCALE).div(stateBeforeExit.minPrice);
       const newReset = range.add(parseUnits("0.001", 18));
       const newTrigger = newReset.add(parseUnits("0.01", 18));
       await oracle.setThresholds(assetA, newTrigger, newReset);
