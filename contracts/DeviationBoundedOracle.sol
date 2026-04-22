@@ -214,10 +214,12 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     /**
      * @notice Updates the minimum price in the rolling window for a given asset
      * @dev Called by the keeper to push corrected min values from the off-chain sliding window.
-     *      Constraint: newMin must be at or below the current spot price.
+     *      Constraint: newMin must be at or below the current spot price. Reverts with
+     *      `InvalidBoundWindow` if the resulting window would permanently satisfy the trigger.
      * @param asset The underlying asset address
      * @param newMin The new minimum price
      * @custom:access Only authorized keeper addresses
+     * @custom:error InvalidBoundWindow if (newMin, maxPrice, triggerThreshold) would leave the deviation window permanently triggered
      * @custom:event MinPriceUpdated
      */
     function updateMinPrice(address asset, uint128 newMin) external {
@@ -228,10 +230,12 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     /**
      * @notice Updates the maximum price in the rolling window for a given asset
      * @dev Called by the keeper to push corrected max values from the off-chain sliding window.
-     *      Constraint: newMax must be at or above the current spot price.
+     *      Constraint: newMax must be at or above the current spot price. Reverts with
+     *      `InvalidBoundWindow` if the resulting window would permanently satisfy the trigger.
      * @param asset The underlying asset address
      * @param newMax The new maximum price
      * @custom:access Only authorized keeper addresses
+     * @custom:error InvalidBoundWindow if (minPrice, newMax, triggerThreshold) would leave the deviation window permanently triggered
      * @custom:event MaxPriceUpdated
      */
     function updateMaxPrice(address asset, uint128 newMax) external {
@@ -364,6 +368,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @custom:error ThresholdBelowMinimum if newTriggerThreshold is below 5%
      * @custom:error ThresholdAboveMaximum if newTriggerThreshold is above 50%
      * @custom:error InvalidResetThreshold if newResetThreshold is at or above newTriggerThreshold
+     * @custom:error InvalidBoundWindow if the current min/max combined with newTriggerThreshold would leave the deviation window permanently triggered
      * @custom:event TriggerThresholdSet if the trigger threshold changed
      * @custom:event ResetThresholdSet if the reset threshold changed
      */
@@ -376,6 +381,8 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
         if (newTriggerThreshold > MAX_THRESHOLD) revert ThresholdAboveMaximum(newTriggerThreshold, MAX_THRESHOLD);
         if (newResetThreshold >= newTriggerThreshold) revert InvalidResetThreshold(newResetThreshold);
         MarketProtectionState storage state = _ensureInitialized(asset);
+
+        _validateBoundWindow(asset, state.minPrice, state.maxPrice, newTriggerThreshold);
 
         if (newTriggerThreshold != state.triggerThreshold) {
             emit TriggerThresholdSet(asset, state.triggerThreshold, newTriggerThreshold);
@@ -598,6 +605,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @custom:error MarketNotInitialized if the asset has not been initialized
      * @custom:error InvalidMinPrice if boundType is MIN and newPrice exceeds the current spot or is at or above maxPrice
      * @custom:error InvalidMaxPrice if boundType is MAX and newPrice is below the current spot or is at or below minPrice
+     * @custom:error InvalidBoundWindow if the resulting (min, max, triggerThreshold) would leave the deviation window permanently triggered
      */
     function _validateAndUpdateBound(address asset, uint128 newPrice, PriceBoundType boundType) internal {
         ensureNonzeroAddress(asset);
@@ -608,11 +616,37 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
         if (boundType == PriceBoundType.MIN) {
             if (newPrice >= state.maxPrice || uint256(newPrice) > currentSpot)
                 revert InvalidMinPrice(asset, newPrice, currentSpot);
+            _validateBoundWindow(asset, newPrice, state.maxPrice, state.triggerThreshold);
             _setMinPrice(state, asset, newPrice);
         } else if (boundType == PriceBoundType.MAX) {
             if (newPrice <= state.minPrice || uint256(newPrice) < currentSpot)
                 revert InvalidMaxPrice(asset, newPrice, currentSpot);
+            _validateBoundWindow(asset, state.minPrice, newPrice, state.triggerThreshold);
             _setMaxPrice(state, asset, newPrice);
+        }
+    }
+
+    /**
+     * @dev Reverts with `InvalidBoundWindow` if the resulting (proposedMin, proposedMax, triggerThreshold)
+     *      would make `_exceedsDeviationThreshold` return true for every possible spot — i.e.
+     *      `proposedMin * (1 + threshold) < proposedMax * (1 - threshold)`. Called from bound and
+     *      threshold updates to prevent a configuration that locks protection on permanently.
+     * @param asset The underlying asset address (propagated into the revert data)
+     * @param proposedMin The prospective minPrice after the update
+     * @param proposedMax The prospective maxPrice after the update
+     * @param triggerThreshold The trigger threshold (mantissa) to validate against
+     * @custom:error InvalidBoundWindow if the adjusted trigger bounds overlap
+     */
+    function _validateBoundWindow(
+        address asset,
+        uint128 proposedMin,
+        uint128 proposedMax,
+        uint256 triggerThreshold
+    ) internal pure {
+        uint256 upperFromMin = (uint256(proposedMin) * (EXP_SCALE + triggerThreshold)) / EXP_SCALE;
+        uint256 lowerFromMax = (uint256(proposedMax) * (EXP_SCALE - triggerThreshold)) / EXP_SCALE;
+        if (upperFromMin < lowerFromMax) {
+            revert InvalidBoundWindow(asset, proposedMin, proposedMax, triggerThreshold);
         }
     }
 

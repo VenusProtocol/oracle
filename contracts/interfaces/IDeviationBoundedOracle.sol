@@ -121,6 +121,11 @@ interface IDeviationBoundedOracle {
     /// @notice Thrown when the exit threshold is set above the deviation threshold
     error InvalidResetThreshold(uint256 resetThreshold);
 
+    /// @notice Thrown when a bound or threshold update would make the trigger window overlap,
+    ///         i.e. `minPrice * (1 + triggerThreshold) < maxPrice * (1 - triggerThreshold)`,
+    ///         leaving `_exceedsDeviationThreshold` permanently true.
+    error InvalidBoundWindow(address asset, uint128 minPrice, uint128 maxPrice, uint256 triggerThreshold);
+
     // --- Non-view price functions (update window + trigger protection) ---
 
     /**
@@ -215,6 +220,7 @@ interface IDeviationBoundedOracle {
      * @custom:error ZeroPriceNotAllowed if newMin is zero
      * @custom:error MarketNotInitialized if the asset has not been initialized
      * @custom:error InvalidMinPrice if newMin exceeds the current spot or is at or above maxPrice
+     * @custom:error InvalidBoundWindow if the resulting (newMin, maxPrice, triggerThreshold) would leave the deviation window permanently triggered
      * @custom:event MinPriceUpdated
      */
     function updateMinPrice(address asset, uint128 newMin) external;
@@ -227,6 +233,7 @@ interface IDeviationBoundedOracle {
      * @custom:error ZeroPriceNotAllowed if newMax is zero
      * @custom:error MarketNotInitialized if the asset has not been initialized
      * @custom:error InvalidMaxPrice if newMax is below the current spot or is at or below minPrice
+     * @custom:error InvalidBoundWindow if the resulting (minPrice, newMax, triggerThreshold) would leave the deviation window permanently triggered
      * @custom:event MaxPriceUpdated
      */
     function updateMaxPrice(address asset, uint128 newMax) external;
@@ -311,6 +318,7 @@ interface IDeviationBoundedOracle {
      * @custom:error ThresholdBelowMinimum if newTriggerThreshold is below 5%
      * @custom:error ThresholdAboveMaximum if newTriggerThreshold is above 50%
      * @custom:error InvalidResetThreshold if newResetThreshold is at or above newTriggerThreshold
+     * @custom:error InvalidBoundWindow if the resulting (minPrice, maxPrice, newTriggerThreshold) would leave the deviation window permanently triggered
      * @custom:event TriggerThresholdSet if the trigger threshold changed
      * @custom:event ResetThresholdSet if the reset threshold changed
      */

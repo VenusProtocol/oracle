@@ -516,6 +516,21 @@ describe("DeviationBoundedOracle", () => {
         "ZeroValueNotAllowed",
       );
     });
+
+    it("reverts with InvalidBoundWindow when the new trigger threshold would make the window permanently trigger", async () => {
+      // Widen the window to [0.9, 1.1] first (spot = SPOT_PRICE = 1.0 so both updates pass).
+      await oracle.updateMinPrice(assetA, MIN_PRICE);
+      await oracle.updateMaxPrice(assetA, MAX_PRICE);
+
+      // With [0.9, 1.1] at a 5% trigger threshold: 0.9 * 1.05 = 0.945 < 1.1 * 0.95 = 1.045
+      // → invariant fails, `_exceedsDeviationThreshold` would be true for every spot.
+      const newTrigger = parseUnits("0.05", 18);
+      const newReset = parseUnits("0.04", 18);
+      await expect(oracle.setThresholds(assetA, newTrigger, newReset)).to.be.revertedWithCustomError(
+        oracle,
+        "InvalidBoundWindow",
+      );
+    });
   });
 
   // ────────────────────────────────────────────────────────────────────────
@@ -697,6 +712,16 @@ describe("DeviationBoundedOracle", () => {
     it("reverts when newMin >= maxPrice", async () => {
       await expect(oracle.updateMinPrice(assetA, MAX_PRICE)).to.be.revertedWithCustomError(oracle, "InvalidMinPrice");
     });
+
+    it("reverts with InvalidBoundWindow when (newMin, maxPrice, triggerThreshold) would permanently trigger", async () => {
+      // MAX_PRICE=1.1, triggerThreshold=20% → need newMin such that newMin * 1.2 < 1.1 * 0.8 = 0.88
+      // i.e. newMin < 0.7333. Pick 0.7 — also satisfies newMin <= spot (1.0) and newMin < maxPrice (1.1).
+      const invalidMin = parseUnits("0.7", 18);
+      await expect(oracle.updateMinPrice(assetA, invalidMin)).to.be.revertedWithCustomError(
+        oracle,
+        "InvalidBoundWindow",
+      );
+    });
   });
 
   // ────────────────────────────────────────────────────────────────────────
@@ -750,6 +775,18 @@ describe("DeviationBoundedOracle", () => {
 
     it("reverts when newMax <= minPrice", async () => {
       await expect(oracle.updateMaxPrice(assetA, MIN_PRICE)).to.be.revertedWithCustomError(oracle, "InvalidMaxPrice");
+    });
+
+    it("reverts with InvalidBoundWindow when (minPrice, newMax, triggerThreshold) would permanently trigger", async () => {
+      // MIN_PRICE=0.9, triggerThreshold=20% → need newMax such that 0.9 * 1.2 = 1.08 < newMax * 0.8
+      // i.e. newMax > 1.35. Pick 1.4 — also satisfies newMax >= spot (1.0) and newMax > minPrice (0.9).
+      // Raise the mocked spot to satisfy newMax >= currentSpot without tripping the keeper bound check.
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(parseUnits("1.3", 18));
+      const invalidMax = parseUnits("1.4", 18);
+      await expect(oracle.updateMaxPrice(assetA, invalidMax)).to.be.revertedWithCustomError(
+        oracle,
+        "InvalidBoundWindow",
+      );
     });
   });
 
@@ -1381,9 +1418,9 @@ describe("DeviationBoundedOracle", () => {
     });
 
     it("triggers protection without expanding window", async () => {
-      // Wide window [0.8, 1.3] — spot=1.0 is inside, no expansion needed
-      // But upperBound = 0.8 * 1.2 = 0.96 → spot 1.0 > 0.96 → triggers
-      await initAssetWithWindow(assetB, parseUnits("0.8", 18), parseUnits("1.3", 18));
+      // Window [0.8, 1.15] with 20% threshold — invariant-safe: 0.8 * 1.2 = 0.96 ≥ 1.15 * 0.8 = 0.92.
+      // spot=1.0 is inside [0.8, 1.15] → no expansion; upperBound = 0.8 * 1.2 = 0.96 → spot > upperBound → pump triggers.
+      await initAssetWithWindow(assetB, parseUnits("0.8", 18), parseUnits("1.15", 18));
 
       resilientOracle.getPrice.whenCalledWith(assetB).returns(SPOT_PRICE);
 
