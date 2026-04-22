@@ -150,7 +150,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
 
     /**
      * @notice Fetches the spot price, updates the protection window, and caches the resolved
-     *         bounded prices in transient storage for the duration of the transaction.
+     *         collateral and debt prices in transient storage for the duration of the transaction.
      * @dev Call this once per vToken at the start of a transaction (e.g. from PolicyFacet before
      *      liquidity calculations). Subsequent calls to getBoundedCollateralPriceView /
      *      getBoundedDebtPriceView within the same transaction will read from the transient cache
