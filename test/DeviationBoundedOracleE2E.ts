@@ -90,7 +90,7 @@ describe("DeviationBoundedOracle E2E", () => {
     triggerThreshold: BigNumber = DEFAULT_THRESHOLD,
     resetThreshold: BigNumber = DEFAULT_RESET_THRESHOLD,
   ) => {
-    await oracle.setTokenConfig(asset, cooldown, triggerThreshold, resetThreshold, true);
+    await oracle.setTokenConfig(asset, cooldown, triggerThreshold, resetThreshold, true, true);
     await oracle.updateMinPrice(asset, minPrice);
     await oracle.updateMaxPrice(asset, maxPrice);
   };
@@ -327,7 +327,7 @@ describe("DeviationBoundedOracle E2E", () => {
       // Initialize with 30% threshold → upperBound = 0.9 * 1.3 = 1.17
       const highThreshold = parseUnits("0.3", 18);
       const resetThreshold = parseUnits("0.15", 18);
-      await oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, highThreshold, resetThreshold, true);
+      await oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, highThreshold, resetThreshold, true, true);
       await oracle.updateMinPrice(assetA, MIN_PRICE);
       await oracle.updateMaxPrice(assetA, MAX_PRICE);
       resilientOracle.getPrice.whenCalledWith(assetA).returns(spot);

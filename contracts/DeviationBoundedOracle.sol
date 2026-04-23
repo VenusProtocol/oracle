@@ -156,6 +156,8 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      *      getBoundedDebtPriceView within the same transaction will read from the transient cache
      *      instead of querying ResilientOracle again, keeping those functions as `view` and
      *      avoiding redundant oracle calls.
+     *      The transient cache is only populated when the asset's `cachingEnabled` flag is `true`.
+     *      When caching is disabled, view price reads fall through to live recomputation.
      *      Permissionless: anyone can call this, both for gas optimisation and to ensure every
      *      caller in the same transaction reads the correct, up-to-date bounded price.
      * @param vToken vToken address
@@ -171,8 +173,9 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
 
     /**
      * @notice Gets the bounded collateral price for a given vToken (view variant)
-     * @dev Reads from transient cache first (populated by a prior updateProtectionState call
-     *      in the same transaction). Falls back to ResilientOracle on cache miss.
+     * @dev Reads from transient cache first when the asset's `cachingEnabled` flag is `true`
+     *      (populated by a prior updateProtectionState call in the same transaction). Falls back
+     *      to ResilientOracle on cache miss or when caching is disabled.
      *      Returns min(spot, windowMin) when protection is active, spot otherwise.
      * @param vToken vToken address
      * @return collateralPrice The bounded collateral price
@@ -183,8 +186,9 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
 
     /**
      * @notice Gets the bounded debt price for a given vToken (view variant)
-     * @dev Reads from transient cache first (populated by a prior updateProtectionState call
-     *      in the same transaction). Falls back to ResilientOracle on cache miss.
+     * @dev Reads from transient cache first when the asset's `cachingEnabled` flag is `true`
+     *      (populated by a prior updateProtectionState call in the same transaction). Falls back
+     *      to ResilientOracle on cache miss or when caching is disabled.
      *      Returns max(spot, windowMax) when protection is active, spot otherwise.
      * @param vToken vToken address
      * @return debtPrice The bounded debt price
@@ -195,7 +199,8 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
 
     /**
      * @notice Gets both the bounded collateral and debt prices for a given vToken (view variant)
-     * @dev Reads from transient cache first; falls back to ResilientOracle on cache miss.
+     * @dev Reads from transient cache first when the asset's `cachingEnabled` flag is `true`;
+     *      falls back to ResilientOracle on cache miss or when caching is disabled.
      * @param vToken vToken address
      * @return collateralPrice The bounded collateral price
      * @return debtPrice The bounded debt price
@@ -278,6 +283,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param triggerThreshold Deviation threshold that activates protection (mantissa). Must be between 5% and 50%.
      * @param resetThreshold Deviation threshold below which protection can be exited (mantissa). Must be non-zero and below triggerThreshold.
      * @param enableBoundedPricing Whether to enable bounded pricing immediately upon initialization
+     * @param enableCaching Whether transient caching of the bounded (collateral, debt) pair is enabled for this asset
      * @custom:access Only Governance
      * @custom:event ProtectionInitialized
      * @custom:event BoundedPricingWhitelistUpdated
@@ -287,10 +293,11 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
         uint64 cooldownPeriod,
         uint256 triggerThreshold,
         uint256 resetThreshold,
-        bool enableBoundedPricing
+        bool enableBoundedPricing,
+        bool enableCaching
     ) external {
-        _checkAccessAllowed("setTokenConfig(address,uint64,uint256,uint256,bool)");
-        _setTokenConfig(asset, cooldownPeriod, triggerThreshold, resetThreshold, enableBoundedPricing);
+        _checkAccessAllowed("setTokenConfig(address,uint64,uint256,uint256,bool,bool)");
+        _setTokenConfig(asset, cooldownPeriod, triggerThreshold, resetThreshold, enableBoundedPricing, enableCaching);
     }
 
     /**
@@ -300,6 +307,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param triggerThresholds Array of trigger thresholds (mantissa)
      * @param resetThresholds Array of reset thresholds (mantissa)
      * @param enableBoundedPricings Array of whether to enable bounded pricing per asset
+     * @param enableCachings Array of whether transient caching is enabled per asset
      * @custom:access Only Governance
      * @custom:error InvalidArrayLength if array lengths do not match
      * @custom:event ProtectionInitialized for each asset
@@ -310,16 +318,18 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
         uint64[] calldata cooldownPeriods,
         uint256[] calldata triggerThresholds,
         uint256[] calldata resetThresholds,
-        bool[] calldata enableBoundedPricings
+        bool[] calldata enableBoundedPricings,
+        bool[] calldata enableCachings
     ) external {
-        _checkAccessAllowed("setTokenConfigs(address[],uint64[],uint256[],uint256[],bool[])");
+        _checkAccessAllowed("setTokenConfigs(address[],uint64[],uint256[],uint256[],bool[],bool[])");
         uint256 len = assets.length;
         if (
             len == 0 ||
             len != cooldownPeriods.length ||
             len != triggerThresholds.length ||
             len != resetThresholds.length ||
-            len != enableBoundedPricings.length
+            len != enableBoundedPricings.length ||
+            len != enableCachings.length
         ) revert InvalidArrayLength();
 
         for (uint256 i; i < len; ++i) {
@@ -328,7 +338,8 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
                 cooldownPeriods[i],
                 triggerThresholds[i],
                 resetThresholds[i],
-                enableBoundedPricings[i]
+                enableBoundedPricings[i],
+                enableCachings[i]
             );
         }
     }
@@ -411,6 +422,24 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
 
         state.isBoundedPricingEnabled = enabled;
         emit BoundedPricingWhitelistUpdated(asset, enabled);
+    }
+
+    /**
+     * @notice Toggles transient caching of the bounded (collateral, debt) pair for an asset
+     * @dev When disabled, each view/non-view price call recomputes bounded prices from the
+     *      live spot instead of reading or writing the transient slots. The initial value is
+     *      set via the `enableCaching` argument of `setTokenConfig`.
+     * @param asset The underlying asset address
+     * @param enabled Whether transient caching is enabled for this asset
+     * @custom:access Only Governance
+     * @custom:error MarketNotInitialized if the asset has not been initialized
+     * @custom:event CachingEnabledUpdated
+     */
+    function setCachingEnabled(address asset, bool enabled) external {
+        _checkAccessAllowed("setCachingEnabled(address,bool)");
+        MarketProtectionState storage state = _ensureInitialized(asset);
+        emit CachingEnabledUpdated(asset, state.cachingEnabled, enabled);
+        state.cachingEnabled = enabled;
     }
 
     // ----- View helpers -----
@@ -521,6 +550,7 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param triggerThreshold Deviation threshold that activates protection (mantissa). Must be between 5% and 50%.
      * @param resetThreshold Deviation threshold below which protection can be exited (mantissa). Must be non-zero and below triggerThreshold.
      * @param enableBoundedPricing Whether to enable bounded pricing immediately upon initialization
+     * @param enableCaching Whether transient caching of the bounded (collateral, debt) pair is enabled for this asset
      * @custom:error MarketAlreadyInitialized if the asset has already been initialized
      * @custom:error ThresholdBelowMinimum if triggerThreshold is below 5%
      * @custom:error ThresholdAboveMaximum if triggerThreshold is above 50%
@@ -533,7 +563,8 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
         uint64 cooldownPeriod,
         uint256 triggerThreshold,
         uint256 resetThreshold,
-        bool enableBoundedPricing
+        bool enableBoundedPricing,
+        bool enableCaching
     ) internal {
         ensureNonzeroAddress(asset);
         ensureNonzeroValue(cooldownPeriod);
@@ -556,7 +587,8 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
             cooldownPeriod: cooldownPeriod,
             asset: asset,
             triggerThreshold: uint128(triggerThreshold),
-            resetThreshold: uint128(resetThreshold)
+            resetThreshold: uint128(resetThreshold),
+            cachingEnabled: enableCaching
         });
 
         allAssets.push(asset);
@@ -802,23 +834,29 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     }
 
     /**
-     * @dev Writes both lower and upper bounded prices to transient storage
+     * @dev Writes both lower and upper bounded prices to transient storage. No-ops when the
+     *      asset's `cachingEnabled` flag is `false`, so callers that disable caching always
+     *      fall through to live recomputation on subsequent reads.
      * @param asset The underlying asset address
      * @param minPrice The resolved lower (collateral) price to cache
      * @param maxPrice The resolved upper (debt) price to cache
      */
     function _setCachedPrices(address asset, uint256 minPrice, uint256 maxPrice) internal {
+        if (!assetProtectionConfig[asset].cachingEnabled) return;
         Transient.cachePrice(COLLATERAL_PRICE_CACHE_SLOT, asset, minPrice);
         Transient.cachePrice(DEBT_PRICE_CACHE_SLOT, asset, maxPrice);
     }
 
     /**
-     * @dev Reads a cached final price from transient storage
+     * @dev Reads a cached final price from transient storage. Returns `(0, 0)` when the
+     *      asset's `cachingEnabled` flag is `false`, which callers already treat as a cache
+     *      miss and handle via live recomputation.
      * @param asset The underlying asset address
      * @return minPrice The cached minimum price, or 0 on cache miss
      * @return maxPrice The cached maximum price, or 0 on cache miss
      */
     function _getCachedPrices(address asset) internal view returns (uint256 minPrice, uint256 maxPrice) {
+        if (!assetProtectionConfig[asset].cachingEnabled) return (0, 0);
         minPrice = Transient.readCachedPrice(COLLATERAL_PRICE_CACHE_SLOT, asset);
         maxPrice = Transient.readCachedPrice(DEBT_PRICE_CACHE_SLOT, asset);
     }
