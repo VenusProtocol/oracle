@@ -1081,4 +1081,51 @@ describe("DeviationBoundedOracle E2E", () => {
       expect(debt).to.equal(SPOT_PRICE);
     });
   });
+
+  // ────────────────────────────────────────────────────────────────────────
+  // E2E-17. Keeper convergence path: trigger → min == max == spot → exitProtectionMode
+  // ────────────────────────────────────────────────────────────────────────
+
+  describe("E2E-17: keeper convergence to min == max == spot enables clean exit", () => {
+    it("17a: full convergence path — pump trigger, keeper converges window to spot, exit succeeds", async () => {
+      await initAssetWithWindow(assetA);
+
+      // 1. Trigger protection via pump
+      const pumpSpot = await triggerPump(assetA, vTokenA);
+      expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
+
+      // 2. Spot stabilises somewhere inside the post-trigger window (between minPrice and maxPrice)
+      const stableSpot = MIN_PRICE.add(pumpSpot).div(2);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(stableSpot);
+
+      // 3. Keeper converges the window: first set min = stableSpot (allowed; old maxPrice >= stableSpot)
+      await oracle.updateMinPrice(assetA, stableSpot);
+      let state = await oracle.assetProtectionConfig(assetA);
+      expect(state.minPrice).to.equal(stableSpot);
+
+      // 4. Keeper sets max = stableSpot — newly allowed (newMax == minPrice == spot)
+      await oracle.updateMaxPrice(assetA, stableSpot);
+      state = await oracle.assetProtectionConfig(assetA);
+      expect(state.minPrice).to.equal(stableSpot);
+      expect(state.maxPrice).to.equal(stableSpot);
+
+      // 5. Range ratio collapses to zero, satisfying the resetThreshold gate
+      const rangeRatio = state.maxPrice.sub(state.minPrice).mul(EXP_SCALE).div(state.minPrice);
+      expect(rangeRatio).to.equal(0);
+
+      // 6. Cooldown elapses and exitProtectionMode succeeds without governance threshold gymnastics
+      await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN + 1]);
+      await ethers.provider.send("evm_mine", []);
+
+      const tx = await oracle.exitProtectionMode(assetA);
+      await expect(tx).to.emit(oracle, "ProtectionModeExited").withArgs(assetA);
+      expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
+
+      // 7. Bounded prices fall back to spot once protection is cleared
+      const collateral = await oracle.callStatic.getBoundedCollateralPrice(vTokenA.address);
+      const debt = await oracle.callStatic.getBoundedDebtPrice(vTokenA.address);
+      expect(collateral).to.equal(stableSpot);
+      expect(debt).to.equal(stableSpot);
+    });
+  });
 });

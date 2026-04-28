@@ -604,8 +604,8 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param boundType Whether this is a MIN or MAX bound update
      * @custom:error ZeroPriceNotAllowed if newPrice is zero
      * @custom:error MarketNotInitialized if the asset has not been initialized
-     * @custom:error InvalidMinPrice if boundType is MIN and newPrice exceeds the current spot or is at or above maxPrice
-     * @custom:error InvalidMaxPrice if boundType is MAX and newPrice is below the current spot or is at or below minPrice
+     * @custom:error InvalidMinPrice if boundType is MIN and newPrice exceeds the current spot or is strictly above maxPrice
+     * @custom:error InvalidMaxPrice if boundType is MAX and newPrice is below the current spot or is strictly below minPrice
      */
     function _validateAndUpdateBound(address asset, uint128 newPrice, PriceBoundType boundType) internal {
         ensureNonzeroAddress(asset);
@@ -614,11 +614,11 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
 
         uint256 currentSpot = _fetchSpotPrice(asset);
         if (boundType == PriceBoundType.MIN) {
-            if (newPrice >= state.maxPrice || uint256(newPrice) > currentSpot)
+            if (newPrice > state.maxPrice || uint256(newPrice) > currentSpot)
                 revert InvalidMinPrice(asset, newPrice, currentSpot);
             _setMinPrice(state, asset, newPrice);
         } else if (boundType == PriceBoundType.MAX) {
-            if (newPrice <= state.minPrice || uint256(newPrice) < currentSpot)
+            if (newPrice < state.minPrice || uint256(newPrice) < currentSpot)
                 revert InvalidMaxPrice(asset, newPrice, currentSpot);
             _setMaxPrice(state, asset, newPrice);
         }

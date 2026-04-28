@@ -584,8 +584,22 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         );
       });
 
-      it("7.4 reverts when newMin >= maxPrice", async () => {
-        await expect(oracle.updateMinPrice(assetA, MAX_PRICE)).to.be.revertedWithCustomError(oracle, "InvalidMinPrice");
+      it("7.4 reverts when newMin > maxPrice", async () => {
+        // Set spot above maxPrice so the spot constraint passes; the maxPrice check is what reverts
+        await mockOracle.setPrice(assetA, MAX_PRICE.add(parseUnits("0.05", 18)));
+        await expect(oracle.updateMinPrice(assetA, MAX_PRICE.add(1))).to.be.revertedWithCustomError(
+          oracle,
+          "InvalidMinPrice",
+        );
+      });
+
+      it("7.5 succeeds when newMin == maxPrice == spot (full convergence)", async () => {
+        // Spot equal to maxPrice so newMin = maxPrice = spot is valid under the relaxed semantics
+        await mockOracle.setPrice(assetA, MAX_PRICE);
+        await expect(oracle.updateMinPrice(assetA, MAX_PRICE)).to.not.be.reverted;
+        const state = await oracle.assetProtectionConfig(assetA);
+        expect(state.minPrice).to.equal(MAX_PRICE);
+        expect(state.maxPrice).to.equal(MAX_PRICE);
       });
     });
 
@@ -616,8 +630,22 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         );
       });
 
-      it("8.4 reverts when newMax <= minPrice", async () => {
-        await expect(oracle.updateMaxPrice(assetA, MIN_PRICE)).to.be.revertedWithCustomError(oracle, "InvalidMaxPrice");
+      it("8.4 reverts when newMax < minPrice", async () => {
+        // Set spot below minPrice so the spot constraint passes; the minPrice check is what reverts
+        await mockOracle.setPrice(assetA, MIN_PRICE.sub(parseUnits("0.05", 18)));
+        await expect(oracle.updateMaxPrice(assetA, MIN_PRICE.sub(1))).to.be.revertedWithCustomError(
+          oracle,
+          "InvalidMaxPrice",
+        );
+      });
+
+      it("8.5 succeeds when newMax == minPrice == spot (full convergence)", async () => {
+        // Spot equal to minPrice so newMax = minPrice = spot is valid under the relaxed semantics
+        await mockOracle.setPrice(assetA, MIN_PRICE);
+        await expect(oracle.updateMaxPrice(assetA, MIN_PRICE)).to.not.be.reverted;
+        const state = await oracle.assetProtectionConfig(assetA);
+        expect(state.minPrice).to.equal(MIN_PRICE);
+        expect(state.maxPrice).to.equal(MIN_PRICE);
       });
     });
 
