@@ -52,11 +52,11 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     address public immutable vai;
 
     /// @notice Transient storage slot for caching final collateral prices within a transaction
-    /// @dev custom:storage-location erc7201:venus-protocol/oracle/DeviationBoundedOracle/cache
-    /// keccak256(abi.encode(uint256(keccak256("venus-protocol/oracle/DeviationBoundedOracle/cache")) - 1))
+    /// @dev custom:storage-location erc7201:venus-protocol/oracle/DeviationBoundedOracle/collateralCache
+    /// keccak256(abi.encode(uint256(keccak256("venus-protocol/oracle/DeviationBoundedOracle/collateralCache")) - 1))
     ///   & ~bytes32(uint256(0xff))
     bytes32 public constant COLLATERAL_PRICE_CACHE_SLOT =
-        0x818cfa9b1e1b1cc716656acdb79a94121ed79bfb196bf958683ed2a3277cb200;
+        0x7bd9fcecef8429101f34baefb335883a97edd91e0d8fdc455d73ab727abf7000;
 
     /// @notice Transient storage slot for caching final debt prices within a transaction
     /// @dev custom:storage-location erc7201:venus-protocol/oracle/DeviationBoundedOracle/debtCache
