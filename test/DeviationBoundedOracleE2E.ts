@@ -1083,6 +1083,53 @@ describe("DeviationBoundedOracle E2E", () => {
   });
 
   // ────────────────────────────────────────────────────────────────────────
+  // E2E-18. Keeper batch (syncPriceBoundsAndProtections): converge + exit in one tx
+  // ────────────────────────────────────────────────────────────────────────
+
+  describe("E2E-18: keeper converges and exits in a single batched tx", () => {
+    it("18a: pump trigger → spot stabilises → batch (SetMin, SetMax, Exit) clears protection in one tx", async () => {
+      // KeeperAction enum: 0 = SetMinPrice, 1 = SetMaxPrice, 2 = ExitProtectionMode
+      const SetMinPrice = 0;
+      const SetMaxPrice = 1;
+      const ExitProtectionMode = 2;
+
+      await initAssetWithWindow(assetA);
+
+      // 1. Trigger via pump
+      const pumpSpot = await triggerPump(assetA, vTokenA);
+      expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
+
+      // 2. Spot stabilises somewhere inside the post-trigger window
+      const stableSpot = MIN_PRICE.add(pumpSpot).div(2);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(stableSpot);
+
+      // 3. Wait out cooldown
+      await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN + 1]);
+      await ethers.provider.send("evm_mine", []);
+
+      // 4. Single batched tx — converge window to spot and exit protection
+      const tx = await oracle.syncPriceBoundsAndProtections([
+        { asset: assetA, action: SetMinPrice, value: stableSpot },
+        { asset: assetA, action: SetMaxPrice, value: stableSpot },
+        { asset: assetA, action: ExitProtectionMode, value: 0 },
+      ]);
+
+      await expect(tx)
+        .to.emit(oracle, "MinPriceUpdated")
+        .and.to.emit(oracle, "MaxPriceUpdated")
+        .and.to.emit(oracle, "ProtectionModeExited")
+        .withArgs(assetA);
+
+      // 5. Protection cleared, bounded prices fall back to spot
+      expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
+      const collateral = await oracle.callStatic.getBoundedCollateralPrice(vTokenA.address);
+      const debt = await oracle.callStatic.getBoundedDebtPrice(vTokenA.address);
+      expect(collateral).to.equal(stableSpot);
+      expect(debt).to.equal(stableSpot);
+    });
+  });
+
+  // ────────────────────────────────────────────────────────────────────────
   // E2E-17. Keeper convergence path: trigger → min == max == spot → exitProtectionMode
   // ────────────────────────────────────────────────────────────────────────
 

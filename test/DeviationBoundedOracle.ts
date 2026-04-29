@@ -961,6 +961,155 @@ describe("DeviationBoundedOracle", () => {
   });
 
   // ────────────────────────────────────────────────────────────────────────
+  // 9b. syncPriceBoundsAndProtections (keeper batch)
+  // ────────────────────────────────────────────────────────────────────────
+
+  describe("syncPriceBoundsAndProtections", () => {
+    // KeeperAction enum: 0 = SetMinPrice, 1 = SetMaxPrice, 2 = ExitProtectionMode
+    const SetMinPrice = 0;
+    const SetMaxPrice = 1;
+    const ExitProtectionMode = 2;
+
+    beforeEach(async () => {
+      await initAssetWithWindow(assetA);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(SPOT_PRICE);
+    });
+
+    it("reverts when caller is unauthorized", async () => {
+      acm.isAllowedToCall.returns(false);
+      await expect(
+        oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: SetMinPrice, value: parseUnits("0.85", 18) }]),
+      ).to.be.revertedWithCustomError(oracle, "Unauthorized");
+    });
+
+    it("succeeds with empty array (no-op)", async () => {
+      await expect(oracle.syncPriceBoundsAndProtections([])).to.not.be.reverted;
+    });
+
+    it("single SetMinPrice item updates the asset and emits MinPriceUpdated", async () => {
+      const newMin = parseUnits("0.85", 18);
+      const tx = await oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: SetMinPrice, value: newMin }]);
+      await expect(tx).to.emit(oracle, "MinPriceUpdated").withArgs(assetA, MIN_PRICE, newMin);
+      const state = await oracle.assetProtectionConfig(assetA);
+      expect(state.minPrice).to.equal(newMin);
+    });
+
+    it("single SetMaxPrice item updates the asset and emits MaxPriceUpdated", async () => {
+      const newMax = parseUnits("1.15", 18);
+      const tx = await oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: SetMaxPrice, value: newMax }]);
+      await expect(tx).to.emit(oracle, "MaxPriceUpdated").withArgs(assetA, MAX_PRICE, newMax);
+      const state = await oracle.assetProtectionConfig(assetA);
+      expect(state.maxPrice).to.equal(newMax);
+    });
+
+    it("single ExitProtectionMode item clears protection and emits ProtectionModeExited", async () => {
+      // Pre-arm: pump trigger so protection is active
+      const pumpSpot = MIN_PRICE.mul(EXP_SCALE.add(DEFAULT_THRESHOLD)).div(EXP_SCALE).add(1);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(pumpSpot);
+      await oracle.getBoundedCollateralPrice(vTokenA.address);
+      expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
+
+      // Cooldown elapses; raise reset threshold above the range so exit gate passes
+      await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN + 1]);
+      await ethers.provider.send("evm_mine", []);
+      const stateAfter = await oracle.assetProtectionConfig(assetA);
+      const range = stateAfter.maxPrice.sub(stateAfter.minPrice).mul(EXP_SCALE).div(stateAfter.minPrice);
+      const newReset = range.add(parseUnits("0.001", 18));
+      const currentTrigger = stateAfter.triggerThreshold;
+      if (newReset.gte(currentTrigger)) {
+        await oracle.setThresholds(assetA, newReset.add(parseUnits("0.01", 18)), newReset);
+      } else {
+        await oracle.setThresholds(assetA, currentTrigger, newReset);
+      }
+
+      const tx = await oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: ExitProtectionMode, value: 0 }]);
+      await expect(tx).to.emit(oracle, "ProtectionModeExited").withArgs(assetA);
+      expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
+    });
+
+    it("mixed batch (SetMin, SetMax, Exit) converges and exits in one tx", async () => {
+      // Pre-arm: pump trigger
+      const pumpSpot = MIN_PRICE.mul(EXP_SCALE.add(DEFAULT_THRESHOLD)).div(EXP_SCALE).add(1);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(pumpSpot);
+      await oracle.getBoundedCollateralPrice(vTokenA.address);
+      expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
+
+      // Spot stabilises somewhere inside the post-trigger window
+      const stableSpot = MIN_PRICE.add(pumpSpot).div(2);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(stableSpot);
+
+      // Wait out cooldown so the Exit action is admissible
+      await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN + 1]);
+      await ethers.provider.send("evm_mine", []);
+
+      const tx = await oracle.syncPriceBoundsAndProtections([
+        { asset: assetA, action: SetMinPrice, value: stableSpot },
+        { asset: assetA, action: SetMaxPrice, value: stableSpot },
+        { asset: assetA, action: ExitProtectionMode, value: 0 },
+      ]);
+
+      await expect(tx)
+        .to.emit(oracle, "MinPriceUpdated")
+        .and.to.emit(oracle, "MaxPriceUpdated")
+        .and.to.emit(oracle, "ProtectionModeExited")
+        .withArgs(assetA);
+
+      const state = await oracle.assetProtectionConfig(assetA);
+      expect(state.minPrice).to.equal(stableSpot);
+      expect(state.maxPrice).to.equal(stableSpot);
+      expect(state.currentlyUsingProtectedPrice).to.equal(false);
+    });
+
+    it("revert in any item rolls back the whole batch", async () => {
+      // Item 1 is a valid SetMinPrice; item 2 is SetMinPrice with value above current spot — must revert.
+      // After revert, the asset's minPrice must remain at its pre-batch value (no partial application).
+      const validNewMin = parseUnits("0.85", 18);
+      const stateBefore = await oracle.assetProtectionConfig(assetA);
+      const aboveSpot = SPOT_PRICE.add(parseUnits("0.5", 18));
+
+      await expect(
+        oracle.syncPriceBoundsAndProtections([
+          { asset: assetA, action: SetMinPrice, value: validNewMin },
+          { asset: assetA, action: SetMinPrice, value: aboveSpot },
+        ]),
+      ).to.be.revertedWithCustomError(oracle, "InvalidMinPrice");
+
+      const stateAfter = await oracle.assetProtectionConfig(assetA);
+      expect(stateAfter.minPrice).to.equal(stateBefore.minPrice);
+    });
+
+    it("reverts with PriceExceedsUint128 when a SetMin/SetMax value overflows uint128", async () => {
+      const overflow = BigNumber.from(2).pow(128);
+      await expect(
+        oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: SetMinPrice, value: overflow }]),
+      ).to.be.revertedWithCustomError(oracle, "PriceExceedsUint128");
+    });
+
+    it("re-uses per-action validation: SetMinPrice with value > spot still reverts with InvalidMinPrice", async () => {
+      const aboveSpot = SPOT_PRICE.add(1);
+      await expect(
+        oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: SetMinPrice, value: aboveSpot }]),
+      ).to.be.revertedWithCustomError(oracle, "InvalidMinPrice");
+    });
+
+    it("re-uses per-action validation: ExitProtectionMode before cooldown still reverts with CooldownNotElapsed", async () => {
+      // Pre-arm protection without waiting cooldown
+      const pumpSpot = MIN_PRICE.mul(EXP_SCALE.add(DEFAULT_THRESHOLD)).div(EXP_SCALE).add(1);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(pumpSpot);
+      await oracle.getBoundedCollateralPrice(vTokenA.address);
+
+      await expect(
+        oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: ExitProtectionMode, value: 0 }]),
+      ).to.be.revertedWithCustomError(oracle, "CooldownNotElapsed");
+    });
+
+    // Note: the catch-all `revert InvalidKeeperAction(...)` branch is defensive for future enum
+    // additions. With the current 3-value enum, Solidity's abi-boundary enum range check rejects
+    // out-of-range action values before the function body executes, so the branch is unreachable
+    // through a well-formed external call and is left untested.
+  });
+
+  // ────────────────────────────────────────────────────────────────────────
   // 10. getBoundedCollateralPrice
   // ────────────────────────────────────────────────────────────────────────
 

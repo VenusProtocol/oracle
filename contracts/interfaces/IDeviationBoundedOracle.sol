@@ -10,6 +10,13 @@ interface IDeviationBoundedOracle {
         MAX
     }
 
+    /// @notice Identifies which keeper action a single syncPriceBoundsAndProtections item performs
+    enum KeeperAction {
+        SetMinPrice,
+        SetMaxPrice,
+        ExitProtectionMode
+    }
+
     // --- Structs ---
 
     /// @notice Per-asset protection state tracking the min/max price window
@@ -34,6 +41,14 @@ interface IDeviationBoundedOracle {
         uint128 resetThreshold;
         /// @notice Whether transient caching of the bounded (collateral, debt) pair is enabled for this asset
         bool cachingEnabled;
+    }
+
+    /// @notice One item in an syncPriceBoundsAndProtections payload
+    /// @dev `value` is interpreted per-action: the new bound price for SetMinPrice / SetMaxPrice, ignored for ExitProtectionMode
+    struct KeeperActionItem {
+        address asset;
+        KeeperAction action;
+        uint256 value;
     }
 
     // --- Events ---
@@ -120,6 +135,9 @@ interface IDeviationBoundedOracle {
 
     /// @notice Thrown when the exit threshold is set at or above the trigger threshold
     error InvalidResetThreshold(uint256 resetThreshold);
+
+    /// @notice Thrown when an syncPriceBoundsAndProtections item carries an unsupported action enum value
+    error InvalidKeeperAction(uint8 action);
 
     // --- Non-view price functions (update window + trigger protection) ---
 
@@ -241,6 +259,26 @@ interface IDeviationBoundedOracle {
      * @custom:event ProtectionModeExited
      */
     function exitProtectionMode(address asset) external;
+
+    /**
+     * @notice Dispatches a batch of keeper-only actions (set min, set max, or exit protection) under a single ACM check
+     * @dev Each item is processed in array order; any item revert rolls back the whole batch.
+     *      `value` is interpreted as the new bound price for SetMinPrice / SetMaxPrice and ignored for ExitProtectionMode.
+     *      Empty `actions` is a no-op success.
+     * @param actions The list of keeper actions to apply
+     * @custom:access Only authorized keeper addresses
+     * @custom:error InvalidKeeperAction if an item carries an unsupported action enum value
+     * @custom:error PriceExceedsUint128 if a SetMin/SetMax item value overflows uint128
+     * @custom:error ZeroPriceNotAllowed if a SetMin/SetMax item value is zero
+     * @custom:error MarketNotInitialized if any referenced asset has not been initialized
+     * @custom:error InvalidMinPrice if a SetMinPrice item violates the spot/maxPrice constraints
+     * @custom:error InvalidMaxPrice if a SetMaxPrice item violates the spot/minPrice constraints
+     * @custom:error ProtectedPriceInactive if an ExitProtectionMode item targets an asset whose protection is not active
+     * @custom:error CooldownNotElapsed if an ExitProtectionMode item is submitted before cooldown elapsed
+     * @custom:error PriceRangeNotConverged if an ExitProtectionMode item is submitted before window convergence
+     * @custom:event MinPriceUpdated, MaxPriceUpdated, ProtectionModeExited
+     */
+    function syncPriceBoundsAndProtections(KeeperActionItem[] calldata actions) external;
 
     // --- Admin functions (governance-gated) ---
 
