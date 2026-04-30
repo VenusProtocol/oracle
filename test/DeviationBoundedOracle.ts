@@ -51,7 +51,7 @@ describe("DeviationBoundedOracle", () => {
     triggerThreshold: BigNumber = DEFAULT_THRESHOLD,
     resetThreshold: BigNumber = DEFAULT_RESET_THRESHOLD,
   ) => {
-    await oracle.setTokenConfig(asset, cooldown, triggerThreshold, resetThreshold, true);
+    await oracle.setTokenConfig(asset, cooldown, triggerThreshold, resetThreshold, true, true);
   };
 
   // Init + widen window via keeper updates (for price-bounding tests that need min=0.9, max=1.1)
@@ -63,7 +63,7 @@ describe("DeviationBoundedOracle", () => {
     triggerThreshold: BigNumber = DEFAULT_THRESHOLD,
     resetThreshold: BigNumber = DEFAULT_RESET_THRESHOLD,
   ) => {
-    await oracle.setTokenConfig(asset, cooldown, triggerThreshold, resetThreshold, true);
+    await oracle.setTokenConfig(asset, cooldown, triggerThreshold, resetThreshold, true, true);
     await oracle.updateMinPrice(asset, minPrice);
     await oracle.updateMaxPrice(asset, maxPrice);
   };
@@ -147,6 +147,7 @@ describe("DeviationBoundedOracle", () => {
           DEFAULT_THRESHOLD,
           DEFAULT_RESET_THRESHOLD,
           true,
+          true,
         );
 
         // Verify struct fields via public getter
@@ -160,6 +161,7 @@ describe("DeviationBoundedOracle", () => {
         expect(state.asset).to.equal(assetA);
         expect(state.triggerThreshold).to.equal(DEFAULT_THRESHOLD);
         expect(state.resetThreshold).to.equal(DEFAULT_RESET_THRESHOLD);
+        expect(state.cachingEnabled).to.equal(true);
 
         // Verify events
         await expect(tx)
@@ -183,6 +185,7 @@ describe("DeviationBoundedOracle", () => {
           DEFAULT_THRESHOLD,
           DEFAULT_RESET_THRESHOLD,
           false,
+          true,
         );
 
         const state = await oracle.assetProtectionConfig(assetA);
@@ -201,63 +204,63 @@ describe("DeviationBoundedOracle", () => {
       it("reverts when caller is unauthorized", async () => {
         acm.isAllowedToCall.returns(false);
         await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true),
+          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true, true),
         ).to.be.revertedWithCustomError(oracle, "Unauthorized");
       });
 
       it("reverts when asset is zero address", async () => {
         await expect(
-          oracle.setTokenConfig(addr0000, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true),
+          oracle.setTokenConfig(addr0000, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true, true),
         ).to.be.revertedWithCustomError(oracle, "ZeroAddressNotAllowed");
       });
 
       it("reverts when already initialized", async () => {
         await initAsset(assetA);
         await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true),
+          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true, true),
         ).to.be.revertedWithCustomError(oracle, "MarketAlreadyInitialized");
       });
 
       it("reverts when threshold < MIN_THRESHOLD", async () => {
         await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, MIN_THRESHOLD.sub(1), DEFAULT_RESET_THRESHOLD, true),
+          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, MIN_THRESHOLD.sub(1), DEFAULT_RESET_THRESHOLD, true, true),
         ).to.be.revertedWithCustomError(oracle, "ThresholdBelowMinimum");
       });
 
       it("reverts when threshold > MAX_THRESHOLD", async () => {
         await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, MAX_THRESHOLD.add(1), DEFAULT_RESET_THRESHOLD, true),
+          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, MAX_THRESHOLD.add(1), DEFAULT_RESET_THRESHOLD, true, true),
         ).to.be.revertedWithCustomError(oracle, "ThresholdAboveMaximum");
       });
 
       it("reverts when resetThreshold >= triggerThreshold", async () => {
         await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_THRESHOLD, true),
+          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_THRESHOLD, true, true),
         ).to.be.revertedWithCustomError(oracle, "InvalidResetThreshold");
       });
 
       it("reverts when asset is VAI", async () => {
         const vaiAddr = await vaiToken.underlying();
         await expect(
-          oracle.setTokenConfig(vaiAddr, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true),
+          oracle.setTokenConfig(vaiAddr, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true, true),
         ).to.be.revertedWithCustomError(oracle, "VAINotAllowed");
       });
 
       it("reverts when cooldownPeriod is zero", async () => {
         await expect(
-          oracle.setTokenConfig(assetA, 0, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true),
+          oracle.setTokenConfig(assetA, 0, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true, true),
         ).to.be.revertedWithCustomError(oracle, "ZeroValueNotAllowed");
       });
 
       it("reverts when triggerThreshold is zero", async () => {
         await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, 0, DEFAULT_RESET_THRESHOLD, true),
+          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, 0, DEFAULT_RESET_THRESHOLD, true, true),
         ).to.be.revertedWithCustomError(oracle, "ZeroValueNotAllowed");
       });
 
       it("reverts when resetThreshold is zero", async () => {
         await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, 0, true),
+          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, 0, true, true),
         ).to.be.revertedWithCustomError(oracle, "ZeroValueNotAllowed");
       });
 
@@ -265,7 +268,7 @@ describe("DeviationBoundedOracle", () => {
         await initAsset(assetA);
         await oracle.setAssetBoundedPricingEnabled(assetA, false);
         await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true),
+          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true, true),
         ).to.be.revertedWithCustomError(oracle, "MarketAlreadyInitialized");
       });
 
@@ -273,7 +276,7 @@ describe("DeviationBoundedOracle", () => {
         const overflowPrice = BigNumber.from(2).pow(128);
         resilientOracle.getPrice.whenCalledWith(assetA).returns(overflowPrice);
         await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true),
+          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true, true),
         ).to.be.revertedWithCustomError(oracle, "PriceExceedsUint128");
       });
     });
@@ -290,6 +293,7 @@ describe("DeviationBoundedOracle", () => {
         [DEFAULT_COOLDOWN, DEFAULT_COOLDOWN],
         [DEFAULT_THRESHOLD, DEFAULT_THRESHOLD],
         [DEFAULT_RESET_THRESHOLD, DEFAULT_RESET_THRESHOLD],
+        [true, true],
         [true, true],
       );
 
@@ -324,6 +328,7 @@ describe("DeviationBoundedOracle", () => {
         [DEFAULT_THRESHOLD, DEFAULT_THRESHOLD],
         [DEFAULT_RESET_THRESHOLD, DEFAULT_RESET_THRESHOLD],
         [true, false],
+        [true, true],
       );
 
       expect(await oracle.isBoundedPricingEnabled(assetA)).to.equal(true);
@@ -333,7 +338,14 @@ describe("DeviationBoundedOracle", () => {
     it("reverts when caller is unauthorized", async () => {
       acm.isAllowedToCall.returns(false);
       await expect(
-        oracle.setTokenConfigs([assetA], [DEFAULT_COOLDOWN], [DEFAULT_THRESHOLD], [DEFAULT_RESET_THRESHOLD], [true]),
+        oracle.setTokenConfigs(
+          [assetA],
+          [DEFAULT_COOLDOWN],
+          [DEFAULT_THRESHOLD],
+          [DEFAULT_RESET_THRESHOLD],
+          [true],
+          [true],
+        ),
       ).to.be.revertedWithCustomError(oracle, "Unauthorized");
     });
 
@@ -344,6 +356,7 @@ describe("DeviationBoundedOracle", () => {
           [DEFAULT_COOLDOWN],
           [DEFAULT_THRESHOLD],
           [DEFAULT_RESET_THRESHOLD],
+          [true],
           [true],
         ),
       ).to.be.revertedWithCustomError(oracle, "InvalidArrayLength");
@@ -356,6 +369,7 @@ describe("DeviationBoundedOracle", () => {
           [DEFAULT_COOLDOWN, DEFAULT_COOLDOWN],
           [DEFAULT_THRESHOLD, DEFAULT_THRESHOLD],
           [DEFAULT_RESET_THRESHOLD, DEFAULT_RESET_THRESHOLD],
+          [true, true],
           [true, true],
         ),
       ).to.be.revertedWithCustomError(oracle, "ZeroAddressNotAllowed");
@@ -370,12 +384,13 @@ describe("DeviationBoundedOracle", () => {
           [DEFAULT_THRESHOLD, DEFAULT_THRESHOLD],
           [DEFAULT_RESET_THRESHOLD, DEFAULT_RESET_THRESHOLD],
           [true, true],
+          [true, true],
         ),
       ).to.be.revertedWithCustomError(oracle, "MarketAlreadyInitialized");
     });
 
     it("succeeds with empty arrays (no-op)", async () => {
-      await expect(oracle.setTokenConfigs([], [], [], [], [])).to.be.revertedWithCustomError(
+      await expect(oracle.setTokenConfigs([], [], [], [], [], [])).to.be.revertedWithCustomError(
         oracle,
         "InvalidArrayLength",
       );
@@ -602,6 +617,43 @@ describe("DeviationBoundedOracle", () => {
   });
 
   // ────────────────────────────────────────────────────────────────────────
+  // 6b. setCachingEnabled
+  // ────────────────────────────────────────────────────────────────────────
+
+  describe("setCachingEnabled", () => {
+    beforeEach(async () => {
+      await initAsset(assetA);
+    });
+
+    it("disables caching and emits CachingEnabledUpdated", async () => {
+      const tx = await oracle.setCachingEnabled(assetA, false);
+      await expect(tx).to.emit(oracle, "CachingEnabledUpdated").withArgs(assetA, true, false);
+      const state = await oracle.assetProtectionConfig(assetA);
+      expect(state.cachingEnabled).to.equal(false);
+    });
+
+    it("re-enables caching and emits CachingEnabledUpdated", async () => {
+      await oracle.setCachingEnabled(assetA, false);
+      const tx = await oracle.setCachingEnabled(assetA, true);
+      await expect(tx).to.emit(oracle, "CachingEnabledUpdated").withArgs(assetA, false, true);
+      const state = await oracle.assetProtectionConfig(assetA);
+      expect(state.cachingEnabled).to.equal(true);
+    });
+
+    it("reverts when caller is unauthorized", async () => {
+      acm.isAllowedToCall.returns(false);
+      await expect(oracle.setCachingEnabled(assetA, false)).to.be.revertedWithCustomError(oracle, "Unauthorized");
+    });
+
+    it("reverts when asset has not been initialized", async () => {
+      await expect(oracle.setCachingEnabled(assetB, false)).to.be.revertedWithCustomError(
+        oracle,
+        "MarketNotInitialized",
+      );
+    });
+  });
+
+  // ────────────────────────────────────────────────────────────────────────
   // 7. updateMinPrice
   // ────────────────────────────────────────────────────────────────────────
 
@@ -656,8 +708,20 @@ describe("DeviationBoundedOracle", () => {
       await expect(oracle.updateMinPrice(assetA, aboveSpot)).to.be.revertedWithCustomError(oracle, "InvalidMinPrice");
     });
 
-    it("reverts when newMin >= maxPrice", async () => {
-      await expect(oracle.updateMinPrice(assetA, MAX_PRICE)).to.be.revertedWithCustomError(oracle, "InvalidMinPrice");
+    it("reverts when newMin > maxPrice", async () => {
+      // Set spot above maxPrice so the spot constraint passes; the maxPrice check is what reverts
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(MAX_PRICE.add(parseUnits("0.05", 18)));
+      const aboveMax = MAX_PRICE.add(1);
+      await expect(oracle.updateMinPrice(assetA, aboveMax)).to.be.revertedWithCustomError(oracle, "InvalidMinPrice");
+    });
+
+    it("succeeds when newMin == maxPrice == spot (full convergence)", async () => {
+      // Spot equal to maxPrice so newMin = maxPrice = spot is valid under the relaxed semantics
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(MAX_PRICE);
+      await expect(oracle.updateMinPrice(assetA, MAX_PRICE)).to.not.be.reverted;
+      const state = await oracle.assetProtectionConfig(assetA);
+      expect(state.minPrice).to.equal(MAX_PRICE);
+      expect(state.maxPrice).to.equal(MAX_PRICE);
     });
   });
 
@@ -710,8 +774,20 @@ describe("DeviationBoundedOracle", () => {
       await expect(oracle.updateMaxPrice(assetA, belowSpot)).to.be.revertedWithCustomError(oracle, "InvalidMaxPrice");
     });
 
-    it("reverts when newMax <= minPrice", async () => {
-      await expect(oracle.updateMaxPrice(assetA, MIN_PRICE)).to.be.revertedWithCustomError(oracle, "InvalidMaxPrice");
+    it("reverts when newMax < minPrice", async () => {
+      // Set spot below minPrice so the spot constraint passes; the minPrice check is what reverts
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(MIN_PRICE.sub(parseUnits("0.05", 18)));
+      const belowMin = MIN_PRICE.sub(1);
+      await expect(oracle.updateMaxPrice(assetA, belowMin)).to.be.revertedWithCustomError(oracle, "InvalidMaxPrice");
+    });
+
+    it("succeeds when newMax == minPrice == spot (full convergence)", async () => {
+      // Spot equal to minPrice so newMax = minPrice = spot is valid under the relaxed semantics
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(MIN_PRICE);
+      await expect(oracle.updateMaxPrice(assetA, MIN_PRICE)).to.not.be.reverted;
+      const state = await oracle.assetProtectionConfig(assetA);
+      expect(state.minPrice).to.equal(MIN_PRICE);
+      expect(state.maxPrice).to.equal(MIN_PRICE);
     });
   });
 
@@ -882,6 +958,155 @@ describe("DeviationBoundedOracle", () => {
 
       await expect(oracle.exitProtectionMode(assetA)).to.not.be.reverted;
     });
+  });
+
+  // ────────────────────────────────────────────────────────────────────────
+  // 9b. syncPriceBoundsAndProtections (keeper batch)
+  // ────────────────────────────────────────────────────────────────────────
+
+  describe("syncPriceBoundsAndProtections", () => {
+    // KeeperAction enum: 0 = SetMinPrice, 1 = SetMaxPrice, 2 = ExitProtectionMode
+    const SetMinPrice = 0;
+    const SetMaxPrice = 1;
+    const ExitProtectionMode = 2;
+
+    beforeEach(async () => {
+      await initAssetWithWindow(assetA);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(SPOT_PRICE);
+    });
+
+    it("reverts when caller is unauthorized", async () => {
+      acm.isAllowedToCall.returns(false);
+      await expect(
+        oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: SetMinPrice, value: parseUnits("0.85", 18) }]),
+      ).to.be.revertedWithCustomError(oracle, "Unauthorized");
+    });
+
+    it("succeeds with empty array (no-op)", async () => {
+      await expect(oracle.syncPriceBoundsAndProtections([])).to.not.be.reverted;
+    });
+
+    it("single SetMinPrice item updates the asset and emits MinPriceUpdated", async () => {
+      const newMin = parseUnits("0.85", 18);
+      const tx = await oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: SetMinPrice, value: newMin }]);
+      await expect(tx).to.emit(oracle, "MinPriceUpdated").withArgs(assetA, MIN_PRICE, newMin);
+      const state = await oracle.assetProtectionConfig(assetA);
+      expect(state.minPrice).to.equal(newMin);
+    });
+
+    it("single SetMaxPrice item updates the asset and emits MaxPriceUpdated", async () => {
+      const newMax = parseUnits("1.15", 18);
+      const tx = await oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: SetMaxPrice, value: newMax }]);
+      await expect(tx).to.emit(oracle, "MaxPriceUpdated").withArgs(assetA, MAX_PRICE, newMax);
+      const state = await oracle.assetProtectionConfig(assetA);
+      expect(state.maxPrice).to.equal(newMax);
+    });
+
+    it("single ExitProtectionMode item clears protection and emits ProtectionModeExited", async () => {
+      // Pre-arm: pump trigger so protection is active
+      const pumpSpot = MIN_PRICE.mul(EXP_SCALE.add(DEFAULT_THRESHOLD)).div(EXP_SCALE).add(1);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(pumpSpot);
+      await oracle.getBoundedCollateralPrice(vTokenA.address);
+      expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
+
+      // Cooldown elapses; raise reset threshold above the range so exit gate passes
+      await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN + 1]);
+      await ethers.provider.send("evm_mine", []);
+      const stateAfter = await oracle.assetProtectionConfig(assetA);
+      const range = stateAfter.maxPrice.sub(stateAfter.minPrice).mul(EXP_SCALE).div(stateAfter.minPrice);
+      const newReset = range.add(parseUnits("0.001", 18));
+      const currentTrigger = stateAfter.triggerThreshold;
+      if (newReset.gte(currentTrigger)) {
+        await oracle.setThresholds(assetA, newReset.add(parseUnits("0.01", 18)), newReset);
+      } else {
+        await oracle.setThresholds(assetA, currentTrigger, newReset);
+      }
+
+      const tx = await oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: ExitProtectionMode, value: 0 }]);
+      await expect(tx).to.emit(oracle, "ProtectionModeExited").withArgs(assetA);
+      expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
+    });
+
+    it("mixed batch (SetMin, SetMax, Exit) converges and exits in one tx", async () => {
+      // Pre-arm: pump trigger
+      const pumpSpot = MIN_PRICE.mul(EXP_SCALE.add(DEFAULT_THRESHOLD)).div(EXP_SCALE).add(1);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(pumpSpot);
+      await oracle.getBoundedCollateralPrice(vTokenA.address);
+      expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
+
+      // Spot stabilises somewhere inside the post-trigger window
+      const stableSpot = MIN_PRICE.add(pumpSpot).div(2);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(stableSpot);
+
+      // Wait out cooldown so the Exit action is admissible
+      await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN + 1]);
+      await ethers.provider.send("evm_mine", []);
+
+      const tx = await oracle.syncPriceBoundsAndProtections([
+        { asset: assetA, action: SetMinPrice, value: stableSpot },
+        { asset: assetA, action: SetMaxPrice, value: stableSpot },
+        { asset: assetA, action: ExitProtectionMode, value: 0 },
+      ]);
+
+      await expect(tx)
+        .to.emit(oracle, "MinPriceUpdated")
+        .and.to.emit(oracle, "MaxPriceUpdated")
+        .and.to.emit(oracle, "ProtectionModeExited")
+        .withArgs(assetA);
+
+      const state = await oracle.assetProtectionConfig(assetA);
+      expect(state.minPrice).to.equal(stableSpot);
+      expect(state.maxPrice).to.equal(stableSpot);
+      expect(state.currentlyUsingProtectedPrice).to.equal(false);
+    });
+
+    it("revert in any item rolls back the whole batch", async () => {
+      // Item 1 is a valid SetMinPrice; item 2 is SetMinPrice with value above current spot — must revert.
+      // After revert, the asset's minPrice must remain at its pre-batch value (no partial application).
+      const validNewMin = parseUnits("0.85", 18);
+      const stateBefore = await oracle.assetProtectionConfig(assetA);
+      const aboveSpot = SPOT_PRICE.add(parseUnits("0.5", 18));
+
+      await expect(
+        oracle.syncPriceBoundsAndProtections([
+          { asset: assetA, action: SetMinPrice, value: validNewMin },
+          { asset: assetA, action: SetMinPrice, value: aboveSpot },
+        ]),
+      ).to.be.revertedWithCustomError(oracle, "InvalidMinPrice");
+
+      const stateAfter = await oracle.assetProtectionConfig(assetA);
+      expect(stateAfter.minPrice).to.equal(stateBefore.minPrice);
+    });
+
+    it("reverts with PriceExceedsUint128 when a SetMin/SetMax value overflows uint128", async () => {
+      const overflow = BigNumber.from(2).pow(128);
+      await expect(
+        oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: SetMinPrice, value: overflow }]),
+      ).to.be.revertedWithCustomError(oracle, "PriceExceedsUint128");
+    });
+
+    it("re-uses per-action validation: SetMinPrice with value > spot still reverts with InvalidMinPrice", async () => {
+      const aboveSpot = SPOT_PRICE.add(1);
+      await expect(
+        oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: SetMinPrice, value: aboveSpot }]),
+      ).to.be.revertedWithCustomError(oracle, "InvalidMinPrice");
+    });
+
+    it("re-uses per-action validation: ExitProtectionMode before cooldown still reverts with CooldownNotElapsed", async () => {
+      // Pre-arm protection without waiting cooldown
+      const pumpSpot = MIN_PRICE.mul(EXP_SCALE.add(DEFAULT_THRESHOLD)).div(EXP_SCALE).add(1);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(pumpSpot);
+      await oracle.getBoundedCollateralPrice(vTokenA.address);
+
+      await expect(
+        oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: ExitProtectionMode, value: 0 }]),
+      ).to.be.revertedWithCustomError(oracle, "CooldownNotElapsed");
+    });
+
+    // Note: the catch-all `revert InvalidKeeperAction(...)` branch is defensive for future enum
+    // additions. With the current 3-value enum, Solidity's abi-boundary enum range check rejects
+    // out-of-range action values before the function body executes, so the branch is unreachable
+    // through a well-formed external call and is left untested.
   });
 
   // ────────────────────────────────────────────────────────────────────────
@@ -1354,6 +1579,56 @@ describe("DeviationBoundedOracle", () => {
       await expect(tx).to.not.emit(oracle, "MinPriceUpdated");
       await expect(tx).to.not.emit(oracle, "MaxPriceUpdated");
       expect(await oracle.currentlyUsingProtectedPrice(assetB)).to.equal(true);
+    });
+  });
+
+  // ────────────────────────────────────────────────────────────────────────
+  // 15b. transient cache gating (DBO.cachingEnabled)
+  // ────────────────────────────────────────────────────────────────────────
+
+  describe("transient cache gating (DBO.cachingEnabled)", () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let caller: any;
+
+    beforeEach(async () => {
+      await initAssetWithWindow(assetA);
+      const callerFactory = await ethers.getContractFactory("DeviationBoundedOracleCaller", admin);
+      caller = await callerFactory.deploy(oracle.address);
+      resilientOracle.getPrice.reset();
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(SPOT_PRICE);
+    });
+
+    it("view reads hit the cache when cachingEnabled is true (default)", async () => {
+      await caller.updateAndGetBothPrices(vTokenA.address);
+
+      // updateProtectionState fetches the spot once; both view getters read from the
+      // transient cache and do not re-query the ResilientOracle.
+      expect(resilientOracle.getPrice).to.have.callCount(1);
+    });
+
+    it("view reads bypass the cache when cachingEnabled is false", async () => {
+      await oracle.setCachingEnabled(assetA, false);
+      resilientOracle.getPrice.reset();
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(SPOT_PRICE);
+
+      await caller.updateAndGetBothPrices(vTokenA.address);
+
+      // updateProtectionState fetches once; each view getter recomputes and fetches again.
+      expect(resilientOracle.getPrice).to.have.callCount(3);
+    });
+
+    it("disabling caching mid-window does not serve stale prices from prior cache writes", async () => {
+      // Seed the cache first by running update with the original spot.
+      await caller.updateAndGetBothPrices(vTokenA.address);
+
+      // Disable caching and change the spot — views must recompute with the new spot.
+      await oracle.setCachingEnabled(assetA, false);
+      const newSpot = parseUnits("1.05", 18);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(newSpot);
+
+      const [collateral, debt] = await caller.callStatic.updateAndGetBothPrices(vTokenA.address);
+      expect(collateral).to.equal(newSpot);
+      expect(debt).to.equal(newSpot);
     });
   });
 
@@ -1862,10 +2137,7 @@ describe("DeviationBoundedOracle", () => {
 
       // Bump resetThreshold above the current range (~29.4%) so the convergence check passes
       const stateBeforeExit = await oracle.assetProtectionConfig(assetA);
-      const range = stateBeforeExit.maxPrice
-        .sub(stateBeforeExit.minPrice)
-        .mul(EXP_SCALE)
-        .div(stateBeforeExit.minPrice);
+      const range = stateBeforeExit.maxPrice.sub(stateBeforeExit.minPrice).mul(EXP_SCALE).div(stateBeforeExit.minPrice);
       const newReset = range.add(parseUnits("0.001", 18));
       const newTrigger = newReset.add(parseUnits("0.01", 18));
       await oracle.setThresholds(assetA, newTrigger, newReset);
