@@ -1909,7 +1909,9 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
           await oracle.setThresholds(assetA, trigger, newReset);
         }
 
-        const tx = await oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: ExitProtectionMode, value: 0 }]);
+        const tx = await oracle.syncPriceBoundsAndProtections([
+          { asset: assetA, action: ExitProtectionMode, value: 0 },
+        ]);
         await expect(tx).to.emit(oracle, "ProtectionModeExited").withArgs(assetA);
         expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
       });
