@@ -288,68 +288,45 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
 
     /**
      * @notice Initializes protection for a new asset
-     * @param asset The underlying asset address
-     * @param cooldownPeriod Minimum time protection stays active after last trigger
-     * @param triggerThreshold Deviation threshold that activates protection (mantissa). Must be between 5% and 50%.
-     * @param resetThreshold Deviation threshold below which protection can be exited (mantissa). Must be non-zero and below triggerThreshold.
-     * @param enableBoundedPricing Whether to enable bounded pricing immediately upon initialization
-     * @param enableCaching Whether transient caching of the bounded (collateral, debt) pair is enabled for this asset
+     * @param tokenConfig_ Token config input for the asset
      * @custom:access Only Governance
      * @custom:event ProtectionInitialized
      * @custom:event BoundedPricingWhitelistUpdated
      */
-    function setTokenConfig(
-        address asset,
-        uint64 cooldownPeriod,
-        uint256 triggerThreshold,
-        uint256 resetThreshold,
-        bool enableBoundedPricing,
-        bool enableCaching
-    ) external {
-        _checkAccessAllowed("setTokenConfig(address,uint64,uint256,uint256,bool,bool)");
-        _setTokenConfig(asset, cooldownPeriod, triggerThreshold, resetThreshold, enableBoundedPricing, enableCaching);
+    function setTokenConfig(TokenConfigInput calldata tokenConfig_) external {
+        _checkAccessAllowed("setTokenConfig((address,uint64,uint256,uint256,bool,bool))");
+        _setTokenConfig(
+            tokenConfig_.asset,
+            tokenConfig_.cooldownPeriod,
+            tokenConfig_.triggerThreshold,
+            tokenConfig_.resetThreshold,
+            tokenConfig_.enableBoundedPricing,
+            tokenConfig_.enableCaching
+        );
     }
 
     /**
      * @notice Batch-initializes protection for multiple assets in a single transaction
-     * @param assets Array of underlying asset addresses
-     * @param cooldownPeriods Array of cooldown periods (seconds)
-     * @param triggerThresholds Array of trigger thresholds (mantissa)
-     * @param resetThresholds Array of reset thresholds (mantissa)
-     * @param enableBoundedPricings Array of whether to enable bounded pricing per asset
-     * @param enableCachings Array of whether transient caching is enabled per asset
+     * @param tokenConfigs_ Array of token config inputs, one per asset
      * @custom:access Only Governance
-     * @custom:error InvalidArrayLength if array lengths do not match
+     * @custom:error InvalidArrayLength if the input array is empty
      * @custom:event ProtectionInitialized for each asset
      * @custom:event BoundedPricingWhitelistUpdated for each asset
      */
-    function setTokenConfigs(
-        address[] calldata assets,
-        uint64[] calldata cooldownPeriods,
-        uint256[] calldata triggerThresholds,
-        uint256[] calldata resetThresholds,
-        bool[] calldata enableBoundedPricings,
-        bool[] calldata enableCachings
-    ) external {
-        _checkAccessAllowed("setTokenConfigs(address[],uint64[],uint256[],uint256[],bool[],bool[])");
-        uint256 len = assets.length;
-        if (
-            len == 0 ||
-            len != cooldownPeriods.length ||
-            len != triggerThresholds.length ||
-            len != resetThresholds.length ||
-            len != enableBoundedPricings.length ||
-            len != enableCachings.length
-        ) revert InvalidArrayLength();
+    function setTokenConfigs(TokenConfigInput[] calldata tokenConfigs_) external {
+        _checkAccessAllowed("setTokenConfigs((address,uint64,uint256,uint256,bool,bool)[])");
+        uint256 len = tokenConfigs_.length;
+        if (len == 0) revert InvalidArrayLength();
 
         for (uint256 i; i < len; ++i) {
+            TokenConfigInput calldata tokenConfig = tokenConfigs_[i];
             _setTokenConfig(
-                assets[i],
-                cooldownPeriods[i],
-                triggerThresholds[i],
-                resetThresholds[i],
-                enableBoundedPricings[i],
-                enableCachings[i]
+                tokenConfig.asset,
+                tokenConfig.cooldownPeriod,
+                tokenConfig.triggerThreshold,
+                tokenConfig.resetThreshold,
+                tokenConfig.enableBoundedPricing,
+                tokenConfig.enableCaching
             );
         }
     }
@@ -561,6 +538,8 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param resetThreshold Deviation threshold below which protection can be exited (mantissa). Must be non-zero and below triggerThreshold.
      * @param enableBoundedPricing Whether to enable bounded pricing immediately upon initialization
      * @param enableCaching Whether transient caching of the bounded (collateral, debt) pair is enabled for this asset
+     * @custom:error ZeroAddressNotAllowed if asset is the zero address
+     * @custom:error ZeroValueNotAllowed if cooldownPeriod, triggerThreshold, or resetThreshold is zero
      * @custom:error MarketAlreadyInitialized if the asset has already been initialized
      * @custom:error ThresholdBelowMinimum if triggerThreshold is below 5%
      * @custom:error ThresholdAboveMaximum if triggerThreshold is above 50%

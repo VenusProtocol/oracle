@@ -44,6 +44,22 @@ describe("DeviationBoundedOracle", () => {
   let nativeMarket: VBEP20Harness;
   let vaiToken: VBEP20Harness;
 
+  const tokenCfg = (
+    asset: string,
+    cooldownPeriod: number | BigNumber = DEFAULT_COOLDOWN,
+    triggerThreshold: BigNumber = DEFAULT_THRESHOLD,
+    resetThreshold: BigNumber = DEFAULT_RESET_THRESHOLD,
+    enableBoundedPricing = true,
+    enableCaching = true,
+  ) => ({
+    asset,
+    cooldownPeriod,
+    triggerThreshold,
+    resetThreshold,
+    enableBoundedPricing,
+    enableCaching,
+  });
+
   // Basic init: min=max=spot (SPOT_PRICE = 1e18)
   const initAsset = async (
     asset: string,
@@ -51,7 +67,7 @@ describe("DeviationBoundedOracle", () => {
     triggerThreshold: BigNumber = DEFAULT_THRESHOLD,
     resetThreshold: BigNumber = DEFAULT_RESET_THRESHOLD,
   ) => {
-    await oracle.setTokenConfig(asset, cooldown, triggerThreshold, resetThreshold, true, true);
+    await oracle.setTokenConfig(tokenCfg(asset, cooldown, triggerThreshold, resetThreshold));
   };
 
   // Init + widen window via keeper updates (for price-bounding tests that need min=0.9, max=1.1)
@@ -63,7 +79,7 @@ describe("DeviationBoundedOracle", () => {
     triggerThreshold: BigNumber = DEFAULT_THRESHOLD,
     resetThreshold: BigNumber = DEFAULT_RESET_THRESHOLD,
   ) => {
-    await oracle.setTokenConfig(asset, cooldown, triggerThreshold, resetThreshold, true, true);
+    await oracle.setTokenConfig(tokenCfg(asset, cooldown, triggerThreshold, resetThreshold));
     await oracle.updateMinPrice(asset, minPrice);
     await oracle.updateMaxPrice(asset, maxPrice);
   };
@@ -141,14 +157,7 @@ describe("DeviationBoundedOracle", () => {
   describe("setTokenConfig", () => {
     describe("happy path", () => {
       it("sets all struct fields, emits events, updates asset lists", async () => {
-        const tx = await oracle.setTokenConfig(
-          assetA,
-          DEFAULT_COOLDOWN,
-          DEFAULT_THRESHOLD,
-          DEFAULT_RESET_THRESHOLD,
-          true,
-          true,
-        );
+        const tx = await oracle.setTokenConfig(tokenCfg(assetA));
 
         // Verify struct fields via public getter
         const state = await oracle.assetProtectionConfig(assetA);
@@ -180,12 +189,7 @@ describe("DeviationBoundedOracle", () => {
 
       it("initializes with bounded pricing disabled when enableBoundedPricing is false", async () => {
         const tx = await oracle.setTokenConfig(
-          assetA,
-          DEFAULT_COOLDOWN,
-          DEFAULT_THRESHOLD,
-          DEFAULT_RESET_THRESHOLD,
-          false,
-          true,
+          tokenCfg(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, false, true),
         );
 
         const state = await oracle.assetProtectionConfig(assetA);
@@ -203,81 +207,81 @@ describe("DeviationBoundedOracle", () => {
     describe("revert branches", () => {
       it("reverts when caller is unauthorized", async () => {
         acm.isAllowedToCall.returns(false);
-        await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true, true),
-        ).to.be.revertedWithCustomError(oracle, "Unauthorized");
+        await expect(oracle.setTokenConfig(tokenCfg(assetA))).to.be.revertedWithCustomError(oracle, "Unauthorized");
       });
 
       it("reverts when asset is zero address", async () => {
-        await expect(
-          oracle.setTokenConfig(addr0000, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true, true),
-        ).to.be.revertedWithCustomError(oracle, "ZeroAddressNotAllowed");
+        await expect(oracle.setTokenConfig(tokenCfg(addr0000))).to.be.revertedWithCustomError(
+          oracle,
+          "ZeroAddressNotAllowed",
+        );
       });
 
       it("reverts when already initialized", async () => {
         await initAsset(assetA);
-        await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true, true),
-        ).to.be.revertedWithCustomError(oracle, "MarketAlreadyInitialized");
+        await expect(oracle.setTokenConfig(tokenCfg(assetA))).to.be.revertedWithCustomError(
+          oracle,
+          "MarketAlreadyInitialized",
+        );
       });
 
       it("reverts when threshold < MIN_THRESHOLD", async () => {
         await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, MIN_THRESHOLD.sub(1), DEFAULT_RESET_THRESHOLD, true, true),
+          oracle.setTokenConfig(tokenCfg(assetA, DEFAULT_COOLDOWN, MIN_THRESHOLD.sub(1), DEFAULT_RESET_THRESHOLD)),
         ).to.be.revertedWithCustomError(oracle, "ThresholdBelowMinimum");
       });
 
       it("reverts when threshold > MAX_THRESHOLD", async () => {
         await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, MAX_THRESHOLD.add(1), DEFAULT_RESET_THRESHOLD, true, true),
+          oracle.setTokenConfig(tokenCfg(assetA, DEFAULT_COOLDOWN, MAX_THRESHOLD.add(1), DEFAULT_RESET_THRESHOLD)),
         ).to.be.revertedWithCustomError(oracle, "ThresholdAboveMaximum");
       });
 
       it("reverts when resetThreshold >= triggerThreshold", async () => {
         await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_THRESHOLD, true, true),
+          oracle.setTokenConfig(tokenCfg(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_THRESHOLD)),
         ).to.be.revertedWithCustomError(oracle, "InvalidResetThreshold");
       });
 
       it("reverts when asset is VAI", async () => {
         const vaiAddr = await vaiToken.underlying();
-        await expect(
-          oracle.setTokenConfig(vaiAddr, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true, true),
-        ).to.be.revertedWithCustomError(oracle, "VAINotAllowed");
+        await expect(oracle.setTokenConfig(tokenCfg(vaiAddr))).to.be.revertedWithCustomError(oracle, "VAINotAllowed");
       });
 
       it("reverts when cooldownPeriod is zero", async () => {
         await expect(
-          oracle.setTokenConfig(assetA, 0, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true, true),
+          oracle.setTokenConfig(tokenCfg(assetA, 0, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD)),
         ).to.be.revertedWithCustomError(oracle, "ZeroValueNotAllowed");
       });
 
       it("reverts when triggerThreshold is zero", async () => {
         await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, 0, DEFAULT_RESET_THRESHOLD, true, true),
+          oracle.setTokenConfig(tokenCfg(assetA, DEFAULT_COOLDOWN, BigNumber.from(0), DEFAULT_RESET_THRESHOLD)),
         ).to.be.revertedWithCustomError(oracle, "ZeroValueNotAllowed");
       });
 
       it("reverts when resetThreshold is zero", async () => {
         await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, 0, true, true),
+          oracle.setTokenConfig(tokenCfg(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, BigNumber.from(0))),
         ).to.be.revertedWithCustomError(oracle, "ZeroValueNotAllowed");
       });
 
       it("reverts when re-initializing after de-whitelist", async () => {
         await initAsset(assetA);
         await oracle.setAssetBoundedPricingEnabled(assetA, false);
-        await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true, true),
-        ).to.be.revertedWithCustomError(oracle, "MarketAlreadyInitialized");
+        await expect(oracle.setTokenConfig(tokenCfg(assetA))).to.be.revertedWithCustomError(
+          oracle,
+          "MarketAlreadyInitialized",
+        );
       });
 
       it("reverts with PriceExceedsUint128 when oracle returns > uint128 max", async () => {
         const overflowPrice = BigNumber.from(2).pow(128);
         resilientOracle.getPrice.whenCalledWith(assetA).returns(overflowPrice);
-        await expect(
-          oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, DEFAULT_THRESHOLD, DEFAULT_RESET_THRESHOLD, true, true),
-        ).to.be.revertedWithCustomError(oracle, "PriceExceedsUint128");
+        await expect(oracle.setTokenConfig(tokenCfg(assetA))).to.be.revertedWithCustomError(
+          oracle,
+          "PriceExceedsUint128",
+        );
       });
     });
   });
@@ -287,15 +291,17 @@ describe("DeviationBoundedOracle", () => {
   // ────────────────────────────────────────────────────────────────────────
 
   describe("setTokenConfigs (batch)", () => {
+    const cfg = (asset: string, enableBoundedPricing = true, enableCaching = true) => ({
+      asset,
+      cooldownPeriod: DEFAULT_COOLDOWN,
+      triggerThreshold: DEFAULT_THRESHOLD,
+      resetThreshold: DEFAULT_RESET_THRESHOLD,
+      enableBoundedPricing,
+      enableCaching,
+    });
+
     it("batch-initializes multiple assets, verifies structs and events", async () => {
-      const tx = await oracle.setTokenConfigs(
-        [assetA, assetB],
-        [DEFAULT_COOLDOWN, DEFAULT_COOLDOWN],
-        [DEFAULT_THRESHOLD, DEFAULT_THRESHOLD],
-        [DEFAULT_RESET_THRESHOLD, DEFAULT_RESET_THRESHOLD],
-        [true, true],
-        [true, true],
-      );
+      const tx = await oracle.setTokenConfigs([cfg(assetA), cfg(assetB)]);
 
       // Verify both assets initialized
       const stateA = await oracle.assetProtectionConfig(assetA);
@@ -322,14 +328,7 @@ describe("DeviationBoundedOracle", () => {
     });
 
     it("batch with mixed enableBoundedPricing values", async () => {
-      await oracle.setTokenConfigs(
-        [assetA, assetB],
-        [DEFAULT_COOLDOWN, DEFAULT_COOLDOWN],
-        [DEFAULT_THRESHOLD, DEFAULT_THRESHOLD],
-        [DEFAULT_RESET_THRESHOLD, DEFAULT_RESET_THRESHOLD],
-        [true, false],
-        [true, true],
-      );
+      await oracle.setTokenConfigs([cfg(assetA, true, true), cfg(assetB, false, true)]);
 
       expect(await oracle.isBoundedPricingEnabled(assetA)).to.equal(true);
       expect(await oracle.isBoundedPricingEnabled(assetB)).to.equal(false);
@@ -337,63 +336,26 @@ describe("DeviationBoundedOracle", () => {
 
     it("reverts when caller is unauthorized", async () => {
       acm.isAllowedToCall.returns(false);
-      await expect(
-        oracle.setTokenConfigs(
-          [assetA],
-          [DEFAULT_COOLDOWN],
-          [DEFAULT_THRESHOLD],
-          [DEFAULT_RESET_THRESHOLD],
-          [true],
-          [true],
-        ),
-      ).to.be.revertedWithCustomError(oracle, "Unauthorized");
-    });
-
-    it("reverts when array lengths mismatch", async () => {
-      await expect(
-        oracle.setTokenConfigs(
-          [assetA, assetB],
-          [DEFAULT_COOLDOWN],
-          [DEFAULT_THRESHOLD],
-          [DEFAULT_RESET_THRESHOLD],
-          [true],
-          [true],
-        ),
-      ).to.be.revertedWithCustomError(oracle, "InvalidArrayLength");
+      await expect(oracle.setTokenConfigs([cfg(assetA)])).to.be.revertedWithCustomError(oracle, "Unauthorized");
     });
 
     it("reverts when one asset in batch is invalid (entire tx reverts)", async () => {
-      await expect(
-        oracle.setTokenConfigs(
-          [assetA, addr0000],
-          [DEFAULT_COOLDOWN, DEFAULT_COOLDOWN],
-          [DEFAULT_THRESHOLD, DEFAULT_THRESHOLD],
-          [DEFAULT_RESET_THRESHOLD, DEFAULT_RESET_THRESHOLD],
-          [true, true],
-          [true, true],
-        ),
-      ).to.be.revertedWithCustomError(oracle, "ZeroAddressNotAllowed");
+      await expect(oracle.setTokenConfigs([cfg(assetA), cfg(addr0000)])).to.be.revertedWithCustomError(
+        oracle,
+        "ZeroAddressNotAllowed",
+      );
     });
 
     it("reverts when one asset is already initialized", async () => {
       await initAsset(assetA);
-      await expect(
-        oracle.setTokenConfigs(
-          [assetA, assetB],
-          [DEFAULT_COOLDOWN, DEFAULT_COOLDOWN],
-          [DEFAULT_THRESHOLD, DEFAULT_THRESHOLD],
-          [DEFAULT_RESET_THRESHOLD, DEFAULT_RESET_THRESHOLD],
-          [true, true],
-          [true, true],
-        ),
-      ).to.be.revertedWithCustomError(oracle, "MarketAlreadyInitialized");
+      await expect(oracle.setTokenConfigs([cfg(assetA), cfg(assetB)])).to.be.revertedWithCustomError(
+        oracle,
+        "MarketAlreadyInitialized",
+      );
     });
 
-    it("succeeds with empty arrays (no-op)", async () => {
-      await expect(oracle.setTokenConfigs([], [], [], [], [], [])).to.be.revertedWithCustomError(
-        oracle,
-        "InvalidArrayLength",
-      );
+    it("reverts on empty input", async () => {
+      await expect(oracle.setTokenConfigs([])).to.be.revertedWithCustomError(oracle, "InvalidArrayLength");
     });
   });
 

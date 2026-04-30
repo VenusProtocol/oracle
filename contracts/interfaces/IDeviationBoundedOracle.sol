@@ -51,6 +51,22 @@ interface IDeviationBoundedOracle {
         uint256 value;
     }
 
+    /// @notice One item in a setTokenConfigs payload
+    struct TokenConfigInput {
+        /// @notice The underlying asset address
+        address asset;
+        /// @notice Minimum time protection stays active after the last trigger (seconds)
+        uint64 cooldownPeriod;
+        /// @notice Entry deviation threshold (mantissa). Must be between 5% and 50%.
+        uint256 triggerThreshold;
+        /// @notice Exit deviation threshold (mantissa). Must be non-zero and below triggerThreshold.
+        uint256 resetThreshold;
+        /// @notice Whether to enable bounded pricing immediately upon initialization
+        bool enableBoundedPricing;
+        /// @notice Whether transient caching of the bounded (collateral, debt) pair is enabled for this asset
+        bool enableCaching;
+    }
+
     // --- Events ---
 
     /// @notice Emitted when protection is initialized for an asset
@@ -286,13 +302,10 @@ interface IDeviationBoundedOracle {
      * @notice Initializes protection parameters for a new asset
      * @dev Seeds the initial min/max window from the current ResilientOracle spot price,
      *      confirming the oracle is live for this asset before it is listed.
-     * @param asset The underlying asset address
-     * @param cooldownPeriod Minimum time protection stays active after the last trigger, in seconds
-     * @param triggerThreshold Deviation threshold that activates protection (mantissa). Must be between 5% and 50%.
-     * @param resetThreshold Deviation threshold below which protection can be exited (mantissa). Must be non-zero and below triggerThreshold.
-     * @param enableBoundedPricing Whether to enable bounded pricing immediately upon initialization
-     * @param enableCaching Whether transient caching of the bounded (collateral, debt) pair is enabled for this asset
+     * @param tokenConfig_ Token config input for the asset
      * @custom:access Only Governance
+     * @custom:error ZeroAddressNotAllowed if asset is the zero address
+     * @custom:error ZeroValueNotAllowed if cooldownPeriod, triggerThreshold, or resetThreshold is zero
      * @custom:error MarketAlreadyInitialized if the asset has already been initialized
      * @custom:error ThresholdBelowMinimum if triggerThreshold is below 5%
      * @custom:error ThresholdAboveMaximum if triggerThreshold is above 50%
@@ -302,36 +315,25 @@ interface IDeviationBoundedOracle {
      * @custom:event ProtectionInitialized
      * @custom:event BoundedPricingWhitelistUpdated
      */
-    function setTokenConfig(
-        address asset,
-        uint64 cooldownPeriod,
-        uint256 triggerThreshold,
-        uint256 resetThreshold,
-        bool enableBoundedPricing,
-        bool enableCaching
-    ) external;
+    function setTokenConfig(TokenConfigInput calldata tokenConfig_) external;
 
     /**
      * @notice Batch-initializes protection parameters for multiple assets in a single transaction
-     * @param assets Array of underlying asset addresses
-     * @param cooldownPeriods Array of cooldown periods (seconds)
-     * @param triggerThresholds Array of trigger thresholds (mantissa)
-     * @param resetThresholds Array of reset thresholds (mantissa)
-     * @param enableBoundedPricings Array of whether to enable bounded pricing per asset
-     * @param enableCachings Array of whether transient caching is enabled per asset
+     * @param tokenConfigs_ Array of token config inputs, one per asset
      * @custom:access Only Governance
-     * @custom:error InvalidArrayLength if array lengths do not match
+     * @custom:error InvalidArrayLength if the input array is empty
+     * @custom:error ZeroAddressNotAllowed if any asset is the zero address
+     * @custom:error ZeroValueNotAllowed if any cooldownPeriod, triggerThreshold, or resetThreshold is zero
+     * @custom:error MarketAlreadyInitialized if any asset has already been initialized
+     * @custom:error ThresholdBelowMinimum if any triggerThreshold is below 5%
+     * @custom:error ThresholdAboveMaximum if any triggerThreshold is above 50%
+     * @custom:error InvalidResetThreshold if any resetThreshold is at or above its triggerThreshold
+     * @custom:error VAINotAllowed if any asset is the VAI token
+     * @custom:error PriceExceedsUint128 if the spot price for any asset overflows uint128
      * @custom:event ProtectionInitialized for each asset
      * @custom:event BoundedPricingWhitelistUpdated for each asset
      */
-    function setTokenConfigs(
-        address[] calldata assets,
-        uint64[] calldata cooldownPeriods,
-        uint256[] calldata triggerThresholds,
-        uint256[] calldata resetThresholds,
-        bool[] calldata enableBoundedPricings,
-        bool[] calldata enableCachings
-    ) external;
+    function setTokenConfigs(TokenConfigInput[] calldata tokenConfigs_) external;
 
     /**
      * @notice Sets the cooldown period for an asset
