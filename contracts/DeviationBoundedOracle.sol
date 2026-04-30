@@ -52,11 +52,11 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     address public immutable vai;
 
     /// @notice Transient storage slot for caching final collateral prices within a transaction
-    /// @dev custom:storage-location erc7201:venus-protocol/oracle/DeviationBoundedOracle/cache
-    /// keccak256(abi.encode(uint256(keccak256("venus-protocol/oracle/DeviationBoundedOracle/cache")) - 1))
+    /// @dev custom:storage-location erc7201:venus-protocol/oracle/DeviationBoundedOracle/collateralCache
+    /// keccak256(abi.encode(uint256(keccak256("venus-protocol/oracle/DeviationBoundedOracle/collateralCache")) - 1))
     ///   & ~bytes32(uint256(0xff))
     bytes32 public constant COLLATERAL_PRICE_CACHE_SLOT =
-        0x818cfa9b1e1b1cc716656acdb79a94121ed79bfb196bf958683ed2a3277cb200;
+        0x7bd9fcecef8429101f34baefb335883a97edd91e0d8fdc455d73ab727abf7000;
 
     /// @notice Transient storage slot for caching final debt prices within a transaction
     /// @dev custom:storage-location erc7201:venus-protocol/oracle/DeviationBoundedOracle/debtCache
@@ -254,24 +254,34 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      */
     function exitProtectionMode(address asset) external {
         _checkAccessAllowed("exitProtectionMode(address)");
-        ensureNonzeroAddress(asset);
-        MarketProtectionState storage state = _ensureInitialized(asset);
+        _exitProtectionMode(asset);
+    }
 
-        if (!state.currentlyUsingProtectedPrice) revert ProtectedPriceInactive(asset);
-
-        if (block.timestamp < uint256(state.lastProtectionTriggeredAt) + uint256(state.cooldownPeriod)) {
-            revert CooldownNotElapsed(asset, state.lastProtectionTriggeredAt, state.cooldownPeriod);
+    /**
+     * @notice Dispatches a batch of keeper-only actions (set min, set max, or exit protection) under a single ACM check
+     * @dev Each item is processed in array order; any item revert rolls back the whole batch.
+     *      `value` is interpreted as the new bound price for SetMinPrice / SetMaxPrice and ignored for ExitProtectionMode.
+     *      Empty `actions` is a no-op success.
+     * @param actions The list of keeper actions to apply
+     * @custom:access Only authorized keeper addresses
+     * @custom:error InvalidKeeperAction if an item carries an unsupported action enum value
+     * @custom:event MinPriceUpdated, MaxPriceUpdated, ProtectionModeExited
+     */
+    function syncPriceBoundsAndProtections(KeeperActionItem[] calldata actions) external {
+        _checkAccessAllowed("syncPriceBoundsAndProtections((address,uint8,uint256)[])");
+        uint256 len = actions.length;
+        for (uint256 i; i < len; ++i) {
+            KeeperActionItem calldata item = actions[i];
+            if (item.action == KeeperAction.SetMinPrice) {
+                _validateAndUpdateBound(item.asset, _safeToUint128(item.value), PriceBoundType.MIN);
+            } else if (item.action == KeeperAction.SetMaxPrice) {
+                _validateAndUpdateBound(item.asset, _safeToUint128(item.value), PriceBoundType.MAX);
+            } else if (item.action == KeeperAction.ExitProtectionMode) {
+                _exitProtectionMode(item.asset);
+            } else {
+                revert InvalidKeeperAction(uint8(item.action));
+            }
         }
-
-        // exit protected price if price range has converged below exit threshold
-        uint256 rangeRatio = _computePriceBoundRatio(state.minPrice, state.maxPrice);
-        if (rangeRatio >= state.resetThreshold) {
-            revert PriceRangeNotConverged(asset, rangeRatio, state.resetThreshold);
-        }
-
-        state.currentlyUsingProtectedPrice = false;
-        state.lastProtectionTriggeredAt = 0;
-        emit ProtectionModeExited(asset);
     }
 
     // ----- Admin functions (governance-gated) -----
@@ -604,8 +614,8 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
      * @param boundType Whether this is a MIN or MAX bound update
      * @custom:error ZeroPriceNotAllowed if newPrice is zero
      * @custom:error MarketNotInitialized if the asset has not been initialized
-     * @custom:error InvalidMinPrice if boundType is MIN and newPrice exceeds the current spot or is at or above maxPrice
-     * @custom:error InvalidMaxPrice if boundType is MAX and newPrice is below the current spot or is at or below minPrice
+     * @custom:error InvalidMinPrice if boundType is MIN and newPrice exceeds the current spot or is strictly above maxPrice
+     * @custom:error InvalidMaxPrice if boundType is MAX and newPrice is below the current spot or is strictly below minPrice
      */
     function _validateAndUpdateBound(address asset, uint128 newPrice, PriceBoundType boundType) internal {
         ensureNonzeroAddress(asset);
@@ -614,14 +624,44 @@ contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
 
         uint256 currentSpot = _fetchSpotPrice(asset);
         if (boundType == PriceBoundType.MIN) {
-            if (newPrice >= state.maxPrice || uint256(newPrice) > currentSpot)
+            if (newPrice > state.maxPrice || uint256(newPrice) > currentSpot)
                 revert InvalidMinPrice(asset, newPrice, currentSpot);
             _setMinPrice(state, asset, newPrice);
         } else if (boundType == PriceBoundType.MAX) {
-            if (newPrice <= state.minPrice || uint256(newPrice) < currentSpot)
+            if (newPrice < state.minPrice || uint256(newPrice) < currentSpot)
                 revert InvalidMaxPrice(asset, newPrice, currentSpot);
             _setMaxPrice(state, asset, newPrice);
         }
+    }
+
+    /**
+     * @notice Clears protection for an asset once cooldown has elapsed and the window has converged
+     * @dev Shared body of `exitProtectionMode` and the ExitProtectionMode branch of `syncPriceBoundsAndProtections`.
+     *      Callers are responsible for ACM gating before invoking this helper.
+     * @param asset The underlying asset address
+     * @custom:error MarketNotInitialized if the asset has not been initialized
+     * @custom:error ProtectedPriceInactive if protection is not currently active
+     * @custom:error CooldownNotElapsed if cooldown period has not elapsed
+     * @custom:error PriceRangeNotConverged if the window range is still above the exit threshold
+     */
+    function _exitProtectionMode(address asset) internal {
+        ensureNonzeroAddress(asset);
+        MarketProtectionState storage state = _ensureInitialized(asset);
+
+        if (!state.currentlyUsingProtectedPrice) revert ProtectedPriceInactive(asset);
+
+        if (block.timestamp < uint256(state.lastProtectionTriggeredAt) + uint256(state.cooldownPeriod)) {
+            revert CooldownNotElapsed(asset, state.lastProtectionTriggeredAt, state.cooldownPeriod);
+        }
+
+        uint256 rangeRatio = _computePriceBoundRatio(state.minPrice, state.maxPrice);
+        if (rangeRatio >= state.resetThreshold) {
+            revert PriceRangeNotConverged(asset, rangeRatio, state.resetThreshold);
+        }
+
+        state.currentlyUsingProtectedPrice = false;
+        state.lastProtectionTriggeredAt = 0;
+        emit ProtectionModeExited(asset);
     }
 
     /**

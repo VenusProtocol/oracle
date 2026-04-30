@@ -100,6 +100,7 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         "updateMinPrice(address,uint128)",
         "updateMaxPrice(address,uint128)",
         "exitProtectionMode(address)",
+        "syncPriceBoundsAndProtections((address,uint8,uint256)[])",
       ];
       for (const fn of DBO_FUNCTIONS) {
         await acmContract.giveCallPermission(oracleDeployed.address, fn, deployer.address);
@@ -584,8 +585,22 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         );
       });
 
-      it("7.4 reverts when newMin >= maxPrice", async () => {
-        await expect(oracle.updateMinPrice(assetA, MAX_PRICE)).to.be.revertedWithCustomError(oracle, "InvalidMinPrice");
+      it("7.4 reverts when newMin > maxPrice", async () => {
+        // Set spot above maxPrice so the spot constraint passes; the maxPrice check is what reverts
+        await mockOracle.setPrice(assetA, MAX_PRICE.add(parseUnits("0.05", 18)));
+        await expect(oracle.updateMinPrice(assetA, MAX_PRICE.add(1))).to.be.revertedWithCustomError(
+          oracle,
+          "InvalidMinPrice",
+        );
+      });
+
+      it("7.5 succeeds when newMin == maxPrice == spot (full convergence)", async () => {
+        // Spot equal to maxPrice so newMin = maxPrice = spot is valid under the relaxed semantics
+        await mockOracle.setPrice(assetA, MAX_PRICE);
+        await expect(oracle.updateMinPrice(assetA, MAX_PRICE)).to.not.be.reverted;
+        const state = await oracle.assetProtectionConfig(assetA);
+        expect(state.minPrice).to.equal(MAX_PRICE);
+        expect(state.maxPrice).to.equal(MAX_PRICE);
       });
     });
 
@@ -616,8 +631,22 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         );
       });
 
-      it("8.4 reverts when newMax <= minPrice", async () => {
-        await expect(oracle.updateMaxPrice(assetA, MIN_PRICE)).to.be.revertedWithCustomError(oracle, "InvalidMaxPrice");
+      it("8.4 reverts when newMax < minPrice", async () => {
+        // Set spot below minPrice so the spot constraint passes; the minPrice check is what reverts
+        await mockOracle.setPrice(assetA, MIN_PRICE.sub(parseUnits("0.05", 18)));
+        await expect(oracle.updateMaxPrice(assetA, MIN_PRICE.sub(1))).to.be.revertedWithCustomError(
+          oracle,
+          "InvalidMaxPrice",
+        );
+      });
+
+      it("8.5 succeeds when newMax == minPrice == spot (full convergence)", async () => {
+        // Spot equal to minPrice so newMax = minPrice = spot is valid under the relaxed semantics
+        await mockOracle.setPrice(assetA, MIN_PRICE);
+        await expect(oracle.updateMaxPrice(assetA, MIN_PRICE)).to.not.be.reverted;
+        const state = await oracle.assetProtectionConfig(assetA);
+        expect(state.minPrice).to.equal(MIN_PRICE);
+        expect(state.maxPrice).to.equal(MIN_PRICE);
       });
     });
 
@@ -1821,6 +1850,135 @@ if (FORK && FORKED_NETWORK === "bscmainnet") {
         const stateAfter = await oracle.assetProtectionConfig(assetA);
         expect(stateAfter.lastProtectionTriggeredAt).to.be.gt(t0);
         expect(stateAfter.minPrice).to.equal(deeperCrash);
+      });
+    });
+
+    // ────────────────────────────────────────────────────────────────────
+    // 38. syncPriceBoundsAndProtections (keeper batch)
+    // ────────────────────────────────────────────────────────────────────
+
+    describe("38. syncPriceBoundsAndProtections", () => {
+      // KeeperAction enum: 0 = SetMinPrice, 1 = SetMaxPrice, 2 = ExitProtectionMode
+      const SetMinPrice = 0;
+      const SetMaxPrice = 1;
+      const ExitProtectionMode = 2;
+
+      it("38.1 reverts when caller is unauthorized", async () => {
+        await initAssetWithWindow(assetA);
+        await expect(
+          oracle
+            .connect(someone)
+            .syncPriceBoundsAndProtections([{ asset: assetA, action: SetMinPrice, value: parseUnits("0.85", 18) }]),
+        ).to.be.revertedWithCustomError(oracle, "Unauthorized");
+      });
+
+      it("38.2 succeeds with empty array (no-op)", async () => {
+        await expect(oracle.syncPriceBoundsAndProtections([])).to.not.be.reverted;
+      });
+
+      it("38.3 single SetMinPrice item updates the asset and emits MinPriceUpdated", async () => {
+        await initAssetWithWindow(assetA);
+        const newMin = parseUnits("0.85", 18);
+        const tx = await oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: SetMinPrice, value: newMin }]);
+        await expect(tx).to.emit(oracle, "MinPriceUpdated").withArgs(assetA, MIN_PRICE, newMin);
+      });
+
+      it("38.4 single SetMaxPrice item updates the asset and emits MaxPriceUpdated", async () => {
+        await initAssetWithWindow(assetA);
+        const newMax = parseUnits("1.15", 18);
+        const tx = await oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: SetMaxPrice, value: newMax }]);
+        await expect(tx).to.emit(oracle, "MaxPriceUpdated").withArgs(assetA, MAX_PRICE, newMax);
+      });
+
+      it("38.5 single ExitProtectionMode item clears protection", async () => {
+        await initAssetWithWindow(assetA);
+        await triggerPump(assetA, vTokenA);
+
+        // Cooldown elapses
+        await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN + 1]);
+        await ethers.provider.send("evm_mine", []);
+
+        // Raise reset threshold so the range check passes
+        const state = await oracle.assetProtectionConfig(assetA);
+        const range = state.maxPrice.sub(state.minPrice).mul(EXP_SCALE).div(state.minPrice);
+        const newReset = range.add(parseUnits("0.001", 18));
+        const trigger = state.triggerThreshold;
+        if (newReset.gte(trigger)) {
+          await oracle.setThresholds(assetA, newReset.add(parseUnits("0.01", 18)), newReset);
+        } else {
+          await oracle.setThresholds(assetA, trigger, newReset);
+        }
+
+        const tx = await oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: ExitProtectionMode, value: 0 }]);
+        await expect(tx).to.emit(oracle, "ProtectionModeExited").withArgs(assetA);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
+      });
+
+      it("38.6 mixed batch (SetMin, SetMax, Exit) converges and exits in one tx", async () => {
+        await initAssetWithWindow(assetA);
+
+        // Trigger via pump
+        const pumpSpot = MIN_PRICE.mul(EXP_SCALE.add(DEFAULT_THRESHOLD)).div(EXP_SCALE).add(1);
+        await mockOracle.setPrice(assetA, pumpSpot);
+        await oracle.getBoundedCollateralPrice(vTokenA.address);
+        expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
+
+        // Spot stabilises somewhere inside the post-trigger window
+        const stableSpot = MIN_PRICE.add(pumpSpot).div(2);
+        await mockOracle.setPrice(assetA, stableSpot);
+
+        // Wait out cooldown
+        await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN + 1]);
+        await ethers.provider.send("evm_mine", []);
+
+        const tx = await oracle.syncPriceBoundsAndProtections([
+          { asset: assetA, action: SetMinPrice, value: stableSpot },
+          { asset: assetA, action: SetMaxPrice, value: stableSpot },
+          { asset: assetA, action: ExitProtectionMode, value: 0 },
+        ]);
+
+        await expect(tx)
+          .to.emit(oracle, "MinPriceUpdated")
+          .and.to.emit(oracle, "MaxPriceUpdated")
+          .and.to.emit(oracle, "ProtectionModeExited")
+          .withArgs(assetA);
+
+        const state = await oracle.assetProtectionConfig(assetA);
+        expect(state.minPrice).to.equal(stableSpot);
+        expect(state.maxPrice).to.equal(stableSpot);
+        expect(state.currentlyUsingProtectedPrice).to.equal(false);
+      });
+
+      it("38.7 revert in any item rolls back the whole batch", async () => {
+        await initAssetWithWindow(assetA);
+        const stateBefore = await oracle.assetProtectionConfig(assetA);
+        const aboveSpot = SPOT_PRICE.add(parseUnits("0.5", 18));
+
+        await expect(
+          oracle.syncPriceBoundsAndProtections([
+            { asset: assetA, action: SetMinPrice, value: parseUnits("0.85", 18) },
+            { asset: assetA, action: SetMinPrice, value: aboveSpot },
+          ]),
+        ).to.be.revertedWithCustomError(oracle, "InvalidMinPrice");
+
+        const stateAfter = await oracle.assetProtectionConfig(assetA);
+        expect(stateAfter.minPrice).to.equal(stateBefore.minPrice);
+      });
+
+      it("38.8 reverts with PriceExceedsUint128 when value overflows uint128", async () => {
+        await initAssetWithWindow(assetA);
+        const overflow = BigNumber.from(2).pow(128);
+        await expect(
+          oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: SetMinPrice, value: overflow }]),
+        ).to.be.revertedWithCustomError(oracle, "PriceExceedsUint128");
+      });
+
+      it("38.9 ExitProtectionMode before cooldown still reverts with CooldownNotElapsed", async () => {
+        await initAssetWithWindow(assetA);
+        await triggerPump(assetA, vTokenA);
+        await expect(
+          oracle.syncPriceBoundsAndProtections([{ asset: assetA, action: ExitProtectionMode, value: 0 }]),
+        ).to.be.revertedWithCustomError(oracle, "CooldownNotElapsed");
       });
     });
   });
