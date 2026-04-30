@@ -10,6 +10,13 @@ interface IDeviationBoundedOracle {
         MAX
     }
 
+    /// @notice Identifies which keeper action a single syncPriceBoundsAndProtections item performs
+    enum KeeperAction {
+        SetMinPrice,
+        SetMaxPrice,
+        ExitProtectionMode
+    }
+
     // --- Structs ---
 
     /// @notice Per-asset protection state tracking the min/max price window
@@ -32,6 +39,16 @@ interface IDeviationBoundedOracle {
         uint128 triggerThreshold;
         /// @notice Exit threshold (mantissa); window must converge below this for protection to be disabled
         uint128 resetThreshold;
+        /// @notice Whether transient caching of the bounded (collateral, debt) pair is enabled for this asset
+        bool cachingEnabled;
+    }
+
+    /// @notice One item in an syncPriceBoundsAndProtections payload
+    /// @dev `value` is interpreted per-action: the new bound price for SetMinPrice / SetMaxPrice, ignored for ExitProtectionMode
+    struct KeeperActionItem {
+        address asset;
+        KeeperAction action;
+        uint256 value;
     }
 
     // --- Events ---
@@ -69,9 +86,12 @@ interface IDeviationBoundedOracle {
     /// @notice Emitted when an asset's whitelist status changes
     event BoundedPricingWhitelistUpdated(address indexed asset, bool whitelisted);
 
+    /// @notice Emitted when the per-asset transient caching flag is toggled
+    event CachingEnabledUpdated(address indexed asset, bool oldEnabled, bool newEnabled);
+
     // --- Errors ---
 
-    /// @notice Thrown when trying to initialize protection for an asset that is not initialized
+    /// @notice Thrown when trying to use or update protection for an asset that has not been initialized
     error MarketNotInitialized(address asset);
 
     /// @notice Thrown when trying to initialize an already initialized market
@@ -107,14 +127,17 @@ interface IDeviationBoundedOracle {
     /// @notice Thrown when trying to initialize protection for VAI
     error VAINotAllowed();
 
-    /// @notice Thrown when trying to update for an asset with active protection
+    /// @notice Thrown when trying to disable bounded pricing for an asset while protection is active
     error ProtectedPriceActive(address asset);
 
     /// @notice Thrown when the lengths of the arrays are not equal
     error InvalidArrayLength();
 
-    /// @notice Thrown when the exit threshold is set above the deviation threshold
+    /// @notice Thrown when the exit threshold is set at or above the trigger threshold
     error InvalidResetThreshold(uint256 resetThreshold);
+
+    /// @notice Thrown when an syncPriceBoundsAndProtections item carries an unsupported action enum value
+    error InvalidKeeperAction(uint8 action);
 
     // --- Non-view price functions (update window + trigger protection) ---
 
@@ -155,9 +178,10 @@ interface IDeviationBoundedOracle {
     // --- State update (call before view price reads to populate transient cache) ---
 
     /**
-     * @notice Updates the protection state for a given vToken, caching the resolved price
+     * @notice Updates the protection state for a given vToken, caching the resolved collateral and debt prices
      * @dev Called by PolicyFacet before liquidity calculations so subsequent view price
-     *      reads in the same transaction are served from transient storage.
+     *      reads in the same transaction are served from transient storage. The transient
+     *      cache is only populated when the asset's `cachingEnabled` flag is `true`.
      * @param vToken vToken address
      * @custom:error PriceExceedsUint128 if the spot price overflows uint128
      * @custom:event MinPriceUpdated if a new window minimum is recorded
@@ -170,7 +194,8 @@ interface IDeviationBoundedOracle {
 
     /**
      * @notice Gets the bounded collateral price for a given vToken (view variant)
-     * @dev Reads from transient cache first; falls back to ResilientOracle on cache miss.
+     * @dev Reads from transient cache first when the asset's `cachingEnabled` flag is `true`;
+     *      falls back to ResilientOracle on cache miss or when caching is disabled.
      * @param vToken vToken address
      * @return price The bounded collateral price
      * @custom:error PriceExceedsUint128 if the spot price overflows uint128 (cache miss path only)
@@ -179,7 +204,8 @@ interface IDeviationBoundedOracle {
 
     /**
      * @notice Gets the bounded debt price for a given vToken (view variant)
-     * @dev Reads from transient cache first; falls back to ResilientOracle on cache miss.
+     * @dev Reads from transient cache first when the asset's `cachingEnabled` flag is `true`;
+     *      falls back to ResilientOracle on cache miss or when caching is disabled.
      * @param vToken vToken address
      * @return price The bounded debt price
      * @custom:error PriceExceedsUint128 if the spot price overflows uint128 (cache miss path only)
@@ -188,7 +214,8 @@ interface IDeviationBoundedOracle {
 
     /**
      * @notice Gets both the bounded collateral and debt prices for a given vToken (view variant)
-     * @dev Reads from transient cache first; falls back to ResilientOracle on cache miss.
+     * @dev Reads from transient cache first when the asset's `cachingEnabled` flag is `true`;
+     *      falls back to ResilientOracle on cache miss or when caching is disabled.
      * @param vToken vToken address
      * @return collateralPrice The bounded collateral price
      * @return debtPrice The bounded debt price
@@ -233,6 +260,26 @@ interface IDeviationBoundedOracle {
      */
     function exitProtectionMode(address asset) external;
 
+    /**
+     * @notice Dispatches a batch of keeper-only actions (set min, set max, or exit protection) under a single ACM check
+     * @dev Each item is processed in array order; any item revert rolls back the whole batch.
+     *      `value` is interpreted as the new bound price for SetMinPrice / SetMaxPrice and ignored for ExitProtectionMode.
+     *      Empty `actions` is a no-op success.
+     * @param actions The list of keeper actions to apply
+     * @custom:access Only authorized keeper addresses
+     * @custom:error InvalidKeeperAction if an item carries an unsupported action enum value
+     * @custom:error PriceExceedsUint128 if a SetMin/SetMax item value overflows uint128
+     * @custom:error ZeroPriceNotAllowed if a SetMin/SetMax item value is zero
+     * @custom:error MarketNotInitialized if any referenced asset has not been initialized
+     * @custom:error InvalidMinPrice if a SetMinPrice item violates the spot/maxPrice constraints
+     * @custom:error InvalidMaxPrice if a SetMaxPrice item violates the spot/minPrice constraints
+     * @custom:error ProtectedPriceInactive if an ExitProtectionMode item targets an asset whose protection is not active
+     * @custom:error CooldownNotElapsed if an ExitProtectionMode item is submitted before cooldown elapsed
+     * @custom:error PriceRangeNotConverged if an ExitProtectionMode item is submitted before window convergence
+     * @custom:event MinPriceUpdated, MaxPriceUpdated, ProtectionModeExited
+     */
+    function syncPriceBoundsAndProtections(KeeperActionItem[] calldata actions) external;
+
     // --- Admin functions (governance-gated) ---
 
     /**
@@ -244,6 +291,7 @@ interface IDeviationBoundedOracle {
      * @param triggerThreshold Deviation threshold that activates protection (mantissa). Must be between 5% and 50%.
      * @param resetThreshold Deviation threshold below which protection can be exited (mantissa). Must be non-zero and below triggerThreshold.
      * @param enableBoundedPricing Whether to enable bounded pricing immediately upon initialization
+     * @param enableCaching Whether transient caching of the bounded (collateral, debt) pair is enabled for this asset
      * @custom:access Only Governance
      * @custom:error MarketAlreadyInitialized if the asset has already been initialized
      * @custom:error ThresholdBelowMinimum if triggerThreshold is below 5%
@@ -259,7 +307,8 @@ interface IDeviationBoundedOracle {
         uint64 cooldownPeriod,
         uint256 triggerThreshold,
         uint256 resetThreshold,
-        bool enableBoundedPricing
+        bool enableBoundedPricing,
+        bool enableCaching
     ) external;
 
     /**
@@ -269,6 +318,7 @@ interface IDeviationBoundedOracle {
      * @param triggerThresholds Array of trigger thresholds (mantissa)
      * @param resetThresholds Array of reset thresholds (mantissa)
      * @param enableBoundedPricings Array of whether to enable bounded pricing per asset
+     * @param enableCachings Array of whether transient caching is enabled per asset
      * @custom:access Only Governance
      * @custom:error InvalidArrayLength if array lengths do not match
      * @custom:event ProtectionInitialized for each asset
@@ -279,7 +329,8 @@ interface IDeviationBoundedOracle {
         uint64[] calldata cooldownPeriods,
         uint256[] calldata triggerThresholds,
         uint256[] calldata resetThresholds,
-        bool[] calldata enableBoundedPricings
+        bool[] calldata enableBoundedPricings,
+        bool[] calldata enableCachings
     ) external;
 
     /**
@@ -318,6 +369,19 @@ interface IDeviationBoundedOracle {
      */
     function setAssetBoundedPricingEnabled(address asset, bool enabled) external;
 
+    /**
+     * @notice Toggles transient caching of the bounded (collateral, debt) pair for an asset
+     * @dev When disabled, each view/non-view price call recomputes bounded prices from the
+     *      live spot instead of reading or writing the transient slots. The initial value is
+     *      set via the `enableCaching` argument of `setTokenConfig`.
+     * @param asset The underlying asset address
+     * @param enabled Whether transient caching is enabled for this asset
+     * @custom:access Only Governance
+     * @custom:error MarketNotInitialized if the asset has not been initialized
+     * @custom:event CachingEnabledUpdated
+     */
+    function setCachingEnabled(address asset, bool enabled) external;
+
     // --- View helpers ---
 
     /**
@@ -332,6 +396,7 @@ interface IDeviationBoundedOracle {
      * @return assetAddr The underlying asset address stored in the struct
      * @return triggerThreshold Entry deviation threshold (mantissa) that activates protection
      * @return resetThreshold Exit deviation threshold (mantissa) below which protection can be disabled
+     * @return cachingEnabled Whether transient caching of the bounded pair is enabled for the asset
      */
     function assetProtectionConfig(
         address asset
@@ -347,7 +412,8 @@ interface IDeviationBoundedOracle {
             uint64 cooldownPeriod,
             address assetAddr,
             uint128 triggerThreshold,
-            uint128 resetThreshold
+            uint128 resetThreshold,
+            bool cachingEnabled
         );
 
     /**

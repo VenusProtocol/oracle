@@ -90,7 +90,7 @@ describe("DeviationBoundedOracle E2E", () => {
     triggerThreshold: BigNumber = DEFAULT_THRESHOLD,
     resetThreshold: BigNumber = DEFAULT_RESET_THRESHOLD,
   ) => {
-    await oracle.setTokenConfig(asset, cooldown, triggerThreshold, resetThreshold, true);
+    await oracle.setTokenConfig(asset, cooldown, triggerThreshold, resetThreshold, true, true);
     await oracle.updateMinPrice(asset, minPrice);
     await oracle.updateMaxPrice(asset, maxPrice);
   };
@@ -327,7 +327,7 @@ describe("DeviationBoundedOracle E2E", () => {
       // Initialize with 30% threshold → upperBound = 0.9 * 1.3 = 1.17
       const highThreshold = parseUnits("0.3", 18);
       const resetThreshold = parseUnits("0.15", 18);
-      await oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, highThreshold, resetThreshold, true);
+      await oracle.setTokenConfig(assetA, DEFAULT_COOLDOWN, highThreshold, resetThreshold, true, true);
       await oracle.updateMinPrice(assetA, MIN_PRICE);
       await oracle.updateMaxPrice(assetA, MAX_PRICE);
       resilientOracle.getPrice.whenCalledWith(assetA).returns(spot);
@@ -1079,6 +1079,100 @@ describe("DeviationBoundedOracle E2E", () => {
       const debt = await oracle.callStatic.getBoundedDebtPrice(vTokenA.address);
       expect(collateral).to.equal(SPOT_PRICE);
       expect(debt).to.equal(SPOT_PRICE);
+    });
+  });
+
+  // ────────────────────────────────────────────────────────────────────────
+  // E2E-18. Keeper batch (syncPriceBoundsAndProtections): converge + exit in one tx
+  // ────────────────────────────────────────────────────────────────────────
+
+  describe("E2E-18: keeper converges and exits in a single batched tx", () => {
+    it("18a: pump trigger → spot stabilises → batch (SetMin, SetMax, Exit) clears protection in one tx", async () => {
+      // KeeperAction enum: 0 = SetMinPrice, 1 = SetMaxPrice, 2 = ExitProtectionMode
+      const SetMinPrice = 0;
+      const SetMaxPrice = 1;
+      const ExitProtectionMode = 2;
+
+      await initAssetWithWindow(assetA);
+
+      // 1. Trigger via pump
+      const pumpSpot = await triggerPump(assetA, vTokenA);
+      expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
+
+      // 2. Spot stabilises somewhere inside the post-trigger window
+      const stableSpot = MIN_PRICE.add(pumpSpot).div(2);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(stableSpot);
+
+      // 3. Wait out cooldown
+      await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN + 1]);
+      await ethers.provider.send("evm_mine", []);
+
+      // 4. Single batched tx — converge window to spot and exit protection
+      const tx = await oracle.syncPriceBoundsAndProtections([
+        { asset: assetA, action: SetMinPrice, value: stableSpot },
+        { asset: assetA, action: SetMaxPrice, value: stableSpot },
+        { asset: assetA, action: ExitProtectionMode, value: 0 },
+      ]);
+
+      await expect(tx)
+        .to.emit(oracle, "MinPriceUpdated")
+        .and.to.emit(oracle, "MaxPriceUpdated")
+        .and.to.emit(oracle, "ProtectionModeExited")
+        .withArgs(assetA);
+
+      // 5. Protection cleared, bounded prices fall back to spot
+      expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
+      const collateral = await oracle.callStatic.getBoundedCollateralPrice(vTokenA.address);
+      const debt = await oracle.callStatic.getBoundedDebtPrice(vTokenA.address);
+      expect(collateral).to.equal(stableSpot);
+      expect(debt).to.equal(stableSpot);
+    });
+  });
+
+  // ────────────────────────────────────────────────────────────────────────
+  // E2E-17. Keeper convergence path: trigger → min == max == spot → exitProtectionMode
+  // ────────────────────────────────────────────────────────────────────────
+
+  describe("E2E-17: keeper convergence to min == max == spot enables clean exit", () => {
+    it("17a: full convergence path — pump trigger, keeper converges window to spot, exit succeeds", async () => {
+      await initAssetWithWindow(assetA);
+
+      // 1. Trigger protection via pump
+      const pumpSpot = await triggerPump(assetA, vTokenA);
+      expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(true);
+
+      // 2. Spot stabilises somewhere inside the post-trigger window (between minPrice and maxPrice)
+      const stableSpot = MIN_PRICE.add(pumpSpot).div(2);
+      resilientOracle.getPrice.whenCalledWith(assetA).returns(stableSpot);
+
+      // 3. Keeper converges the window: first set min = stableSpot (allowed; old maxPrice >= stableSpot)
+      await oracle.updateMinPrice(assetA, stableSpot);
+      let state = await oracle.assetProtectionConfig(assetA);
+      expect(state.minPrice).to.equal(stableSpot);
+
+      // 4. Keeper sets max = stableSpot — newly allowed (newMax == minPrice == spot)
+      await oracle.updateMaxPrice(assetA, stableSpot);
+      state = await oracle.assetProtectionConfig(assetA);
+      expect(state.minPrice).to.equal(stableSpot);
+      expect(state.maxPrice).to.equal(stableSpot);
+
+      // 5. Range ratio collapses to zero, satisfying the resetThreshold gate
+      const rangeRatio = state.maxPrice.sub(state.minPrice).mul(EXP_SCALE).div(state.minPrice);
+      expect(rangeRatio).to.equal(0);
+
+      // 6. Cooldown elapses and exitProtectionMode succeeds without governance threshold gymnastics
+      await ethers.provider.send("evm_increaseTime", [DEFAULT_COOLDOWN + 1]);
+      await ethers.provider.send("evm_mine", []);
+
+      const tx = await oracle.exitProtectionMode(assetA);
+      await expect(tx).to.emit(oracle, "ProtectionModeExited").withArgs(assetA);
+      expect(await oracle.currentlyUsingProtectedPrice(assetA)).to.equal(false);
+
+      // 7. Bounded prices fall back to spot once protection is cleared
+      const collateral = await oracle.callStatic.getBoundedCollateralPrice(vTokenA.address);
+      const debt = await oracle.callStatic.getBoundedDebtPrice(vTokenA.address);
+      expect(collateral).to.equal(stableSpot);
+      expect(debt).to.equal(stableSpot);
     });
   });
 });
