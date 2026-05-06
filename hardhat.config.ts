@@ -41,6 +41,16 @@ function isFork() {
         },
         live: false,
         saveDeployments: false,
+        chains: {
+          56: {
+            hardforkHistory: {
+              berlin: 0,
+              london: 13_000_000,
+              shanghai: 39_539_137,
+              cancun: 40_790_075,
+            },
+          },
+        },
       }
     : {
         allowUnlimitedContractSize: true,
