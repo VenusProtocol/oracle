@@ -1,3 +1,121 @@
+## 2.15.0-dev.8 (2026-05-06)
+
+* add certik and hashdit audit report ([495c2cc](https://github.com/VenusProtocol/oracle/commit/495c2cc))
+* add quantstampm audit report ([af99820](https://github.com/VenusProtocol/oracle/commit/af99820))
+* Merge pull request #306 from VenusProtocol/feat/vpd-893-bounded-price-oracle ([5a1870c](https://github.com/VenusProtocol/oracle/commit/5a1870c)), closes [#306](https://github.com/VenusProtocol/oracle/issues/306)
+* Merge pull request #308 from VenusProtocol/fix/vpd-893-hashdit ([cce417b](https://github.com/VenusProtocol/oracle/commit/cce417b)), closes [#308](https://github.com/VenusProtocol/oracle/issues/308)
+* Merge pull request #310 from VenusProtocol/fix/vpd-893-Certik ([556bd5e](https://github.com/VenusProtocol/oracle/commit/556bd5e)), closes [#310](https://github.com/VenusProtocol/oracle/issues/310)
+* Merge pull request #311 from VenusProtocol/fix/vpd-893-quantstamp ([8e4dccb](https://github.com/VenusProtocol/oracle/commit/8e4dccb)), closes [#311](https://github.com/VenusProtocol/oracle/issues/311)
+* feat: add Claude workflow including rules and skills for testing and Solidity style ([185175c](https://github.com/VenusProtocol/oracle/commit/185175c))
+* feat: add initial DeviationBoundedOracle contract implementation ([16784b9](https://github.com/VenusProtocol/oracle/commit/16784b9))
+* feat: add setTokenConfigs batch function, rename protection state fields, and fix NatSpec ([58ce852](https://github.com/VenusProtocol/oracle/commit/58ce852))
+* feat: Add syncPriceBoundsAndProtections batch entry point for keeper actions ([f60318a](https://github.com/VenusProtocol/oracle/commit/f60318a))
+* feat: add tests ([590fdf0](https://github.com/VenusProtocol/oracle/commit/590fdf0))
+* feat: deployment scripts and fork tests ([5be0f8b](https://github.com/VenusProtocol/oracle/commit/5be0f8b))
+* feat: updating deployment files ([12e375f](https://github.com/VenusProtocol/oracle/commit/12e375f))
+* feat: updating deployment files ([99f6a8f](https://github.com/VenusProtocol/oracle/commit/99f6a8f))
+* fix: [I01] Use Helpers To Re-enable Protection State ([058d651](https://github.com/VenusProtocol/oracle/commit/058d651))
+* fix: [M01] Reset Cooldown Only On Genuine Window Expansion ([69b23a6](https://github.com/VenusProtocol/oracle/commit/69b23a6))
+* fix: [S1] Align COLLATERAL_PRICE_CACHE_SLOT with canonical ERC-7201 derivation ([d328cd6](https://github.com/VenusProtocol/oracle/commit/d328cd6))
+* fix: [VLD-01] Add per-asset cachingEnabled flag defaulting to enabled ([6939d4f](https://github.com/VenusProtocol/oracle/commit/6939d4f))
+* fix: Allow min == max == spot in keeper bound updates ([8563c8c](https://github.com/VenusProtocol/oracle/commit/8563c8c))
+* fix: lint ([a9a16f5](https://github.com/VenusProtocol/oracle/commit/a9a16f5))
+* fix: linting ([9033f23](https://github.com/VenusProtocol/oracle/commit/9033f23))
+* fix: test ([7ad77af](https://github.com/VenusProtocol/oracle/commit/7ad77af))
+* fix: upgrade DBO implementation ([f0dab6f](https://github.com/VenusProtocol/oracle/commit/f0dab6f))
+* fix: use struct input for setTokenConfig and setTokenConfigs to fix CI stack-too-deep ([bbf9a97](https://github.com/VenusProtocol/oracle/commit/bbf9a97))
+* chore: add DeviationBoundedOracle bscmainnet deployment artifacts ([7b046f1](https://github.com/VenusProtocol/oracle/commit/7b046f1))
+* chore: add DeviationBoundedOracle bsctestnet deployments ([00ea1c6](https://github.com/VenusProtocol/oracle/commit/00ea1c6))
+* chore: minor cleanups ([7a18054](https://github.com/VenusProtocol/oracle/commit/7a18054))
+* docs: [I02] Document updateProtectionState As Permissionless Entry Point ([f0de73d](https://github.com/VenusProtocol/oracle/commit/f0de73d))
+* docs: [VLD-05] Align IDeviationBoundedOracle NatSpec With Implementation ([7e469e3](https://github.com/VenusProtocol/oracle/commit/7e469e3))
+* docs: [VLD-06] Correct _exceedsDeviationThreshold @notice Description ([2519e92](https://github.com/VenusProtocol/oracle/commit/2519e92))
+* refactor: (WIP) add improvements to DeviationBoundedOracle ([cbf42d1](https://github.com/VenusProtocol/oracle/commit/cbf42d1))
+* refactor: eliminate redundant storage reads and implicit returns in DeviationBoundedOracle ([1af785b](https://github.com/VenusProtocol/oracle/commit/1af785b))
+* refactor: improve code flow and structure, add dual-price API, and move events/errors to interface ([f2c4df5](https://github.com/VenusProtocol/oracle/commit/f2c4df5))
+* refactor: rename disableActiveProtectedPrice to exitProtectionMode and allow zero vaiAddress ([da67dc6](https://github.com/VenusProtocol/oracle/commit/da67dc6))
+
+## 2.15.0-dev.7 (2026-04-17)
+
+* Merge pull request #307 from VenusProtocol/feat/vpd-995 ([adfcddd](https://github.com/VenusProtocol/oracle/commit/adfcddd)), closes [#307](https://github.com/VenusProtocol/oracle/issues/307)
+* feat: add new oracle deployments for solvBTC and U ([a3a9f08](https://github.com/VenusProtocol/oracle/commit/a3a9f08))
+* feat: updating deployment files ([b0a81d3](https://github.com/VenusProtocol/oracle/commit/b0a81d3))
+
+## 2.15.0-dev.6 (2026-01-21)
+
+* Merge pull request #304 from VenusProtocol/feat/vpd-404 ([006092f](https://github.com/VenusProtocol/oracle/commit/006092f)), closes [#304](https://github.com/VenusProtocol/oracle/issues/304)
+* feat: add clisBNB pendle oracle deployment script ([611d17d](https://github.com/VenusProtocol/oracle/commit/611d17d))
+* feat: add PT-clisBNB-25JUN2026 oracle for mainnet ([a3b8923](https://github.com/VenusProtocol/oracle/commit/a3b8923))
+* feat: add PT-clisBNB-25JUN2026 pendle oracle deployments ([5244422](https://github.com/VenusProtocol/oracle/commit/5244422))
+* feat: updating deployment files ([07da32e](https://github.com/VenusProtocol/oracle/commit/07da32e))
+* feat: updating deployment files ([e52cc70](https://github.com/VenusProtocol/oracle/commit/e52cc70))
+
+## 2.15.0-dev.5 (2026-01-09)
+
+* ci: update to use the Trusted Publisher for npm release ([023bc82](https://github.com/VenusProtocol/oracle/commit/023bc82))
+* Merge pull request #303 from VenusProtocol/feat/VPD-418 ([c0012d9](https://github.com/VenusProtocol/oracle/commit/c0012d9)), closes [#303](https://github.com/VenusProtocol/oracle/issues/303)
+* feat: deploy stable usdt price feed ([f165163](https://github.com/VenusProtocol/oracle/commit/f165163))
+* feat: updating deployment files ([80dbbf7](https://github.com/VenusProtocol/oracle/commit/80dbbf7))
+* feat: updating deployment files ([52d2d4c](https://github.com/VenusProtocol/oracle/commit/52d2d4c))
+* feat: updating deployment files ([e62750a](https://github.com/VenusProtocol/oracle/commit/e62750a))
+* refactor: update bounds in StableUsdtPriceFeed ([d3271a5](https://github.com/VenusProtocol/oracle/commit/d3271a5))
+* refactor: update decimals ([bc10eaf](https://github.com/VenusProtocol/oracle/commit/bc10eaf))
+
+## [2.15.0-dev.4](https://github.com/VenusProtocol/oracle/compare/v2.15.0-dev.3...v2.15.0-dev.4) (2025-11-03)
+
+
+### Features
+
+* add slim package scripts ([ed14178](https://github.com/VenusProtocol/oracle/commit/ed141788f696d3631f082bec7fee6f0d6d70c8f7))
+
+
+### Bug Fixes
+
+* add repo URL ([dee1291](https://github.com/VenusProtocol/oracle/commit/dee1291c1c71917ed3dc5b7b51868284df8c8b9f))
+
+## [2.15.0-dev.3](https://github.com/VenusProtocol/oracle/compare/v2.15.0-dev.2...v2.15.0-dev.3) (2025-10-27)
+
+
+### Features
+
+* updating deployment files ([f961fec](https://github.com/VenusProtocol/oracle/commit/f961fece037878006c2fbcad6517769370ad502b))
+* updating deployment files ([161a69d](https://github.com/VenusProtocol/oracle/commit/161a69d884440316a65139461691592da6ba7cf1))
+
+
+### Bug Fixes
+
+* deploy wbeth oracle ([b1b62d3](https://github.com/VenusProtocol/oracle/commit/b1b62d3712ee12f5e4cdfab273b1e512ab2e3ed5))
+* fixed yarn.lock ([3c85969](https://github.com/VenusProtocol/oracle/commit/3c85969a0d0e0baf0768827d3496fc088b2d0a13))
+* merge conflict ([509402e](https://github.com/VenusProtocol/oracle/commit/509402e614c20dc3e96a350faa6f7426cdd1f4fa))
+* revert testnet ([5f271ea](https://github.com/VenusProtocol/oracle/commit/5f271ea154d1c92b659fc9d0f15071c54a9f9d5f))
+
+## [2.15.0-dev.2](https://github.com/VenusProtocol/oracle/compare/v2.15.0-dev.1...v2.15.0-dev.2) (2025-10-20)
+
+
+### Bug Fixes
+
+* enable sourcify ([3b3bc87](https://github.com/VenusProtocol/oracle/commit/3b3bc87c49d9c0024df4347fb77e9ca6fef5320f))
+* fixed etherscan verification ([757fd98](https://github.com/VenusProtocol/oracle/commit/757fd986c79425b87c0b61f936427e562f50b086))
+* fixed hardhat config ([f8a4683](https://github.com/VenusProtocol/oracle/commit/f8a4683ac3c5509bd60fdba450e2535212b75072))
+* fixed yarn.lock ([0bc0d7d](https://github.com/VenusProtocol/oracle/commit/0bc0d7d82baeac828e246339f36cb525bf56bd3d))
+* merge conflict ([f462ef3](https://github.com/VenusProtocol/oracle/commit/f462ef34044171dcd1230ca91c472775bf010855))
+* removed etherscan verify ([1961046](https://github.com/VenusProtocol/oracle/commit/1961046f585d35f8b4c70b18d6c5055e85d0676c))
+
+## [2.15.0-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.14.1-dev.1...v2.15.0-dev.1) (2025-10-16)
+
+
+### Features
+
+* finish usdt chainlink oracle deployment script and corresponding deployment ([3756352](https://github.com/VenusProtocol/oracle/commit/37563526172c5c636623d7049849625262b5c947))
+* updating deployment files ([37a2bc6](https://github.com/VenusProtocol/oracle/commit/37a2bc614d178eb0b68fd56d31da3bc4a84fc13c))
+
+## [2.14.1-dev.1](https://github.com/VenusProtocol/oracle/compare/v2.14.0...v2.14.1-dev.1) (2025-09-29)
+
+
+### Bug Fixes
+
+* release ([241a9e7](https://github.com/VenusProtocol/oracle/commit/241a9e73e509e94f9112a52b84be77a09f04c71c))
+
 ## [2.14.0](https://github.com/VenusProtocol/oracle/compare/v2.13.0...v2.14.0) (2025-09-29)
 
 

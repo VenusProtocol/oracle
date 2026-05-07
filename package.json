@@ -1,7 +1,8 @@
 {
   "name": "@venusprotocol/oracle",
   "description": "Venus Protocol Price Oracle",
-  "version": "2.14.0",
+  "repository": "git@github.com:VenusProtocol/oracle.git",
+  "version": "2.15.0-dev.8",
   "author": "Venus",
   "engines": {
     "node": ">=18.x.x"
@@ -61,12 +62,11 @@
     "@matterlabs/hardhat-zksync-solc": "^1.2.1",
     "@matterlabs/hardhat-zksync-verify": "^1.8.0",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.4",
+    "@nomicfoundation/hardhat-verify": "^2.0.14",
     "@nomiclabs/hardhat-ethers": "^2.2.1",
-    "@nomiclabs/hardhat-etherscan": "^3.1.0",
     "@openzeppelin/hardhat-upgrades": "^1.22.0",
-    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@semantic-release/npm": "^9.0.1",
     "@trivago/prettier-plugin-sort-imports": "^3.2.0",
     "@typechain/ethers-v5": "^10.1.0",
     "@typechain/hardhat": "^6.1.0",
@@ -93,7 +93,7 @@
     "mocha": "^10.0.0",
     "prettier": "^2.6.2",
     "prettier-plugin-solidity": "^1.0.0",
-    "semantic-release": "^19.0.3",
+    "semantic-release": "^25.0.2",
     "shx": "^0.3.4",
     "solhint": "^3.3.7",
     "solhint-plugin-prettier": "^0.0.5",

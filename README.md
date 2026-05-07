@@ -104,7 +104,7 @@ $ yarn hardhat export --network <network-name> --export ./deployments/<network-n
 ## Verify Contracts
 
 ```
-npx hardhat etherscan-verify --network <network-name>
+npx hardhat verify --network <network-name> <contract-address> <constructor-arg1> <constructor-arg2>
 ```
 
 ## Hardhat Commands
