@@ -247,7 +247,10 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
 
     /**
      * @notice Updates the capped main oracle snapshot.
-     * @dev This function should always be called before calling getPrice
+     * @dev This function should always be called before calling getPrice.
+     *      A successful return does NOT guarantee the snapshot was advanced — CAPO-style
+     *      main oracles no-op `updateSnapshot()` while within `snapshotInterval`, or when
+     *      `snapshotInterval == 0`.
      * @param asset asset address
      */
     function updateAssetPrice(address asset) external {
