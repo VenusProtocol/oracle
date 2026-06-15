@@ -247,18 +247,47 @@ describe("CorrelatedTokenOracle", () => {
       expect(price).to.be.equal(ethers.utils.parseUnits("100.0000003170979198", 18));
     });
 
-    it("zero max allowed exchange rate", async () => {
+    it("reverts when setting a zero max allowed exchange rate while capping is active", async () => {
       await correlatedTokenOracle.updateSnapshot();
       const price = await correlatedTokenOracle.getPrice(correlatedToken.address);
       expect(price).to.equal(ethers.utils.parseUnits("10", 18));
 
-      // Set the max allowed exchange rate to zero
+      // A zero max-rate would make getMaxAllowedExchangeRate() return 0 and silently disable the cap (DS2-88)
       const currentBlock = await ethers.provider.getBlock("latest");
       const currentTimestamp = currentBlock.timestamp;
-      await correlatedTokenOracle.setSnapshot(0, currentTimestamp);
+      await expect(correlatedTokenOracle.setSnapshot(0, currentTimestamp)).to.be.revertedWithCustomError(
+        correlatedTokenOracle,
+        "InvalidSnapshotMaxExchangeRate",
+      );
+    });
 
-      // eslint-disable-next-line no-unused-expressions
-      expect(await correlatedTokenOracle.isCapped()).to.be.false;
+    it("reverts when setting a future snapshot timestamp while capping is active", async () => {
+      // A future timestamp would underflow block.timestamp - snapshotTimestamp and DoS pricing (DS2-87)
+      const currentBlock = await ethers.provider.getBlock("latest");
+      const currentTimestamp = currentBlock.timestamp;
+      await expect(
+        correlatedTokenOracle.setSnapshot(exchangeRate, currentTimestamp + 1000),
+      ).to.be.revertedWithCustomError(correlatedTokenOracle, "InvalidSnapshotTimestamp");
+    });
+
+    it("reverts when setting a zero snapshot timestamp while capping is active", async () => {
+      // A zero timestamp would make timeElapsed equal block.timestamp, inflating the cap to never bind
+      await expect(correlatedTokenOracle.setSnapshot(exchangeRate, 0)).to.be.revertedWithCustomError(
+        correlatedTokenOracle,
+        "InvalidSnapshotTimestamp",
+      );
+    });
+
+    it("allows a zero snapshot when capping is disabled", async () => {
+      // Disable capping (snapshotInterval = 0); snapshot fields are then irrelevant and unvalidated
+      await correlatedTokenOracle.setGrowthRate(0, 0);
+
+      await expect(correlatedTokenOracle.setSnapshot(0, 0))
+        .to.emit(correlatedTokenOracle, "SnapshotUpdated")
+        .withArgs(0, 0);
+
+      expect(await correlatedTokenOracle.snapshotMaxExchangeRate()).to.equal(0);
+      expect(await correlatedTokenOracle.snapshotTimestamp()).to.equal(0);
     });
   });
 });
