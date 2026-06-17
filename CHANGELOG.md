@@ -1,3 +1,11 @@
+## 2.16.0-dev.1 (2026-06-17)
+
+* Merge pull request #313 from VenusProtocol/main ([aed5f33](https://github.com/VenusProtocol/oracle/commit/aed5f33)), closes [#313](https://github.com/VenusProtocol/oracle/issues/313)
+* Merge pull request #316 from VenusProtocol/feat/vpd-1341 ([1198bc6](https://github.com/VenusProtocol/oracle/commit/1198bc6)), closes [#316](https://github.com/VenusProtocol/oracle/issues/316)
+* feat: deploy atlas oracle on bsctestnet ([f374607](https://github.com/VenusProtocol/oracle/commit/f374607))
+* feat: updating deployment files ([d569da0](https://github.com/VenusProtocol/oracle/commit/d569da0))
+* chore: update yarn lock ([adf1a07](https://github.com/VenusProtocol/oracle/commit/adf1a07))
+
 ## 2.15.0 (2026-05-07)
 
 * add certik and hashdit audit report ([495c2cc](https://github.com/VenusProtocol/oracle/commit/495c2cc))
