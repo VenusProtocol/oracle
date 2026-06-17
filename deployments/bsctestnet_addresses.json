@@ -4,6 +4,9 @@
   "addresses": {
     "AnkrBNBOracle": "0x7655d558c3C865913013D82fF4d1e70e97cDf906",
     "AsBNBOracle": "0xb31909f6687Da5bEc559DB7baeed41E14f5Dc17E",
+    "AtlasOracle": "0x7F00af2f30a55e79311392C98fBBfA629D19b3A5",
+    "AtlasOracle_Implementation": "0xFaC00Dc856F454BB674c8588d4CC16Edef9dc28b",
+    "AtlasOracle_Proxy": "0x7F00af2f30a55e79311392C98fBBfA629D19b3A5",
     "BNBxOracle": "0x068945930785e6816faE855a2A2e8c59BAD380f0",
     "BinanceOracle": "0xB58BFDCE610042311Dc0e034a80Cc7776c1D68f5",
     "BinanceOracle_Implementation": "0x8dA774a84e20BBFA5d62c3718feE5f1753046e0C",
