@@ -24,10 +24,15 @@ import { Transient } from "./lib/Transient.sol";
  * collateral tokens. Sustained attacks beyond the window period are expected to be handled by
  * off-chain monitoring systems.
  *
- * The oracle exposes both view and non-view price functions. The non-view variants update the
- * price window and trigger protection. The view variants read stored state only. A transient
- * price cache avoids redundant ResilientOracle calls within the same transaction when
- * updateProtectionState is called before the view price reads.
+ * Non-view price functions update the window and trigger protection; view functions never mutate
+ * state and recompute from the live spot. An optional per-asset transient cache skips redundant
+ * ResilientOracle calls within a transaction: when enabled, the first computation populates it and
+ * every later read in the same transaction returns that value instead of recomputing.
+ *
+ * The cache freezes the first value for the rest of the transaction, so enable it only for assets
+ * whose price cannot move within a single transaction (e.g. Chainlink feeds, updated once per block).
+ * Leave it disabled for assets with a movable spot (e.g. AMM-derived feeds); otherwise a stale cached
+ * value could skip protection.
  */
 contract DeviationBoundedOracle is AccessControlledV8, IDeviationBoundedOracle {
     /// @notice Minimum allowed threshold value (5%) to account for keeper deadband
