@@ -2,7 +2,7 @@
   "name": "@venusprotocol/oracle",
   "description": "Venus Protocol Price Oracle",
   "repository": "git@github.com:VenusProtocol/oracle.git",
-  "version": "2.16.0-dev.2",
+  "version": "2.16.0",
   "author": "Venus",
   "engines": {
     "node": ">=18.x.x"
