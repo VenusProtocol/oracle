@@ -334,7 +334,9 @@ contract ResilientOracle is PausableUpgradeable, AccessControlledV8, ResilientOr
 
     /**
      * @notice Updates the capped oracle snapshot.
-     * @dev Cache the asset price and return if already cached
+     * @dev Cache the asset price and return if already cached.
+     *      `updateSnapshot()` may revert for oracles other than `CorrelatedTokenOracle`;
+     *      the empty catch block intentionally swallows that revert and is harmless.
      * @param asset asset address
      */
     function _updateAssetPrice(address asset) internal {

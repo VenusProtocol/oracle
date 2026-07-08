@@ -66,6 +66,9 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
     /// @notice Thrown if the max snapshot exchange rate is invalid
     error InvalidSnapshotMaxExchangeRate();
 
+    /// @notice Thrown if the snapshot timestamp is invalid
+    error InvalidSnapshotTimestamp();
+
     /// @notice @notice Thrown when the action is prohibited by AccessControlManager
     error Unauthorized(address sender, address calledContract, string methodSignature);
 
@@ -115,10 +118,19 @@ abstract contract CorrelatedTokenOracle is OracleInterface, ICappedOracle {
      * @notice Directly sets the snapshot exchange rate and timestamp
      * @param _snapshotMaxExchangeRate The exchange rate to set
      * @param _snapshotTimestamp The timestamp to set
+     * @custom:error InvalidSnapshotMaxExchangeRate error is thrown if the max snapshot exchange rate is zero while
+     * the snapshot interval is active (a zero cap would silently disable the growth cap)
+     * @custom:error InvalidSnapshotTimestamp error is thrown if the snapshot timestamp is zero or in the future while
+     * the snapshot interval is active (a future timestamp would underflow getMaxAllowedExchangeRate and revert pricing)
      * @custom:event Emits SnapshotUpdated event on successful update of the snapshot
      */
     function setSnapshot(uint256 _snapshotMaxExchangeRate, uint256 _snapshotTimestamp) external {
         _checkAccessAllowed("setSnapshot(uint256,uint256)");
+
+        if (snapshotInterval != 0) {
+            if (_snapshotMaxExchangeRate == 0) revert InvalidSnapshotMaxExchangeRate();
+            if (_snapshotTimestamp == 0 || _snapshotTimestamp > block.timestamp) revert InvalidSnapshotTimestamp();
+        }
 
         snapshotMaxExchangeRate = _snapshotMaxExchangeRate;
         snapshotTimestamp = _snapshotTimestamp;

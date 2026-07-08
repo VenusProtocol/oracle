@@ -4132,8 +4132,8 @@ __metadata:
   linkType: hard
 
 "@venusprotocol/oracle@npm:^2.7.0":
-  version: 2.14.0
-  resolution: "@venusprotocol/oracle@npm:2.14.0"
+  version: 2.15.0
+  resolution: "@venusprotocol/oracle@npm:2.15.0"
   dependencies:
     "@chainlink/contracts": ^0.5.1
     "@defi-wonderland/smock": 2.4.0
@@ -4149,7 +4149,7 @@ __metadata:
     module-alias: ^2.2.2
     patch-package: ^8.0.0
     solidity-docgen: ^0.6.0-beta.29
-  checksum: e10a6b303cb2d41f158fdae300d030f9fb506e0d389414a7b94fdada89bd322ad3e452a8b929a8e42602dd93e380916bbc86c9ba58fdf5178d38fbbb71edadb8
+  checksum: c1d6a6eacedc9f6883a5a2cc85530fe5e9390ecb9cfcc0f526f09cf059ea25098c1c9e208767e74f73cd8e13ae04bb4acd6f6a43431db8686a0e75bd72794af9
   languageName: node
   linkType: hard
 

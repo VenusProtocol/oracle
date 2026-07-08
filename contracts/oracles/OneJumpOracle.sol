@@ -13,6 +13,7 @@ import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/I
  */
 contract OneJumpOracle is CorrelatedTokenOracle {
     /// @notice Address of the intermediate oracle
+    /// @dev Must return UNDERLYING_TOKEN per CORRELATED_TOKEN, not USD denominated price.
     OracleInterface public immutable INTERMEDIATE_ORACLE;
 
     /// @notice Constructor for the implementation contract.
