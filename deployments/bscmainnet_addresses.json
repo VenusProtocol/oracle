@@ -2,6 +2,9 @@
   "name": "bscmainnet",
   "chainId": "56",
   "addresses": {
+    "APROOracle": "0x04480f1Ba2252CDF89deB022B58d0a03d1B4cF91",
+    "APROOracle_Implementation": "0x5499Aa0d1a7Ee06B92f3d9213774Ae848bC8c9A4",
+    "APROOracle_Proxy": "0x04480f1Ba2252CDF89deB022B58d0a03d1B4cF91",
     "AnkrBNBOracle": "0x4512e9579734f7B8730f0a05Cd0D92DC33EB2675",
     "AsBNBOracle": "0x652B90D1d45a7cD5BE82c5Fb61a4A00bA126dde5",
     "AtlasOracle": "0x9E6928Ec418948ceb9f1cd9872fD312b13D841D0",
