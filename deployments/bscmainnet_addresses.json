@@ -87,6 +87,7 @@
     "wstETHOneJumpRedstoneOracle": "0x90dd7ae1137cC072F7740Ee0b264f2351515B98A",
     "wstETHOneJumpRedstoneOracle_Implementation": "0xCf56AEB81930bB4d1Bd94a2381A4A3fb6b4Bd44b",
     "wstETHOneJumpRedstoneOracle_Proxy": "0x90dd7ae1137cC072F7740Ee0b264f2351515B98A",
+    "xSolvBTCOneJumpChainlinkOracle": "0xDfDbF9DAFbc94Cb1F827d3364637dDBB26823739",
     "xSolvBTCOneJumpRedStoneOracle": "0xf5534f78Df9b610B19A63956d498d00CFaD8B9D3"
   }
 }
