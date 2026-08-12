@@ -11,6 +11,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
   const redstoneOracle = await hre.ethers.getContract("RedStoneOracle");
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
+  const chainlinkOracle = await hre.ethers.getContract("ChainlinkOracle");
 
   await deploy("xSolvBTCOneJumpRedStoneOracle", {
     contract: "OneJumpOracle",
@@ -18,6 +19,15 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     log: true,
     deterministicDeployment: false,
     args: [xSolvBTC, SolvBTC, resilientOracle.address, redstoneOracle.address, 0, 0, 0, 0, acm, 0],
+    skipIfAlreadyDeployed: true,
+  });
+
+  await deploy("xSolvBTCOneJumpChainlinkOracle", {
+    contract: "OneJumpOracle",
+    from: deployer,
+    log: true,
+    deterministicDeployment: false,
+    args: [xSolvBTC, SolvBTC, resilientOracle.address, chainlinkOracle.address, 0, 0, 0, 0, acm, 0],
     skipIfAlreadyDeployed: true,
   });
 };
