@@ -1,3 +1,11 @@
+## 2.16.0-dev.3 (2026-08-12)
+
+* Merge pull request #318 from VenusProtocol/feat/apro-oracle-deployment ([2cfc3b1](https://github.com/VenusProtocol/oracle/commit/2cfc3b1)), closes [#318](https://github.com/VenusProtocol/oracle/issues/318)
+* feat: add APROOracle deploy script and bscmainnet deployment ([0a4a7c3](https://github.com/VenusProtocol/oracle/commit/0a4a7c3))
+* feat: deploy xSolvBTC OneJump oracle via Chainlink ([3ffc79b](https://github.com/VenusProtocol/oracle/commit/3ffc79b))
+* feat: updating deployment files ([3acf2fd](https://github.com/VenusProtocol/oracle/commit/3acf2fd))
+* feat: updating deployment files ([aa67c38](https://github.com/VenusProtocol/oracle/commit/aa67c38))
+
 ## 2.16.0-dev.2 (2026-07-03)
 
 * Merge branch 'develop' into fix/vpd-1241-certik-audit ([3094df0](https://github.com/VenusProtocol/oracle/commit/3094df0))
