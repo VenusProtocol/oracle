@@ -1,3 +1,9 @@
+## 2.16.0-dev.4 (2026-08-12)
+
+* Merge pull request #319 from VenusProtocol/deploy-testnet-apro-oracle ([6b8962c](https://github.com/VenusProtocol/oracle/commit/6b8962c)), closes [#319](https://github.com/VenusProtocol/oracle/issues/319)
+* feat: deploy APROOracle on bsctestnet ([b7de8c6](https://github.com/VenusProtocol/oracle/commit/b7de8c6))
+* feat: updating deployment files ([2a61cee](https://github.com/VenusProtocol/oracle/commit/2a61cee))
+
 ## 2.16.0-dev.3 (2026-08-12)
 
 * Merge pull request #318 from VenusProtocol/feat/apro-oracle-deployment ([2cfc3b1](https://github.com/VenusProtocol/oracle/commit/2cfc3b1)), closes [#318](https://github.com/VenusProtocol/oracle/issues/318)
