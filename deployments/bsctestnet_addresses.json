@@ -2,6 +2,9 @@
   "name": "bsctestnet",
   "chainId": "97",
   "addresses": {
+    "APROOracle": "0x309bC6e25672fDBCFa09D76bAA68be59f215f98d",
+    "APROOracle_Implementation": "0x65527D9F60E6c6dEE2C5CF361C38499daf0587BA",
+    "APROOracle_Proxy": "0x309bC6e25672fDBCFa09D76bAA68be59f215f98d",
     "AnkrBNBOracle": "0x7655d558c3C865913013D82fF4d1e70e97cDf906",
     "AsBNBOracle": "0xb31909f6687Da5bEc559DB7baeed41E14f5Dc17E",
     "AtlasOracle": "0x7F00af2f30a55e79311392C98fBBfA629D19b3A5",
