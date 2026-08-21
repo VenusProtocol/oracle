@@ -11,10 +11,10 @@ const VAULTS = [
   { vault: "vhU", asset: "U" },
 ];
 
-// Only Hub_USDT is deployed on testnet, so only its oracle can be deployed there. The vault keeps
-// the vhUSDT key even though its share token is named "Vault Share" / vSHARE and has 12 decimals,
-// because it is the testnet stand-in for mainnet's vhUSDT.
-const TESTNET_VAULTS = [{ vault: "vhUSDT", asset: "USDT" }];
+// Only Hub_USDT is deployed on testnet, so only its oracle can be deployed there. Its share token
+// is named "Vault Share" / vSHARE and has 12 decimals, so the deployment is named after vSHARE
+// rather than after mainnet's vhUSDT, which does not exist on testnet.
+const TESTNET_VAULTS = [{ vault: "vSHARE", asset: "USDT" }];
 
 const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
