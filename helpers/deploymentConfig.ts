@@ -106,9 +106,7 @@ export const ADDRESSES: PreconfiguredAddresses = {
     SolvBTC: "0x6855E14A6df91b8E4D55163d068E9ef2530fd4CE",
     "PT-clisBNB-25JUN2026": "0x60825e8eBbed5C32c1DAA7eA68ceCA70BEA65040",
     USDT: "0xA11c8D9DC9b66E209Ef60F0C8D969D3CD988782c",
-    // Share token of Hub_USDT, the only Venus Hub vault deployed on testnet. It is named
-    // "Vault Share" / vSHARE and has 12 decimals, and it stands in for mainnet's vhUSDT.
-    vSHARE: "0x7cE6ADF754D0eC81A6CF8ACd9C7454F45077dc61",
+    vhUSDT: "0x7cE6ADF754D0eC81A6CF8ACd9C7454F45077dc61",
   },
   bscmainnet: {
     vBNBAddress: mainnetDeployments.contracts.vBNB.address,

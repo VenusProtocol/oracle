@@ -11,10 +11,10 @@ const VAULTS = [
   { vault: "vhU", asset: "U" },
 ];
 
-// Only Hub_USDT is deployed on testnet, so only its oracle can be deployed there. Its share token
-// is named "Vault Share" / vSHARE and has 12 decimals, so the deployment is named after vSHARE
-// rather than after mainnet's vhUSDT, which does not exist on testnet.
-const TESTNET_VAULTS = [{ vault: "vSHARE", asset: "USDT" }];
+// Only Hub_USDT is deployed on testnet, so only its oracle can be deployed there. It is named
+// after mainnet's vhUSDT to keep one deployment name per vault across networks, even though the
+// token itself predates the naming convention and is still "Vault Share" / vSHARE on chain.
+const TESTNET_VAULTS = [{ vault: "vhUSDT", asset: "USDT" }];
 
 const func: DeployFunction = async ({ getNamedAccounts, deployments, network }: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;

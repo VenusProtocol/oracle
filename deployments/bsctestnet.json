@@ -21169,7 +21169,7 @@
         }
       ]
     },
-    "vSHARE_ERC4626Oracle": {
+    "vhUSDT_ERC4626Oracle": {
       "address": "0xB5A17EB6A135A61057bc2F4f102c633899256BFa",
       "abi": [
         {
