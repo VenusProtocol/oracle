@@ -1,3 +1,16 @@
+## 2.16.0-dev.5 (2026-08-27)
+
+* Merge pull request #320 from VenusProtocol/feat/vh-capped-oracles ([85d8cc3](https://github.com/VenusProtocol/oracle/commit/85d8cc3)), closes [#320](https://github.com/VenusProtocol/oracle/issues/320)
+* feat: updating deployment files ([9b20d41](https://github.com/VenusProtocol/oracle/commit/9b20d41))
+* feat: updating deployment files ([cb0401f](https://github.com/VenusProtocol/oracle/commit/cb0401f))
+* feat(deploy): add vh receipt token ERC4626 oracles ([94b944c](https://github.com/VenusProtocol/oracle/commit/94b944c))
+* feat(deploy): deploy vh oracle on bsctestnet ([d087067](https://github.com/VenusProtocol/oracle/commit/d087067))
+* refactor(deploy): name the testnet vh oracle after vhUSDT ([6dde8a8](https://github.com/VenusProtocol/oracle/commit/6dde8a8))
+* refactor(deploy): name the testnet vh oracle after vSHARE ([8c59195](https://github.com/VenusProtocol/oracle/commit/8c59195))
+* chore: retrigger ci ([52b5dd5](https://github.com/VenusProtocol/oracle/commit/52b5dd5))
+* chore(deploy): record the bscmainnet vh oracle deployments ([9ebbbbd](https://github.com/VenusProtocol/oracle/commit/9ebbbbd))
+* chore(deploy): record the bsctestnet vSHARE oracle deployment ([7495d0d](https://github.com/VenusProtocol/oracle/commit/7495d0d))
+
 ## 2.16.0-dev.4 (2026-08-12)
 
 * Merge pull request #319 from VenusProtocol/deploy-testnet-apro-oracle ([6b8962c](https://github.com/VenusProtocol/oracle/commit/6b8962c)), closes [#319](https://github.com/VenusProtocol/oracle/issues/319)
