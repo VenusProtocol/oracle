@@ -10,9 +10,11 @@
   "parserOptions": {
     "project": ".eslinttsconfigrc"
   },
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "sonarjs"],
   "root": true,
   "rules": {
+    "complexity": ["error", 15],
+    "sonarjs/cognitive-complexity": ["error", 15],
     "import/extensions": 0,
     "import/prefer-default-export": 0,
     "camelcase": 1,
