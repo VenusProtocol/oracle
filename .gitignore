@@ -18,6 +18,8 @@
 **/node_modules
 .openzeppelin
 typechain-types
+/cache-foundry
+/out
 
 # files
 *.env
