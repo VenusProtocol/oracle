@@ -3,7 +3,7 @@
   "include": [
     "typechain-types",
     "deploy",
-    "tests",
+    "test",
     "tasks",
     "docgen-templates",
     "scripts",

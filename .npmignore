@@ -5,7 +5,7 @@ deploy
 deployments
 docs
 networks
-tests
+test
 .npmignore
 hardhat.config.ts
 hardhat.config.zksync.ts

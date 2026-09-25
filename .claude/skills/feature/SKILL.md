@@ -70,7 +70,7 @@ contracts/
   ├── interfaces/IMyOracle.sol     # Interface first
   └── oracles/MyOracle.sol         # Implementation
 
-tests/hardhat/
+test/
   └── MyOracle.ts                  # Unit tests (only when asked)
 
 deploy/

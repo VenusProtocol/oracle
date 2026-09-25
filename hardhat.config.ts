@@ -263,7 +263,7 @@ const config: HardhatUserConfig = {
     ],
   },
   paths: {
-    tests: "./tests/hardhat",
+    tests: "./test",
   },
   dependencyCompiler: {
     paths: [

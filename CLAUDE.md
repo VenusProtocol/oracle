@@ -32,7 +32,7 @@ yarn docgen                    # generate contract docs
 
 ```bash
 # Requires FORK=true + FORKED_NETWORK + ARCHIVE_NODE_<network> in .env
-FORK=true FORKED_NETWORK=bscmainnet npx hardhat test tests/hardhat/fork/<test-file>.ts
+FORK=true FORKED_NETWORK=bscmainnet npx hardhat test test/fork/<test-file>.ts
 ```
 
 ### Deploying
@@ -59,12 +59,10 @@ contracts/
   ├── ReferenceOracle.sol
   └── ResilientOracle.sol
 
-tests/
-  ├── hardhat/
-  │     ├── fork/              # Fork-based integration tests (FORK=true)
-  │     ├── utils/             # Test helpers
-  │     └── <OracleName>.ts    # Unit tests per oracle (mirrors contracts/oracles/)
-  └── foundry/                 # Foundry fuzz tests (<Contract>.t.sol)
+test/
+  ├── fork/                    # Fork-based integration tests (FORK=true)
+  ├── utils/                   # Test helpers
+  └── <OracleName>.ts          # Unit tests per oracle (mirrors contracts/oracles/)
 
 deploy/                        # Hardhat-deploy scripts (numbered, run in order)
 deployments/                   # Hardhat-deploy artifacts per network (git-tracked)
