@@ -22,7 +22,7 @@ The guidance below applies to whichever test type the user requests.
 
 ## Unit Tests
 
-One test file per contract in `test/`. The structure below is a reference — substitute actual contract names, addresses, and constructor args for the contract under test.
+One test file per contract in `tests/hardhat/`. The structure below is a reference — substitute actual contract names, addresses, and constructor args for the contract under test.
 
 ```typescript
 import { smock } from "@defi-wonderland/smock";
@@ -120,7 +120,7 @@ describe("<ContractName>", async () => {
 **Don't:**
 
 - Test OZ/base contract internals (Ownable, AccessControl, Initializable).
-- Create new mocks if existing ones in `test/` suffice.
+- Create new mocks if existing ones in `tests/hardhat/` suffice.
 - Duplicate revert paths already tested in another file.
 - Add fuzz tests unless explicitly asked.
 
@@ -128,12 +128,12 @@ describe("<ContractName>", async () => {
 
 ## Fork Tests
 
-Fork tests live in `test/fork/`. Run with `FORK=true FORKED_NETWORK=<network>`.
+Fork tests live in `tests/hardhat/fork/`. Run with `FORK=true FORKED_NETWORK=<network>`.
 
 - Deploy the new contract inside the fork test itself — do not rely on a live deployment.
 - Use real mainnet addresses for already-deployed contracts (oracles, resilientOracle, ACM) so live state is part of the test.
 - Mirror the unit test flow but validate calculations against real on-chain data.
-- Import shared helpers from `test/fork/utils.ts` (addresses, signers, impersonation helpers).
+- Import shared helpers from `tests/hardhat/fork/utils.ts` (addresses, signers, impersonation helpers).
 
 ```typescript
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
@@ -174,7 +174,7 @@ describe("<ContractName> fork tests", () => {
 
 ## Verify
 
-Run `npx hardhat test test/<TestFileName>.ts` and fix any failures before reporting to the user.
+Run `npx hardhat test tests/hardhat/<TestFileName>.ts` and fix any failures before reporting to the user.
 
 ---
 

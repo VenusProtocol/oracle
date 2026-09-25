@@ -160,7 +160,7 @@ const config: HardhatUserConfig = {
     ],
   },
   paths: {
-    tests: "./tests",
+    tests: "./tests/hardhat",
     cache: "./cache-zk",
     artifacts: "./artifacts-zk",
   },

@@ -1,6 +1,6 @@
 ---
 description: Rules for when and how to write or update tests
-globs: test/**/*.ts
+globs: tests/hardhat/**/*.ts
 ---
 
 # Testing Rules
