@@ -8,7 +8,7 @@ Hardhat-only: it produces the published package. To work on the Foundry suite al
 
 ```
 forge test                      256 fuzz runs
-FOUNDRY_PROFILE=ci forge test   the 5000 runs CI uses
+FOUNDRY_PROFILE=ci forge test   the 2000 runs CI uses
 ```
 
 ## What belongs where
