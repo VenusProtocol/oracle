@@ -23,6 +23,11 @@ optimizer_runs = 200
 [profile.default.fuzz]
 runs = 256
 
+[profile.default.invariant]
+runs = 64
+depth = 32
+
 # Everything not set here is inherited from the default profile.
 [profile.ci]
 fuzz = { runs = 2000 }
+invariant = { runs = 1000, depth = 100 }
