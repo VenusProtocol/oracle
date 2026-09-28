@@ -16,7 +16,7 @@
     "contracts"
   ],
   "scripts": {
-    "clean": "shx rm -rf ./artifacts ./cache ./coverage ./coverage.json && hardhat clean && hardhat clean --config hardhat.config.zksync.ts && forge clean",
+    "clean": "shx rm -rf ./artifacts ./cache ./coverage ./coverage.json ./out ./cache-foundry && hardhat clean && hardhat clean --config hardhat.config.zksync.ts",
     "commit": "git-cz",
     "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile && hardhat compile --config hardhat.config.zksync.ts",
     "hardhat:coverage": "hardhat coverage",
@@ -29,7 +29,8 @@
     "prettier": "prettier --config ./.prettierrc.yaml --write \"**/*.{js,json,md,sol,ts,yaml,yml}\"",
     "prettier:check": "prettier --check --config ./.prettierrc.yaml \"**/*.{js,json,md,sol,ts,yaml,yml}\"",
     "prettier:cached": "prettier --write --cache --config ./.prettierrc.yaml \"**/*.{js,json,md,sol,ts,yaml,yml}\"",
-    "test": "npm run compile && hardhat test && forge test",
+    "test": "npm run compile && hardhat test",
+    "test:foundry": "forge test",
     "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
     "build": "rm -rf dist && hardhat compile && hardhat compile --config hardhat.config.zksync.ts && tsc --declaration",
     "docgen": "hardhat docgen",
