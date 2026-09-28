@@ -76,6 +76,8 @@ $ yarn prettier
 
 npx hardhat test
 
+forge test
+
 ```
 
 - To run fork tests add FORK=true, FORKED_NETWORK and one ARCHIVE_NODE var in the .env file.

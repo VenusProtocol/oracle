@@ -90,11 +90,10 @@ contract DeviationBoundedOracleTest is Test {
 
     uint256 internal constant INITIAL_PRICE = 1e18;
     uint256 internal constant TRIGGER_THRESHOLD = 10e16;
+    uint64 internal constant COOLDOWN = 1 hours;
 
     function setUp() public {
         spotOracle = new MockSimpleOracle();
-        spotOracle.setPrice(asset, INITIAL_PRICE);
-        vToken = address(new VBEP20Harness("Venus Asset", "vASSET", 8, asset));
 
         AccessControlManager acm = new AccessControlManager();
         DeviationBoundedOracle implementation = new DeviationBoundedOracle(
@@ -110,27 +109,21 @@ contract DeviationBoundedOracleTest is Test {
                 )
             )
         );
-        handler = new DeviationBoundedOracleHandler(dbo, spotOracle, vToken, asset);
-
         acm.giveCallPermission(
             address(dbo),
             "setTokenConfig((address,uint64,uint256,uint256,bool,bool))",
             address(this)
         );
-        acm.giveCallPermission(address(dbo), "updateMinPrice(address,uint128)", address(handler));
-        acm.giveCallPermission(address(dbo), "updateMaxPrice(address,uint128)", address(handler));
-        acm.giveCallPermission(address(dbo), "exitProtectionMode(address)", address(handler));
 
-        dbo.setTokenConfig(
-            IDeviationBoundedOracle.TokenConfigInput({
-                asset: asset,
-                cooldownPeriod: 1 hours,
-                triggerThreshold: TRIGGER_THRESHOLD,
-                resetThreshold: 5e16,
-                enableBoundedPricing: true,
-                enableCaching: false
-            })
-        );
+        vToken = _listAsset(asset, INITIAL_PRICE, false);
+        handler = new DeviationBoundedOracleHandler(dbo, spotOracle, vToken, asset);
+
+        address[2] memory keepers = [address(handler), address(this)];
+        for (uint256 i; i < keepers.length; ++i) {
+            acm.giveCallPermission(address(dbo), "updateMinPrice(address,uint128)", keepers[i]);
+            acm.giveCallPermission(address(dbo), "updateMaxPrice(address,uint128)", keepers[i]);
+            acm.giveCallPermission(address(dbo), "exitProtectionMode(address)", keepers[i]);
+        }
 
         targetContract(address(handler));
     }
@@ -149,6 +142,74 @@ contract DeviationBoundedOracleTest is Test {
         (uint256 collateralPrice, uint256 debtPrice) = dbo.getBoundedPricesView(vToken);
         assertEq(collateralPrice, up ? INITIAL_PRICE : movedPrice);
         assertEq(debtPrice, up ? movedPrice : INITIAL_PRICE);
+    }
+
+    /// @notice The trigger band includes its edges: a spot exactly on one keeps spot pricing, and one
+    ///  wei past it engages protection.
+    function testFuzz_theTriggerBandIncludesItsEdges(uint256 price, bool up) public {
+        price = bound(price, MIN_PRICE, MAX_PRICE);
+        address edgeAsset = makeAddr("edgeAsset");
+        address edgeVToken = _listAsset(edgeAsset, price, false);
+        uint256 edge = up ? (price * (1e18 + TRIGGER_THRESHOLD)) / 1e18 : (price * (1e18 - TRIGGER_THRESHOLD)) / 1e18;
+
+        spotOracle.setPrice(edgeAsset, edge);
+        dbo.updateProtectionState(edgeVToken);
+        assertFalse(dbo.currentlyUsingProtectedPrice(edgeAsset));
+
+        spotOracle.setPrice(edgeAsset, up ? edge + 1 : edge - 1);
+        dbo.updateProtectionState(edgeVToken);
+        assertTrue(dbo.currentlyUsingProtectedPrice(edgeAsset));
+    }
+
+    /// @notice Protection holds for the whole cooldown. Once it has passed and the keeper has pulled
+    ///  the window in to spot, exiting prices both sides at spot again.
+    function testFuzz_exitAfterTheCooldownReturnsToSpotPricing(uint256 movedPrice, bool up) public {
+        movedPrice = up
+            ? bound(movedPrice, (INITIAL_PRICE * 111) / 100, INITIAL_PRICE * 10)
+            : bound(movedPrice, INITIAL_PRICE / 10, (INITIAL_PRICE * 89) / 100);
+        spotOracle.setPrice(asset, movedPrice);
+        dbo.updateProtectionState(vToken);
+        uint64 triggeredAt = uint64(block.timestamp);
+
+        if (up) dbo.updateMinPrice(asset, uint128(movedPrice));
+        else dbo.updateMaxPrice(asset, uint128(movedPrice));
+
+        vm.warp(block.timestamp + COOLDOWN - 1);
+        vm.expectRevert(
+            abi.encodeWithSelector(IDeviationBoundedOracle.CooldownNotElapsed.selector, asset, triggeredAt, COOLDOWN)
+        );
+        dbo.exitProtectionMode(asset);
+
+        vm.warp(block.timestamp + 1);
+        dbo.exitProtectionMode(asset);
+
+        assertFalse(dbo.currentlyUsingProtectedPrice(asset));
+        (uint256 collateralPrice, uint256 debtPrice) = dbo.getBoundedPricesView(vToken);
+        assertEq(collateralPrice, movedPrice);
+        assertEq(debtPrice, movedPrice);
+    }
+
+    /// @notice With caching on, the prices resolved when a transaction first prices the market hold
+    ///  for the rest of it: the views read them back, and a later spot move goes unseen.
+    /// @dev A Foundry test runs as one transaction, so the transient cache lasts across these calls
+    ///  as it would within one production transaction.
+    function testFuzz_cachedPricesHoldForTheRestOfTheTransaction(uint256 movedPrice, uint256 laterPrice) public {
+        movedPrice = bound(movedPrice, MIN_PRICE, MAX_PRICE);
+        laterPrice = bound(laterPrice, MIN_PRICE, MAX_PRICE);
+        address cachedAsset = makeAddr("cachedAsset");
+        address cachedVToken = _listAsset(cachedAsset, INITIAL_PRICE, true);
+
+        spotOracle.setPrice(cachedAsset, movedPrice);
+        (uint256 collateralPrice, uint256 debtPrice) = dbo.getBoundedPrices(cachedVToken);
+
+        spotOracle.setPrice(cachedAsset, laterPrice);
+        (uint256 viewCollateral, uint256 viewDebt) = dbo.getBoundedPricesView(cachedVToken);
+        (uint256 laterCollateral, uint256 laterDebt) = dbo.getBoundedPrices(cachedVToken);
+
+        assertEq(viewCollateral, collateralPrice);
+        assertEq(viewDebt, debtPrice);
+        assertEq(laterCollateral, collateralPrice);
+        assertEq(laterDebt, debtPrice);
     }
 
     function invariant_collateralNeverAboveSpotAndDebtNeverBelow() public view {
@@ -177,5 +238,21 @@ contract DeviationBoundedOracleTest is Test {
 
         assertGt(minPrice, 0);
         assertLe(minPrice, maxPrice);
+    }
+
+    /// @dev Configures `asset_` at `price` behind a fresh harness vToken, which it returns.
+    function _listAsset(address asset_, uint256 price, bool caching) internal returns (address vToken_) {
+        spotOracle.setPrice(asset_, price);
+        vToken_ = address(new VBEP20Harness("Venus Asset", "vASSET", 8, asset_));
+        dbo.setTokenConfig(
+            IDeviationBoundedOracle.TokenConfigInput({
+                asset: asset_,
+                cooldownPeriod: COOLDOWN,
+                triggerThreshold: TRIGGER_THRESHOLD,
+                resetThreshold: 5e16,
+                enableBoundedPricing: true,
+                enableCaching: caching
+            })
+        );
     }
 }
