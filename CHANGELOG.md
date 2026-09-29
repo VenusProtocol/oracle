@@ -1,3 +1,23 @@
+## 2.16.0-dev.6 (2026-09-29)
+
+* Merge pull request #321 from VenusProtocol/feat/code-complexity-gates ([835d5b6](https://github.com/VenusProtocol/oracle/commit/835d5b6)), closes [#321](https://github.com/VenusProtocol/oracle/issues/321)
+* Merge pull request #322 from VenusProtocol/feat/foundry-setup ([c1d10ac](https://github.com/VenusProtocol/oracle/commit/c1d10ac)), closes [#322](https://github.com/VenusProtocol/oracle/issues/322)
+* test: cover dbo caching, exit and band edges, document forge test ([e92785d](https://github.com/VenusProtocol/oracle/commit/e92785d))
+* test: fuzz and invariant-test deviation bounded oracle pricing ([50d68ce](https://github.com/VenusProtocol/oracle/commit/50d68ce))
+* test: fuzz bound validator price bounds in foundry ([772f9e9](https://github.com/VenusProtocol/oracle/commit/772f9e9))
+* test: keep tests in test/, with foundry under test/foundry ([64ce067](https://github.com/VenusProtocol/oracle/commit/64ce067))
+* test: keep the bound validator suite, decouple forge from yarn ([68ad8e0](https://github.com/VenusProtocol/oracle/commit/68ad8e0))
+* test: move hardhat tests to tests/hardhat and foundry tests to tests/foundry ([92b1c6b](https://github.com/VenusProtocol/oracle/commit/92b1c6b))
+* docs: add foundry and the forge-std submodule to the setup steps ([afb5a8e](https://github.com/VenusProtocol/oracle/commit/afb5a8e))
+* docs: document the foundry setup and what belongs in it ([cbb074f](https://github.com/VenusProtocol/oracle/commit/cbb074f))
+* docs: drop the foundry readme ([3141425](https://github.com/VenusProtocol/oracle/commit/3141425))
+* chore: add invariant budgets to the foundry profiles ([228896c](https://github.com/VenusProtocol/oracle/commit/228896c))
+* chore: drop redundant foundry config and forge build from compile ([f35aece](https://github.com/VenusProtocol/oracle/commit/f35aece))
+* chore: drop the foundry failure dirs and unused invariant config ([964d3f0](https://github.com/VenusProtocol/oracle/commit/964d3f0))
+* chore: enforce function complexity limits in eslint and sonarjs ([e96d0c0](https://github.com/VenusProtocol/oracle/commit/e96d0c0))
+* chore: lower the ci fuzz budget to 2000 runs ([06faf48](https://github.com/VenusProtocol/oracle/commit/06faf48))
+* feat: add foundry alongside hardhat with forge-std and a ci job ([dd6f1f2](https://github.com/VenusProtocol/oracle/commit/dd6f1f2))
+
 ## 2.16.0-dev.5 (2026-08-27)
 
 * Merge pull request #320 from VenusProtocol/feat/vh-capped-oracles ([85d8cc3](https://github.com/VenusProtocol/oracle/commit/85d8cc3)), closes [#320](https://github.com/VenusProtocol/oracle/issues/320)
