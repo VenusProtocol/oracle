@@ -7,12 +7,20 @@ import { CorrelatedTokenOracle } from "./common/CorrelatedTokenOracle.sol";
 /**
  * @title ERC4626Oracle
  * @author Venus
- * @notice This oracle fetches the price of ERC4626 tokens
+ * @notice This oracle fetches the price of ERC4626 tokens.
+ * @dev CAPO (Capped Asset Price Oracle) is mandatory for ERC-4626 tokens to prevent
+ * donation-based exchange rate manipulation attacks. The convertToAssets() function
+ * can be inflated by directly transferring underlying tokens to the vault contract,
+ * which would allow attackers to borrow against artificially inflated collateral.
  */
 contract ERC4626Oracle is CorrelatedTokenOracle {
     uint256 public immutable ONE_CORRELATED_TOKEN;
 
+    /// @notice Thrown when CAPO parameters are not set (required for ERC-4626 tokens)
+    error CAPORequired();
+
     /// @notice Constructor for the implementation contract.
+    /// @dev Enforces CAPO: annualGrowthRate, snapshotInterval, and initial snapshot values must be non-zero
     constructor(
         address correlatedToken,
         address underlyingToken,
@@ -36,6 +44,10 @@ contract ERC4626Oracle is CorrelatedTokenOracle {
             _snapshotGap
         )
     {
+        // ERC-4626 vaults are vulnerable to donation attacks that inflate convertToAssets().
+        // CAPO must be active to cap the exchange rate growth and prevent manipulation.
+        if (annualGrowthRate == 0 || _snapshotInterval == 0) revert CAPORequired();
+
         ONE_CORRELATED_TOKEN = 10 ** IERC4626(correlatedToken).decimals();
     }
 
