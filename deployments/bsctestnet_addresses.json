@@ -2,6 +2,9 @@
   "name": "bsctestnet",
   "chainId": "97",
   "addresses": {
+    "APROOracle": "0x309bC6e25672fDBCFa09D76bAA68be59f215f98d",
+    "APROOracle_Implementation": "0x65527D9F60E6c6dEE2C5CF361C38499daf0587BA",
+    "APROOracle_Proxy": "0x309bC6e25672fDBCFa09D76bAA68be59f215f98d",
     "AnkrBNBOracle": "0x7655d558c3C865913013D82fF4d1e70e97cDf906",
     "AsBNBOracle": "0xb31909f6687Da5bEc559DB7baeed41E14f5Dc17E",
     "AtlasOracle": "0x7F00af2f30a55e79311392C98fBBfA629D19b3A5",
@@ -59,6 +62,7 @@
     "WBETHOracle_Proxy": "0x80f80ad1d963673819752c234339901fa19fA7cb",
     "sUSDeOneJumpChainlinkOracle": "0x4678BcB5B8eDd9f853725F64d59Ba592F9e41565",
     "sUSDeOneJumpRedstoneOracle": "0xA5b51bF1625c1F90341c4527AFa5B0865F15ac70",
+    "vhUSDT_ERC4626Oracle": "0xB5A17EB6A135A61057bc2F4f102c633899256BFa",
     "weETHOneJumpChainlinkOracle": "0x8C8a70695DC952CA2e8CD4038907201FaBB8134E",
     "weETHOneJumpChainlinkOracle_Implementation": "0x8C836bB533107A8FB4741377cf7b666DD0248C08",
     "weETHOneJumpChainlinkOracle_Proxy": "0x8C8a70695DC952CA2e8CD4038907201FaBB8134E",

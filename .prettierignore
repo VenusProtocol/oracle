@@ -12,6 +12,9 @@
 **/dist
 **/node_modules
 **/typechain-types
+/cache-foundry
+/lib
+/out
 
 # files
 *.env
