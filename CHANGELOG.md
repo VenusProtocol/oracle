@@ -1,3 +1,50 @@
+## 2.16.0-dev.6 (2026-09-29)
+
+* Merge pull request #321 from VenusProtocol/feat/code-complexity-gates ([835d5b6](https://github.com/VenusProtocol/oracle/commit/835d5b6)), closes [#321](https://github.com/VenusProtocol/oracle/issues/321)
+* Merge pull request #322 from VenusProtocol/feat/foundry-setup ([c1d10ac](https://github.com/VenusProtocol/oracle/commit/c1d10ac)), closes [#322](https://github.com/VenusProtocol/oracle/issues/322)
+* test: cover dbo caching, exit and band edges, document forge test ([e92785d](https://github.com/VenusProtocol/oracle/commit/e92785d))
+* test: fuzz and invariant-test deviation bounded oracle pricing ([50d68ce](https://github.com/VenusProtocol/oracle/commit/50d68ce))
+* test: fuzz bound validator price bounds in foundry ([772f9e9](https://github.com/VenusProtocol/oracle/commit/772f9e9))
+* test: keep tests in test/, with foundry under test/foundry ([64ce067](https://github.com/VenusProtocol/oracle/commit/64ce067))
+* test: keep the bound validator suite, decouple forge from yarn ([68ad8e0](https://github.com/VenusProtocol/oracle/commit/68ad8e0))
+* test: move hardhat tests to tests/hardhat and foundry tests to tests/foundry ([92b1c6b](https://github.com/VenusProtocol/oracle/commit/92b1c6b))
+* docs: add foundry and the forge-std submodule to the setup steps ([afb5a8e](https://github.com/VenusProtocol/oracle/commit/afb5a8e))
+* docs: document the foundry setup and what belongs in it ([cbb074f](https://github.com/VenusProtocol/oracle/commit/cbb074f))
+* docs: drop the foundry readme ([3141425](https://github.com/VenusProtocol/oracle/commit/3141425))
+* chore: add invariant budgets to the foundry profiles ([228896c](https://github.com/VenusProtocol/oracle/commit/228896c))
+* chore: drop redundant foundry config and forge build from compile ([f35aece](https://github.com/VenusProtocol/oracle/commit/f35aece))
+* chore: drop the foundry failure dirs and unused invariant config ([964d3f0](https://github.com/VenusProtocol/oracle/commit/964d3f0))
+* chore: enforce function complexity limits in eslint and sonarjs ([e96d0c0](https://github.com/VenusProtocol/oracle/commit/e96d0c0))
+* chore: lower the ci fuzz budget to 2000 runs ([06faf48](https://github.com/VenusProtocol/oracle/commit/06faf48))
+* feat: add foundry alongside hardhat with forge-std and a ci job ([dd6f1f2](https://github.com/VenusProtocol/oracle/commit/dd6f1f2))
+
+## 2.16.0-dev.5 (2026-08-27)
+
+* Merge pull request #320 from VenusProtocol/feat/vh-capped-oracles ([85d8cc3](https://github.com/VenusProtocol/oracle/commit/85d8cc3)), closes [#320](https://github.com/VenusProtocol/oracle/issues/320)
+* feat: updating deployment files ([9b20d41](https://github.com/VenusProtocol/oracle/commit/9b20d41))
+* feat: updating deployment files ([cb0401f](https://github.com/VenusProtocol/oracle/commit/cb0401f))
+* feat(deploy): add vh receipt token ERC4626 oracles ([94b944c](https://github.com/VenusProtocol/oracle/commit/94b944c))
+* feat(deploy): deploy vh oracle on bsctestnet ([d087067](https://github.com/VenusProtocol/oracle/commit/d087067))
+* refactor(deploy): name the testnet vh oracle after vhUSDT ([6dde8a8](https://github.com/VenusProtocol/oracle/commit/6dde8a8))
+* refactor(deploy): name the testnet vh oracle after vSHARE ([8c59195](https://github.com/VenusProtocol/oracle/commit/8c59195))
+* chore: retrigger ci ([52b5dd5](https://github.com/VenusProtocol/oracle/commit/52b5dd5))
+* chore(deploy): record the bscmainnet vh oracle deployments ([9ebbbbd](https://github.com/VenusProtocol/oracle/commit/9ebbbbd))
+* chore(deploy): record the bsctestnet vSHARE oracle deployment ([7495d0d](https://github.com/VenusProtocol/oracle/commit/7495d0d))
+
+## 2.16.0-dev.4 (2026-08-12)
+
+* Merge pull request #319 from VenusProtocol/deploy-testnet-apro-oracle ([6b8962c](https://github.com/VenusProtocol/oracle/commit/6b8962c)), closes [#319](https://github.com/VenusProtocol/oracle/issues/319)
+* feat: deploy APROOracle on bsctestnet ([b7de8c6](https://github.com/VenusProtocol/oracle/commit/b7de8c6))
+* feat: updating deployment files ([2a61cee](https://github.com/VenusProtocol/oracle/commit/2a61cee))
+
+## 2.16.0-dev.3 (2026-08-12)
+
+* Merge pull request #318 from VenusProtocol/feat/apro-oracle-deployment ([2cfc3b1](https://github.com/VenusProtocol/oracle/commit/2cfc3b1)), closes [#318](https://github.com/VenusProtocol/oracle/issues/318)
+* feat: add APROOracle deploy script and bscmainnet deployment ([0a4a7c3](https://github.com/VenusProtocol/oracle/commit/0a4a7c3))
+* feat: deploy xSolvBTC OneJump oracle via Chainlink ([3ffc79b](https://github.com/VenusProtocol/oracle/commit/3ffc79b))
+* feat: updating deployment files ([3acf2fd](https://github.com/VenusProtocol/oracle/commit/3acf2fd))
+* feat: updating deployment files ([aa67c38](https://github.com/VenusProtocol/oracle/commit/aa67c38))
+
 ## 2.16.0 (2026-07-08)
 
 * Merge branch 'develop' into fix/vpd-1241-certik-audit ([3094df0](https://github.com/VenusProtocol/oracle/commit/3094df0))
