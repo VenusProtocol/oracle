@@ -92,7 +92,7 @@
     "hardhat-deploy-ethers": "^0.3.0-beta.13",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.1",
-    "lodash": "^4.17.21",
+    "lodash": "^4.18.0",
     "mocha": "^10.0.0",
     "prettier": "^2.6.2",
     "prettier-plugin-solidity": "^1.0.0",
@@ -124,6 +124,21 @@
   },
   "resolutions": {
     "hardhat": "2.22.18",
-    "@defi-wonderland/smock": "2.4.0"
+    "@defi-wonderland/smock": "2.4.0",
+    "@babel/core@7.17.8": "7.29.7",
+    "@babel/traverse@7.17.3": "7.29.7",
+    "adm-zip@^0.4.16": "0.6.1",
+    "axios@^0.21.1": "0.34.0",
+    "axios@^0.21.2": "0.34.0",
+    "bn.js@4.11.6": "4.12.5",
+    "cookie@^0.4.1": "0.7.2",
+    "elliptic@6.5.4": "6.6.1",
+    "lodash@4.17.21": "4.18.1",
+    "micromatch@4.0.5": "4.0.8",
+    "tar-fs@~2.0.1": "2.1.5",
+    "tmp@0.0.33": "0.2.7",
+    "tmp@^0.0.33": "0.2.7",
+    "ws@7.4.6": "7.5.13",
+    "yaml@2.3.1": "2.9.1"
   }
 }
