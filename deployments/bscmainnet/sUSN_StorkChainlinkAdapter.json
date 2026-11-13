@@ -1,0 +1,171 @@
+{
+  "address": "0xBa0331C346280A20c6b67C43512466030bAf13E0",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract IStork",
+          "name": "stork",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "priceId",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "PRICE_ID",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "STORK",
+      "outputs": [
+        {
+          "internalType": "contract IStork",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "decimals",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "latestRoundData",
+      "outputs": [
+        {
+          "internalType": "uint80",
+          "name": "roundId",
+          "type": "uint80"
+        },
+        {
+          "internalType": "int256",
+          "name": "answer",
+          "type": "int256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "startedAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "updatedAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint80",
+          "name": "answeredInRound",
+          "type": "uint80"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x2a06d2afc9c8c34e24cb23d78f67120af804458e2b64cfa22035d79064b25567",
+  "receipt": {
+    "to": null,
+    "from": "0x9b0A3EAE7f174937d31745B710BbeA68e9D1BEf7",
+    "contractAddress": "0xBa0331C346280A20c6b67C43512466030bAf13E0",
+    "transactionIndex": 64,
+    "gasUsed": "232860",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x4d1dbced6f565a5849ed9878113ae796a5a046383006ed458162f36bc5825ebd",
+    "transactionHash": "0x2a06d2afc9c8c34e24cb23d78f67120af804458e2b64cfa22035d79064b25567",
+    "logs": [],
+    "blockNumber": 133351579,
+    "cumulativeGasUsed": "11227310",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x7D06cc8210228365896A3cc8Aac88c5551529112",
+    "0x77003d6da8f95711efa901495c607c987dfaedd55d24c6f935286f2851ed915e"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "0ce839f17624050b42c332d29957e170",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.25+commit.b61c2a91\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract IStork\",\"name\":\"stork\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"priceId\",\"type\":\"bytes32\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"PRICE_ID\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"STORK\",\"outputs\":[{\"internalType\":\"contract IStork\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"decimals\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"latestRoundData\",\"outputs\":[{\"internalType\":\"uint80\",\"name\":\"roundId\",\"type\":\"uint80\"},{\"internalType\":\"int256\",\"name\":\"answer\",\"type\":\"int256\"},{\"internalType\":\"uint256\",\"name\":\"startedAt\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"updatedAt\",\"type\":\"uint256\"},{\"internalType\":\"uint80\",\"name\":\"answeredInRound\",\"type\":\"uint80\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"Venus\",\"details\":\"Stork stores the update time in nanoseconds. The ChainlinkOracle compares `updatedAt` with `block.timestamp`,      so it is reported here in seconds; in nanoseconds every read reverts with \\\"updatedAt exceeds block time\\\".      The value is read through Stork's own age check, which reverts once the value is older than Stork's      `validTimePeriodSeconds` (1 hour on BNB Chain). An hourly feed can pass that age shortly before a push lands,      and every price read reverts until it does. A `maxStalePeriod` on the ChainlinkOracle only binds when it is      set below Stork's limit.\",\"kind\":\"dev\",\"methods\":{\"constructor\":{\"params\":{\"priceId\":\"Stork ID of the feed\",\"stork\":\"Stork contract address\"}},\"decimals()\":{\"returns\":{\"_0\":\"Always 18, since Stork stores every value with 18 decimals\"}},\"latestRoundData()\":{\"details\":\"Stork keeps no rounds, so `roundId` and `answeredInRound` carry the update time as well.\",\"returns\":{\"answer\":\"The value, with 18 decimals\",\"answeredInRound\":\"Update time of the value, in seconds\",\"roundId\":\"Update time of the value, in seconds\",\"startedAt\":\"Update time of the value, in seconds\",\"updatedAt\":\"Update time of the value, in seconds\"}}},\"title\":\"StorkChainlinkAdapter\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"PRICE_ID()\":{\"notice\":\"Stork ID of the feed this adapter reads\"},\"STORK()\":{\"notice\":\"Stork contract that stores the feed\"},\"decimals()\":{\"notice\":\"Number of decimals in the value\"},\"latestRoundData()\":{\"notice\":\"Latest value of the feed, in the Chainlink `latestRoundData` format\"}},\"notice\":\"Exposes one Stork feed through the Chainlink `latestRoundData` interface, so the ChainlinkOracle can read it\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/oracles/StorkChainlinkAdapter.sol\":\"StorkChainlinkAdapter\"},\"evmVersion\":\"cancun\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/interfaces/IStork.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity 0.8.25;\\n\\ninterface IStork {\\n    struct TemporalNumericValue {\\n        // Time of the value, in nanoseconds\\n        uint64 timestampNs;\\n        // The value, with 18 decimals\\n        int192 quantizedValue;\\n    }\\n\\n    function getTemporalNumericValueV1(bytes32 id) external view returns (TemporalNumericValue memory value);\\n}\\n\",\"keccak256\":\"0x31e6de814b921b6419b190ccc1d7e1e1d94a457c8f47e01b27d63c9a7d6c163d\",\"license\":\"BSD-3-Clause\"},\"contracts/oracles/StorkChainlinkAdapter.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity 0.8.25;\\n\\nimport { IStork } from \\\"../interfaces/IStork.sol\\\";\\n\\n/**\\n * @title StorkChainlinkAdapter\\n * @author Venus\\n * @notice Exposes one Stork feed through the Chainlink `latestRoundData` interface, so the ChainlinkOracle can read it\\n * @dev Stork stores the update time in nanoseconds. The ChainlinkOracle compares `updatedAt` with `block.timestamp`,\\n *      so it is reported here in seconds; in nanoseconds every read reverts with \\\"updatedAt exceeds block time\\\".\\n *\\n *      The value is read through Stork's own age check, which reverts once the value is older than Stork's\\n *      `validTimePeriodSeconds` (1 hour on BNB Chain). An hourly feed can pass that age shortly before a push lands,\\n *      and every price read reverts until it does. A `maxStalePeriod` on the ChainlinkOracle only binds when it is\\n *      set below Stork's limit.\\n */\\ncontract StorkChainlinkAdapter {\\n    /// @notice Stork contract that stores the feed\\n    IStork public immutable STORK;\\n\\n    /// @notice Stork ID of the feed this adapter reads\\n    bytes32 public immutable PRICE_ID;\\n\\n    /**\\n     * @param stork Stork contract address\\n     * @param priceId Stork ID of the feed\\n     */\\n    constructor(IStork stork, bytes32 priceId) {\\n        // Reverts for a zero address, a non-Stork contract, an ID that was never pushed or a value older than\\n        // Stork's age limit, so a bad feed fails at deploy instead of on the first price read.\\n        stork.getTemporalNumericValueV1(priceId);\\n\\n        STORK = stork;\\n        PRICE_ID = priceId;\\n    }\\n\\n    /**\\n     * @notice Latest value of the feed, in the Chainlink `latestRoundData` format\\n     * @dev Stork keeps no rounds, so `roundId` and `answeredInRound` carry the update time as well.\\n     * @return roundId Update time of the value, in seconds\\n     * @return answer The value, with 18 decimals\\n     * @return startedAt Update time of the value, in seconds\\n     * @return updatedAt Update time of the value, in seconds\\n     * @return answeredInRound Update time of the value, in seconds\\n     */\\n    function latestRoundData()\\n        external\\n        view\\n        returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)\\n    {\\n        IStork.TemporalNumericValue memory value = STORK.getTemporalNumericValueV1(PRICE_ID);\\n        updatedAt = value.timestampNs / 1e9;\\n        return (uint80(updatedAt), value.quantizedValue, updatedAt, updatedAt, uint80(updatedAt));\\n    }\\n\\n    /**\\n     * @notice Number of decimals in the value\\n     * @return Always 18, since Stork stores every value with 18 decimals\\n     */\\n    function decimals() external pure returns (uint8) {\\n        return 18;\\n    }\\n}\\n\",\"keccak256\":\"0x308b47a995364e213022020a86fe3ab6c85fd9f50341ef2559451f37ff3d5a5c\",\"license\":\"BSD-3-Clause\"}},\"version\":1}",
+  "bytecode": "0x60c060405234801561000f575f80fd5b5060405161046938038061046983398101604081905261002e916100aa565b6040516266bde960e61b8152600481018290526001600160a01b038316906319af7a40906024016040805180830381865afa15801561006f573d5f803e3d5ffd5b505050506040513d601f19601f8201168201806040525081019061009391906100e1565b506001600160a01b0390911660805260a052610158565b5f80604083850312156100bb575f80fd5b82516001600160a01b03811681146100d1575f80fd5b6020939093015192949293505050565b5f604082840312156100f1575f80fd5b604080519081016001600160401b03808211838310171561012057634e487b7160e01b5f52604160045260245ffd5b81604052845191508082168214610135575f80fd5b5081526020830151601781900b811461014c575f80fd5b60208201529392505050565b60805160a0516102e46101855f395f81816053015261014c01525f8181609c015261011d01526102e45ff3fe608060405234801561000f575f80fd5b506004361061004a575f3560e01c8063066dc9b41461004e578063313ce567146100885780634cf093b614610097578063feaf968c146100d6575b5f80fd5b6100757f000000000000000000000000000000000000000000000000000000000000000081565b6040519081526020015b60405180910390f35b6040516012815260200161007f565b6100be7f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b03909116815260200161007f565b6100de610115565b6040805169ffffffffffffffffffff968716815260208101959095528401929092526060830152909116608082015260a00161007f565b5f805f805f807f00000000000000000000000000000000000000000000000000000000000000006001600160a01b03166319af7a407f00000000000000000000000000000000000000000000000000000000000000006040518263ffffffff1660e01b815260040161018991815260200190565b6040805180830381865afa1580156101a3573d5f803e3d5ffd5b505050506040513d601f19601f820116820180604052508101906101c79190610204565b80519091506101db90633b9aca009061027c565b6020919091015167ffffffffffffffff9091169660179190910b95508694508493508392509050565b5f60408284031215610214575f80fd5b6040516040810167ffffffffffffffff828210818311171561024457634e487b7160e01b5f52604160045260245ffd5b81604052845191508082168214610259575f80fd5b5081526020830151601781900b8114610270575f80fd5b60208201529392505050565b5f67ffffffffffffffff808416806102a257634e487b7160e01b5f52601260045260245ffd5b9216919091049291505056fea26469706673582212203692014c2d4300edcf276bc9da6a3a8e20e5e0800c2d8f0bf6bf41176def548364736f6c63430008190033",
+  "deployedBytecode": "0x608060405234801561000f575f80fd5b506004361061004a575f3560e01c8063066dc9b41461004e578063313ce567146100885780634cf093b614610097578063feaf968c146100d6575b5f80fd5b6100757f000000000000000000000000000000000000000000000000000000000000000081565b6040519081526020015b60405180910390f35b6040516012815260200161007f565b6100be7f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b03909116815260200161007f565b6100de610115565b6040805169ffffffffffffffffffff968716815260208101959095528401929092526060830152909116608082015260a00161007f565b5f805f805f807f00000000000000000000000000000000000000000000000000000000000000006001600160a01b03166319af7a407f00000000000000000000000000000000000000000000000000000000000000006040518263ffffffff1660e01b815260040161018991815260200190565b6040805180830381865afa1580156101a3573d5f803e3d5ffd5b505050506040513d601f19601f820116820180604052508101906101c79190610204565b80519091506101db90633b9aca009061027c565b6020919091015167ffffffffffffffff9091169660179190910b95508694508493508392509050565b5f60408284031215610214575f80fd5b6040516040810167ffffffffffffffff828210818311171561024457634e487b7160e01b5f52604160045260245ffd5b81604052845191508082168214610259575f80fd5b5081526020830151601781900b8114610270575f80fd5b60208201529392505050565b5f67ffffffffffffffff808416806102a257634e487b7160e01b5f52601260045260245ffd5b9216919091049291505056fea26469706673582212203692014c2d4300edcf276bc9da6a3a8e20e5e0800c2d8f0bf6bf41176def548364736f6c63430008190033",
+  "devdoc": {
+    "author": "Venus",
+    "details": "Stork stores the update time in nanoseconds. The ChainlinkOracle compares `updatedAt` with `block.timestamp`,      so it is reported here in seconds; in nanoseconds every read reverts with \"updatedAt exceeds block time\".      The value is read through Stork's own age check, which reverts once the value is older than Stork's      `validTimePeriodSeconds` (1 hour on BNB Chain). An hourly feed can pass that age shortly before a push lands,      and every price read reverts until it does. A `maxStalePeriod` on the ChainlinkOracle only binds when it is      set below Stork's limit.",
+    "kind": "dev",
+    "methods": {
+      "constructor": {
+        "params": {
+          "priceId": "Stork ID of the feed",
+          "stork": "Stork contract address"
+        }
+      },
+      "decimals()": {
+        "returns": {
+          "_0": "Always 18, since Stork stores every value with 18 decimals"
+        }
+      },
+      "latestRoundData()": {
+        "details": "Stork keeps no rounds, so `roundId` and `answeredInRound` carry the update time as well.",
+        "returns": {
+          "answer": "The value, with 18 decimals",
+          "answeredInRound": "Update time of the value, in seconds",
+          "roundId": "Update time of the value, in seconds",
+          "startedAt": "Update time of the value, in seconds",
+          "updatedAt": "Update time of the value, in seconds"
+        }
+      }
+    },
+    "title": "StorkChainlinkAdapter",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "PRICE_ID()": {
+        "notice": "Stork ID of the feed this adapter reads"
+      },
+      "STORK()": {
+        "notice": "Stork contract that stores the feed"
+      },
+      "decimals()": {
+        "notice": "Number of decimals in the value"
+      },
+      "latestRoundData()": {
+        "notice": "Latest value of the feed, in the Chainlink `latestRoundData` format"
+      }
+    },
+    "notice": "Exposes one Stork feed through the Chainlink `latestRoundData` interface, so the ChainlinkOracle can read it",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}

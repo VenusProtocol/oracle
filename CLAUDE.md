@@ -75,7 +75,8 @@ artifacts/                     # Compiled ABIs & artifacts (NOT git-tracked)
 
 ## Tests
 
-If tests exist and code changes are made: make the code change first, then immediately ask the user if you should update the tests before touching them.
+- **New feature or new contract, during design and the initial build:** don't write or edit tests unless asked.
+- **Small changes, normal changes and bug fixes:** always update the affected tests and add tests for the new behaviour in the same change, without asking first.
 
 ---
 
