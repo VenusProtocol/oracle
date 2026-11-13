@@ -13,7 +13,7 @@ const FORKED_NETWORK: string = process.env.FORKED_NETWORK || "";
 
 const STORK = "0x7D06cc8210228365896A3cc8Aac88c5551529112";
 const SUSN = "0xdA67B4284609d2d48e5d10cfAc411572727dc1eD";
-// Stork's sUSN -> USN exchange rate, pushed hourly
+// keccak256("SUSNUSD_RR_NOON"): Stork's sUSN redemption-rate feed (USN per sUSN), pushed hourly
 const SUSN_FEED_ID = "0x77003d6da8f95711efa901495c607c987dfaedd55d24c6f935286f2851ed915e";
 const STORK_VALID_TIME_PERIOD = 3600;
 const MAX_STALE_PERIOD = 3900;

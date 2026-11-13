@@ -4,7 +4,8 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 // Stork's contract on BNB Chain, which stores every Stork feed
 const STORK = "0x7D06cc8210228365896A3cc8Aac88c5551529112";
 
-// Stork feed ID of the sUSN -> USN exchange rate, pushed hourly
+// keccak256("SUSNUSD_RR_NOON"): Stork's sUSN redemption-rate feed, pushed hourly. Its value is the USN per sUSN of
+// the Ethereum sUSN vault, so USN counts as exactly $1 despite the USD in the name.
 const SUSN_FEED_ID = "0x77003d6da8f95711efa901495c607c987dfaedd55d24c6f935286f2851ed915e";
 
 const func: DeployFunction = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnvironment) => {

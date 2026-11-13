@@ -10,9 +10,9 @@ import { addr0000 } from "./utils/data";
 import { makeToken } from "./utils/makeToken";
 import { getTime } from "./utils/time";
 
-const PRICE_ID = ethers.utils.id("SUSNUSN_RR");
+const PRICE_ID = ethers.utils.id("SUSNUSD_RR_NOON");
 const VALUE = parseUnits("1.236497006", 18);
-// Below Stork's 1-hour limit: on a real feed, that is the only setting where the ChainlinkOracle's check can fire.
+// Below Stork's 1-hour limit, so every age these tests feed the ChainlinkOracle is one a real Stork read can return
 const MAX_STALE_PERIOD = 1800;
 
 const toNs = (seconds: number) => BigNumber.from(seconds).mul(1e9);

@@ -36,8 +36,13 @@ contract StorkChainlinkAdapter {
     }
 
     /**
-     * @notice Latest value of the feed, with `startedAt` and `updatedAt` in seconds
-     * @dev Stork keeps no rounds, so `roundId` and `answeredInRound` carry the update time.
+     * @notice Latest value of the feed, in the Chainlink `latestRoundData` format
+     * @dev Stork keeps no rounds, so `roundId` and `answeredInRound` carry the update time as well.
+     * @return roundId Update time of the value, in seconds
+     * @return answer The value, with 18 decimals
+     * @return startedAt Update time of the value, in seconds
+     * @return updatedAt Update time of the value, in seconds
+     * @return answeredInRound Update time of the value, in seconds
      */
     function latestRoundData()
         external
@@ -49,7 +54,10 @@ contract StorkChainlinkAdapter {
         return (uint80(updatedAt), value.quantizedValue, updatedAt, updatedAt, uint80(updatedAt));
     }
 
-    /// @notice Stork stores every value with 18 decimals
+    /**
+     * @notice Number of decimals in the value
+     * @return Always 18, since Stork stores every value with 18 decimals
+     */
     function decimals() external pure returns (uint8) {
         return 18;
     }
