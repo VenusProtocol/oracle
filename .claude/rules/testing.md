@@ -7,9 +7,8 @@ globs: test/**/*.ts
 
 ## When to Write Tests
 
-- During **feature implementation**, tests are written only on explicit request -- do not auto-generate tests while building contracts.
-- Once implementation is complete (e.g. during fixes, reviews, or audits), tests are expected and should be written when asked.
-- Once tests exist and code changes are made later: make the code change first, then immediately ask the user if you should update the tests before touching them. _(Also in CLAUDE.md so this rule is always in context.)_
+- During the **design and initial build of a new feature or contract**, tests are written only on explicit request -- do not write or edit tests while the design is still settling.
+- For **small changes, normal changes and bug fixes**, always update the affected tests and add tests for the new behaviour in the same change -- do not ask first. _(Also in CLAUDE.md so this rule is always in context.)_
 - Write tests against **intended behaviour**, not against what the code currently does. If a test fails, ask the user whether the behaviour is correct or the code has a bug -- never silently adjust a test to make it pass.
 
 ---

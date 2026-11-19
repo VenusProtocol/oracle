@@ -1,0 +1,40 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/interfaces/IStork.sol": {
+      "content": "// SPDX-License-Identifier: BSD-3-Clause\npragma solidity 0.8.25;\n\ninterface IStork {\n    struct TemporalNumericValue {\n        // Time of the value, in nanoseconds\n        uint64 timestampNs;\n        // The value, with 18 decimals\n        int192 quantizedValue;\n    }\n\n    function getTemporalNumericValueV1(bytes32 id) external view returns (TemporalNumericValue memory value);\n}\n"
+    },
+    "contracts/oracles/StorkChainlinkAdapter.sol": {
+      "content": "// SPDX-License-Identifier: BSD-3-Clause\npragma solidity 0.8.25;\n\nimport { IStork } from \"../interfaces/IStork.sol\";\n\n/**\n * @title StorkChainlinkAdapter\n * @author Venus\n * @notice Exposes one Stork feed through the Chainlink `latestRoundData` interface, so the ChainlinkOracle can read it\n * @dev Stork stores the update time in nanoseconds. The ChainlinkOracle compares `updatedAt` with `block.timestamp`,\n *      so it is reported here in seconds; in nanoseconds every read reverts with \"updatedAt exceeds block time\".\n *\n *      The value is read through Stork's own age check, which reverts once the value is older than Stork's\n *      `validTimePeriodSeconds` (1 hour on BNB Chain). An hourly feed can pass that age shortly before a push lands,\n *      and every price read reverts until it does. A `maxStalePeriod` on the ChainlinkOracle only binds when it is\n *      set below Stork's limit.\n */\ncontract StorkChainlinkAdapter {\n    /// @notice Stork contract that stores the feed\n    IStork public immutable STORK;\n\n    /// @notice Stork ID of the feed this adapter reads\n    bytes32 public immutable PRICE_ID;\n\n    /**\n     * @param stork Stork contract address\n     * @param priceId Stork ID of the feed\n     */\n    constructor(IStork stork, bytes32 priceId) {\n        // Reverts for a zero address, a non-Stork contract, an ID that was never pushed or a value older than\n        // Stork's age limit, so a bad feed fails at deploy instead of on the first price read.\n        stork.getTemporalNumericValueV1(priceId);\n\n        STORK = stork;\n        PRICE_ID = priceId;\n    }\n\n    /**\n     * @notice Latest value of the feed, in the Chainlink `latestRoundData` format\n     * @dev Stork keeps no rounds, so `roundId` and `answeredInRound` carry the update time as well.\n     * @return roundId Update time of the value, in seconds\n     * @return answer The value, with 18 decimals\n     * @return startedAt Update time of the value, in seconds\n     * @return updatedAt Update time of the value, in seconds\n     * @return answeredInRound Update time of the value, in seconds\n     */\n    function latestRoundData()\n        external\n        view\n        returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)\n    {\n        IStork.TemporalNumericValue memory value = STORK.getTemporalNumericValueV1(PRICE_ID);\n        updatedAt = value.timestampNs / 1e9;\n        return (uint80(updatedAt), value.quantizedValue, updatedAt, updatedAt, uint80(updatedAt));\n    }\n\n    /**\n     * @notice Number of decimals in the value\n     * @return Always 18, since Stork stores every value with 18 decimals\n     */\n    function decimals() external pure returns (uint8) {\n        return 18;\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200,
+      "details": {
+        "yul": true
+      }
+    },
+    "evmVersion": "cancun",
+    "outputSelection": {
+      "*": {
+        "*": [
+          "storageLayout",
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "evm.gasEstimates"
+        ],
+        "": ["ast"]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}
