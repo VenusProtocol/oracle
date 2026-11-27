@@ -10,8 +10,9 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const { deployer } = await getNamedAccounts();
   const { wUSDM, USDM, acm } = ADDRESSES[network.name];
 
-  const SNAPSHOT_UPDATE_INTERVAL = ethers.constants.MaxUint256;
+  const SNAPSHOT_UPDATE_INTERVAL = 86400; // 24 hours - enables automatic snapshot updates
   const wUSDM_ANNUAL_GROWTH_RATE = ethers.utils.parseUnits("0.15", 18);
+  const SNAPSHOT_GAP = parseUnits("0.01", 18); // 1% safety margin against rate fluctuations
   const resilientOracle = await ethers.getContract("ResilientOracle");
   const block = await ethers.provider.getBlock("latest");
   const vault = await ethers.getContractAt("IERC4626", wUSDM);
@@ -31,7 +32,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       exchangeRate,
       block.timestamp,
       acm,
-      0,
+      SNAPSHOT_GAP,
     ],
   });
 };
