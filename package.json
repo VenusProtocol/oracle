@@ -2,7 +2,7 @@
   "name": "@venusprotocol/oracle",
   "description": "Venus Protocol Price Oracle",
   "repository": "git@github.com:VenusProtocol/oracle.git",
-  "version": "2.18.0",
+  "version": "0.0.0-semantically-released",
   "author": "Venus",
   "engines": {
     "node": ">=18.x.x"
@@ -67,8 +67,6 @@
     "@nomicfoundation/hardhat-verify": "^2.0.14",
     "@nomiclabs/hardhat-ethers": "^2.2.1",
     "@openzeppelin/hardhat-upgrades": "^1.22.0",
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/git": "^10.0.1",
     "@trivago/prettier-plugin-sort-imports": "^3.2.0",
     "@typechain/ethers-v5": "^10.1.0",
     "@typechain/hardhat": "^6.1.0",
